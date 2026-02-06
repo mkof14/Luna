@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { HormoneData, HormoneStatus } from '../types';
+import { HormoneData } from '../types';
+import { Logo } from './Logo';
 
 interface HormoneDetailProps {
   hormone: HormoneData;
@@ -9,135 +10,158 @@ interface HormoneDetailProps {
 
 const HormoneDetail: React.FC<HormoneDetailProps> = ({ hormone, onClose }) => {
   return (
-    <div className="fixed inset-0 z-[200] bg-white dark:bg-slate-950 overflow-y-auto animate-in slide-in-from-bottom duration-500 ease-out">
-      <nav className="sticky top-0 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 px-8 py-6 flex justify-between items-center z-50">
+    <div className="fixed inset-0 z-[250] bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl overflow-y-auto animate-in slide-in-from-bottom duration-700 ease-out no-scrollbar">
+      {/* STICKY HEADER */}
+      <nav className="sticky top-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 px-8 py-5 flex justify-between items-center z-[260]">
         <button 
           onClick={onClose} 
-          className="group flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 hover:text-luna-purple transition-all"
+          className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 hover:text-luna-purple transition-all"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform">
             <path d="M19 12H5M12 19l-7-7 7-7"/>
           </svg>
-          Back
+          Back to Map
         </button>
-        <div className="flex items-center gap-3">
-           <span className="w-2 h-2 rounded-full animate-pulse shadow-sm" style={{ backgroundColor: hormone.color, boxShadow: `0 0 8px ${hormone.color}` }} />
-           <span className="text-[10px] font-black text-slate-500 dark:text-slate-300 uppercase tracking-widest">{hormone.status}</span>
+        
+        <div className="flex items-center gap-4">
+           <div className="flex flex-col items-end">
+             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">System Status</span>
+             <span className="text-xs font-bold text-slate-900 dark:text-slate-100">{hormone.status}</span>
+           </div>
+           <div className="w-3 h-3 rounded-full animate-status-pulse" style={{ backgroundColor: hormone.color, boxShadow: `0 0 15px ${hormone.color}` }} />
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-8 py-20 pb-40 space-y-24">
+      <div className="max-w-4xl mx-auto px-8 py-16 pb-32 space-y-20 relative">
+        {/* Subtle Background Handwriting Watermark */}
+        <div className="absolute top-20 right-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none transform rotate-12 scale-150">
+          <Logo size="xl" variant="animated" />
+        </div>
+
         {/* HERO SECTION */}
-        <header className="space-y-10 animate-in fade-in slide-in-from-top-4 duration-700">
-          <div className="flex flex-col md:flex-row md:items-center gap-8">
-            <span className="text-7xl p-10 bg-slate-50 dark:bg-slate-900 rounded-[3rem] w-fit shadow-xl border border-slate-100 dark:border-slate-800 transition-transform hover:rotate-12">
-              {hormone.icon}
-            </span>
-            <div className="space-y-2">
-              <h1 className="text-6xl font-black tracking-tighter text-slate-900 dark:text-slate-100">{hormone.name}</h1>
-              <span className="text-xs font-black uppercase text-slate-400 dark:text-slate-500 tracking-[0.4em] block">
-                Primary Job: {hormone.id} Management
+        <header className="space-y-12 animate-in fade-in slide-in-from-top-4 duration-1000 fill-mode-both">
+          <div className="flex flex-col md:flex-row md:items-end gap-10">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-tr from-rose-400/20 to-purple-400/20 rounded-[3rem] blur-2xl group-hover:blur-3xl transition-all" />
+              <span className="relative z-10 text-8xl p-12 bg-white dark:bg-slate-900 rounded-[3.5rem] w-fit shadow-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-center animate-float">
+                {hormone.icon}
               </span>
             </div>
+            <div className="space-y-3 pb-2">
+              <h1 className="text-6xl md:text-7xl font-black tracking-tighter text-slate-900 dark:text-slate-100 leading-none">{hormone.name}</h1>
+              <div className="flex items-center gap-3">
+                <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-[10px] font-black uppercase text-slate-500 tracking-widest">
+                  Marker ID: {hormone.id}
+                </span>
+                <div className="h-px w-12 bg-slate-200 dark:bg-slate-800" />
+                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Physiological Primary</span>
+              </div>
+            </div>
           </div>
-          <div className="space-y-4">
-            <p className="text-3xl font-medium italic text-slate-800 dark:text-slate-200 leading-[1.3] max-w-3xl border-l-4 border-slate-200 dark:border-slate-800 pl-8">
+          
+          <div className="relative animate-in fade-in duration-1000 delay-300 fill-mode-both">
+            <p className="text-3xl md:text-4xl font-medium italic text-slate-800 dark:text-slate-200 leading-[1.25] max-w-3xl border-l-[6px] border-slate-900 dark:border-slate-100 pl-10 py-2">
               "{hormone.description}"
-            </p>
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 max-w-2xl pl-8 uppercase tracking-widest text-[11px]">
-              The Big Picture: This hormone acts as a signal to your brain and body to prioritize specific functions over others.
             </p>
           </div>
         </header>
 
-        {/* EXPERIENCE SECTION */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-16 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-          <div className="space-y-6 p-8 bg-slate-50 dark:bg-slate-900/40 rounded-[2.5rem] border border-slate-100 dark:border-slate-800/50">
-            <div className="flex items-center gap-3">
-              <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: hormone.color }} />
-              <h3 className="text-[11px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest">The Daily Experience</h3>
+        {/* EXPERIENCE TILES */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500 fill-mode-both">
+          <div className="group space-y-6 p-10 bg-white/50 dark:bg-slate-900/50 glass rounded-[3rem] border border-slate-200 dark:border-slate-800/50 hover:shadow-2xl transition-all hover:-translate-y-1">
+            <div className="flex items-center gap-4">
+              <div className="w-2 h-8 rounded-full" style={{ backgroundColor: hormone.color }} />
+              <h3 className="text-[11px] font-black uppercase text-slate-400 tracking-[0.3em]">Sensory Experience</h3>
             </div>
-            <p className="text-xl leading-relaxed text-slate-700 dark:text-slate-200 italic font-medium">
+            <p className="text-2xl leading-relaxed text-slate-800 dark:text-slate-100 italic font-bold">
               {hormone.imbalanceFeeling}
             </p>
-            <p className="text-[11px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-tighter italic">
-              * This is a physiological signal, not a personality trait.
-            </p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest opacity-60">Systemic Observation</p>
           </div>
-          <div className="space-y-6 p-8 bg-slate-50 dark:bg-slate-900/40 rounded-[2.5rem] border border-slate-100 dark:border-slate-800/50">
-            <div className="flex items-center gap-3">
-              <div className="w-1.5 h-6 rounded-full opacity-30" style={{ backgroundColor: hormone.color }} />
-              <h3 className="text-[11px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest">Real-world Signal</h3>
+
+          <div className="group space-y-6 p-10 bg-white/50 dark:bg-slate-900/50 glass rounded-[3rem] border border-slate-200 dark:border-slate-800/50 hover:shadow-2xl transition-all hover:-translate-y-1">
+            <div className="flex items-center gap-4">
+              <div className="w-2 h-8 rounded-full opacity-30" style={{ backgroundColor: hormone.color }} />
+              <h3 className="text-[11px] font-black uppercase text-slate-400 tracking-[0.3em]">Daily Manifestation</h3>
             </div>
-            <p className="text-xl leading-relaxed text-slate-700 dark:text-slate-200 font-medium">
+            <p className="text-2xl leading-relaxed text-slate-800 dark:text-slate-100 font-bold">
               {hormone.dailyImpact}
             </p>
-            <p className="text-[11px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-tighter italic">
-              Understanding this pattern helps you plan your schedule with kindness.
-            </p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest opacity-60">Rhythm Insight</p>
           </div>
         </section>
 
-        {/* SYSTEMS SECTION */}
-        <section className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-           <div className="text-center space-y-2">
-              <h3 className="text-[11px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-[0.4em]">Life Impact Areas</h3>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-600 italic">Where you see this marker manifest in your daily life.</p>
+        {/* INFLUENCE GRID */}
+        <section className="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-700 fill-mode-both">
+           <div className="text-center space-y-3">
+              <h3 className="text-[11px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-[0.5em]">Systemic Impact Areas</h3>
+              <p className="text-sm font-medium text-slate-500 italic">Where this marker signals change in your life.</p>
            </div>
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               {hormone.affects.map((area, idx) => (
-                <div key={idx} className="p-8 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 hover:shadow-2xl hover:border-luna-purple transition-all group shadow-sm">
-                   <p className="text-lg font-black text-slate-900 dark:text-slate-100 group-hover:text-luna-purple transition-colors">{area}</p>
-                   <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 mt-2 uppercase tracking-tighter">Systemic Management Active</p>
+                <div key={idx} className="p-8 bg-slate-50/50 dark:bg-slate-900/30 rounded-[2.5rem] border border-slate-100 dark:border-slate-800/50 hover:border-luna-purple transition-all group flex flex-col items-center text-center space-y-4">
+                   <div className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-lg shadow-sm group-hover:rotate-12 transition-transform">📍</div>
+                   <p className="text-sm font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">{area}</p>
                 </div>
               ))}
            </div>
         </section>
 
-        {/* DRIVERS SECTION */}
-        <section className="p-12 bg-slate-50 dark:bg-slate-900/80 rounded-[4rem] border border-slate-200 dark:border-slate-800 space-y-10 shadow-inner">
-           <div className="text-center space-y-2">
-              <h3 className="text-[11px] font-black uppercase text-slate-500 dark:text-slate-400 tracking-widest">What moves the needle?</h3>
-              <p className="text-sm font-medium text-slate-500 italic">Common factors that shift this marker up or down.</p>
+        {/* DRIVER CLOUD */}
+        <section className="p-12 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-[4rem] space-y-12 shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-900 fill-mode-both overflow-hidden relative">
+           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white_1px,_transparent_1px)] bg-[size:20px_20px]" />
+           
+           <div className="text-center space-y-3 relative z-10">
+              <h3 className="text-[11px] font-black uppercase opacity-60 tracking-[0.3em]">State Influencers</h3>
+              <p className="text-lg font-bold italic">Factors that shift this baseline.</p>
            </div>
-           <div className="flex flex-wrap justify-center gap-4">
+           
+           <div className="flex flex-wrap justify-center gap-4 relative z-10">
               {hormone.drivers.map((driver, idx) => (
-                <span key={idx} className="px-6 py-3 bg-white dark:bg-slate-800 rounded-full text-xs font-black text-slate-700 dark:text-slate-200 shadow-md border border-slate-200 dark:border-slate-700 hover:scale-105 transition-transform">
+                <span key={idx} className="px-8 py-4 bg-white/10 dark:bg-black/5 backdrop-blur-md rounded-full text-xs font-black uppercase tracking-widest border border-white/10 dark:border-black/5 hover:bg-white/20 transition-all cursor-default">
                    {driver}
                 </span>
               ))}
            </div>
         </section>
 
-        {/* DOCTOR PREP */}
-        <section className="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
-          <div className="text-center space-y-2">
-            <h3 className="text-[11px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-[0.4em]">Health Professional Briefing</h3>
-            <p className="text-sm font-medium text-slate-500 italic">Bridging the gap between your feeling and clinical data.</p>
+        {/* DOCTOR PREP - HIGH CONTRAST */}
+        <section className="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-[1100ms] fill-mode-both">
+          <div className="text-center space-y-3">
+            <h3 className="text-[11px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-[0.4em]">Professional Briefing</h3>
+            <p className="text-sm font-medium text-slate-500 italic">Structured for clear clinical communication.</p>
           </div>
-          <div className="p-12 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-[3rem] space-y-8 shadow-2xl relative overflow-hidden group">
-             <div className="absolute top-0 right-0 p-8 opacity-10 text-8xl font-black group-hover:scale-110 transition-transform">🩺</div>
-             <div className="space-y-4 relative z-10">
-                <h4 className="text-[10px] font-black uppercase tracking-widest opacity-60">Observation Summary</h4>
-                <p className="text-2xl font-medium italic leading-relaxed max-w-2xl">
-                  "Lately, I've noticed my reported experience of {hormone.name.toLowerCase()} aligns with specific shifts in my energy and social capacity. I'd like to explore how this pattern relates to my overall health."
+          
+          <div className="p-12 bg-white dark:bg-slate-900 border-4 border-slate-900 dark:border-slate-100 rounded-[3.5rem] space-y-12 shadow-2xl group transition-all">
+             <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-slate-900 dark:bg-slate-100 flex items-center justify-center text-white dark:text-slate-900 text-sm">📋</div>
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Personal Observation</h4>
+                </div>
+                <p className="text-2xl md:text-3xl font-bold leading-tight text-slate-900 dark:text-slate-100 italic">
+                  "Lately, I've noticed my reported experience of {hormone.name.toLowerCase()} aligns with specific shifts in my energy and capacity. I'd like to explore how this pattern relates to my overall health."
                 </p>
              </div>
-             <div className="space-y-6 pt-10 border-t border-white/10 dark:border-black/10 relative z-10">
-               <h4 className="text-[10px] font-black uppercase tracking-widest opacity-60">Questions for your next visit</h4>
-               {hormone.generalDoctorQuestions.map((q, i) => (
-                 <div key={i} className="flex gap-4 items-start">
-                    <span className="w-6 h-6 rounded-full bg-white/20 dark:bg-black/10 flex items-center justify-center text-[10px] font-black">{i+1}</span>
-                    <p className="text-lg font-bold flex-1">"{q}"</p>
-                 </div>
-               ))}
+             
+             <div className="space-y-8 pt-10 border-t-2 border-slate-100 dark:border-slate-800">
+               <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Questions for Consultation</h4>
+               <div className="grid grid-cols-1 gap-6">
+                 {hormone.generalDoctorQuestions.map((q, i) => (
+                   <div key={i} className="flex gap-6 items-start group/q">
+                      <span className="w-10 h-10 flex-shrink-0 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-black group-hover/q:bg-luna-purple group-hover/q:text-white transition-all">{i+1}</span>
+                      <p className="text-xl font-bold text-slate-800 dark:text-slate-200 group-hover/q:translate-x-1 transition-transform leading-relaxed">"{q}"</p>
+                   </div>
+                 ))}
+               </div>
              </div>
           </div>
         </section>
         
         <footer className="text-center pt-24 border-t border-slate-200 dark:border-slate-800 space-y-4">
-           <p className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-600 tracking-[0.5em]">Local Observation Protocol Active</p>
-           <p className="text-xs text-slate-500 italic">This current state is a snapshot in time. Every rhythm is temporary.</p>
+           <p className="text-[10px] font-black uppercase text-slate-400 dark:text-slate-600 tracking-[0.6em] animate-pulse">Self-Observation Protocol Active</p>
+           <p className="text-xs text-slate-500 italic max-w-sm mx-auto leading-relaxed">
+             This map is a temporal snapshot. Your physiology is a living, shifting system.
+           </p>
         </footer>
       </div>
     </div>

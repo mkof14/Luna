@@ -280,12 +280,6 @@ const App: React.FC = () => {
             >
               {ui.arrival.confirm}
             </button>
-            <button 
-              onClick={() => setManualDashboardOverride(true)}
-              className="w-full mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-            >
-              {ui.arrival.exit}
-            </button>
           </div>
         </div>
       </div>
@@ -357,19 +351,20 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      <main className="flex-grow max-w-7xl mx-auto w-full px-6 py-12 pb-32 relative z-10">
+      <main className="flex-grow max-w-7xl mx-auto w-full px-6 pt-6 pb-32 relative z-10">
         {activeTab === 'dashboard' && (
-          <div className="space-y-16 animate-in fade-in slide-in-from-bottom-6 duration-700">
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
+            {/* HERO TEXT RAISED HIGHER */}
+            <div className="text-center lg:text-left space-y-4 max-w-3xl">
+              <h3 className="text-4xl lg:text-7xl font-black tracking-tight text-slate-900 dark:text-slate-100 leading-[1.1]">
+                Hi. Let's look at <br/> <span className="text-luna-purple font-brand text-5xl lg:text-9xl lowercase pt-2 inline-block drop-shadow-md">how you are.</span>
+              </h3>
+              <p className="text-xl lg:text-3xl text-slate-700 dark:text-slate-400 italic font-semibold leading-relaxed">
+                A gentle way to understand what your body is trying to tell you today.
+              </p>
+            </div>
+
             <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
-              <div className="flex-1 space-y-6 text-center lg:text-left">
-                <h3 className="text-4xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-slate-100 leading-[1.1]">
-                  Hi. Let's look at <br/> <span className="text-luna-purple font-brand text-5xl lg:text-8xl lowercase pt-4 inline-block drop-shadow-md">how you are.</span>
-                </h3>
-                <p className="text-2xl text-slate-700 dark:text-slate-400 max-w-xl italic font-semibold leading-relaxed">
-                  A gentle way to understand what your body is trying to tell you today.
-                </p>
-                {/* REMOVED My Rhythm and New Tests buttons per user request */}
-              </div>
               <div className="flex-1 w-full max-w-xl">
                 <DailyStatePanel 
                   phase={currentPhase}
@@ -377,14 +372,15 @@ const App: React.FC = () => {
                   reassurance={ui.reflection.temporaryNote}
                 />
               </div>
+              <div className="flex-1 space-y-12">
+                <div className="bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-luna border border-slate-300 dark:border-slate-800 relative group overflow-hidden">
+                   <div className="absolute inset-0 bg-gradient-to-r from-luna-purple/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                   <PatternStrip days={historicalPattern} label="Your Path" />
+                </div>
+              </div>
             </div>
 
             <div className="space-y-12">
-              <div className="bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-luna border border-slate-300 dark:border-slate-800 relative group overflow-hidden">
-                 <div className="absolute inset-0 bg-gradient-to-r from-luna-purple/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                 <PatternStrip days={historicalPattern} label="Your Path" />
-              </div>
-
               <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                 {hormoneData.map(h => (
                   <HormoneGauge key={h.id} hormone={h} onClick={setSelectedHormone} />
@@ -424,39 +420,33 @@ const App: React.FC = () => {
                  </button>
               </div>
 
-              <section className="pt-16 border-t border-slate-300 dark:border-slate-800 flex flex-col items-center gap-6 text-center">
-                <button 
-                  onClick={() => setShowClosure(true)}
-                  className="text-xs font-black text-slate-500 hover:text-luna-purple transition-all uppercase tracking-[0.4em] bg-white dark:bg-slate-900 px-8 py-3 rounded-full border border-slate-200 shadow-sm hover:shadow-md active:scale-95 shimmer-bg"
-                >
-                  {ui.arrival.exit}
-                </button>
-              </section>
+              {/* Just browsing button removed from here as requested */}
+            </div>
+          </div>
+        )}
+
+        <div className="animate-in fade-in duration-500 relative z-10">
+          {activeTab === 'cycle' && (
+            <div className="bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-luna border border-slate-300 dark:border-slate-800 glass-deep">
+              <CycleTimeline 
+                currentDay={systemState.currentDay} 
+                onDayChange={(d) => { dataService.logEvent('CYCLE_SYNC', { day: d, length: 28 }); setLog(dataService.getLog()); }} 
+                isDetailed={true} 
+                onBack={handleBackToDashboard}
+              />
             </div>
           )}
-
-          <div className="animate-in fade-in duration-500 relative z-10">
-            {activeTab === 'cycle' && (
-              <div className="bg-white dark:bg-slate-900 p-10 rounded-[3rem] shadow-luna border border-slate-300 dark:border-slate-800 glass-deep">
-                <CycleTimeline 
-                  currentDay={systemState.currentDay} 
-                  onDayChange={(d) => { dataService.logEvent('CYCLE_SYNC', { day: d, length: 28 }); setLog(dataService.getLog()); }} 
-                  isDetailed={true} 
-                  onBack={handleBackToDashboard}
-                />
-              </div>
-            )}
-            {activeTab === 'labs' && <LabsView day={systemState.currentDay} age={30} onBack={handleBackToDashboard} />}
-            {activeTab === 'history' && <HistoryView log={log} onBack={handleBackToDashboard} />}
-            {activeTab === 'faq' && <FAQView onBack={handleBackToDashboard} />}
-            {activeTab === 'contact' && <ContactView ui={ui} onBack={handleBackToDashboard} />}
-            {activeTab === 'meds' && <MedicationsView medications={systemState.medications} onBack={handleBackToDashboard} />}
-            {activeTab === 'creative' && <CreativeStudio />}
-            {activeTab === 'relationships' && <RelationshipsView phase={currentPhase} onBack={handleBackToDashboard} />}
-            {activeTab === 'family' && <FamilyView phase={currentPhase} onBack={handleBackToDashboard} />}
-            {activeTab === 'crisis' && <CrisisCenterView onBack={handleBackToDashboard} />}
-            {activeTab === 'profile' && <ProfileView ui={ui} onBack={handleBackToDashboard} />}
-          </div>
+          {activeTab === 'labs' && <LabsView day={systemState.currentDay} age={30} onBack={handleBackToDashboard} />}
+          {activeTab === 'history' && <HistoryView log={log} onBack={handleBackToDashboard} />}
+          {activeTab === 'faq' && <FAQView onBack={handleBackToDashboard} />}
+          {activeTab === 'contact' && <ContactView ui={ui} onBack={handleBackToDashboard} />}
+          {activeTab === 'meds' && <MedicationsView medications={systemState.medications} onBack={handleBackToDashboard} />}
+          {activeTab === 'creative' && <CreativeStudio />}
+          {activeTab === 'relationships' && <RelationshipsView phase={currentPhase} onBack={handleBackToDashboard} />}
+          {activeTab === 'family' && <FamilyView phase={currentPhase} onBack={handleBackToDashboard} />}
+          {activeTab === 'crisis' && <CrisisCenterView onBack={handleBackToDashboard} />}
+          {activeTab === 'profile' && <ProfileView ui={ui} onBack={handleBackToDashboard} />}
+        </div>
       </main>
 
       <footer className="w-full bg-white dark:bg-slate-900 border-t-2 border-slate-200 dark:border-slate-800 py-16 px-6 relative z-10">
