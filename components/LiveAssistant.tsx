@@ -30,7 +30,7 @@ async function decodeAudioData(data: Uint8Array, ctx: AudioContext, sampleRate: 
   return buffer;
 }
 
-export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; systemContext: string }> = ({ isOpen, onClose, systemContext }) => {
+export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; stateSnapshot: string }> = ({ isOpen, onClose, stateSnapshot }) => {
   const [isActive, setIsActive] = useState(false);
   const [status, setStatus] = useState("Disconnected");
   const sessionRef = useRef<any>(null);
@@ -67,7 +67,7 @@ export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; sys
           scriptProcessor.connect(audioContextRef.current!.input.destination);
         },
         onmessage: async (message) => {
-          const audioBase64 = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
+          const audioBase64 = message.serverContent?.modelTurn?.parts?.[0]?.inlineData?.data;
           if (audioBase64) {
             const ctx = audioContextRef.current!.output;
             nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
@@ -92,7 +92,7 @@ export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; sys
       config: {
         responseModalities: [Modality.AUDIO],
         speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } } },
-        systemInstruction: `You are Luna, a women's health guide. Context: ${systemContext}. Speak warmly. No diagnosis.`
+        systemInstruction: `You are Luna, a women's health guide. Situation: ${stateSnapshot}. Speak warmly. No diagnosis.`
       }
     });
 
@@ -132,7 +132,7 @@ export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; sys
             )}
           </div>
           
-          <p className="text-[10px] font-bold text-slate-400 uppercase leading-relaxed max-w-xs">Talk naturally about how you're feeling. I'm here to provide physiological context based on your cycle map.</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase leading-relaxed max-w-xs">Talk naturally about how you're feeling. I'm here to provide physiological mapping based on your cycle.</p>
         </div>
         
         {isActive && (

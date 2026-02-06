@@ -37,13 +37,13 @@ import { ProfileView } from './components/ProfileView';
 type TabType = 'dashboard' | 'cycle' | 'labs' | 'meds' | 'history' | 'creative' | 'faq' | 'contact' | 'relationships' | 'family' | 'crisis' | 'profile';
 
 const App: React.FC = () => {
-  // Загружаем лог событий из локального хранилища
+  // Load events log from local storage
   const [log, setLog] = useState<HealthEvent[]>(() => dataService.getLog());
   
-  // Проецируем текущее состояние системы на основе лога
+  // Project the current system state based on the log
   const systemState = useMemo(() => dataService.projectState(log), [log]);
   
-  // Флаги управления видимостью экранов
+  // Visibility flags
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(systemState.onboarded);
   const [isAuthenticated, setIsAuthenticated] = useState(systemState.isAuthenticated);
   const [subscriptionTier, setSubscriptionTier] = useState(systemState.subscriptionTier);
@@ -51,7 +51,7 @@ const App: React.FC = () => {
   const [showCrisis, setShowCrisis] = useState(false);
   const [manualDashboardOverride, setManualDashboardOverride] = useState(false);
   
-  // Управление языком
+  // Language management
   const [lang, setLang] = useState<Language>(() => {
     const saved = localStorage.getItem('luna_lang');
     return (saved as Language) || 'en';
@@ -63,7 +63,7 @@ const App: React.FC = () => {
     localStorage.setItem('luna_lang', lang);
   }, [lang]);
 
-  // Проверка: нужно ли показать экран ежедневного чекина (если прошло > 12 часов)
+  // Check: should we show the daily checkin screen (>12 hours since last)
   const isArrivalMode = useMemo(() => {
     if (!isAuthenticated || subscriptionTier === 'none') return false;
     if (manualDashboardOverride) return false;
@@ -79,7 +79,7 @@ const App: React.FC = () => {
   const [stateNarrative, setStateNarrative] = useState<string | null>(null);
   const [isNarrativeLoading, setIsNarrativeLoading] = useState(false);
   
-  // Данные для формы чекина
+  // Checkin form data
   const [checkinData, setCheckinData] = useState({ 
     energy: 3, 
     mood: 3, 
@@ -89,7 +89,7 @@ const App: React.FC = () => {
     stress: 3 
   });
   
-  // Управление темой
+  // Theme management
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('luna_theme');
     if (saved === 'light' || saved === 'dark') return saved;
@@ -105,7 +105,7 @@ const App: React.FC = () => {
 
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
-  // Работа движка правил для расчета статусов гормонов
+  // Rule engine for hormone status calculation
   const engineResult = useMemo(() => {
     return runRuleEngine({
       age: 30,
@@ -117,7 +117,7 @@ const App: React.FC = () => {
     });
   }, [systemState]);
 
-  // Подготовка финальных данных о гормонах
+  // Prepare final hormone data
   const hormoneData = useMemo(() => {
     return INITIAL_HORMONES.map(h => ({
       ...h,
@@ -125,7 +125,7 @@ const App: React.FC = () => {
     }));
   }, [engineResult.hormoneStatuses]);
 
-  // Проверка на критическое состояние (нужна ли панель кризиса)
+  // Critical state check
   useEffect(() => {
     const criticalStrains = hormoneData.filter(h => h.status === HormoneStatus.STRAINED || h.status === HormoneStatus.UNSTABLE);
     if (criticalStrains.length >= 2 && !showClosure && !isArrivalMode && isAuthenticated && subscriptionTier !== 'none') {
@@ -133,7 +133,7 @@ const App: React.FC = () => {
     }
   }, [hormoneData, showClosure, isArrivalMode, isAuthenticated, subscriptionTier]);
 
-  // Определение текущей фазы цикла
+  // Determine current cycle phase
   const currentPhase = useMemo(() => {
     const day = systemState.currentDay;
     if (day <= 5) return CyclePhase.MENSTRUAL;
@@ -142,7 +142,7 @@ const App: React.FC = () => {
     return CyclePhase.LUTEAL;
   }, [systemState.currentDay]);
 
-  // Исторические паттерны для дашборда
+  // Historical patterns for dashboard
   const historicalPattern = useMemo(() => {
     const colors = ['#ff8a73', '#14b8a6', '#fef3c7', '#ddd6fe', '#e0f2fe', '#dcfce7'];
     return Array.from({ length: 14 }).map((_, i) => ({
@@ -152,7 +152,7 @@ const App: React.FC = () => {
     }));
   }, [log]);
 
-  // Загрузка текстовой рефлексии от Gemini
+  // Load narrative reflection from Gemini
   useEffect(() => {
     if (activeTab === 'dashboard' && !isArrivalMode && isAuthenticated && subscriptionTier !== 'none') {
       const fetchNarrative = async () => {
@@ -164,28 +164,28 @@ const App: React.FC = () => {
           systemState.lastCheckin?.metrics || {},
           lang
         );
-        setStateNarrative(narrative);
+        setStateNarrative(narrative ?? null);
         setIsNarrativeLoading(false);
       };
       fetchNarrative();
     }
   }, [currentPhase, systemState.currentDay, systemState.lastCheckin, activeTab, isArrivalMode, hormoneData, lang, isAuthenticated, subscriptionTier]);
 
-  // Обработка входа
+  // Auth handler
   const handleAuthSuccess = () => {
     dataService.logEvent('AUTH_SUCCESS', {});
     setLog(dataService.getLog());
     setIsAuthenticated(true);
   };
 
-  // Обработка покупки подписки
+  // Subscription handler
   const handleSubscriptionPurchase = (tier: 'monthly' | 'yearly') => {
     dataService.logEvent('SUBSCRIPTION_PURCHASE', { tier });
     setLog(dataService.getLog());
     setSubscriptionTier(tier);
   };
 
-  // Сохранение чекина
+  // Checkin save
   const submitCheckin = () => {
     try {
       dataService.logEvent('DAILY_CHECKIN', { 
@@ -205,19 +205,17 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // --- ЛОГИКА ОТОБРАЖЕНИЯ ЭКРАНОВ (ORDER OF GATES) ---
-
-  // 1. Авторизация
+  // 1. Auth Gate
   if (!isAuthenticated) {
     return <AuthView ui={ui} onSuccess={handleAuthSuccess} />;
   }
 
-  // 2. Оплата подписки
+  // 2. Pricing Gate
   if (subscriptionTier === 'none') {
     return <PricingView ui={ui} onSelect={handleSubscriptionPurchase} />;
   }
 
-  // 3. Онбординг (только один раз после оплаты)
+  // 3. Onboarding Gate
   if (!hasCompletedOnboarding) {
     return (
       <div className="fixed inset-0 bg-white dark:bg-slate-950 flex items-center justify-center p-8 z-[200]">
@@ -235,12 +233,12 @@ const App: React.FC = () => {
     );
   }
 
-  // 4. Закрытие системы (принудительный отдых)
+  // 4. Closure State
   if (showClosure) {
     return <ClosureView onDismiss={() => { setShowClosure(false); setManualDashboardOverride(false); setActiveTab('dashboard'); }} />;
   }
 
-  // 5. Утренний/вечерний чекин
+  // 5. Check-in Mode
   if (isArrivalMode) {
     return (
       <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center p-6 py-12 animate-in fade-in duration-1000 relative overflow-hidden">
@@ -286,15 +284,15 @@ const App: React.FC = () => {
     );
   }
 
-  // 6. ОСНОВНОЙ КОНТЕНТ (ДАШБОРД)
+  // 6. Main Dashboard
   return (
     <div className="min-h-screen flex flex-col bg-slate-100/60 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-purple-200 relative overflow-hidden">
       
-      {/* GLOBAL BACKGROUND LIFE BLOBS */}
+      {/* Background blobs */}
       <div className="absolute top-[-100px] left-[-100px] w-[600px] h-[600px] bg-purple-400/5 dark:bg-purple-900/10 rounded-full blur-[120px] animate-blob-slow pointer-events-none" />
       <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-cyan-400/5 dark:bg-cyan-900/10 rounded-full blur-[100px] animate-blob-reverse pointer-events-none" />
       
-      {/* Stardust particles layer */}
+      {/* Stardust layer */}
       <div className="absolute inset-0 pointer-events-none opacity-40 dark:opacity-20 overflow-hidden">
         {Array.from({ length: 20 }).map((_, i) => (
           <div 
@@ -354,7 +352,6 @@ const App: React.FC = () => {
       <main className="flex-grow max-w-7xl mx-auto w-full px-6 pt-6 pb-32 relative z-10">
         {activeTab === 'dashboard' && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
-            {/* HERO TEXT RAISED HIGHER */}
             <div className="text-center lg:text-left space-y-4 max-w-3xl">
               <h3 className="text-4xl lg:text-7xl font-black tracking-tight text-slate-900 dark:text-slate-100 leading-[1.1]">
                 Hi. Let's look at <br/> <span className="text-luna-purple font-brand text-5xl lg:text-9xl lowercase pt-2 inline-block drop-shadow-md">how you are.</span>
@@ -419,8 +416,6 @@ const App: React.FC = () => {
                     </div>
                  </button>
               </div>
-
-              {/* Just browsing button removed from here as requested */}
             </div>
           </div>
         )}
@@ -514,7 +509,7 @@ const App: React.FC = () => {
       </footer>
 
       {selectedHormone && <HormoneDetail hormone={selectedHormone} onClose={() => setSelectedHormone(null)} />}
-      {showLiveAssistant && <LiveAssistant isOpen={showLiveAssistant} onClose={() => setShowLiveAssistant(false)} systemContext={`Phase: ${currentPhase}, Day ${systemState.currentDay}. Role: Friendly guide. Lang: ${lang}.`} />}
+      {showLiveAssistant && <LiveAssistant isOpen={showLiveAssistant} onClose={() => setShowLiveAssistant(false)} stateSnapshot={`Phase: ${currentPhase}, Day ${systemState.currentDay}. Role: Friendly guide. Lang: ${lang}.`} />}
       <CrisisPanel isActive={showCrisis} onClose={() => setShowCrisis(false)} />
     </div>
   );
