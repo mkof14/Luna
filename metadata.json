@@ -1,0 +1,8 @@
+{
+  "name": "Luna Balance: Women’s Wellness Support System",
+  "description": "A visual-first digital system for wellness discovery, physiology mapping, and systemic self-observation.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

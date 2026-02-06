@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Balance MVP Data Contracts",
+  "description": "Validation schemas for the Women's Health Understanding System event log and data exchange formats.",
+  "definitions": {
+    "BaseEvent": {
+      "type": "object",
+      "description": "The atomic unit of data in the system event log.",
+      "required": ["id", "timestamp", "type", "version", "payload"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "type": { 
+          "enum": [
+            "DAILY_CHECKIN", 
+            "CYCLE_SYNC", 
+            "LAB_MARKER_ENTRY", 
+            "MEDICATION_LOG", 
+            "INSIGHT_GENERATED", 
+            "ONBOARDING_COMPLETE", 
+            "DATA_EXPORTED"
+          ] 
+        },
+        "version": { "type": "integer", "minimum": 1 },
+        "payload": { "type": "object" }
+      }
+    },
+    "CheckInPayload": {
+      "type": "object",
+      "required": ["metrics", "symptoms", "isPeriod"],
+      "properties": {
+        "metrics": {
+          "type": "object",
+          "required": ["energy", "sleep", "mood", "irritability", "libido", "stress"],
+          "properties": {
+            "energy": { "type": "integer", "minimum": 1, "maximum": 5 },
+            "sleep": { "type": "integer", "minimum": 1, "maximum": 5 },
+            "mood": { "type": "integer", "minimum": 1, "maximum": 5 },
+            "irritability": { "type": "integer", "minimum": 1, "maximum": 5 },
+            "libido": { "type": "integer", "minimum": 1, "maximum": 5 },
+            "stress": { "type": "integer", "minimum": 1, "maximum": 5 }
+          }
+        },
+        "symptoms": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "isPeriod": { "type": "boolean" }
+      }
+    },
+    "CycleSyncPayload": {
+      "type": "object",
+      "required": ["day", "length"],
+      "properties": {
+        "day": { "type": "integer", "minimum": 1, "maximum": 45 },
+        "length": { "type": "integer", "minimum": 20, "maximum": 45 },
+        "lastPeriodStart": { "type": "string", "format": "date" }
+      }
+    },
+    "LabMarkerPayload": {
+      "type": "object",
+      "required": ["rawText", "collectionDate"],
+      "properties": {
+        "rawText": { "type": "string" },
+        "markers": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "collectionDate": { "type": "string", "format": "date" }
+      }
+    },
+    "MedicationLogPayload": {
+      "type": "object",
+      "required": ["action", "medId", "name"],
+      "properties": {
+        "action": { "enum": ["ADD", "REMOVE", "UPDATE"] },
+        "medId": { "type": "string" },
+        "name": { "type": "string" },
+        "dose": { "type": "string" },
+        "observations": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "string" },
+        "updates": { "type": "object" }
+      }
+    },
+    "InsightGeneratedPayload": {
+      "type": "object",
+      "required": ["insightId", "ruleId", "text"],
+      "properties": {
+        "insightId": { "type": "string" },
+        "ruleId": { "type": "string" },
+        "text": { "type": "string" },
+        "hormoneId": { "type": "string" }
+      }
+    },
+    "DashboardViewDTO": {
+      "type": "object",
+      "description": "Calculated state projection for frontend rendering.",
+      "required": ["systemStatus", "temporalTrends", "alerts"],
+      "properties": {
+        "systemStatus": {
+          "type": "object",
+          "required": ["day", "phase", "hormones", "activeMedications"],
+          "properties": {
+            "day": { "type": "integer" },
+            "phase": { "type": "string" },
+            "hormones": { "type": "array", "items": { "$ref": "#/definitions/HormoneDisplayData" } },
+            "activeMedications": { "type": "array", "items": { "type": "object" } }
+          }
+        },
+        "temporalTrends": {
+          "type": "object",
+          "properties": {
+            "energy": { "type": "array", "items": { "type": "number" } },
+            "mood": { "type": "array", "items": { "type": "number" } }
+          }
+        },
+        "alerts": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "HormoneDisplayData": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "level": { "type": "number" },
+        "status": { "type": "string" },
+        "trend": { "type": "array", "items": { "type": "number" } }
+      }
+    },
+    "DoctorPrepExport": {
+      "type": "object",
+      "description": "Schema for the downloadable clinical data package.",
+      "required": ["metadata", "clinicalSummary", "eventTimeline"],
+      "properties": {
+        "metadata": {
+          "type": "object",
+          "required": ["exportedAt", "LunaVersion", "userId"],
+          "properties": {
+            "exportedAt": { "type": "string", "format": "date-time" },
+            "LunaVersion": { "type": "string" },
+            "userId": { "type": "string" },
+            "privacyPolicy": { "type": "string" }
+          }
+        },
+        "clinicalSummary": { "type": "string" },
+        "markerHistory": { "type": "array", "items": { "$ref": "#/definitions/LabMarkerPayload" } },
+        "eventTimeline": { "type": "array", "items": { "$ref": "#/definitions/BaseEvent" } }
+      }
+    }
+  }
+}
