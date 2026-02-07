@@ -164,7 +164,7 @@ const App: React.FC = () => {
           systemState.lastCheckin?.metrics || {},
           lang
         );
-        setStateNarrative(narrative ?? null);
+        setStateNarrative(narrative ?? "Everything is moving as it should.");
         setIsNarrativeLoading(false);
       };
       fetchNarrative();

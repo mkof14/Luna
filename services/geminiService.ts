@@ -2,41 +2,44 @@
 import { GoogleGenAI } from "@google/genai";
 import { SystemState } from "../types";
 
+/**
+ * Enhanced lab analyzer that ingests full profile and historical context.
+ * Simulates "learning" by comparing new data against the user's documented baseline.
+ */
 export const analyzeLabResults = async (results: string, systemState: SystemState, lang: string = 'en') => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
-  // Create a condensed profile/history snapshot for the model
+  // Create a sophisticated historical summary to inform the AI of the user's baseline
   const profileSummary = `
     Name: ${systemState.profile.name || 'Anonymous'}, 
-    Conditions: ${systemState.profile.conditions || 'None listed'}, 
+    Age: ${systemState.profile.birthDate},
+    Health Conditions: ${systemState.profile.conditions || 'None listed'}, 
+    Physical Stats: ${systemState.profile.weight}${systemState.profile.units === 'metric' ? 'kg' : 'lb'}, ${systemState.profile.height}${systemState.profile.units === 'metric' ? 'cm' : 'in'},
     Sensitivities: ${systemState.profile.sensitivities.join(', ') || 'None listed'},
     Stress Baseline: ${systemState.profile.stressBaseline}
   `;
   
-  const recentHistorySummary = systemState.events
+  const historySummary = systemState.events
     .filter(e => e.type === 'DAILY_CHECKIN')
-    .slice(-5)
-    .map(e => `Day ${e.payload.day || '?'}: Mood ${e.payload.metrics?.mood}, Energy ${e.payload.metrics?.energy}`)
+    .slice(-10) // Look at the last 10 days of sensations
+    .map(e => `Day ${e.payload.day || '?'}: Mood ${e.payload.metrics?.mood}/5, Energy ${e.payload.metrics?.energy}/5`)
     .join('; ');
 
   const prompt = `
-    As a women's health quiet companion, analyze these lab results and provide a professional, empathetic "Your Body's Voice" reflection for a State Record.
+    As a women's health quiet companion, perform a systemic mapping of these laboratory markers.
+    CONTEXT:
+    - Profile Baseline: ${profileSummary}
+    - Recent Internal Rhythm (Self-Observation Record): ${historySummary}
+    - Current Temporal Point: Day ${systemState.currentDay} of ${systemState.cycleLength}
+    - New Data to Integrate: ${results}
     
-    PHYSIOLOGICAL PARAMETERS:
-    - Current Rhythm: Day ${systemState.currentDay} of a ${systemState.cycleLength}-day cycle.
-    - Profile Snapshot: ${profileSummary}
-    - Recent State Observations: ${recentHistorySummary}
-    
-    NEW LABORATORY DATA:
-    ${results}
-    
-    SYSTEMIC ANALYTICAL GUIDELINES:
-    1. ROLE: You are a professional mirror. Reflect the underlying physiological rhythm.
-    2. DEEP PERSONALIZATION: Link these markers specifically to the user's reported sensitivities and recent history.
-    3. STRUCTURE: Provide a single, sophisticated, cohesive paragraph (2-3 sentences).
-    4. TONE: Professional, poetic, and non-judgmental. Avoid "good" or "bad".
-    5. SAFETY: No medical diagnoses or specific treatment advice.
-    6. RESPONSE LANGUAGE: ${lang}.
+    REPORT PROTOCOL:
+    1. ROLE: You are a professional mirror reflecting "Your Body's Voice".
+    2. DEEP PERSONALIZATION: Synthesize the results by specifically referencing the user's known sensitivities and their recent mood/energy trends.
+    3. STRUCTURE: Provide a sophisticated, cohesive reflection (2-4 sentences).
+    4. TONE: Clinical-grade but empathetic and poetic. Avoid binary "good/bad" labels.
+    5. SAFETY: Strictly no diagnoses or treatment plans.
+    6. LANGUAGE: ${lang}.
   `;
   try {
     const response = await ai.models.generateContent({
@@ -45,14 +48,14 @@ export const analyzeLabResults = async (results: string, systemState: SystemStat
     });
     return response.text;
   } catch (error) {
-    return "The system observes a natural rhythm at this temporal point.";
+    return "The system is observing your natural rhythm at this temporal point.";
   }
 };
 
 export const generateStateNarrative = async (phase: string, day: number, hormones: any[], metrics: any, lang: string = 'en') => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const prompt = `
-    Generate a 1-sentence reflection for "Your Body's Voice" section.
+    Generate a 1-sentence reflection for "Your Body's Voice" section based on the current system snapshot.
     Parameters: Phase ${phase}, Day ${day}. Metrics: ${JSON.stringify(metrics)}.
     
     TONE & RULES:
@@ -72,9 +75,6 @@ export const generateStateNarrative = async (phase: string, day: number, hormone
   }
 };
 
-/**
- * Generates an abstract artistic visualization of a physiological state.
- */
 export const generateStateVisual = async (prompt: string, aspectRatio: string = "1:1", size: string = "1K") => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   try {
@@ -109,9 +109,6 @@ export const generateStateVisual = async (prompt: string, aspectRatio: string = 
   }
 };
 
-/**
- * Initiates and polls for a cinematic video generation using Veo.
- */
 export const startVeoVideo = async (prompt: string) => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   try {

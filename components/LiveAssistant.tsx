@@ -92,7 +92,7 @@ export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; sta
       config: {
         responseModalities: [Modality.AUDIO],
         speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } } },
-        systemInstruction: `You are Luna, a women's health guide. Situation: ${stateSnapshot}. Speak warmly. No diagnosis.`
+        systemInstruction: `You are Luna, a women's health guide. Current State Snapshot: ${stateSnapshot}. Speak warmly. No diagnosis.`
       }
     });
 
