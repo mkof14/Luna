@@ -126,6 +126,13 @@ const en = {
     guidance: "Themes for Today",
     nothingUrgent: "Your body is communicating clearly today.",
     temporaryNote: "Every feeling is a signal, not a destination."
+  },
+  bridge: {
+    title: "Empathy Bridge",
+    cta: "Want me to tell [Name] how to support you today?",
+    generating: "Building the bridge...",
+    shared: "Copied for your partner",
+    partnerPlaceholder: "Partner's Name"
   }
 };
 
@@ -146,6 +153,13 @@ const ru = {
     family: "Дом",
     crisis: "Центр спокойствия",
     profile: "Профиль"
+  },
+  bridge: {
+    title: "Эмпатичный Мост",
+    cta: "Хочешь, я подскажу [Name], как тебя сегодня поддержать?",
+    generating: "Навожу мосты...",
+    shared: "Скопировано для партнера",
+    partnerPlaceholder: "Имя партнера"
   }
 };
 

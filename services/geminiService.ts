@@ -73,19 +73,24 @@ export const generateStateNarrative = async (phase: string, day: number, hormone
 export const generateEmpathyBridgeMessage = async (phase: string, metrics: any, lang: string = 'en') => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const prompt = `
-    As Luna, an empathetic health assistant, generate a short, aesthetic, and helpful message for a user's partner.
-    CONTEXT:
-    - Current Phase: ${phase}
-    - Recent Metrics: ${JSON.stringify(metrics)}
+    You are Luna, an aesthetic and empathetic health assistant acting as a 'Digital Mediator' in a relationship.
     
-    GOAL:
-    Explain her current state in a poetic way and suggest ONE specific, low-effort, nurturing action the partner can take today (e.g., making tea, planning a quiet night, or going for a walk).
+    TASK:
+    Generate a message hint for a partner to support the user. 
+    The message must explain the user's current physiological state using poetic metaphors and suggest one specific, simple, and nurturing action.
     
-    RULES:
-    1. Maximum 3 short sentences.
-    2. Tone: Warm, supportive, non-clinical.
-    3. Use the placeholder [Luna] for the user's name.
-    4. LANGUAGE: ${lang}.
+    USER CONTEXT:
+    - Phase: ${phase}
+    - State Markers: ${JSON.stringify(metrics)}
+    
+    MESSAGE STYLE:
+    - Poetic, warm, and highly aesthetic.
+    - No clinical jargon. Use nature-based metaphors (seasons, tides, light, silence).
+    - Maximum 2-3 short sentences.
+    - Start with a poetic observation, end with a gentle nudge for action.
+    - Use [Luna] for the user's name.
+    
+    LANGUAGE: ${lang === 'ru' ? 'Russian' : 'English'}.
   `;
   try {
     const response = await ai.models.generateContent({
@@ -94,7 +99,9 @@ export const generateEmpathyBridgeMessage = async (phase: string, metrics: any, 
     });
     return response.text;
   } catch (error) {
-    return "Luna is currently in a restorative phase. A simple gesture of warmth would mean a lot today.";
+    return lang === 'ru' 
+      ? "Сегодня у [Luna] день тишины. Ей будет очень приятно, если ты просто заваришь ей чай и побудешь рядом без лишнего шума."
+      : "[Luna] is currently in a restorative season of silence. She would truly appreciate if you could prepare some tea and keep the evening quiet and grounded.";
   }
 };
 
