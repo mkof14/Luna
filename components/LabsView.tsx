@@ -21,8 +21,16 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
     setLoading(true);
     try {
       const result = await analyzeLabResults(input, systemState);
-      setAnalysis(result);
-      dataService.logEvent('LAB_MARKER_ENTRY', { rawText: input, analysis: result.text, day: systemState.currentDay });
+      const formattedResult = {
+        text: result.text || "The system could not generate a clear interpretation at this time.",
+        sources: result.sources || []
+      };
+      setAnalysis(formattedResult);
+      dataService.logEvent('LAB_MARKER_ENTRY', { 
+        rawText: input, 
+        analysis: formattedResult.text, 
+        day: systemState.currentDay 
+      });
       setLog(dataService.getLog()); 
     } catch (error) {
       setAnalysis({ text: "The system is observing your natural rhythm. Analysis interrupted.", sources: [] });

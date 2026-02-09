@@ -138,7 +138,7 @@ export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; sta
           },
           onmessage: async (msg: LiveServerMessage) => {
             if (msg.serverContent?.outputTranscription) {
-              const text = msg.serverContent.outputTranscription.text;
+              const text = msg.serverContent.outputTranscription.text || "";
               currentTranscriptionRef.current += text;
               setMessages(prev => {
                 const last = prev[prev.length - 1];
@@ -150,7 +150,7 @@ export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; sta
             }
 
             if (msg.serverContent?.inputTranscription) {
-              const text = msg.serverContent.inputTranscription.text;
+              const text = msg.serverContent.inputTranscription.text || "";
               if (msg.serverContent?.turnComplete) {
                  setMessages(prev => [...prev, { role: 'user', text: text }]);
               }
