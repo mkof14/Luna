@@ -10,15 +10,15 @@ interface LogoProps {
 /**
  * Luna Logo Component
  * Renders the brand name "Luna".
- * The 'animated' variant uses a specialized SVG path for a handwriting effect.
- * Updated with uniform letter spacing and a refined signature path.
+ * Updated: Removed the signature path and entry "blink" animations.
+ * Only the smooth color shift remains.
  */
 export const Logo: React.FC<LogoProps> = ({ className = "", size = "md", variant = 'text' }) => {
   const sizeClasses = {
-    sm: 'text-3xl',
-    md: 'text-4xl',
-    lg: 'text-6xl',
-    xl: 'text-8xl',
+    sm: 'text-4xl',
+    md: 'text-6xl',
+    lg: 'text-8xl',
+    xl: 'text-9xl',
   };
 
   if (variant === 'animated') {
@@ -29,58 +29,17 @@ export const Logo: React.FC<LogoProps> = ({ className = "", size = "md", variant
       <div className={`${className} flex items-center justify-center`}>
         <svg 
           viewBox="0 0 240 100" 
-          className="w-full h-auto overflow-visible text-luna-purple dark:text-luna-teal"
-          style={{ maxWidth: '350px' }}
+          className="w-full h-auto overflow-visible animate-color-shift-luna"
+          style={{ maxWidth: '450px' }}
         >
-          {/* Refined, more elegant signature path that flows smoothly under the letters */}
-          <path
-            className="luna-signature"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="
-              M 35,75 
-              C 45,75 55,75 65,75 
-              C 85,75 80,45 100,45 
-              C 120,45 115,75 135,75 
-              C 155,75 150,45 170,45 
-              C 190,45 185,75 205,75 
-              C 220,75 230,65 235,55
-            "
-          />
+          {/* Signature path removed per user request for a cleaner look */}
           
-          {/* Individual Letter Animations with perfect uniform spacing */}
-          <g className="font-brand" style={{ fontSize: '5.2rem' }}>
-             <text 
-              x="50" y="65" 
-              className="animate-letter-flow opacity-0" 
-              style={{ animationDelay: '1.2s' }}
-             >
-               L
-             </text>
-             <text 
-              x="95" y="65" 
-              className="animate-letter-flow opacity-0" 
-              style={{ animationDelay: '1.7s' }}
-             >
-               u
-             </text>
-             <text 
-              x="140" y="65" 
-              className="animate-letter-flow opacity-0" 
-              style={{ animationDelay: '2.2s' }}
-             >
-               n
-             </text>
-             <text 
-              x="185" y="65" 
-              className="animate-letter-flow opacity-0" 
-              style={{ animationDelay: '2.7s' }}
-             >
-               a
-             </text>
+          {/* Static letters with only color-shift applied via the SVG parent class */}
+          <g className="font-brand" style={{ fontSize: '6.5rem' }}>
+             <text x="50" y="65">L</text>
+             <text x="95" y="65">u</text>
+             <text x="140" y="65">n</text>
+             <text x="185" y="65">a</text>
           </g>
         </svg>
       </div>
@@ -88,7 +47,7 @@ export const Logo: React.FC<LogoProps> = ({ className = "", size = "md", variant
   }
 
   return (
-    <span className={`font-brand text-luna-purple dark:text-luna-teal leading-none pt-1 select-none transition-all hover:scale-105 active:scale-95 cursor-pointer inline-block drop-shadow-sm ${sizeClasses[size]} ${className}`}>
+    <span className={`font-brand animate-color-shift-luna leading-none pt-1 select-none transition-all hover:scale-105 active:scale-95 cursor-pointer inline-block drop-shadow-sm ${sizeClasses[size]} ${className}`}>
       Luna
     </span>
   );

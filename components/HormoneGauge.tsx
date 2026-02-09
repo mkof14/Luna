@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { HormoneData } from '../types';
+import { HormoneData, HormoneStatus } from '../types';
 import { UI_COPY, INITIAL_HORMONES } from '../constants';
-import { StateScale } from './StateScale';
 
 interface HormoneGaugeProps {
   hormone: HormoneData;
@@ -11,56 +10,78 @@ interface HormoneGaugeProps {
 }
 
 const HormoneGauge: React.FC<HormoneGaugeProps> = ({ hormone, onClick, isActive = false }) => {
-  const displayLabels = UI_COPY.hormones.scales[hormone.id as keyof typeof UI_COPY.hormones.scales] || ["-", "+"];
   const displayName = (UI_COPY.hormones as any).displayNames[hormone.id] || hormone.name;
-  
-  // Find the human-friendly description from initial data
-  const baseData = INITIAL_HORMONES.find(h => h.id === hormone.id);
-  const shortRole = baseData?.description.split('.')[0] + '.';
+  const isAlertState = hormone.status === HormoneStatus.UNSTABLE || hormone.status === HormoneStatus.STRAINED;
 
   return (
     <button 
       onClick={() => onClick(hormone)}
-      className={`relative w-full p-8 text-left transition-all duration-500 rounded-[3rem] border-2 shadow-luna hover:shadow-2xl hover:-translate-y-2 group overflow-hidden ${
+      className={`relative w-full aspect-square p-6 flex flex-col items-center justify-center transition-all duration-700 rounded-[3rem] border-2 group overflow-hidden ${
         isActive 
-          ? 'ring-8 ring-luna-purple/20 border-luna-purple bg-white dark:bg-slate-900' 
-          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800/80 hover:border-slate-400 dark:hover:border-slate-700'
+          ? 'ring-4 ring-luna-purple/20 border-luna-purple bg-white dark:bg-slate-900' 
+          : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
       }`}
     >
-      {/* Shimmer effect on hover */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 shimmer-bg pointer-events-none" />
-      
-      {/* Dynamic Background Glow in Dark Mode */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-slate-100 dark:to-slate-800/30 opacity-0 group-hover:opacity-100 transition-opacity" />
-      
-      {/* Accent strip with glow */}
-      <div className="absolute top-0 left-0 right-0 h-2 opacity-100 transition-all group-hover:h-3" style={{ backgroundColor: hormone.color, boxShadow: `0 2px 10px ${hormone.color}44` }} />
-      
-      <div className="flex justify-between items-start mb-4 pt-2 relative z-10">
-        <div className="space-y-1">
-          <h4 className="text-sm font-black uppercase tracking-[0.1em] text-slate-900 dark:text-slate-100 leading-tight pr-4">{displayName}</h4>
-          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 italic max-w-[150px] leading-relaxed">
-            {shortRole}
-          </p>
-        </div>
-        <span className="text-3xl p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-700 group-hover:scale-125 group-hover:rotate-6 animate-float" style={{ animationDelay: `${Math.random() * 2}s` }}>
+      {/* Background Radial Glow */}
+      <div 
+        className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-1000"
+        style={{ background: `radial-gradient(circle at center, ${hormone.color} 0%, transparent 70%)` }}
+      />
+
+      {/* Level Indicator (Liquid Fill Effect) */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 transition-all duration-1000 ease-in-out opacity-5 dark:opacity-10"
+        style={{ 
+          height: `${hormone.level}%`, 
+          backgroundColor: hormone.color,
+          filter: 'blur(40px)'
+        }} 
+      />
+
+      <div className="relative z-10 flex flex-col items-center gap-4 text-center">
+        <div className={`text-5xl transition-all duration-700 ${isAlertState ? 'animate-status-pulse' : 'animate-float'}`}>
           {hormone.icon}
-        </span>
+        </div>
+        
+        <div className="space-y-1">
+          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+            {displayName}
+          </h4>
+          <div className="flex items-center justify-center gap-1.5">
+             <div 
+               className="w-1.5 h-1.5 rounded-full" 
+               style={{ backgroundColor: hormone.color, boxShadow: `0 0 10px ${hormone.color}` }} 
+             />
+             <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">{hormone.status}</span>
+          </div>
+        </div>
       </div>
 
-      <div className="py-4 relative z-10">
-        <StateScale 
-          label="" 
-          value={Math.round((hormone.level / 100) * 4) + 1} 
-          minLabel={displayLabels[0]} 
-          maxLabel={displayLabels[1]} 
+      {/* Abstract Visual Progress Ring */}
+      <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none opacity-20 group-hover:opacity-100 transition-opacity duration-1000">
+        <circle
+          cx="50%"
+          cy="50%"
+          r="45%"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1"
+          strokeDasharray="10 5"
+          className="text-slate-100 dark:text-slate-800"
         />
-      </div>
-
-      <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/60 flex justify-between items-center relative z-10">
-         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">{hormone.status}</span>
-         <div className="w-3 h-3 rounded-full animate-status-pulse shadow-sm" style={{ backgroundColor: hormone.color, boxShadow: `0 0 15px ${hormone.color}` }} />
-      </div>
+        <circle
+          cx="50%"
+          cy="50%"
+          r="45%"
+          fill="none"
+          stroke={hormone.color}
+          strokeWidth="3"
+          strokeDasharray="283"
+          strokeDashoffset={283 - (283 * hormone.level) / 100}
+          strokeLinecap="round"
+          className="transition-all duration-1000"
+        />
+      </svg>
     </button>
   );
 };

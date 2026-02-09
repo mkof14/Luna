@@ -6,57 +6,62 @@ export const HistoryView: React.FC<{ log: HealthEvent[]; onBack?: () => void }> 
   const sortedLog = [...log].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
   return (
-    <div className="max-w-4xl mx-auto space-y-16 animate-in fade-in duration-700">
-      {onBack && (
-        <button 
-          onClick={onBack} 
-          className="group flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-luna-purple transition-all mb-4"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
-          Back
-        </button>
-      )}
-
-      <header className="space-y-8 text-center">
-        <h2 className="text-5xl font-bold tracking-tight">Temporal Record</h2>
-        <p className="text-xl font-medium text-slate-500 italic">Your internal history, archived locally on this device.</p>
+    <div className="max-w-6xl mx-auto space-y-24 animate-in fade-in slide-in-from-bottom-12 duration-1000 pb-40">
+      <header className="flex flex-col items-center lg:items-start gap-10">
+        <h2 className="text-6xl lg:text-9xl font-black tracking-tighter leading-none uppercase text-slate-900 dark:text-slate-100">
+          Temporal <br/> <span className="text-luna-purple">Record.</span>
+        </h2>
+        <p className="text-xl lg:text-2xl text-slate-500 italic font-medium max-w-2xl leading-relaxed">
+          A chronological mirror of your physiological journey. Every entry is a fragment of your rhythm.
+        </p>
       </header>
 
-      <div className="relative space-y-16 pt-8">
-        <div className="absolute left-10 top-0 bottom-0 w-[2px] bg-slate-100 dark:bg-slate-800"></div>
+      <section className="relative space-y-32">
+        <div className="absolute left-10 lg:left-20 top-0 bottom-0 w-px bg-slate-100 dark:bg-slate-800" />
         
         {sortedLog.length === 0 ? (
-          <div className="p-32 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-[4rem]">
-            <p className="text-sm font-black uppercase text-slate-300 tracking-[0.4em]">No systemic history recorded</p>
+          <div className="p-32 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[4rem]">
+            <p className="text-[10px] font-black uppercase text-slate-300 tracking-[0.5em]">No history mapped yet</p>
           </div>
         ) : (
-          sortedLog.map((event) => (
-            <div key={event.id} className="relative pl-24 flex items-start gap-12 group">
-              <div className="absolute left-[31px] top-6 w-5 h-5 rounded-full border-4 border-slate-900 dark:border-slate-100 bg-white dark:bg-slate-900 group-first:bg-luna-purple group-first:border-luna-purple group-first:scale-150 transition-all shadow-sm"></div>
+          sortedLog.map((event, i) => (
+            <div key={event.id} className="relative pl-24 lg:pl-48 group animate-in fade-in slide-in-from-left-4" style={{ animationDelay: `${i * 100}ms` }}>
+              <div className="absolute left-[34px] lg:left-[74px] top-4 w-3 h-3 rounded-full bg-luna-purple ring-8 ring-white dark:ring-slate-950 z-10 transition-transform group-hover:scale-150" />
               
-              <div className="flex-1 p-10 bg-white/70 dark:bg-slate-900/50 glass rounded-[3rem] shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-center mb-6">
-                  <span className="text-xs font-black uppercase text-luna-purple tracking-[0.4em]">
-                    {event.type.replace(/_/g, ' ')}
+              <div className="flex flex-col lg:flex-row gap-8 lg:items-center">
+                <div className="w-48 flex-shrink-0">
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 block mb-1">
+                    {new Date(event.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                   </span>
-                  <span className="text-xs font-bold text-slate-300 dark:text-slate-600">
-                    {new Date(event.timestamp).toLocaleDateString()} • {new Date(event.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  <span className="text-[9px] font-bold text-slate-300">
+                    {new Date(event.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
-                <div className="text-lg font-medium text-slate-600 dark:text-slate-400 leading-relaxed italic">
-                  {event.type === 'DAILY_CHECKIN' && "Mirror sensation state recorded for daily calibration."}
-                  {event.type === 'CYCLE_SYNC' && `Biological season recalibrated to Day ${event.payload.day}.`}
-                  {event.type === 'LAB_MARKER_ENTRY' && "Marker context decoded and archived in wellness history."}
-                  {event.type === 'MEDICATION_LOG' && `Profile ${event.payload.action.toLowerCase()}ed: ${event.payload.name}.`}
-                  {event.type === 'ONBOARDING_COMPLETE' && "Luna system initialized."}
+
+                <div className="flex-1 bg-white dark:bg-slate-900 p-12 rounded-[3.5rem] shadow-luna border dark:border-slate-800 transition-all hover:-translate-y-1">
+                  <div className="flex justify-between items-start mb-6">
+                    <span className="text-[9px] font-black uppercase tracking-[0.5em] text-luna-purple">
+                      {event.type.replace(/_/g, ' ')}
+                    </span>
+                    <span className="px-3 py-1 bg-slate-50 dark:bg-slate-950 rounded-full text-[8px] font-black text-slate-400">
+                      V.{event.version}
+                    </span>
+                  </div>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100 leading-tight italic">
+                    {event.type === 'DAILY_CHECKIN' && "Subjective state calibration completed."}
+                    {event.type === 'CYCLE_SYNC' && `Rhythm recalibrated to Day ${event.payload.day}.`}
+                    {event.type === 'LAB_MARKER_ENTRY' && "Biological marker context decoded."}
+                    {event.type === 'MEDICATION_LOG' && `Care kit update: ${event.payload.name}.`}
+                    {event.type === 'AUTH_SUCCESS' && "Security vault access granted."}
+                    {event.type === 'ONBOARDING_COMPLETE' && "Luna presence initialized."}
+                    {event.type === 'PROFILE_UPDATE' && "Identity baseline updated."}
+                  </p>
                 </div>
               </div>
             </div>
           ))
         )}
-      </div>
+      </section>
     </div>
   );
 };

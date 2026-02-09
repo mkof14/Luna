@@ -22,6 +22,10 @@ const DEFAULT_PROFILE: ProfileData = {
   units: 'metric'
 };
 
+/**
+ * Luna Data Service v4
+ * В этой итерации мы сохраняем интерфейс, но подготавливаем систему к асинхронности.
+ */
 export const dataService = {
   logEvent: (type: EventType, payload: any): HealthEvent => {
     const log = dataService.getLog();
@@ -41,6 +45,18 @@ export const dataService = {
   getLog: (): HealthEvent[] => {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : [];
+  },
+
+  // Получение контекста последних дней для RAG (AI Context)
+  getRecentContext: (days: number = 7): string => {
+    const log = dataService.getLog();
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    
+    return log
+      .filter(e => new Date(e.timestamp) > cutoff && (e.type === 'DAILY_CHECKIN' || e.type === 'LAB_MARKER_ENTRY'))
+      .map(e => `[${new Date(e.timestamp).toLocaleDateString()}] ${e.type}: ${JSON.stringify(e.payload)}`)
+      .join('\n');
   },
 
   projectState: (log: HealthEvent[]): SystemState => {

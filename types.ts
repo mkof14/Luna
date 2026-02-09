@@ -63,8 +63,8 @@ export interface ProfileData {
 export interface SystemState {
   events: HealthEvent[];
   onboarded: boolean;
-  isAuthenticated: boolean; // Вошел ли пользователь в аккаунт
-  subscriptionTier: 'none' | 'monthly' | 'yearly'; // Тип подписки
+  isAuthenticated: boolean;
+  subscriptionTier: 'none' | 'monthly' | 'yearly';
   currentDay: number;
   cycleLength: number;
   medications: Medication[];

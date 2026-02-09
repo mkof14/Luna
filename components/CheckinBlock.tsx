@@ -10,34 +10,56 @@ interface CheckinBlockProps {
 }
 
 export const CheckinBlock: React.FC<CheckinBlockProps> = ({ label, value, onChange, minLabel, maxLabel }) => {
+  const handleValueChange = (num: number) => {
+    if ('vibrate' in navigator) navigator.vibrate(10);
+    onChange(num);
+  };
+
+  const getSegmentColor = (num: number) => {
+    const colors = [
+      'bg-slate-200 dark:bg-slate-800',
+      'bg-indigo-200 dark:bg-indigo-900/40',
+      'bg-purple-200 dark:bg-purple-900/40',
+      'bg-rose-200 dark:bg-rose-900/40',
+      'bg-orange-200 dark:bg-orange-900/40'
+    ];
+    return colors[num - 1];
+  };
+
   return (
-    <div className="space-y-3 w-full animate-in fade-in slide-in-from-bottom-2 duration-500">
-      <div className="flex justify-between items-baseline mb-1 px-1">
-        <span className="text-xs font-black text-slate-700 dark:text-slate-300 tracking-tight">
+    <div className="space-y-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex justify-between items-center px-2">
+        <label className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-[0.2em]">
           {label}
-        </span>
-        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">
-          {value} / 5
-        </span>
+        </label>
+        <div className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-[10px] font-black">
+          {value}
+        </div>
       </div>
 
-      <div className="flex justify-between items-center bg-slate-50/80 dark:bg-slate-800/40 p-1.5 rounded-full border border-slate-100 dark:border-slate-800">
+      <div className="grid grid-cols-5 gap-2 h-16">
         {[1, 2, 3, 4, 5].map((num) => (
           <button
             key={num}
-            onClick={() => onChange(num)}
-            className={`w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs font-black transition-all duration-300 ${
+            type="button"
+            onClick={() => handleValueChange(num)}
+            className={`relative rounded-2xl transition-all duration-500 overflow-hidden border-2 ${
               value === num 
-                ? 'bg-luna-purple text-white shadow-md shadow-luna-purple/20 scale-105' 
-                : 'text-slate-400 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-500 dark:hover:text-slate-300'
-            }`}
+                ? 'border-luna-purple scale-105 shadow-lg' 
+                : 'border-transparent opacity-40 hover:opacity-100'
+            } ${getSegmentColor(num)}`}
           >
-            {num}
+            <span className={`text-xs font-black ${value === num ? 'text-luna-purple dark:text-white' : 'text-slate-400'}`}>
+              {num}
+            </span>
+            {value === num && (
+              <div className="absolute inset-0 bg-white/20 dark:bg-white/5 animate-pulse" />
+            )}
           </button>
         ))}
       </div>
 
-      <div className="flex justify-between text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-3">
+      <div className="flex justify-between text-[9px] font-black text-slate-400 uppercase tracking-widest px-2 italic">
         <span>{minLabel}</span>
         <span>{maxLabel}</span>
       </div>

@@ -34,78 +34,47 @@ const FAQ_DATA: FAQCategory[] = [
 ];
 
 export const FAQView: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
-  const [activeCategory, setActiveCategory] = useState<number>(0);
-  const [openItem, setOpenItem] = useState<string | null>(null);
-
   return (
-    <div className="max-w-5xl mx-auto space-y-16 animate-in fade-in duration-700">
-      {onBack && (
-        <button 
-          onClick={onBack} 
-          className="group flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-luna-purple transition-all mb-4"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
-          Back
-        </button>
-      )}
-
-      <header className="space-y-8 text-center">
-        <h2 className="text-6xl font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-tight">Deep Understanding</h2>
-        <p className="text-xl font-medium text-slate-500 italic max-w-2xl mx-auto">Answers to the questions you might not have asked aloud.</p>
+    <div className="max-w-6xl mx-auto space-y-32 animate-in fade-in slide-in-from-bottom-12 duration-1000 pb-40">
+      <header className="flex flex-col items-center gap-10 text-center">
+        <h2 className="text-6xl lg:text-9xl font-black tracking-tighter leading-none uppercase text-slate-900 dark:text-slate-100">
+          Library of <br/> <span className="text-luna-purple">Understanding.</span>
+        </h2>
+        <p className="text-xl lg:text-2xl text-slate-500 italic font-medium max-w-3xl leading-relaxed">
+          Deep dives into the logic behind the mirror. Every answer is a step towards systemic self-awareness.
+        </p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-16 pt-8">
-        <aside className="space-y-4">
-          <h4 className="text-xs font-black uppercase tracking-[0.4em] text-slate-300 mb-6 pl-4">Topics</h4>
-          {FAQ_DATA.map((cat, i) => (
-            <button
-              key={i}
-              onClick={() => { setActiveCategory(i); setOpenItem(null); }}
-              className={`w-full text-left px-8 py-5 rounded-3xl text-sm font-black uppercase tracking-widest transition-all ${
-                activeCategory === i 
-                  ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 shadow-xl' 
-                  : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
-              }`}
-            >
-              {cat.title}
-            </button>
-          ))}
-        </aside>
+      <section className="space-y-40">
+        {FAQ_DATA.map((cat, i) => (
+          <article key={i} className="space-y-16">
+            <div className="flex items-center gap-8">
+              <span className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-300">Section 0{i+1}</span>
+              <h3 className="text-4xl font-black uppercase tracking-tight">{cat.title}</h3>
+              <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800" />
+            </div>
 
-        <section className="md:col-span-3 space-y-8 bg-white dark:bg-slate-900 p-12 rounded-[4rem] glass border border-slate-50 dark:border-slate-800">
-          <h3 className="text-xs font-black uppercase text-luna-purple tracking-[0.5em] mb-10">
-            Current Section: {FAQ_DATA[activeCategory].title}
-          </h3>
-          <div className="space-y-6">
-            {FAQ_DATA[activeCategory].items.map((item, i) => (
-              <div key={i} className="border-b border-slate-50 dark:border-slate-800 last:border-0">
-                <button
-                  onClick={() => setOpenItem(openItem === item.q ? null : item.q)}
-                  className="w-full py-8 flex justify-between items-center text-left group outline-none"
-                >
-                  <span className="text-xl font-bold text-slate-800 dark:text-slate-200 group-hover:text-luna-purple transition-colors leading-relaxed">{item.q}</span>
-                  <span className={`text-2xl transition-transform text-slate-300 ${openItem === item.q ? 'rotate-45 text-luna-purple' : ''}`}>+</span>
-                </button>
-                <div className={`overflow-hidden transition-all duration-700 ease-in-out ${openItem === item.q ? 'max-h-[500px] pb-10' : 'max-h-0'}`}>
-                  <p className="text-lg font-medium text-slate-500 dark:text-slate-400 leading-[1.8] italic border-l-4 border-stone-100 dark:border-slate-800 pl-10">
+            <div className="grid grid-cols-1 gap-12">
+              {cat.items.map((item, j) => (
+                <div key={j} className="group space-y-6 max-w-4xl">
+                  <h4 className="text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-tight transition-colors group-hover:text-luna-purple">
+                    {item.q}
+                  </h4>
+                  <p className="text-xl text-slate-500 dark:text-slate-400 font-medium italic border-l-4 border-slate-100 dark:border-slate-800 pl-10 py-2 leading-relaxed">
                     "{item.a}"
                   </p>
                 </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
+              ))}
+            </div>
+          </article>
+        ))}
+      </section>
 
-      <footer className="pt-24 text-center">
-        <div className="max-w-2xl mx-auto p-16 bg-slate-50 dark:bg-slate-900/40 rounded-[4rem] border border-slate-100 dark:border-slate-800 shadow-sm">
-           <p className="text-xs font-black uppercase text-luna-purple tracking-[0.4em] mb-8">Vital Support Reminder</p>
-           <p className="text-base text-slate-500 dark:text-slate-400 leading-[1.8] italic font-medium">
-             Luna is a wellness discovery tool. If you feel acute pain, severe emotional distress, or other alarming signs, please contact emergency services or a licensed provider immediately.
-           </p>
-        </div>
+      <footer className="p-20 bg-slate-900 text-white dark:bg-white dark:text-slate-900 rounded-[5rem] text-center space-y-10 shadow-2xl">
+        <p className="text-[10px] font-black uppercase tracking-[0.5em] opacity-60">Professional Standard</p>
+        <p className="text-2xl lg:text-3xl font-bold italic leading-tight max-w-3xl mx-auto uppercase tracking-tighter">
+          "Luna is designed to be a digital vault. We prioritize the preservation of your physiological autonomy over data convenience."
+        </p>
       </footer>
     </div>
   );

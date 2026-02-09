@@ -4,7 +4,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luna Balance | Your Wellness Companion</title>
+    <title>Luna Balance | Women’s Health Understanding System</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Luna Balance: A private, visual-first wellness discovery system. Map your physiology, track hormonal rhythms, and understand your body's language without cloud storage.">
+    <meta name="keywords" content="women's health, hormone tracking, wellness system, cycle mapping, privacy-first health, physiological mapping">
+    <meta name="author" content="Luna Balance Systems">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://luna-balance.vercel.app/">
+    <meta property="og:title" content="Luna Balance | Your Internal Rhythm Mirror">
+    <meta property="og:description" content="A private space to understand your body. Deterministic logic meets Multimodal AI.">
+    <meta property="og:image" content="/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Luna Balance | Private Health Mapping">
+    <meta property="twitter:description" content="Map your physiology. Keep your privacy. Built for the modern woman.">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Luna Balance",
+      "operatingSystem": "Web, iOS, Android",
+      "applicationCategory": "HealthApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "13.95",
+        "priceCurrency": "USD"
+      },
+      "description": "Women’s Health Understanding System focusing on physiological mapping and systemic self-observation.",
+      "permissions": "microphone, camera",
+      "softwareVersion": "4.0.0"
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,9 +64,9 @@
                     colors: {
                         luna: {
                             coral: '#ff5a40',
-                            purple: '#9d4edd', /* Vibrant Purple for Dark Mode */
-                            teal: '#22d3ee',   /* Brighter Cyan for Dark Mode */
-                            soft: '#fcecec'
+                            purple: '#6d28d9',
+                            teal: '#0e7490',
+                            soft: '#f1f5f9'
                         }
                     },
                     fontFamily: {
@@ -41,185 +79,52 @@
                         'soft-spin': 'soft-spin 20s linear infinite',
                         'blob-slow': 'blob-slow 25s infinite ease-in-out',
                         'blob-reverse': 'blob-slow 30s infinite ease-in-out reverse',
-                        'luna-reveal': 'luna-reveal 5s ease-out forwards',
                         'shimmer': 'shimmer 2.5s linear infinite',
-                        'stardust': 'stardust 10s ease-in-out infinite',
                         'liquid': 'liquid 18s ease-in-out infinite',
                         'breath-deep': 'breath-deep 8s ease-in-out infinite',
-                        'draw-path': 'draw-path 6s cubic-bezier(0.4, 0, 0.2, 1) forwards',
                         'droplet': 'droplet 7s linear infinite',
                         'letter-flow': 'letter-flow 4s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                        'oscilloscope': 'oscilloscope 3s linear infinite',
+                        'color-shift-luna': 'color-shift-luna 12s ease-in-out infinite',
                     },
                     keyframes: {
-                        'status-pulse': {
-                            '0%, 100%': { opacity: 1, transform: 'scale(1)' },
-                            '50%': { opacity: 0.8, transform: 'scale(1.05)' },
+                        'status-pulse': { '0%, 100%': { opacity: 1, transform: 'scale(1)' }, '50%': { opacity: 0.8, transform: 'scale(1.05)' } },
+                        'float': { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-20px)' } },
+                        'soft-spin': { 'from': { transform: 'rotate(0deg)' }, 'to': { transform: 'rotate(360deg)' } },
+                        'blob-slow': { '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' }, '33%': { transform: 'translate(30px, -50px) scale(1.1)' }, '66%': { transform: 'translate(-20px, 20px) scale(0.9)' } },
+                        'shimmer': { 'from': { transform: 'translateX(-100%)' }, 'to': { transform: 'translateX(100%)' } },
+                        'liquid': { '0%, 100%': { 'border-radius': '60% 40% 30% 70% / 60% 30% 70% 40%' }, '50%': { 'border-radius': '30% 60% 70% 40% / 50% 60% 30% 60%' } },
+                        'breath-deep': { '0%, 100%': { opacity: '0.5', transform: 'scale(1)', filter: 'blur(45px)' }, '50%': { opacity: 0.8, transform: 'scale(1.2)', filter: 'blur(65px)' } },
+                        'droplet': { '0%': { transform: 'translateY(-30px) scale(0)', opacity: '0' }, '15%': { transform: 'translateY(0) scale(1.2)', opacity: '0.7' }, '85%': { opacity: '0.5' }, '100%': { transform: 'translateY(180px) scale(0.7)', opacity: '0' } },
+                        'letter-flow': { '0%': { fill: '#000000', opacity: '0', filter: 'blur(8px)', transform: 'translateY(15px) scale(0.9)' }, '30%': { opacity: '1', filter: 'blur(0)', transform: 'translateY(0) scale(1)', fill: '#000000' }, '100%': { fill: 'currentColor', opacity: '1' } },
+                        'oscilloscope': { 'from': { 'stroke-dashoffset': '1000' }, 'to': { 'stroke-dashoffset': '0' } },
+                        'color-shift-luna': { 
+                            '0%, 100%': { color: '#6d28d9' }, 
+                            '33%': { color: '#ff5a40' },
+                            '66%': { color: '#0e7490' }
                         },
-                        'float': {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
-                        },
-                        'soft-spin': {
-                            'from': { transform: 'rotate(0deg)' },
-                            'to': { transform: 'rotate(360deg)' },
-                        },
-                        'blob-slow': {
-                            '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                        },
-                        'luna-reveal': {
-                            '0%': { opacity: '0', filter: 'blur(15px)', transform: 'scale(0.9)' },
-                            '40%': { opacity: '0.3', filter: 'blur(8px)' },
-                            '100%': { opacity: '1', filter: 'blur(0)', transform: 'scale(1)' },
-                        },
-                        'shimmer': {
-                            'from': { transform: 'translateX(-100%)' },
-                            'to': { transform: 'translateX(100%)' }
-                        },
-                        'stardust': {
-                            '0%, 100%': { opacity: '0.3', transform: 'translate(0, 0)' },
-                            '50%': { opacity: '0.8', transform: 'translate(15px, -15px)' }
-                        },
-                        'liquid': {
-                            '0%, 100%': { 'border-radius': '60% 40% 30% 70% / 60% 30% 70% 40%' },
-                            '50%': { 'border-radius': '30% 60% 70% 40% / 50% 60% 30% 60%' }
-                        },
-                        'breath-deep': {
-                            '0%, 100%': { opacity: '0.5', transform: 'scale(1)', filter: 'blur(45px)' },
-                            '50%': { opacity: '0.8', transform: 'scale(1.2)', filter: 'blur(65px)' }
-                        },
-                        'draw-path': {
-                            'from': { 'stroke-dashoffset': '1000' },
-                            'to': { 'stroke-dashoffset': '0' }
-                        },
-                        'droplet': {
-                            '0%': { transform: 'translateY(-30px) scale(0)', opacity: '0' },
-                            '15%': { transform: 'translateY(0) scale(1.2)', opacity: '0.7' },
-                            '85%': { opacity: '0.5' },
-                            '100%': { transform: 'translateY(180px) scale(0.7)', opacity: '0' }
-                        },
-                        'letter-flow': {
-                            '0%': { 
-                                fill: '#000000', 
-                                opacity: '0', 
-                                filter: 'blur(8px)',
-                                transform: 'translateY(15px) scale(0.9)'
-                            },
-                            '30%': {
-                                opacity: '1',
-                                filter: 'blur(0)',
-                                transform: 'translateY(0) scale(1)',
-                                fill: '#000000'
-                            },
-                            '100%': { 
-                                fill: 'currentColor', 
-                                opacity: '1'
-                            }
-                        }
                     }
                 },
             },
         }
     </script>
     <style>
-        html {
-            font-size: 16px;
+        html { font-size: 16px; }
+        * { transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; }
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .gradient-bg { background: radial-gradient(circle at 0% 0%, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%); }
+        .dark .gradient-bg { background: radial-gradient(circle at 20% 20%, #020617 0%, #0a0a1a 40%, #000000 100%); }
+        .glass { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); border: 1px solid #e2e8f0; }
+        .dark .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .shadow-luna { box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.14), 0 8px 18px -6px rgba(0, 0, 0, 0.06); }
+        .dark .shadow-luna { box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 20px rgba(109, 40, 217, 0.1); }
+        
+        @keyframes scroll-wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
-        * {
-            transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-        }
-        .gradient-bg {
-            background: radial-gradient(circle at 0% 0%, #ffffff 0%, #f9f0f0 40%, #f0f4f9 100%);
-        }
-        .dark .gradient-bg {
-            background: radial-gradient(circle at 20% 20%, #020617 0%, #0a0a1a 40%, #000000 100%);
-        }
-        .glass {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-        }
-        .dark .glass {
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .glass-deep {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(40px);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-        }
-        .dark .glass-deep {
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(40px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 2rem;
-            height: 2rem;
-            background: #7a288a;
-            border: 3px solid white;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 8px 15px -3px rgba(122, 40, 138, 0.4);
-        }
-        .dark input[type="range"]::-webkit-slider-thumb {
-            background: #9d4edd;
-            border-color: #0f172a;
-            box-shadow: 0 0 20px rgba(157, 78, 221, 0.5);
-        }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .shadow-luna {
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
-        }
-        .dark .shadow-luna {
-            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.8), 0 0 15px rgba(157, 78, 221, 0.05);
-        }
-        .shimmer-bg {
-            position: relative;
-            overflow: hidden;
-        }
-        .shimmer-bg::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
-            animation: shimmer 3s infinite;
-        }
-
-        /* SVG Handwriting Styles */
-        .luna-signature {
-            stroke-dasharray: 1000;
-            stroke-dashoffset: 1000;
-            animation: draw-path 5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        /* Prevent text from showing before animation */
-        .animate-luna-reveal {
-            animation: luna-reveal 5s ease-out forwards;
+        .animate-scroll-wave {
+            animation: scroll-wave 4s linear infinite;
         }
     </style>
 <script type="importmap">
@@ -236,7 +141,7 @@
 }
 </script>
 </head>
-<body class="gradient-bg min-h-screen text-slate-900 dark:text-slate-100 overflow-x-hidden selection:bg-purple-200 dark:selection:bg-purple-900/50 relative">
+<body class="gradient-bg min-h-screen text-slate-900 dark:text-slate-100 overflow-x-hidden relative">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

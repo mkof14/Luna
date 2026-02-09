@@ -10,8 +10,30 @@ interface DailyStatePanelProps {
 
 export const DailyStatePanel: React.FC<DailyStatePanelProps> = ({ summary, phase, reassurance }) => {
   return (
-    <div className="w-full flex flex-col items-center justify-center space-y-12 py-6 animate-in fade-in duration-1000">
-      <div className="relative w-[22rem] h-[22rem] md:w-[26rem] md:h-[26rem] flex items-center justify-center">
+    <div className="w-full flex flex-col items-center justify-center space-y-12 py-6 animate-in fade-in duration-1000 relative">
+      
+      {/* OSCILLOSCOPE WAVE BACKGROUND */}
+      <div className="absolute inset-0 pointer-events-none z-0 flex items-center overflow-hidden opacity-30 dark:opacity-20">
+        <svg className="w-[200%] h-64 animate-scroll-wave" viewBox="0 0 1000 100" preserveAspectRatio="none">
+          <path 
+            d="M0,50 Q25,20 50,50 T100,50 T150,50 T200,50 T250,50 T300,50 T350,50 T400,50 T450,50 T500,50 T550,50 T600,50 T650,50 T700,50 T750,50 T800,50 T850,50 T900,50 T950,50 T1000,50" 
+            fill="none" 
+            stroke="#ff5a40" 
+            strokeWidth="3" 
+            strokeLinecap="round"
+          />
+          <path 
+            d="M0,50 Q25,20 50,50 T100,50 T150,50 T200,50 T250,50 T300,50 T350,50 T400,50 T450,50 T500,50 T550,50 T600,50 T650,50 T700,50 T750,50 T800,50 T850,50 T900,50 T950,50 T1000,50" 
+            fill="none" 
+            stroke="#ff5a40" 
+            strokeWidth="1.5" 
+            strokeDasharray="10 10"
+            className="opacity-50"
+          />
+        </svg>
+      </div>
+
+      <div className="relative w-[22rem] h-[22rem] md:w-[26rem] md:h-[26rem] flex items-center justify-center z-10">
         {/* DEEP BREATHING AMBIENT GLOW */}
         <div className="absolute inset-[-20%] bg-gradient-to-tr from-rose-400/20 via-purple-300/20 to-cyan-300/20 rounded-full blur-[90px] animate-breath-deep" />
         <div className="absolute inset-[-10%] bg-gradient-to-bl from-cyan-400/15 via-rose-300/15 to-purple-300/15 rounded-full blur-[70px] animate-breath-deep delay-[2000ms]" />
@@ -46,7 +68,7 @@ export const DailyStatePanel: React.FC<DailyStatePanelProps> = ({ summary, phase
         </div>
       </div>
 
-      <div className="max-w-md text-center space-y-6 px-6">
+      <div className="max-w-md text-center space-y-6 px-6 relative z-10">
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-[3500ms] fill-mode-both">
           <span className="text-[11px] font-black uppercase text-rose-600 dark:text-rose-400 tracking-[0.5em] block animate-pulse">
             {phase} Rhythm

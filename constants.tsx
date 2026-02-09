@@ -51,7 +51,7 @@ const en = {
     home: "My Day",
     dashboard: "My State",
     cycle: "My Rhythm",
-    labs: "Health Markers",
+    labs: "Lab Reports",
     meds: "Care Kit",
     history: "My Journey",
     creative: "Art",
@@ -129,10 +129,30 @@ const en = {
   }
 };
 
+const ru = {
+  ...en,
+  navigation: {
+    ...en.navigation,
+    home: "Мой день",
+    dashboard: "Моё состояние",
+    cycle: "Мой ритм",
+    labs: "Мои анализы",
+    meds: "Аптечка",
+    history: "Мой путь",
+    creative: "Искусство",
+    faq: "Понимание",
+    contact: "Поддержка",
+    relationships: "Связи",
+    family: "Дом",
+    crisis: "Центр спокойствия",
+    profile: "Профиль"
+  }
+};
+
 export const UI_COPY = en;
 
 export const TRANSLATIONS: Record<Language, any> = {
-  en, ru: en, uk: en, es: en, fr: en, de: en, zh: en, ja: en, pt: en,
+  en, ru, uk: en, es: en, fr: en, de: en, zh: en, ja: en, pt: en,
 };
 
 export const INITIAL_HORMONES: HormoneData[] = [
