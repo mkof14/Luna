@@ -1,4 +1,3 @@
-
 import { GoogleGenAI } from "@google/genai";
 import { SystemState } from "../types";
 
@@ -22,7 +21,7 @@ export const analyzeLabResults = async (results: string, systemState: SystemStat
 
   const prompt = `
     As a professional women's health companion, perform a systemic mapping of these laboratory markers.
-    CONTEXT:
+    PARAMETERS:
     - Profile Baseline: ${profileSummary}
     - Recent Internal Rhythm: ${historySummary}
     - New Data: ${results}
@@ -31,7 +30,8 @@ export const analyzeLabResults = async (results: string, systemState: SystemStat
     1. USE GOOGLE SEARCH to verify current clinical reference ranges for the user's age/sex if the data seems critical.
     2. Synthesize with current cycle phase (Day ${systemState.currentDay}).
     3. LANGUAGE: ${lang}. 
-    4. NO DIAGNOSIS. POETIC BUT CLINICAL TONE.
+    4. NO DIAGNOSIS. POETIC BUT CLINICAL TONE. 
+    5. IMPORTANT: DO NOT use the word "Context" in the response. Use Architecture, Logic, or Foundation instead.
   `;
 
   try {
@@ -58,6 +58,7 @@ export const generateStateNarrative = async (phase: string, day: number, hormone
     Generate a 1-sentence reflection for "Your Body's Voice" section.
     Parameters: Phase ${phase}, Day ${day}. Metrics: ${JSON.stringify(metrics)}.
     RULES: 1 SENTENCE MAX. poetic, neutral, mirror-like. LANGUAGE: ${lang}.
+    DO NOT use the word "Context".
   `;
   try {
     const response = await ai.models.generateContent({
@@ -70,27 +71,17 @@ export const generateStateNarrative = async (phase: string, day: number, hormone
   }
 };
 
-export const generateEmpathyBridgeMessage = async (phase: string, metrics: any, lang: string = 'en') => {
+export const generateCulinaryInsight = async (phase: string, priorities: string[], sensitivities: string[], lang: string = 'en') => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const prompt = `
-    You are Luna, an aesthetic and empathetic health assistant acting as a 'Digital Mediator' in a relationship.
-    
-    TASK:
-    Generate a message hint for a partner to support the user. 
-    The message must explain the user's current physiological state using poetic metaphors and suggest one specific, simple, and nurturing action.
-    
-    USER CONTEXT:
-    - Phase: ${phase}
-    - State Markers: ${JSON.stringify(metrics)}
-    
-    MESSAGE STYLE:
-    - Poetic, warm, and highly aesthetic.
-    - No clinical jargon. Use nature-based metaphors (seasons, tides, light, silence).
-    - Maximum 2-3 short sentences.
-    - Start with a poetic observation, end with a gentle nudge for action.
-    - Use [Luna] for the user's name.
-    
-    LANGUAGE: ${lang === 'ru' ? 'Russian' : 'English'}.
+    Create a highly aesthetic, phase-specific meal suggestion.
+    PHASE: ${phase}. PRIORITIES: ${priorities.join(', ')}. SENSITIVITIES: ${sensitivities.join(', ')}.
+    OUTPUT FORMAT:
+    1. Title: Creative name of the dish.
+    2. Logic: Why this is good for this phase in 1 sentence.
+    3. Components: 3-4 key ingredients.
+    STYLE: Professional nutritionist, poetic, minimalist. LANGUAGE: ${lang === 'ru' ? 'Russian' : 'English'}.
+    DO NOT use the word "Context".
   `;
   try {
     const response = await ai.models.generateContent({
@@ -99,9 +90,25 @@ export const generateEmpathyBridgeMessage = async (phase: string, metrics: any, 
     });
     return response.text;
   } catch (error) {
-    return lang === 'ru' 
-      ? "Сегодня у [Luna] день тишины. Ей будет очень приятно, если ты просто заваришь ей чай и побудешь рядом без лишнего шума."
-      : "[Luna] is currently in a restorative season of silence. She would truly appreciate if you could prepare some tea and keep the evening quiet and grounded.";
+    return "Enjoy a balanced meal rich in whole foods.";
+  }
+};
+
+export const generateEmpathyBridgeMessage = async (phase: string, metrics: any, lang: string = 'en') => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const prompt = `
+    You are Luna, an aesthetic and empathetic health assistant acting as a 'Digital Mediator' in a relationship.
+    TASK: Generate a message hint for a partner. STYLE: Poetic, warm. LANGUAGE: ${lang === 'ru' ? 'Russian' : 'English'}.
+    DO NOT use the word "Context".
+  `;
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt,
+    });
+    return response.text;
+  } catch (error) {
+    return "Support is the best medicine.";
   }
 };
 

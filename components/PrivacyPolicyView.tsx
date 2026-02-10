@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Logo } from './Logo';
 
@@ -13,8 +12,8 @@ export const PrivacyPolicyView: React.FC<{ onBack: () => void }> = ({ onBack }) 
       text: "When you export your data, it is generated locally. We recommend keeping these files in a secure, encrypted location. Luna does not have a back-door to recover lost local data."
     },
     {
-      title: "Third-Party Services",
-      text: "We only use external calls to the Google Gemini API for high-level synthesis and image generation. These calls are context-stripped to maintain the highest possible level of anonymity."
+      title: "Third-Party Foundations",
+      text: "We only use external calls to the Google Gemini API for high-level synthesis and image generation. These calls are alignment-stripped to maintain the highest possible level of anonymity."
     },
     {
       title: "No Selling of Identity",
@@ -23,7 +22,7 @@ export const PrivacyPolicyView: React.FC<{ onBack: () => void }> = ({ onBack }) 
   ];
 
   return (
-    <div className="max-w-4xl mx-auto space-y-16 animate-in fade-in duration-1000 pb-32">
+    <article className="max-w-4xl mx-auto space-y-16 animate-in fade-in duration-1000 pb-32">
       <button onClick={onBack} className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-luna-purple transition-all">← Back</button>
       
       <header className="space-y-6">
@@ -44,12 +43,13 @@ export const PrivacyPolicyView: React.FC<{ onBack: () => void }> = ({ onBack }) 
         ))}
       </div>
 
-      <div className="p-12 bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 rounded-[4rem] text-center space-y-6 shadow-2xl">
-        <p className="text-[10px] font-black uppercase tracking-[0.5em] opacity-60">Compliance Level: High-Trust</p>
-        <p className="text-xl font-bold italic leading-tight max-w-2xl mx-auto">
+      <footer className="p-12 bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 rounded-[4rem] text-center space-y-6 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full bg-luna-purple/5 animate-pulse"></div>
+        <p className="text-[10px] font-black uppercase tracking-[0.5em] opacity-60 relative z-10">Compliance Level: High-Trust</p>
+        <p className="text-xl font-bold italic leading-tight max-w-2xl mx-auto relative z-10 uppercase tracking-tighter">
           "Luna is designed to be a digital vault. We prioritize the preservation of your physiological autonomy over data convenience."
         </p>
-      </div>
-    </div>
+      </footer>
+    </article>
   );
 };

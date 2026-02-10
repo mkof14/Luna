@@ -80,8 +80,8 @@ export const RelationshipsView: React.FC<{ phase: CyclePhase; onBack: () => void
       
       <div className="bg-white dark:bg-slate-900 p-8 md:p-12 rounded-[4rem] shadow-luna border border-slate-200 dark:border-slate-800 space-y-16">
         <header className="text-center space-y-4">
-          <h2 className="text-5xl font-black tracking-tight leading-none uppercase">{lang === 'ru' ? "Социальный Ритм" : "Social Rhythm"}</h2>
-          <p className="text-sm font-medium text-slate-400 uppercase tracking-[0.3em]">{lang === 'ru' ? "Карта отношений" : "Relationship Mapping"}</p>
+          <h2 className="text-5xl font-black tracking-tight leading-none uppercase">{ui.bridge.title}</h2>
+          <p className="text-sm font-medium text-slate-400 uppercase tracking-[0.3em]">{lang === 'ru' ? "Цифровой Медиатор" : "Digital Mediator"}</p>
         </header>
 
         {/* EMMATHY BRIDGE SECTION */}

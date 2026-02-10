@@ -154,7 +154,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ ui, onBack }) => {
           </div>
         </section>
 
-        {/* PILLAR 3: MENTAL LANDSCAPE */}
+        {/* PILLAR 3: MIND PILLAR */}
         <section className={sectionClasses}>
           <div className="flex items-center gap-6 pb-4 border-b-2 border-slate-100 dark:border-slate-800">
             <div className="w-16 h-16 bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center rounded-[1.8rem] text-3xl shadow-sm">🧠</div>
@@ -164,27 +164,55 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ ui, onBack }) => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-            <div className="space-y-6">
+            <div className="space-y-4">
               <label className={labelClasses}>Stress Sensitivity Quotient</label>
-              <div className="grid grid-cols-3 gap-4">
-                {['low', 'medium', 'high'].map(level => (
-                  <button key={level} onClick={() => updateProfile({ stressBaseline: level })} className={`py-6 text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl border-2 transition-all shadow-sm ${profile.stressBaseline === level ? 'bg-amber-500 text-white border-amber-500 shadow-xl scale-[1.02]' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-400'}`}>{level}</button>
-                ))}
+              <div className="relative">
+                <select 
+                  value={profile.stressBaseline} 
+                  onChange={e => updateProfile({ stressBaseline: e.target.value })}
+                  className={`${inputClasses} appearance-none cursor-pointer pr-12`}
+                >
+                  <option value="low">Low Sensitivity</option>
+                  <option value="medium">Medium Sensitivity</option>
+                  <option value="high">High Sensitivity</option>
+                </select>
+                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
               </div>
-              <p className="text-[11px] text-slate-400 italic font-bold text-center">Defines your system's baseline resilience map.</p>
+              <p className="text-[11px] text-slate-400 italic font-bold px-2 leading-tight">Defines your system's baseline resilience map for observation.</p>
             </div>
-            <div className="space-y-6">
+            
+            <div className="space-y-4">
               <label className={labelClasses}>External Peace Disruptors</label>
-              <div className="flex flex-wrap gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {['Noise', 'Bright Light', 'Crowds', 'Cold', 'Heat', 'Scents', 'Textures', 'Predictability'].map(item => {
-                  const isActive = profile.sensitivities?.includes(item);
+                  const isActive = (profile.sensitivities || []).includes(item);
                   return (
                     <button 
                       key={item} 
-                      onClick={() => { const current = profile.sensitivities || []; const next = isActive ? current.filter(i => i !== item) : [...current, item]; updateProfile({ sensitivities: next }); }} 
-                      className={`px-6 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all border-2 ${isActive ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-lg' : 'bg-white dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-800 hover:border-slate-400'}`}
+                      type="button"
+                      onClick={() => { 
+                        const current = profile.sensitivities || []; 
+                        const next = isActive ? current.filter(i => i !== item) : [...current, item]; 
+                        updateProfile({ sensitivities: next }); 
+                      }} 
+                      className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all text-left ${
+                        isActive 
+                          ? 'bg-slate-900 dark:bg-white border-slate-900 dark:border-white shadow-md' 
+                          : 'bg-slate-50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-600'
+                      }`}
                     >
-                      {item}
+                      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+                        isActive 
+                          ? 'bg-luna-purple border-luna-purple text-white' 
+                          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700'
+                      }`}>
+                        {isActive && <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>}
+                      </div>
+                      <span className={`text-[11px] font-black uppercase tracking-widest ${isActive ? 'text-white dark:text-slate-900' : 'text-slate-500 dark:text-slate-400'}`}>
+                        {item}
+                      </span>
                     </button>
                   );
                 })}

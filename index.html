@@ -1,51 +1,51 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Luna Balance | Women’s Health Understanding System</title>
     
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Luna Balance: A private, visual-first wellness discovery system. Map your physiology, track hormonal rhythms, and understand your body's language without cloud storage.">
-    <meta name="keywords" content="women's health, hormone tracking, wellness system, cycle mapping, privacy-first health, physiological mapping">
+    <!-- SEO & Metadata -->
+    <meta name="description" content="Luna Balance: A private, visual-first wellness discovery framework. Map your physiology and track hormonal rhythms with edge-computed intelligence.">
+    <meta name="keywords" content="women's health, hormone tracking, wellness system, cycle mapping, privacy-first health, physiological mapping, AI health assistant">
     <meta name="author" content="Luna Balance Systems">
-    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#6d28d9">
+    <link rel="canonical" href="https://luna-balance.vercel.app/">
 
-    <!-- Open Graph / Facebook -->
+    <!-- Performance: Resource Hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://esm.sh">
+    
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://luna-balance.vercel.app/">
+    <meta property="og:site_name" content="Luna Balance">
     <meta property="og:title" content="Luna Balance | Your Internal Rhythm Mirror">
-    <meta property="og:description" content="A private space to understand your body. Deterministic logic meets Multimodal AI.">
+    <meta property="og:description" content="Understand your body's language. Private, secure, and beautiful health mapping.">
     <meta property="og:image" content="/og-image.png">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="Luna Balance | Private Health Mapping">
-    <meta property="twitter:description" content="Map your physiology. Keep your privacy. Built for the modern woman.">
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
+      "@type": "HealthPlanNetwork",
       "name": "Luna Balance",
-      "operatingSystem": "Web, iOS, Android",
-      "applicationCategory": "HealthApplication",
+      "description": "Deterministic Women’s Health Understanding Architecture",
+      "applicationCategory": "Health",
+      "operatingSystem": "Web",
       "offers": {
         "@type": "Offer",
-        "price": "13.95",
+        "price": "0",
         "priceCurrency": "USD"
       },
-      "description": "Women’s Health Understanding System focusing on physiological mapping and systemic self-observation.",
-      "permissions": "microphone, camera",
-      "softwareVersion": "4.0.0"
+      "author": {
+        "@type": "Organization",
+        "name": "Luna Lab"
+      }
     }
     </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
     <script>
         (function() {
@@ -77,55 +77,38 @@
                         'status-pulse': 'status-pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'float': 'float 6s ease-in-out infinite',
                         'soft-spin': 'soft-spin 20s linear infinite',
-                        'blob-slow': 'blob-slow 25s infinite ease-in-out',
-                        'blob-reverse': 'blob-slow 30s infinite ease-in-out reverse',
-                        'shimmer': 'shimmer 2.5s linear infinite',
-                        'liquid': 'liquid 18s ease-in-out infinite',
-                        'breath-deep': 'breath-deep 8s ease-in-out infinite',
-                        'droplet': 'droplet 7s linear infinite',
-                        'letter-flow': 'letter-flow 4s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-                        'oscilloscope': 'oscilloscope 3s linear infinite',
                         'color-shift-luna': 'color-shift-luna 12s ease-in-out infinite',
+                        'bg-flow': 'bg-flow 60s ease infinite',
                     },
                     keyframes: {
                         'status-pulse': { '0%, 100%': { opacity: 1, transform: 'scale(1)' }, '50%': { opacity: 0.8, transform: 'scale(1.05)' } },
                         'float': { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-20px)' } },
                         'soft-spin': { 'from': { transform: 'rotate(0deg)' }, 'to': { transform: 'rotate(360deg)' } },
-                        'blob-slow': { '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' }, '33%': { transform: 'translate(30px, -50px) scale(1.1)' }, '66%': { transform: 'translate(-20px, 20px) scale(0.9)' } },
-                        'shimmer': { 'from': { transform: 'translateX(-100%)' }, 'to': { transform: 'translateX(100%)' } },
-                        'liquid': { '0%, 100%': { 'border-radius': '60% 40% 30% 70% / 60% 30% 70% 40%' }, '50%': { 'border-radius': '30% 60% 70% 40% / 50% 60% 30% 60%' } },
-                        'breath-deep': { '0%, 100%': { opacity: '0.5', transform: 'scale(1)', filter: 'blur(45px)' }, '50%': { opacity: 0.8, transform: 'scale(1.2)', filter: 'blur(65px)' } },
-                        'droplet': { '0%': { transform: 'translateY(-30px) scale(0)', opacity: '0' }, '15%': { transform: 'translateY(0) scale(1.2)', opacity: '0.7' }, '85%': { opacity: '0.5' }, '100%': { transform: 'translateY(180px) scale(0.7)', opacity: '0' } },
-                        'letter-flow': { '0%': { fill: '#000000', opacity: '0', filter: 'blur(8px)', transform: 'translateY(15px) scale(0.9)' }, '30%': { opacity: '1', filter: 'blur(0)', transform: 'translateY(0) scale(1)', fill: '#000000' }, '100%': { fill: 'currentColor', opacity: '1' } },
-                        'oscilloscope': { 'from': { 'stroke-dashoffset': '1000' }, 'to': { 'stroke-dashoffset': '0' } },
                         'color-shift-luna': { 
                             '0%, 100%': { color: '#6d28d9' }, 
                             '33%': { color: '#ff5a40' },
                             '66%': { color: '#0e7490' }
                         },
+                        'bg-flow': {
+                          '0%, 100%': { 'background-position': '0% 50%' },
+                          '50%': { 'background-position': '100% 50%' }
+                        }
                     }
                 },
             },
         }
     </script>
     <style>
-        html { font-size: 16px; }
-        * { transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; }
-        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
-        .gradient-bg { background: radial-gradient(circle at 0% 0%, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%); }
-        .dark .gradient-bg { background: radial-gradient(circle at 20% 20%, #020617 0%, #0a0a1a 40%, #000000 100%); }
+        * { transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; background-size: 400% 400%; }
+        .dynamic-bg-light { background: linear-gradient(-45deg, #fffcf0, #fff7e6, #fff1f2, #f0fdfa); animation: bg-flow 30s ease infinite; }
+        .dynamic-bg-dark { background: linear-gradient(-45deg, #020617, #0f172a, #1e1b4b, #2d1b4b); animation: bg-flow 30s ease infinite; }
         .glass { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); border: 1px solid #e2e8f0; }
         .dark .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .shadow-luna { box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.14), 0 8px 18px -6px rgba(0, 0, 0, 0.06); }
         .dark .shadow-luna { box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 20px rgba(109, 40, 217, 0.1); }
-        
-        @keyframes scroll-wave {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .animate-scroll-wave {
-            animation: scroll-wave 4s linear infinite;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 <script type="importmap">
 {
@@ -141,7 +124,7 @@
 }
 </script>
 </head>
-<body class="gradient-bg min-h-screen text-slate-900 dark:text-slate-100 overflow-x-hidden relative">
+<body class="dynamic-bg-light dark:dynamic-bg-dark min-h-screen text-slate-900 dark:text-slate-100 overflow-x-hidden relative">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

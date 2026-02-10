@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useRef } from 'react';
 import { analyzeLabResults } from '../services/geminiService';
 import { dataService } from '../services/dataService';
@@ -47,7 +46,7 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-24 animate-in fade-in slide-in-from-bottom-12 duration-1000 pb-40">
+    <article className="max-w-7xl mx-auto space-y-24 animate-in fade-in slide-in-from-bottom-12 duration-1000 pb-40">
       <header className="flex flex-col items-center lg:items-start gap-8">
         <div className="flex items-center gap-4">
            <Logo size="sm" />
@@ -57,13 +56,12 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
           Marker <br/> <span className="text-luna-purple">Decoder.</span>
         </h2>
         <p className="text-xl lg:text-2xl text-slate-500 italic font-medium max-w-3xl leading-relaxed">
-          Translate clinical data into physiological context. Luna identifies patterns by aligning markers with your internal seasons.
+          Translate clinical data into physiological alignment. Luna identifies patterns by syncing markers with your internal seasons.
         </p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-        {/* INPUT DECK */}
-        <div className="lg:col-span-6 space-y-12">
+        <section className="lg:col-span-6 space-y-12">
           <div className="bg-white dark:bg-slate-900 p-8 rounded-[4rem] shadow-luna border-2 border-slate-100 dark:border-slate-800 focus-within:border-luna-purple transition-all">
             <div className="flex justify-between items-center mb-6 px-4">
                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Ingestion Protocol</span>
@@ -104,23 +102,21 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
           <div className="p-10 bg-slate-50 dark:bg-slate-900/40 rounded-[3rem] border-2 border-slate-100 dark:border-slate-800 space-y-6">
              <div className="flex items-center gap-4">
                <div className="w-10 h-10 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-lg shadow-sm">🛡️</div>
-               <h4 className="text-[10px] font-black uppercase tracking-widest text-luna-teal">Privacy Disclaimer</h4>
+               <h4 className="text-[10px] font-black uppercase tracking-widest text-luna-teal">Privacy Alignment</h4>
              </div>
              <p className="text-xs font-bold text-slate-500 italic leading-relaxed">
                This interpretation is observational. Only a licensed professional can provide a diagnosis. Luna is a mirror, not a medical device.
              </p>
           </div>
-        </div>
+        </section>
 
-        {/* INTERPRETATION OUTPUT */}
         <aside className="lg:col-span-6 space-y-12">
           {analysis ? (
             <div className="animate-in fade-in slide-in-from-right-8 duration-1000 space-y-12">
-               {/* SYNTHESIS BOX */}
                <div className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-12 rounded-[4rem] shadow-2xl relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-12 opacity-5 text-9xl">📜</div>
                   <div className="relative z-10 space-y-8">
-                     <h3 className="text-[11px] font-black uppercase tracking-[0.4em] opacity-40">System Synthesis</h3>
+                     <h3 className="text-[11px] font-black uppercase tracking-[0.4em] opacity-40">System Logic</h3>
                      <p className="text-3xl font-bold leading-tight italic">"{analysis.text}"</p>
                      <div className="pt-6 flex gap-6">
                         <button onClick={handleCopy} className="text-[10px] font-black uppercase tracking-widest border-b-2 border-current pb-1 hover:opacity-70 transition-all">
@@ -130,7 +126,6 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
                   </div>
                </div>
 
-               {/* FUNCTIONAL PLACEMENT - Wireframe Spec */}
                <div className="space-y-8 p-12 bg-white dark:bg-slate-900 rounded-[4rem] border-2 border-slate-100 dark:border-slate-800 shadow-luna">
                   <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 mb-10">Functional Signal Mapping</h3>
                   
@@ -140,8 +135,7 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
                   </div>
                </div>
 
-               {/* PREP BOX */}
-               <div className="p-12 border-4 border-slate-900 dark:border-slate-100 rounded-[4rem] bg-white dark:bg-slate-900 space-y-8">
+               <div className="p-12 border-4 border-slate-900 dark:border-slate-100 rounded-[4rem] bg-white dark:bg-slate-900 space-y-8 shadow-2xl">
                   <div className="flex items-center gap-4">
                      <span className="text-2xl">📋</span>
                      <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400">Clinical Preparation Guide</h4>
@@ -159,8 +153,8 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
                </div>
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center p-20 border-4 border-dashed border-slate-100 dark:border-slate-900 rounded-[5rem] text-center space-y-6">
-               <div className="w-24 h-24 rounded-full bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-4xl grayscale opacity-20">📂</div>
+            <div className="h-full flex flex-col items-center justify-center p-20 border-4 border-dashed border-slate-100 dark:border-slate-900 rounded-[5rem] text-center space-y-6 opacity-40">
+               <div className="w-24 h-24 rounded-full bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-4xl grayscale">📂</div>
                <div className="space-y-2">
                  <p className="text-[12px] font-black uppercase tracking-[0.5em] text-slate-300">Decoder Idle</p>
                  <p className="text-xs font-bold text-slate-400 italic max-w-xs">
@@ -171,10 +165,6 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
           )}
         </aside>
       </div>
-
-      <footer className="text-center pt-20 opacity-20">
-         <p className="text-[9px] font-black uppercase tracking-[0.8em]">End-to-End Local Privacy Guaranteed</p>
-      </footer>
-    </div>
+    </article>
   );
 };

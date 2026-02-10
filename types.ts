@@ -21,6 +21,14 @@ export enum ConfidenceLevel {
   HIGH = 'High'
 }
 
+export interface SymptomArchetype {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  color: string;
+}
+
 export type EventType = 
   | 'DAILY_CHECKIN'
   | 'CYCLE_SYNC'
@@ -31,7 +39,9 @@ export type EventType =
   | 'DATA_EXPORTED'
   | 'PROFILE_UPDATE'
   | 'AUTH_SUCCESS'
-  | 'SUBSCRIPTION_PURCHASE';
+  | 'SUBSCRIPTION_PURCHASE'
+  | 'AUDIO_REFLECTION'
+  | 'FUEL_LOG';
 
 export interface HealthEvent {
   id: string;
@@ -71,7 +81,9 @@ export interface SystemState {
   symptoms: string[];
   labData: string;
   lastCheckin?: any;
+  fuelLogs: string[]; // List of nutrients consumed today
   profile: ProfileData;
+  activeArchetype?: SymptomArchetype;
 }
 
 export interface Medication {
@@ -100,6 +112,7 @@ export interface HormoneData {
   drivers: string[];
   whatToTrack: string[];
   generalDoctorQuestions: string[];
+  category?: string; // Optional for library grouping
 }
 
 export interface Insight {
@@ -129,4 +142,5 @@ export interface RuleOutput {
   hormoneStatuses: Record<string, HormoneStatus>;
   insights: Insight[];
   doctorQuestions: DoctorQuestion[];
+  archetype?: SymptomArchetype;
 }

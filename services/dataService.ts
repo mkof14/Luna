@@ -22,57 +22,67 @@ const DEFAULT_PROFILE: ProfileData = {
   units: 'metric'
 };
 
-/**
- * Luna Data Service v4
- * В этой итерации мы сохраняем интерфейс, но подготавливаем систему к асинхронности.
- */
+// Security Helper
+const sanitizeInput = (str: any): string => {
+  if (typeof str !== 'string') return '';
+  return str.replace(/[<>]/g, '').trim();
+};
+
 export const dataService = {
   logEvent: (type: EventType, payload: any): HealthEvent => {
-    const log = dataService.getLog();
-    const newEvent: HealthEvent = {
-      id: crypto.randomUUID?.() || Math.random().toString(36).substring(2, 15),
-      timestamp: new Date().toISOString(),
-      type,
-      payload,
-      version: 3
-    };
-    
-    const updatedLog = [...log, newEvent];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedLog));
-    return newEvent;
+    try {
+      const log = dataService.getLog();
+      
+      // Sanitization Layer
+      const sanitizedPayload = JSON.parse(JSON.stringify(payload), (key, value) => {
+        return typeof value === 'string' ? sanitizeInput(value) : value;
+      });
+
+      const newEvent: HealthEvent = {
+        id: crypto.randomUUID?.() || Math.random().toString(36).substring(2, 15),
+        timestamp: new Date().toISOString(),
+        type,
+        payload: sanitizedPayload,
+        version: 4
+      };
+      
+      const updatedLog = [...log, newEvent];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedLog));
+      return newEvent;
+    } catch (e) {
+      console.error("Data sync failed", e);
+      throw e;
+    }
   },
 
   getLog: (): HealthEvent[] => {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  },
-
-  // Получение контекста последних дней для RAG (AI Context)
-  getRecentContext: (days: number = 7): string => {
-    const log = dataService.getLog();
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - days);
-    
-    return log
-      .filter(e => new Date(e.timestamp) > cutoff && (e.type === 'DAILY_CHECKIN' || e.type === 'LAB_MARKER_ENTRY'))
-      .map(e => `[${new Date(e.timestamp).toLocaleDateString()}] ${e.type}: ${JSON.stringify(e.payload)}`)
-      .join('\n');
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
   },
 
   projectState: (log: HealthEvent[]): SystemState => {
+    const today = new Date().toISOString().split('T')[0];
+    
     return log.reduce((state: SystemState, event: HealthEvent) => {
+      const eventDate = event.timestamp.split('T')[0];
+      
       switch (event.type) {
         case 'ONBOARDING_COMPLETE':
           return { ...state, onboarded: true };
-        case 'AUTH_SUCCESS':
-          return { ...state, isAuthenticated: true };
-        case 'SUBSCRIPTION_PURCHASE':
-          return { ...state, subscriptionTier: event.payload.tier };
         case 'CYCLE_SYNC':
           return { ...state, currentDay: event.payload.day, cycleLength: event.payload.length };
         case 'DAILY_CHECKIN':
           const symptoms = Array.from(new Set([...state.symptoms, ...(event.payload.symptoms || [])]));
           return { ...state, symptoms, lastCheckin: { ...event.payload, timestamp: event.timestamp } };
+        case 'FUEL_LOG':
+          if (eventDate === today) {
+            return { ...state, fuelLogs: [...state.fuelLogs, event.payload.nutrient] };
+          }
+          return state;
         case 'MEDICATION_LOG':
           if (event.payload.action === 'ADD') {
             const newMed: Medication = {
@@ -107,27 +117,8 @@ export const dataService = {
       medications: [],
       symptoms: [],
       labData: '',
+      fuelLogs: [],
       profile: { ...DEFAULT_PROFILE }
     });
-  },
-
-  exportData: (state: SystemState, clinicalSummary: string | null) => {
-    const exportObj = {
-      metadata: {
-        exportedAt: new Date().toISOString(),
-        system: 'Luna Balance V3',
-      },
-      events: state.events,
-      profile: state.profile,
-      clinicalSummary: clinicalSummary || "No summary generated."
-    };
-
-    const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Luna_Health_Export_${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
   }
 };
