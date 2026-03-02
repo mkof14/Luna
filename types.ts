@@ -1,11 +1,11 @@
 
 export enum HormoneStatus {
-  BALANCED = 'Balanced',
-  UNSTABLE = 'Unstable',
-  STRAINED = 'Strained',
-  FLUCTUATING = 'Fluctuating',
-  PEAK = 'Peak Activity',
-  DORMANT = 'Dormant'
+  BALANCED = 'Steady',
+  UNSTABLE = 'Sensitive',
+  STRAINED = 'Stressed',
+  FLUCTUATING = 'Changing',
+  PEAK = 'Active',
+  DORMANT = 'Quiet'
 }
 
 export enum CyclePhase {
@@ -143,4 +143,81 @@ export interface RuleOutput {
   insights: Insight[];
   doctorQuestions: DoctorQuestion[];
   archetype?: SymptomArchetype;
+}
+
+export enum PartnerNoteIntent {
+  UNDERSTANDING = 'understanding',
+  SPACE = 'space',
+  SUPPORT = 'support',
+  PREVENT_MISUNDERSTANDING = 'prevent_misunderstanding',
+  NOT_SURE = 'not_sure'
+}
+
+export enum PartnerNoteTone {
+  CALM = 'calm',
+  WARM = 'warm',
+  SHORT = 'short',
+  DETAILED = 'detailed',
+  REPAIR = 'repair'
+}
+
+export enum PartnerNoteBoundary {
+  SOFT = 'soft',
+  GENTLE = 'gentle',
+  CLEAR = 'clear'
+}
+
+export interface PartnerNoteInput {
+  state_energy: 'low' | 'medium' | 'high';
+  state_sensitivity: 'low' | 'medium' | 'high';
+  state_social_bandwidth: 'low' | 'medium' | 'high';
+  state_cognitive_load: 'low' | 'medium' | 'high';
+  relationship_context: 'stable' | 'tense' | 'recovering';
+  intent: PartnerNoteIntent;
+  tone: PartnerNoteTone;
+  boundary_level: PartnerNoteBoundary;
+  partner_name?: string;
+  preferred_terms?: string;
+  avoid_terms?: string[];
+  language?: string;
+}
+
+export interface PartnerNoteMessage {
+  id: string;
+  content: string;
+}
+
+export interface BridgeReflectionInput {
+  language: string;
+  reflection: {
+    quiet_presence: string;
+    not_meaning: string;
+    kindness_needed: string;
+  };
+}
+
+export interface BridgeLetterOutput {
+  meta: {
+    language: string;
+    contains_medical: boolean;
+    contains_therapy_language: boolean;
+    contains_blame: boolean;
+  };
+  bridge_letter: {
+    content: string;
+  };
+}
+
+export interface PartnerNoteOutput {
+  meta: {
+    language: string;
+    contains_medical: boolean;
+    contains_blame: boolean;
+    safety_flags: string[];
+  };
+  messages: {
+    text: PartnerNoteMessage[];
+    note: PartnerNoteMessage[];
+    letter: PartnerNoteMessage[];
+  };
 }

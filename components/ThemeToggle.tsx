@@ -6,57 +6,64 @@ interface ThemeToggleProps {
   toggle: () => void;
 }
 
+/**
+ * Enhanced Theme Toggle Component
+ * Features a fluid morphing SVG icon with spring-like transitions.
+ * Utilizes SVG masking to transition the sun into a crescent moon.
+ */
 const ThemeToggle: React.FC<ThemeToggleProps> = ({ theme, toggle }) => {
   const isDark = theme === 'dark';
 
   return (
     <button
       onClick={toggle}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className="relative flex items-center justify-center w-11 h-11 rounded-full bg-slate-100/50 dark:bg-slate-800/50 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 border border-slate-200/50 dark:border-slate-700/50 transition-all hover:scale-110 active:scale-90 group outline-none overflow-hidden"
+      aria-label={isDark ? "Activate light mode" : "Activate dark mode"}
+      title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+      className="relative flex items-center justify-center w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all hover:scale-110 active:scale-90 group outline-none overflow-hidden shadow-sm hover:shadow-md"
     >
-      {/* Background Ambient Glow */}
+      {/* Background Ambient Glow - Reactive to current theme */}
       <div 
-        className={`absolute inset-0 transition-opacity duration-700 blur-xl pointer-events-none opacity-0 group-hover:opacity-100
-          ${isDark ? 'bg-indigo-500/20' : 'bg-amber-500/20'}`} 
+        className={`absolute inset-0 transition-opacity duration-1000 blur-xl pointer-events-none opacity-0 group-hover:opacity-100
+          ${isDark ? 'bg-indigo-500/10' : 'bg-amber-500/10'}`} 
       />
 
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
+        width="24"
+        height="24"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={`relative z-10 transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) 
-          ${isDark ? 'rotate-[360deg] text-indigo-400' : 'rotate-0 text-amber-500'}`}
+        className={`relative z-10 transition-all duration-[700ms] cubic-bezier(0.4, 0, 0.2, 1) 
+          ${isDark ? 'rotate-[40deg] text-indigo-400' : 'rotate-0 text-amber-500'}`}
       >
-        <mask id="moon-mask-header">
+        <mask id="theme-toggle-mask">
           <rect x="0" y="0" width="100%" height="100%" fill="white" />
           <circle 
-            cx={isDark ? "16" : "24"} 
-            cy={isDark ? "8" : "-8"} 
-            r="6" 
+            cx={isDark ? "10" : "25"} 
+            cy={isDark ? "4" : "0"} 
+            r="8" 
             fill="black" 
-            className="transition-all duration-500 ease-in-out"
+            className="transition-all duration-[600ms] ease-in-out"
           />
         </mask>
 
+        {/* Main Body (Sun Center / Moon) */}
         <circle 
           cx="12" 
           cy="12" 
-          r={isDark ? "9" : "5"} 
+          r={isDark ? "10" : "5"} 
           fill="currentColor" 
-          mask="url(#moon-mask-header)"
-          className="transition-all duration-500 ease-in-out fill-current"
+          mask="url(#theme-toggle-mask)"
+          className="transition-all duration-[600ms] ease-in-out fill-current"
         />
 
-        {/* Rays - Sun only */}
+        {/* Sun Rays - Disappear and rotate when dark */}
         <g 
-          className={`transition-all duration-500 origin-center ${isDark ? 'opacity-0 scale-50 rotate-90' : 'opacity-100 scale-100 rotate-0'}`}
+          className={`transition-all duration-[600ms] origin-center ${isDark ? 'opacity-0 scale-0 rotate-90' : 'opacity-100 scale-100 rotate-0'}`}
           stroke="currentColor"
         >
           <line x1="12" y1="1" x2="12" y2="3" />
@@ -70,9 +77,9 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ theme, toggle }) => {
         </g>
       </svg>
       
-      {/* Active Ring */}
-      <div className={`absolute inset-0 rounded-full border-2 transition-all duration-700 pointer-events-none
-        ${isDark ? 'border-indigo-500/0 group-active:border-indigo-500/20' : 'border-amber-500/0 group-active:border-amber-500/20'}`} />
+      {/* Interactive Ripple/Focus Ring */}
+      <div className={`absolute inset-0 rounded-2xl border-2 transition-all duration-500 pointer-events-none
+        ${isDark ? 'border-indigo-400/0 group-active:border-indigo-400/30' : 'border-amber-400/0 group-active:border-amber-400/30'}`} />
     </button>
   );
 };

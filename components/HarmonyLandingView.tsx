@@ -9,7 +9,7 @@ interface HarmonyLandingViewProps {
 export const HarmonyLandingView: React.FC<HarmonyLandingViewProps> = ({ onNavigate, onBack }) => {
   const cards = [
     { id: 'relationships', label: 'Connection', icon: '💞', color: 'luna-teal', desc: 'Sync your social battery with your inner rhythm.' },
-    { id: 'family', label: 'Home Life', icon: '🏡', color: 'luna-purple', desc: 'Manage domestic demands through physiological seasons.' },
+    { id: 'family', label: 'Home Seasons', icon: '🏡', color: 'luna-purple', desc: 'Manage domestic demands through physiological seasons.' },
     { id: 'creative', label: 'Art', icon: '🎨', color: 'amber-600', desc: 'Non-verbal creative reflection and state mapping.' },
   ];
 

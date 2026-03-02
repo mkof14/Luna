@@ -33,17 +33,17 @@ export const MedicationsView: React.FC<{ medications: Medication[]; onBack?: () 
       <header className="flex flex-col lg:flex-row justify-between items-center lg:items-end gap-12">
         <div className="space-y-10 text-center lg:text-left">
           <h2 className="text-6xl lg:text-9xl font-black tracking-tighter leading-none uppercase text-slate-900 dark:text-slate-100">
-            Care <br/> <span className="text-luna-teal">Kit.</span>
+            My <br/> <span className="text-luna-teal">Support.</span>
           </h2>
           <p className="text-xl lg:text-2xl text-slate-500 italic font-medium max-w-xl">
-            Track sensitivities to external substances. Luna observes how your body processes your protocol.
+            Keep track of what helps you feel better. Luna observes how your body responds to your care plan.
           </p>
         </div>
         <button 
           onClick={() => setShowAdd(!showAdd)}
           className={`px-12 py-5 rounded-full font-black uppercase tracking-widest shadow-2xl transition-all ${showAdd ? 'bg-rose-500 text-white' : 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:scale-105'}`}
         >
-          {showAdd ? "Close Form" : "Add Profile"}
+          {showAdd ? "Close" : "Add something new"}
         </button>
       </header>
 
@@ -51,16 +51,16 @@ export const MedicationsView: React.FC<{ medications: Medication[]; onBack?: () 
         <section className="bg-white dark:bg-slate-900 p-16 rounded-[4.5rem] shadow-luna border dark:border-slate-800 animate-in zoom-in-95 duration-500 space-y-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
              <div className="space-y-2">
-               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Substance Name</label>
+               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Name</label>
                <input 
                  value={newName} 
                  onChange={e => setNewName(e.target.value)}
                  className="w-full bg-slate-50 dark:bg-slate-950 p-6 rounded-[2.5rem] outline-none font-bold text-xl border-2 border-transparent focus:border-luna-teal transition-all"
-                 placeholder="e.g. Magnesium Glycinate"
+                 placeholder="e.g. Magnesium"
                />
              </div>
              <div className="space-y-2">
-               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Dosage</label>
+               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Amount</label>
                <input 
                  value={newDose} 
                  onChange={e => setNewDose(e.target.value)}
@@ -70,7 +70,7 @@ export const MedicationsView: React.FC<{ medications: Medication[]; onBack?: () 
              </div>
           </div>
           <button onClick={handleAdd} className="w-full py-8 bg-luna-teal text-white font-black uppercase tracking-[0.4em] rounded-full shadow-xl hover:scale-[1.01] transition-all">
-            Initialize Profile
+            Save
           </button>
         </section>
       )}
@@ -78,7 +78,7 @@ export const MedicationsView: React.FC<{ medications: Medication[]; onBack?: () 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {medications.length === 0 ? (
           <div className="col-span-full p-32 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[4rem]">
-            <p className="text-[10px] font-black uppercase text-slate-300 tracking-[0.5em]">No active substances mapped</p>
+            <p className="text-[10px] font-black uppercase text-slate-300 tracking-[0.5em]">Nothing added yet.</p>
           </div>
         ) : (
           medications.map(med => (
@@ -88,12 +88,12 @@ export const MedicationsView: React.FC<{ medications: Medication[]; onBack?: () 
               <div className="relative z-10 space-y-6">
                 <div className="flex justify-between items-start">
                   <span className="text-4xl">💊</span>
-                  <button onClick={() => handleRemove(med.id)} className="text-[8px] font-black uppercase text-rose-400 opacity-0 group-hover:opacity-100 transition-all border border-rose-100 rounded-full px-4 py-1.5">Archive</button>
+                  <button onClick={() => handleRemove(med.id)} className="text-[8px] font-black uppercase text-rose-400 opacity-0 group-hover:opacity-100 transition-all border border-rose-100 rounded-full px-4 py-1.5">Remove</button>
                 </div>
                 <h4 className="text-3xl font-black uppercase tracking-tighter leading-tight">{med.name}</h4>
                 <div className="space-y-1">
                   <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{med.dose || 'Standard Dose'}</p>
-                  <p className="text-[9px] font-bold text-slate-300 italic">Sync Active since {new Date(med.addedAt).toLocaleDateString()}</p>
+                  <p className="text-[9px] font-bold text-slate-300 italic">Added on {new Date(med.addedAt).toLocaleDateString()}</p>
                 </div>
               </div>
             </div>

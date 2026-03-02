@@ -6,24 +6,29 @@ export type Language = 'en' | 'ru' | 'uk' | 'es' | 'fr' | 'de' | 'zh' | 'ja' | '
 const en = {
   navigation: {
     home: "Home",
-    dashboard: "Map",
-    cycle: "Rhythm",
-    labs: "Labs",
-    meds: "Care Kit",
-    history: "Record",
-    creative: "Art Studio",
-    reflections: "Voice",
-    relationships: "Bridge",
-    family: "Home",
+    dashboard: "Today",
+    cycle: "My Cycle",
+    labs: "Health Reports",
+    meds: "My Support",
+    history: "My Journey",
+    bridge: "The Bridge",
+    creative: "Create",
+    reflections: "Voice Journal",
+    relationships: "Connection",
+    family: "Home Seasons",
     profile: "Profile",
-    library: "Vault",
-    faq: "FAQ",
+    library: "Knowledge",
+    faq: "Questions",
     contact: "Contact",
-    crisis: "Crisis Support"
+    crisis: "Support",
+    partner: "Partner Info",
+    healthHub: "Health Hub",
+    awareness: "Awareness",
+    harmony: "Harmony"
   },
   library: {
-    headline: "Biological Vault",
-    subheadline: "The molecular architecture of your being. Synchronized with your personal markers.",
+    headline: "Your Body's Voice",
+    subheadline: "A guide to understanding your unique biological rhythm.",
     categories: {
       rhythm: "Reproductive rhythm",
       metabolism: "Metabolic engine",
@@ -33,10 +38,10 @@ const en = {
     }
   },
   fuel: {
-    title: "Fuel Compass",
-    subtitle: "Nutrient focus for your current phase",
-    priorities: "Daily Priorities",
-    fullProtocol: "Full Phase Protocol",
+    title: "Nourishment",
+    subtitle: "What your body needs in this phase",
+    priorities: "Focus on",
+    fullProtocol: "Phase Guide",
     categories: {
       micronutrients: "Micronutrients",
       foods: "Functional Foods",
@@ -59,11 +64,58 @@ const en = {
     stress: { label: "Current Load", min: "Grounded", max: "Overloaded" }
   },
   bridge: {
-    title: "Empathy Bridge",
-    cta: "Want me to tell [Name] how to support you today?",
-    generating: "Building the bridge...",
-    shared: "Copied for your partner",
-    partnerPlaceholder: "Partner's Name"
+    title: "Relationship Mode",
+    subtitle: "Partner Note",
+    cta: "Generate a calm message to help [Name] understand your current state.",
+    generating: "Crafting note...",
+    shared: "Copied to clipboard",
+    partnerPlaceholder: "Partner's Name",
+    intents: {
+      understanding: "I want understanding / patience",
+      space: "I want space / quiet",
+      support: "I want specific support",
+      prevent_misunderstanding: "I want to prevent misunderstanding",
+      not_sure: "I'm not sure — help me phrase it"
+    },
+    tones: {
+      calm: "Calm & neutral",
+      warm: "Warm & close",
+      short: "Very short",
+      detailed: "More detailed",
+      repair: "Repair after tension"
+    },
+    boundaries: {
+      soft: "Soft ask",
+      gentle: "Gentle boundary",
+      clear: "Clear boundary"
+    },
+    steps: {
+      intent: "What is your intent?",
+      tone: "Choose a tone",
+      boundary: "Set a boundary level",
+      result: "Your Partner Note"
+    },
+    refinements: {
+      shorter: "Make it shorter",
+      softer: "Make it softer",
+      clearer: "Make it clearer",
+      appreciation: "Add appreciation",
+      boundary: "Add boundary",
+      neutralize: "Remove blame"
+    },
+    shareAction: "Share with Partner",
+    refineAction: "Refine Message",
+    partnerFAQ: {
+      title: "Partner FAQ",
+      subtitle: "Understanding the Luna system from the outside.",
+      items: [
+        { q: "What is Luna?", a: "Luna is a wellness support system that maps physiological rhythms to help users understand their internal state. It's a mirror, not a coach." },
+        { q: "How can I support her?", a: "The best support is understanding. When she shares a 'Partner Note,' it's an invitation to sync with her current capacity, not a request for a solution." },
+        { q: "Why does her mood change?", a: "Physiological cycles affect energy, sensitivity, and social bandwidth. These are natural shifts, not personal reactions." },
+        { q: "Is this medical?", a: "No. Luna is a mirror for self-observation. It doesn't diagnose. If you have medical concerns, please consult a professional." },
+        { q: "How to read the 'Partner Note'?", a: "It's a bridge. It uses 'I' statements to explain her internal landscape. Read it as a weather report for her day." }
+      ]
+    }
   },
   contact: {
     headline: "Reach Out",
@@ -76,7 +128,7 @@ const en = {
     email: "Email",
     subject: "Subject",
     message: "Message",
-    send: "Transmit Signal"
+    send: "Send"
   },
   shared: {
     footer: "Private & Local. Your data stays on your device.",
@@ -89,24 +141,29 @@ const ru = {
   navigation: {
     ...en.navigation,
     home: "Главная",
-    dashboard: "Карта",
-    cycle: "Ритм",
-    labs: "Анализы",
-    meds: "Аптечка",
-    history: "История",
-    creative: "Студия",
-    reflections: "Голос",
-    relationships: "Мост",
-    family: "Дом",
+    dashboard: "Сегодня",
+    cycle: "Мой цикл",
+    labs: "Отчеты здоровья",
+    meds: "Моя поддержка",
+    history: "Мой путь",
+    bridge: "Мост",
+    creative: "Творчество",
+    reflections: "Голосовой дневник",
+    relationships: "Связь",
+    family: "Сезоны Дома",
     profile: "Профиль",
-    library: "Библиотека",
-    faq: "FAQ",
+    library: "Знания",
+    faq: "Вопросы",
     contact: "Контакт",
-    crisis: "Поддержка"
+    crisis: "Поддержка",
+    partner: "Для партнера",
+    healthHub: "Центр здоровья",
+    awareness: "Осознанность",
+    harmony: "Гармония"
   },
   library: {
-    headline: "Биологический Свод",
-    subheadline: "Молекулярная архитектура вашего существа. Синхронизировано с вашими показателями.",
+    headline: "Голос тела",
+    subheadline: "Ваш личный путеводитель по биологическим ритмам.",
     categories: {
       rhythm: "Репродуктивный Ритм",
       metabolism: "Метаболический Двигатель",
@@ -116,10 +173,10 @@ const ru = {
     }
   },
   fuel: {
-    title: "Топливный Компас",
-    subtitle: "Нутриентный фокус вашей текущей фазы",
-    priorities: "Приоритеты дня",
-    fullProtocol: "Полный протокол фазы",
+    title: "Питание",
+    subtitle: "Что нужно вашему телу сейчас",
+    priorities: "В фокусе",
+    fullProtocol: "Гид по фазе",
     categories: {
       micronutrients: "Микронутриенты",
       foods: "Функциональные продукты",
@@ -128,11 +185,58 @@ const ru = {
     avoid: "Ограничения"
   },
   bridge: {
-    title: "Эмпатичный Мост",
-    cta: "Хочешь, я подскажу [Name], как тебя сегодня поддержать?",
-    generating: "Навожу мосты...",
-    shared: "Скопировано для партнера",
-    partnerPlaceholder: "Имя партнера"
+    title: "Режим Отношений",
+    subtitle: "Записка Партнеру",
+    cta: "Создать спокойное сообщение, чтобы помочь [Name] понять ваше состояние.",
+    generating: "Создаю записку...",
+    shared: "Скопировано в буфер",
+    partnerPlaceholder: "Имя партнера",
+    intents: {
+      understanding: "Я хочу понимания / терпения",
+      space: "Мне нужно пространство / тишина",
+      support: "Мне нужна конкретная поддержка",
+      prevent_misunderstanding: "Я хочу избежать недопонимания",
+      not_sure: "Я не уверена — помоги мне сформулировать"
+    },
+    tones: {
+      calm: "Спокойный и нейтральный",
+      warm: "Теплый и близкий",
+      short: "Очень короткий",
+      detailed: "Более детальный",
+      repair: "Восстановление после напряжения"
+    },
+    boundaries: {
+      soft: "Мягкая просьба",
+      gentle: "Мягкая граница",
+      clear: "Четкая граница"
+    },
+    steps: {
+      intent: "Какова ваша цель?",
+      tone: "Выберите тон",
+      boundary: "Установите уровень границ",
+      result: "Ваша Записка Партнеру"
+    },
+    refinements: {
+      shorter: "Сделать короче",
+      softer: "Сделать мягче",
+      clearer: "Сделать четче",
+      appreciation: "Добавить благодарность",
+      boundary: "Добавить границу",
+      neutralize: "Убрать обвинения"
+    },
+    shareAction: "Поделиться с партнером",
+    refineAction: "Уточнить сообщение",
+    partnerFAQ: {
+      title: "FAQ для партнеров",
+      subtitle: "Понимание системы Luna со стороны.",
+      items: [
+        { q: "Что такое Luna?", a: "Luna — это система поддержки благополучия, которая сопоставляет физиологические ритмы, чтобы помочь пользователю понять свое внутреннее состояние. Это зеркало, а не коуч." },
+        { q: "Как я могу ее поддержать?", a: "Лучшая поддержка — это понимание. Когда она делится «Запиской партнера», это приглашение синхронизироваться с ее текущими возможностями, а не просьба о решении." },
+        { q: "Почему ее настроение меняется?", a: "Физиологические циклы влияют на энергию, чувствительность и социальную активность. Это естественные сдвиги, а не личные реакции." },
+        { q: "Это медицинское приложение?", a: "Нет. Luna — это зеркало для самонаблюдения. Она не ставит диагнозы. Если у вас есть медицинские вопросы, обратитесь к специалисту." },
+        { q: "Как читать «Записку партнера»?", a: "Это мост. В ней используются «Я-сообщения» для объяснения ее внутреннего ландшафта. Читайте это как прогноз погоды на ее день." }
+      ]
+    }
   }
 };
 
@@ -143,12 +247,12 @@ export const UI_COPY = {
       progesterone: "Inner Peace",
       cortisol: "Stress Load",
       testosterone: "Vitality",
-      insulin: "Fuel Logic",
-      thyroid: "Metabolic Pace"
+      insulin: "Energy Balance",
+      thyroid: "Body Speed"
     }
   },
   reflection: {
-    guidance: "Observations for Inward Inquiry"
+    guidance: "Thoughts for self-reflection"
   }
 };
 
@@ -167,52 +271,52 @@ export interface FuelPhaseData {
 
 export const FUEL_DATA: Record<CyclePhase, FuelPhaseData> = {
   [CyclePhase.MENSTRUAL]: {
-    reason: "Your body is in a state of loss and renewal. Prioritize remineralization and warmth.",
-    avoid: ["Cold Drinks", "Excessive Caffeine", "Refined Sugar", "Processed Salt"],
+    reason: "Your body is renewing itself. Focus on warmth and minerals.",
+    avoid: ["Cold Drinks", "Too much Caffeine", "Sugar", "Salty Snacks"],
     priorities: ["Iron", "Zinc", "Warm Soups", "Vitamin C", "Magnesium"],
     protocol: {
-      micronutrients: ["Iron (Chelated)", "Zinc (Picolinate)", "Vitamin B12", "Magnesium Bisglycinate", "Vitamin C (Liposomal)"],
-      foods: ["Red Meat or Lentils", "Dark Leafy Greens", "Beets", "Bone Broth", "Dark Chocolate (85%+)", "Seaweed", "Black Beans"],
-      ritual: ["Warm herbal infusions (Nettle/Raspberry leaf)", "Gentle heat application", "Slow nasal breathing", "Restored hydration with electrolytes"]
+      micronutrients: ["Iron", "Zinc", "Vitamin B12", "Magnesium", "Vitamin C"],
+      foods: ["Lentils or Red Meat", "Spinach & Kale", "Beets", "Warm Broth", "Dark Chocolate", "Seaweed", "Beans"],
+      ritual: ["Warm herbal tea", "Gentle warmth", "Slow breathing", "Stay hydrated"]
     }
   },
   [CyclePhase.FOLLICULAR]: {
-    reason: "Estrogen is rising. Support healthy hormone metabolism with fiber and probiotics.",
-    avoid: ["Processed Sugars", "Alcohol", "Excess Saturated Fat", "Heavy Dairy"],
-    priorities: ["B-Vitamins", "Cruciferous Veggies", "Probiotics", "Vitamin E", "Folate"],
+    reason: "Energy is rising. Support your body with fiber and fresh foods.",
+    avoid: ["Sugar", "Alcohol", "Heavy Fats", "Heavy Dairy"],
+    priorities: ["B-Vitamins", "Fresh Veggies", "Probiotics", "Vitamin E", "Folate"],
     protocol: {
-      micronutrients: ["B-Complex", "Folate (Methylated)", "Vitamin E", "CoQ10", "Selenium"],
-      foods: ["Fermented Veggies (Kimchi/Kraut)", "Kefir", "Broccoli/Cauliflower", "Sprouted Seeds", "Citrus Fruits", "Chicken/Fish", "Nuts (Cashews/Pumpkin seeds)"],
-      ritual: ["Light creative exploration", "Increased water intake with lemon", "Morning sunlight exposure", "New habit initialization"]
+      micronutrients: ["B-Vitamins", "Folate", "Vitamin E", "CoQ10", "Selenium"],
+      foods: ["Kimchi or Kraut", "Kefir", "Broccoli & Cauliflower", "Seeds", "Citrus", "Chicken or Fish", "Nuts"],
+      ritual: ["Try something creative", "Lemon water", "Morning sun", "Start a new habit"]
     }
   },
   [CyclePhase.OVULATORY]: {
-    reason: "Metabolism is peaking. Maintain fluid balance and anti-inflammatory fats.",
-    priorities: ["Omega-3", "Fiber", "Glutathione Support", "Hydration+", "Vitamin A"],
-    avoid: ["High Sodium", "Deep Fried Foods", "Refined Carbohydrates", "Caffeine Overdose"],
+    reason: "Your energy is at its peak. Stay hydrated and eat healthy fats.",
+    priorities: ["Omega-3", "Fiber", "Healthy Fats", "Hydration", "Vitamin A"],
+    avoid: ["Too much Salt", "Fried Foods", "White Bread", "Too much Caffeine"],
     protocol: {
-      micronutrients: ["Omega-3 (DHA/EPA)", "Glutathione precursors (NAC)", "Vitamin D3", "Vitamin A", "Antioxidant complex"],
-      foods: ["Wild Salmon", "Avocado", "Quinoa", "Fresh Berries", "Sprouts", "Bell Peppers", "Flax Seeds", "Walnuts"],
-      ritual: ["Social dining", "Intense physical movement", "Cold exposure (showers)", "High-verbal interaction tasks"]
+      micronutrients: ["Omega-3", "NAC", "Vitamin D3", "Vitamin A", "Antioxidants"],
+      foods: ["Salmon", "Avocado", "Quinoa", "Berries", "Sprouts", "Peppers", "Flax Seeds", "Walnuts"],
+      ritual: ["Dinner with friends", "Active movement", "Cool showers", "Talk and connect"]
     }
   },
   [CyclePhase.LUTEAL]: {
-    reason: "Progesterone needs support. Focus on blood sugar stability and nerve-calming minerals.",
-    priorities: ["Magnesium", "Complex Carbs", "Calcium", "Vitamin B6", "Healthy Fats"],
-    avoid: ["Refined Flour", "Alcohol", "Excessive Stimulants", "Late-night Snacks"],
+    reason: "Your body is slowing down. Focus on steady energy and calming minerals.",
+    priorities: ["Magnesium", "Slow Carbs", "Calcium", "Vitamin B6", "Healthy Fats"],
+    avoid: ["White Flour", "Alcohol", "Stimulants", "Late-night Snacks"],
     protocol: {
-      micronutrients: ["Magnesium (Malate/Taurate)", "Vitamin B6 (P5P)", "Calcium Citrate", "Inositol", "GABA support"],
-      foods: ["Roasted Root Veggies", "Oats", "Bananas", "Sesame Seeds", "Sunflower Seeds", "Grass-fed Beef or Tofu", "Spinach", "Peppermint Tea"],
-      ritual: ["Early digital sunset", "Journaling internal friction", "Epsom salt baths", "Prioritizing predictability"]
+      micronutrients: ["Magnesium", "Vitamin B6", "Calcium", "Inositol", "GABA support"],
+      foods: ["Roasted Veggies", "Oats", "Bananas", "Sesame Seeds", "Sunflower Seeds", "Tofu or Beef", "Spinach", "Peppermint Tea"],
+      ritual: ["Early screen-off", "Journaling", "Warm baths", "Keep things simple"]
     }
   }
 };
 
 export const ARCHETYPES = {
-  fog: { id: 'fog', name: 'The Fog', icon: '🌫️', color: '#94a3b8', description: 'Internal visibility is low. Mental processing speed is currently focused on internal maintenance.' },
-  radiance: { id: 'radiance', name: 'The Radiance', icon: '✨', color: '#f59e0b', description: 'High systemic energy. Your social and creative capacity is at its cyclical peak.' },
-  storm: { id: 'storm', name: 'The Storm', icon: '⚡', color: '#6366f1', description: 'High reactivity. Your nervous system is hyper-aware of environmental noise.' },
-  anchor: { id: 'anchor', name: 'The Anchor', icon: '⚓', color: '#10b981', description: 'Grounded restoration. A stable period for deep work and physical recovery.' }
+  fog: { id: 'fog', name: 'The Fog', icon: '🌫️', color: '#94a3b8', description: 'Visibility is low. Your mind is focused on internal rest.' },
+  radiance: { id: 'radiance', name: 'The Radiance', icon: '✨', color: '#f59e0b', description: 'Energy is high. You are at your most social and creative.' },
+  storm: { id: 'storm', name: 'The Storm', icon: '⚡', color: '#6366f1', description: 'High sensitivity. You are very aware of everything around you.' },
+  anchor: { id: 'anchor', name: 'The Anchor', icon: '⚓', color: '#10b981', description: 'Grounded and steady. A good time for deep work and rest.' }
 };
 
 export const INITIAL_HORMONES: HormoneData[] = [

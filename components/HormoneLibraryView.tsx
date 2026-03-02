@@ -85,7 +85,7 @@ export const HormoneLibraryView: React.FC<{ lang: Language; onBack: () => void }
         </button>
         <div className="space-y-4 text-center lg:text-left">
           <h2 className="text-6xl lg:text-9xl font-black tracking-tighter leading-[0.85] uppercase text-slate-900 dark:text-slate-100">
-            Biological <br/> <span className="text-luna-purple">Intelligence.</span>
+            Knowledge <br/> <span className="text-luna-purple">Base.</span>
           </h2>
           <p className="text-xl lg:text-2xl text-slate-500 italic font-medium max-w-3xl leading-relaxed">
             {ui.library.subheadline}
@@ -100,7 +100,7 @@ export const HormoneLibraryView: React.FC<{ lang: Language; onBack: () => void }
               <span className="text-5xl">{cat.icon}</span>
               <div className="space-y-1">
                 <h3 className={`text-3xl font-black uppercase tracking-tighter ${cat.color}`}>{cat.label}</h3>
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">System Node {categories.indexOf(cat) + 1}</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Part {categories.indexOf(cat) + 1}</p>
               </div>
             </div>
 
@@ -120,7 +120,7 @@ export const HormoneLibraryView: React.FC<{ lang: Language; onBack: () => void }
                         <span className="text-5xl group-hover:scale-110 transition-transform block">{hormone.icon}</span>
                         {isSync && (
                           <span className="px-3 py-1 bg-luna-purple/10 text-luna-purple text-[7px] font-black uppercase tracking-widest rounded-full border border-luna-purple/20 animate-pulse">
-                            Linked
+                            Active
                           </span>
                         )}
                       </div>
@@ -140,7 +140,7 @@ export const HormoneLibraryView: React.FC<{ lang: Language; onBack: () => void }
 
                     <div className="relative z-10 pt-6 flex items-center justify-between">
                       <span className="text-[9px] font-black uppercase tracking-widest text-luna-purple opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0 transition-all">
-                        {lang === 'ru' ? 'Схема →' : 'Mechanics →'}
+                        {lang === 'ru' ? 'Подробнее →' : 'Details →'}
                       </span>
                       <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: hormone.color }} />
                     </div>
@@ -159,11 +159,11 @@ export const HormoneLibraryView: React.FC<{ lang: Language; onBack: () => void }
       <div className="p-20 bg-slate-900 text-white dark:bg-white dark:text-slate-900 rounded-[5rem] text-center space-y-12 shadow-2xl relative overflow-hidden group">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-luna-purple via-transparent to-transparent group-hover:scale-110 transition-transform duration-1000" />
         <div className="relative z-10 space-y-6">
-          <p className="text-[11px] font-black uppercase tracking-[0.6em] opacity-40">Biological Sovereignty</p>
+          <p className="text-[11px] font-black uppercase tracking-[0.6em] opacity-40">Your Body's Wisdom</p>
           <p className="text-3xl lg:text-5xl font-bold italic leading-none max-w-4xl mx-auto uppercase tracking-tighter">
             {lang === 'ru' 
-              ? "Знание своей химии — это ваша биологическая свобода." 
-              : "Knowing your chemistry is your biological freedom."}
+              ? "Понимание своего тела — ваша величайшая сила." 
+              : "Understanding your body is your greatest strength."}
           </p>
         </div>
       </div>

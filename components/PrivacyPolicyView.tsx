@@ -4,8 +4,8 @@ import { Logo } from './Logo';
 export const PrivacyPolicyView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const sections = [
     {
-      title: "Sovereign Health Data",
-      text: "Luna Balance follows the 'Sovereign Protocol'. Your health data—logs, lab markers, and check-ins—is stored exclusively on your device. We do not maintain any cloud databases for your personal records."
+      title: "Your Private Data",
+      text: "Luna Balance follows our 'Privacy Promise'. Your health data—logs, lab markers, and check-ins—is stored exclusively on your device. We do not maintain any cloud databases for your personal records."
     },
     {
       title: "Encryption & Exports",
