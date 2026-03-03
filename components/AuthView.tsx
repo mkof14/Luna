@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
 import { Logo } from './Logo';
+import { AuthCopy } from '../types/uiCopy';
 
 interface AuthViewProps {
-  ui: any;
+  ui: AuthCopy;
   onSuccess: () => void;
 }
 

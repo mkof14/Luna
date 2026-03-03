@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": ".tmp-tests",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "target": "ES2022",
+    "types": ["node", "vite/client"],
+    "noImplicitAny": false
+  },
+  "include": [
+    "tests/**/*.ts",
+    "services/**/*.ts",
+    "utils/**/*.ts",
+    "types.ts",
+    "constants.tsx"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

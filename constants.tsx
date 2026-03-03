@@ -22,6 +22,7 @@ const en = {
     contact: "Contact",
     crisis: "Support",
     partner: "Partner Info",
+    support: "Support",
     healthHub: "Health Hub",
     awareness: "Awareness",
     harmony: "Harmony"
@@ -136,6 +137,8 @@ const en = {
   }
 };
 
+export type TranslationSchema = typeof en;
+
 const ru = {
   ...en,
   navigation: {
@@ -157,6 +160,7 @@ const ru = {
     contact: "Контакт",
     crisis: "Поддержка",
     partner: "Для партнера",
+    support: "Поддержка",
     healthHub: "Центр здоровья",
     awareness: "Осознанность",
     harmony: "Гармония"
@@ -256,7 +260,17 @@ export const UI_COPY = {
   }
 };
 
-export const TRANSLATIONS: Record<Language, any> = { en, ru, uk: en, es: en, fr: en, de: en, zh: en, ja: en, pt: en };
+export const TRANSLATIONS: Record<Language, TranslationSchema> = {
+  en,
+  ru,
+  uk: en,
+  es: en,
+  fr: en,
+  de: en,
+  zh: en,
+  ja: en,
+  pt: en,
+};
 
 export interface FuelPhaseData {
   reason: string;

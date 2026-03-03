@@ -1,13 +1,22 @@
 
 import React from 'react';
+import { TabType } from '../utils/navigation';
 
 interface HarmonyLandingViewProps {
-  onNavigate: (tab: any) => void;
+  onNavigate: (tab: TabType) => void;
   onBack: () => void;
 }
 
 export const HarmonyLandingView: React.FC<HarmonyLandingViewProps> = ({ onNavigate, onBack }) => {
-  const cards = [
+  type HarmonyCard = {
+    id: TabType;
+    label: string;
+    icon: string;
+    color: string;
+    desc: string;
+  };
+
+  const cards: HarmonyCard[] = [
     { id: 'relationships', label: 'Connection', icon: '💞', color: 'luna-teal', desc: 'Sync your social battery with your inner rhythm.' },
     { id: 'family', label: 'Home Seasons', icon: '🏡', color: 'luna-purple', desc: 'Manage domestic demands through physiological seasons.' },
     { id: 'creative', label: 'Art', icon: '🎨', color: 'amber-600', desc: 'Non-verbal creative reflection and state mapping.' },

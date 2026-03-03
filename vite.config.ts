@@ -4,13 +4,9 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  define: {
-    // Injects process.env.API_KEY from Vercel/System environment into the client build
-    'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
-  },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    sourcemap: false,
   },
   server: {
     port: 3000

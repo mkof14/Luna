@@ -7,6 +7,15 @@ interface Connection {
   label: string;
 }
 
+interface ConnectionLine {
+  d: string;
+  label: string;
+  x: number;
+  y: number;
+}
+
+const isConnectionLine = (line: ConnectionLine | null): line is ConnectionLine => line !== null;
+
 const CONNECTIONS: Connection[] = [
   { from: 'cortisol', to: 'thyroid', label: 'Stress inhibits metabolism' },
   { from: 'estrogen', to: 'progesterone', label: 'Essential cycle ratio' },
@@ -14,7 +23,7 @@ const CONNECTIONS: Connection[] = [
 ];
 
 export const HormoneConnections: React.FC<{ active: boolean }> = ({ active }) => {
-  const [lines, setLines] = useState<{ d: string, label: string, x: number, y: number }[]>([]);
+  const [lines, setLines] = useState<ConnectionLine[]>([]);
 
   useEffect(() => {
     if (!active) {
@@ -49,7 +58,7 @@ export const HormoneConnections: React.FC<{ active: boolean }> = ({ active }) =>
           };
         }
         return null;
-      }).filter(Boolean) as any[];
+      }).filter(isConnectionLine);
 
       setLines(newLines);
     };

@@ -4,10 +4,49 @@ import { Mic, Square, Play, Save, X, Volume2, Sparkles, MessageSquare, VolumeX, 
 import { dataService } from '../services/dataService';
 import { generatePsychologistResponse } from '../services/geminiService';
 
+type SpeechRecognitionAlternativeLike = {
+  transcript: string;
+};
+
+type SpeechRecognitionResultLike = {
+  isFinal: boolean;
+  0: SpeechRecognitionAlternativeLike;
+};
+
+type SpeechRecognitionResultListLike = {
+  length: number;
+  [index: number]: SpeechRecognitionResultLike;
+};
+
+type SpeechRecognitionEventLike = {
+  resultIndex: number;
+  results: SpeechRecognitionResultListLike;
+};
+
+type SpeechRecognitionErrorEventLike = {
+  error: string;
+};
+
+type SpeechRecognitionLike = {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onstart: (() => void) | null;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+};
+
+type SpeechRecognitionConstructorLike = new () => SpeechRecognitionLike;
+
 declare global {
   interface Window {
-    SpeechRecognition: any;
-    webkitSpeechRecognition: any;
+    SpeechRecognition?: SpeechRecognitionConstructorLike;
+    webkitSpeechRecognition?: SpeechRecognitionConstructorLike;
+    webkitAudioContext?: typeof AudioContext;
   }
 }
 
@@ -23,7 +62,7 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: string }> = 
   const [error, setError] = useState<string | null>(null);
   const [statusMsg, setStatusMsg] = useState<string>("");
 
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const recognitionActive = useRef(false);
   const transcriptionRef = useRef("");
   const interimRef = useRef("");
@@ -35,13 +74,13 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: string }> = 
 
   // Initialize Speech Recognition once
   useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
+    const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) {
       setError(lang === 'ru' ? "Ваш браузер не поддерживает распознавание речи. Попробуйте Chrome или Safari." : "Your browser does not support voice recognition. Please try Chrome or Safari.");
       return;
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition = new SpeechRecognitionCtor();
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = lang === 'ru' ? 'ru-RU' : 'en-US';
@@ -51,7 +90,7 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: string }> = 
       setStatusMsg(lang === 'ru' ? "Слушаю..." : "Listening...");
     };
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionEventLike) => {
       let interim = '';
       let final = '';
 
@@ -73,7 +112,7 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: string }> = 
       setInterimTranscription(interim);
     };
 
-    recognition.onerror = (event: any) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEventLike) => {
       console.error("Speech recognition error", event.error);
       if (event.error === 'not-allowed') {
         setError(lang === 'ru' ? "Доступ к микрофону запрещен. Проверьте настройки браузера." : "Microphone access denied. Check browser settings.");
@@ -97,7 +136,7 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: string }> = 
         recognitionRef.current.onend = null;
         recognitionRef.current.onerror = null;
         recognitionRef.current.onresult = null;
-        try { recognitionRef.current.abort(); } catch (e) {}
+        try { recognitionRef.current.abort(); } catch (_e) {}
       }
     };
   }, [lang]);
@@ -146,7 +185,11 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: string }> = 
       streamRef.current = stream;
       
       if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextCtor) {
+          throw new Error('AudioContext is not supported');
+        }
+        audioContextRef.current = new AudioContextCtor();
       } else if (audioContextRef.current.state === 'suspended') {
         await audioContextRef.current.resume();
       }
@@ -158,23 +201,24 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: string }> = 
       analyserRef.current = analyser;
 
       if (recognitionRef.current) {
+        const recognition = recognitionRef.current;
         try {
           if (recognitionActive.current) {
-            try { recognitionRef.current.abort(); } catch(e) {}
+            try { recognition.abort(); } catch (_e) {}
           }
-          recognitionRef.current.start();
+          recognition.start();
           recognitionActive.current = true;
           console.log("Recognition started successfully");
         } catch (e) {
           console.warn("Recognition start error:", e);
           // Fallback: try to just start
           try { 
-            recognitionRef.current.abort();
+            recognition.abort();
             setTimeout(() => {
-              recognitionRef.current.start(); 
+              recognition.start(); 
               recognitionActive.current = true;
             }, 100);
-          } catch (e2) {}
+          } catch (_e2) {}
         }
       }
       setIsRecording(true);

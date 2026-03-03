@@ -1,0 +1,118 @@
+import React from 'react';
+import ThemeToggle from './ThemeToggle';
+import LanguageSelector from './LanguageSelector';
+import { Logo } from './Logo';
+import { Language } from '../constants';
+import { TabType } from '../utils/navigation';
+
+type NavItem = {
+  id: TabType;
+  label: string;
+  icon: string;
+};
+
+type NavGroup = {
+  title: string;
+  items: NavItem[];
+};
+
+interface AppShellNavProps {
+  activeTab: TabType;
+  showSidebar: boolean;
+  setShowSidebar: (next: boolean) => void;
+  navigateTo: (tab: TabType) => void;
+  sidebarGroups: NavGroup[];
+  lang: Language;
+  setLang: (lang: Language) => void;
+  theme: 'light' | 'dark';
+  setTheme: (theme: 'light' | 'dark') => void;
+}
+
+export const AppShellNav: React.FC<AppShellNavProps> = ({
+  activeTab,
+  showSidebar,
+  setShowSidebar,
+  navigateTo,
+  sidebarGroups,
+  lang,
+  setLang,
+  theme,
+  setTheme,
+}) => {
+  return (
+    <>
+      <nav className={`fixed inset-0 z-[1000] bg-slate-950/40 backdrop-blur-md transition-opacity duration-500 ${showSidebar ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setShowSidebar(false)}>
+        <div className={`absolute left-0 top-0 h-full w-[340px] bg-white dark:bg-slate-900 shadow-luna-deep transition-transform duration-500 ease-out p-8 flex flex-col overflow-y-auto no-scrollbar ${showSidebar ? 'translate-x-0' : '-translate-x-full'}`} onClick={e => e.stopPropagation()}>
+          <header className="flex justify-between items-center mb-12">
+            <Logo size="sm" />
+            <button onClick={() => setShowSidebar(false)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-2xl font-light">×</button>
+          </header>
+
+          <div className="flex flex-col gap-10">
+            {sidebarGroups.map((group, idx) => (
+              <div key={idx} className="space-y-4">
+                <h4 className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-400 dark:text-slate-600 px-4">{group.title}</h4>
+                <div className="flex flex-col gap-1">
+                  {group.items.map((item) => (
+                    <button
+                      key={item.id}
+                      data-testid={`sidebar-nav-${item.id}`}
+                      onClick={() => navigateTo(item.id)}
+                      className={`flex items-center gap-5 p-4 rounded-2xl transition-all group ${activeTab === item.id ? 'bg-luna-purple/10 text-luna-purple font-bold shadow-sm' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'}`}
+                    >
+                      <span className={`text-xl transition-transform group-hover:scale-110 ${activeTab === item.id ? 'opacity-100' : 'opacity-40'}`}>{item.icon}</span>
+                      <span className="text-[11px] font-black uppercase tracking-[0.2em]">{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </nav>
+
+      <header className="sticky top-0 z-[100] w-full glass border-b border-slate-300 dark:border-white/10 shadow-sm transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-8">
+          <div className="flex items-center gap-6 md:gap-8 shrink-0">
+            <button
+              data-testid="nav-logo-dashboard"
+              onClick={() => navigateTo('dashboard')}
+              className="flex items-center hover:scale-105 active:scale-95 transition-transform"
+            >
+              <Logo size="sm" />
+            </button>
+          </div>
+
+          <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar py-2 flex-grow justify-center lg:justify-start px-2">
+            {sidebarGroups[0].items.map((item) => (
+              <button
+                key={item.id}
+                data-testid={`top-nav-${item.id}`}
+                onClick={() => navigateTo(item.id)}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === item.id ? 'bg-luna-purple/10 text-luna-purple shadow-sm' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+              >
+                <span className="text-sm">{item.icon}</span>
+                <span className="hidden sm:inline">{item.label}</span>
+              </button>
+            ))}
+            <button
+              data-testid="top-nav-more"
+              onClick={() => setShowSidebar(true)}
+              className="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all whitespace-nowrap flex items-center gap-2"
+            >
+              <span className="text-sm">➕</span>
+              <span className="hidden sm:inline">More</span>
+            </button>
+          </nav>
+
+          <div className="flex items-center gap-4 shrink-0">
+            <div className="hidden sm:block">
+              <LanguageSelector current={lang} onSelect={setLang} />
+            </div>
+            <ThemeToggle theme={theme} toggle={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
+          </div>
+        </div>
+      </header>
+    </>
+  );
+};

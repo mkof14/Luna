@@ -1,11 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { dataService } from '../services/dataService';
 import { ProfileData } from '../types';
+import { normalizeProfileData } from '../utils/profile';
 
-interface ProfileViewProps { ui: any; onBack: () => void; }
+interface ProfileViewProps { onBack: () => void; }
 
-export const ProfileView: React.FC<ProfileViewProps> = ({ ui, onBack }) => {
+export const ProfileView: React.FC<ProfileViewProps> = ({ onBack }) => {
   const [log, setLog] = useState(() => dataService.getLog());
   const systemState = dataService.projectState(log);
   const [profile, setProfile] = useState<ProfileData>(systemState.profile);
@@ -17,7 +18,8 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ ui, onBack }) => {
   };
 
   const handleSave = () => {
-    const updatedProfile = { ...profile, lastUpdated: new Date().toISOString() };
+    const normalizedProfile = normalizeProfileData(profile);
+    const updatedProfile = { ...normalizedProfile, lastUpdated: new Date().toISOString() };
     setProfile(updatedProfile);
     dataService.logEvent('PROFILE_UPDATE', updatedProfile);
     setLog(dataService.getLog());
@@ -55,6 +57,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ ui, onBack }) => {
             <span className="text-[11px] font-bold text-slate-900 dark:text-slate-100">{new Date(profile.lastUpdated).toLocaleDateString()}</span>
           </div>}
           <button 
+            data-testid="profile-save"
             onClick={handleSave} 
             className={`px-12 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.2em] transition-all shadow-xl ${isSaved ? 'bg-emerald-500 text-white shadow-emerald-500/20' : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:scale-[1.02] active:scale-95'}`}
           >
@@ -89,7 +92,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ ui, onBack }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10">
             <div className="space-y-2 lg:col-span-1">
               <label className={labelClasses}>Identity Name</label>
-              <input type="text" value={profile.name} onChange={e => updateProfile({ name: e.target.value })} placeholder="Preferred name" className={inputClasses} />
+              <input data-testid="profile-name-input" type="text" value={profile.name} onChange={e => updateProfile({ name: e.target.value })} placeholder="Preferred name" className={inputClasses} />
             </div>
             <div className="space-y-2">
               <label className={labelClasses}>Temporal Origin (Birth Date)</label>

@@ -1,9 +1,10 @@
 
 import React from 'react';
 import { Logo } from './Logo';
+import { PricingCopy } from '../types/uiCopy';
 
 interface PricingViewProps {
-  ui: any;
+  ui: PricingCopy;
   onSelect: (tier: 'monthly' | 'yearly') => void;
 }
 

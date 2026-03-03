@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
+import { ContactCopy } from '../types/uiCopy';
+import { hasMeaningfulText, normalizeUserText } from '../utils/text';
 
 interface ContactViewProps {
-  ui: any;
+  ui: ContactCopy;
   onBack?: () => void;
 }
 
@@ -16,7 +18,15 @@ export const ContactView: React.FC<ContactViewProps> = ({ ui, onBack }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !message || !email) return;
+    const normalizedName = normalizeUserText(name);
+    const normalizedEmail = normalizeUserText(email);
+    const normalizedMessage = normalizeUserText(message);
+
+    if (!hasMeaningfulText(normalizedName) || !hasMeaningfulText(normalizedMessage) || !hasMeaningfulText(normalizedEmail)) return;
+
+    setName(normalizedName);
+    setEmail(normalizedEmail);
+    setMessage(normalizedMessage);
     setIsLoading(true);
     // Simulate API call
     setTimeout(() => {

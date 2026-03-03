@@ -127,8 +127,8 @@ export interface PhaseIndicatorProps {
  */
 export interface QuickCheckInFormProps {
   isOpen: boolean;
-  initialValues?: any;
-  onSubmit: (data: any) => void;
+  initialValues?: Record<string, unknown>;
+  onSubmit: (data: Record<string, unknown>) => void;
   onCancel: () => void;
   isLoading?: boolean;
   /** A11y: role="dialog", aria-modal="true", trap focus, Escape to close */

@@ -5,13 +5,16 @@ import { dataService } from '../services/dataService';
 import { HealthEvent } from '../types';
 import { Logo } from './Logo';
 import { StateScale } from './StateScale';
+import { isSupportedLabFile } from '../utils/runtimeGuards';
+import { copyTextSafely } from '../utils/share';
 
 export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void }> = ({ day, age, onBack }) => {
   const [input, setInput] = useState("");
-  const [analysis, setAnalysis] = useState<{ text: string, sources: any[] } | null>(null);
+  const [analysis, setAnalysis] = useState<{ text: string; sources: unknown[] } | null>(null);
   const [loading, setLoading] = useState(false);
   const [log, setLog] = useState<HealthEvent[]>(() => dataService.getLog());
-  const [copyFeedback, setCopyFeedback] = useState(false);
+  const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
+  const [uploadFeedback, setUploadFeedback] = useState<string | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const systemState = useMemo(() => dataService.projectState(log), [log]);
@@ -39,11 +42,32 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
     }
   };
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     if (!analysis) return;
-    navigator.clipboard.writeText(analysis.text);
-    setCopyFeedback(true);
-    setTimeout(() => setCopyFeedback(false), 2000);
+    const copied = await copyTextSafely(analysis.text);
+    setCopyFeedback(copied ? 'Copied' : 'Copy failed');
+    setTimeout(() => setCopyFeedback(null), 2000);
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!isSupportedLabFile(file)) {
+      setUploadFeedback('Only text files are supported in local mode. Paste image/PDF content manually.');
+      event.target.value = '';
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      setInput((prev) => (prev ? `${prev}\n${text}` : text));
+      setUploadFeedback(`Loaded: ${file.name}`);
+    } catch {
+      setUploadFeedback('Could not read the selected file.');
+    } finally {
+      event.target.value = '';
+    }
   };
 
   return (
@@ -80,14 +104,14 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
 
             <div className="pt-8 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
                <div className="flex gap-4">
-                 <button 
+                 <button
                   onClick={() => fileInputRef.current?.click()}
                   className="w-14 h-14 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-950 hover:bg-luna-purple hover:text-white transition-all text-xl shadow-inner border border-slate-300 dark:border-slate-800"
-                  title="Scan Report"
+                  title="Upload Text Report"
                  >
-                   📸
+                   📄
                  </button>
-                 <input type="file" ref={fileInputRef} className="hidden" accept="image/*" />
+                 <input type="file" ref={fileInputRef} className="hidden" accept=".txt,.csv,.md,text/plain" onChange={handleFileUpload} />
                </div>
                
                <button 
@@ -98,6 +122,11 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
                  {loading ? "Reading..." : "See Results"}
                </button>
             </div>
+            {uploadFeedback && (
+              <p className="pt-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                {uploadFeedback}
+              </p>
+            )}
           </div>
 
           <div className="p-10 bg-slate-200/50 dark:bg-slate-900/40 rounded-[3rem] border-2 border-slate-300 dark:border-slate-800 space-y-6">
@@ -121,7 +150,7 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
                      <p className="text-3xl font-bold leading-tight italic">"{analysis.text}"</p>
                      <div className="pt-6 flex gap-6">
                         <button onClick={handleCopy} className="text-[10px] font-black uppercase tracking-widest border-b-2 border-current pb-1 hover:opacity-70 transition-all">
-                          {copyFeedback ? "Copied" : "Copy for doctor"}
+                          {copyFeedback || "Copy for doctor"}
                         </button>
                      </div>
                   </div>

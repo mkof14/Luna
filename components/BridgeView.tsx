@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { generateBridgeLetter } from '../services/geminiService';
 import { BridgeReflectionInput, BridgeLetterOutput } from '../types';
+import { incrementBridgeUsage, parseBridgeUsage } from '../utils/runtimeGuards';
+import { normalizeBridgeReflectionInput } from '../utils/bridge';
+import { shareTextSafely } from '../utils/share';
 
 type BridgeStep = 'entry' | 'reflection' | 'result';
 
@@ -13,6 +16,7 @@ export const BridgeView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [letter, setLetter] = useState<BridgeLetterOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [shareFeedback, setShareFeedback] = useState<string | null>(null);
   const [usageCount, setUsageCount] = useState(0);
 
   const questions = [
@@ -22,25 +26,14 @@ export const BridgeView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   ];
 
   useEffect(() => {
-    const saved = localStorage.getItem('luna_bridge_usage');
-    if (saved) {
-      const { count, weekStart } = JSON.parse(saved);
-      const now = new Date();
-      const start = new Date(weekStart);
-      const diffDays = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-      
-      if (diffDays >= 7) {
-        setUsageCount(0);
-        localStorage.setItem('luna_bridge_usage', JSON.stringify({ count: 0, weekStart: now.toISOString() }));
-      } else {
-        setUsageCount(count);
-      }
-    } else {
-      localStorage.setItem('luna_bridge_usage', JSON.stringify({ count: 0, weekStart: new Date().toISOString() }));
-    }
+    const now = new Date();
+    const usage = parseBridgeUsage(localStorage.getItem('luna_bridge_usage'), now);
+    setUsageCount(usage.count);
+    localStorage.setItem('luna_bridge_usage', JSON.stringify(usage));
   }, []);
 
   const handleContinue = () => {
+    setError(null);
     if (usageCount >= 2) {
       setError("The Bridge is a rare space. You have reached your weekly limit of 2 reflections.");
       return;
@@ -58,46 +51,45 @@ export const BridgeView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   };
 
   const handleGenerate = async () => {
+    if (isGenerating) return;
     setIsGenerating(true);
+    setError(null);
     setStep('result');
     
-    const input: BridgeReflectionInput = {
+    const input: BridgeReflectionInput = normalizeBridgeReflectionInput({
       language: 'en',
       reflection: {
         quiet_presence: answers[0],
         not_meaning: answers[1],
         kindness_needed: answers[2]
       }
-    };
+    });
 
-    const result = await generateBridgeLetter(input);
-    
-    if ('error' in result) {
-      setError(result.error.message);
-    } else {
-      setLetter(result);
-      const newCount = usageCount + 1;
-      setUsageCount(newCount);
-      const saved = JSON.parse(localStorage.getItem('luna_bridge_usage') || '{}');
-      localStorage.setItem('luna_bridge_usage', JSON.stringify({ ...saved, count: newCount }));
+    try {
+      const result = await generateBridgeLetter(input);
+      
+      if ('error' in result) {
+        setError(result.error.message);
+      } else {
+        setLetter(result);
+        const next = incrementBridgeUsage(localStorage.getItem('luna_bridge_usage'), new Date());
+        setUsageCount(next.count);
+        localStorage.setItem('luna_bridge_usage', JSON.stringify(next));
+      }
+    } catch (_e) {
+      setError('Could not form reflection right now. Please retry.');
     }
     setIsGenerating(false);
   };
 
   const handleShare = async () => {
-    if (letter && navigator.share) {
-      try {
-        await navigator.share({
-          title: 'A Reflection from Luna',
-          text: letter.bridge_letter.content,
-        });
-      } catch (err) {
-        console.log("Share cancelled");
-      }
-    } else if (letter) {
-      navigator.clipboard.writeText(letter.bridge_letter.content);
-      alert("Copied to clipboard.");
-    }
+    if (!letter) return;
+    setShareFeedback(null);
+
+    const result = await shareTextSafely(letter.bridge_letter.content, 'A Reflection from Luna');
+    if (result === 'shared') setShareFeedback('Shared.');
+    else if (result === 'copied') setShareFeedback('Copied to clipboard.');
+    else setShareFeedback('Could not share. Try copy manually.');
   };
 
   return (
@@ -207,6 +199,9 @@ export const BridgeView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                       Share
                     </button>
                   </div>
+                  {shareFeedback && (
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{shareFeedback}</p>
+                  )}
                 </div>
               </div>
             ) : null}

@@ -13,6 +13,7 @@ interface FuelCompassProps {
 export const FuelCompass: React.FC<FuelCompassProps> = ({ phase, lang }) => {
   const data = FUEL_DATA[phase];
   const ui = TRANSLATIONS[lang];
+  type FuelCategoryKey = keyof typeof ui.fuel.categories;
   
   const [log, setLog] = useState(() => dataService.getLog());
   const state = dataService.projectState(log);
@@ -52,6 +53,12 @@ export const FuelCompass: React.FC<FuelCompassProps> = ({ phase, lang }) => {
   const totalPossible = allItems.length;
   const totalConsumed = allItems.filter(item => nutrientsConsumed.includes(item)).length;
   const progress = Math.min(100, (totalConsumed / totalPossible) * 100);
+  const getFuelCategoryLabel = (key: string) => {
+    if (key in ui.fuel.categories) {
+      return ui.fuel.categories[key as FuelCategoryKey];
+    }
+    return key;
+  };
 
   return (
     <div className="bg-white dark:bg-slate-900 p-8 md:p-12 rounded-[4rem] shadow-luna-rich border-2 border-slate-200 dark:border-slate-800 space-y-12 animate-in fade-in duration-700 relative overflow-hidden group">
@@ -118,7 +125,7 @@ export const FuelCompass: React.FC<FuelCompassProps> = ({ phase, lang }) => {
                {Object.entries(data.protocol).map(([key, items]) => (
                  <div key={key} className="space-y-4">
                     <h5 className="text-[9px] font-black uppercase text-slate-400 tracking-[0.3em]">
-                      { (ui.fuel.categories as any)[key] || key }
+                      {getFuelCategoryLabel(key)}
                     </h5>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {(items as string[]).map((item, idx) => {

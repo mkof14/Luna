@@ -1,31 +1,63 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { dataService } from '../services/dataService';
 import { Medication } from '../types';
+import { getMedicationValidationError, normalizeMedicationInput } from '../utils/medications';
 
 export const MedicationsView: React.FC<{ medications: Medication[]; onBack?: () => void }> = ({ medications, onBack }) => {
   const [showAdd, setShowAdd] = useState(false);
   const [newName, setNewName] = useState("");
   const [newDose, setNewDose] = useState("");
+  const [localMedications, setLocalMedications] = useState<Medication[]>(medications);
+  const [status, setStatus] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  useEffect(() => {
+    setLocalMedications(medications);
+  }, [medications]);
+
+  useEffect(() => {
+    if (!status) return;
+    const timer = window.setTimeout(() => setStatus(null), 2400);
+    return () => window.clearTimeout(timer);
+  }, [status]);
 
   const handleAdd = () => {
-    if (!newName) return;
-    dataService.logEvent('MEDICATION_LOG', { 
+    const { name, dose } = normalizeMedicationInput(newName, newDose);
+    const validationError = getMedicationValidationError(localMedications, name, dose);
+    if (validationError) {
+      setStatus({ type: 'error', text: validationError });
+      return;
+    }
+
+    const medId = Math.random().toString(36).slice(2, 11);
+    const event = dataService.logEvent('MEDICATION_LOG', {
       action: 'ADD', 
-      medId: Math.random().toString(36).substr(2, 9),
-      name: newName, 
-      dose: newDose 
+      medId,
+      name,
+      dose
     });
+    setLocalMedications((prev) => [
+      ...prev,
+      {
+        id: medId,
+        name,
+        dose: dose || undefined,
+        startDate: event.timestamp,
+        observations: [],
+        notes: '',
+        addedAt: event.timestamp,
+      },
+    ]);
     setNewName("");
     setNewDose("");
     setShowAdd(false);
-    // Force a local update or use a parent refresh mechanism
-    window.location.reload(); 
+    setStatus({ type: 'success', text: 'Support profile added.' });
   };
 
   const handleRemove = (id: string) => {
     dataService.logEvent('MEDICATION_LOG', { action: 'REMOVE', medId: id });
-    window.location.reload();
+    setLocalMedications((prev) => prev.filter((med) => med.id !== id));
+    setStatus({ type: 'success', text: 'Support profile removed.' });
   };
 
   return (
@@ -40,6 +72,7 @@ export const MedicationsView: React.FC<{ medications: Medication[]; onBack?: () 
           </p>
         </div>
         <button 
+          data-testid="medications-toggle-add"
           onClick={() => setShowAdd(!showAdd)}
           className={`px-12 py-5 rounded-full font-black uppercase tracking-widest shadow-2xl transition-all ${showAdd ? 'bg-rose-500 text-white' : 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:scale-105'}`}
         >
@@ -47,12 +80,26 @@ export const MedicationsView: React.FC<{ medications: Medication[]; onBack?: () 
         </button>
       </header>
 
+      {status && (
+        <div
+          data-testid="medications-status"
+          className={`px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border ${
+            status.type === 'success'
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-700/40'
+              : 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:border-rose-700/40'
+          }`}
+        >
+          {status.text}
+        </div>
+      )}
+
       {showAdd && (
-        <section className="bg-white dark:bg-slate-900 p-16 rounded-[4.5rem] shadow-luna border dark:border-slate-800 animate-in zoom-in-95 duration-500 space-y-12">
+        <section data-testid="medications-form" className="bg-white dark:bg-slate-900 p-16 rounded-[4.5rem] shadow-luna border dark:border-slate-800 animate-in zoom-in-95 duration-500 space-y-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
              <div className="space-y-2">
                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Name</label>
                <input 
+                 data-testid="medications-name-input"
                  value={newName} 
                  onChange={e => setNewName(e.target.value)}
                  className="w-full bg-slate-50 dark:bg-slate-950 p-6 rounded-[2.5rem] outline-none font-bold text-xl border-2 border-transparent focus:border-luna-teal transition-all"
@@ -62,6 +109,7 @@ export const MedicationsView: React.FC<{ medications: Medication[]; onBack?: () 
              <div className="space-y-2">
                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Amount</label>
                <input 
+                 data-testid="medications-dose-input"
                  value={newDose} 
                  onChange={e => setNewDose(e.target.value)}
                  className="w-full bg-slate-50 dark:bg-slate-950 p-6 rounded-[2.5rem] outline-none font-bold text-xl border-2 border-transparent focus:border-luna-teal transition-all"
@@ -69,26 +117,31 @@ export const MedicationsView: React.FC<{ medications: Medication[]; onBack?: () 
                />
              </div>
           </div>
-          <button onClick={handleAdd} className="w-full py-8 bg-luna-teal text-white font-black uppercase tracking-[0.4em] rounded-full shadow-xl hover:scale-[1.01] transition-all">
+          <button
+            data-testid="medications-save"
+            onClick={handleAdd}
+            disabled={!newName.trim()}
+            className="w-full py-8 bg-luna-teal text-white font-black uppercase tracking-[0.4em] rounded-full shadow-xl hover:scale-[1.01] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+          >
             Save
           </button>
         </section>
       )}
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {medications.length === 0 ? (
+        {localMedications.length === 0 ? (
           <div className="col-span-full p-32 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[4rem]">
             <p className="text-[10px] font-black uppercase text-slate-300 tracking-[0.5em]">Nothing added yet.</p>
           </div>
         ) : (
-          medications.map(med => (
-            <div key={med.id} className="relative bg-white dark:bg-slate-900 p-12 rounded-[4rem] shadow-luna border dark:border-slate-800 group overflow-hidden transition-all hover:-translate-y-2">
+          localMedications.map(med => (
+            <div data-testid={`medications-card-${med.id}`} key={med.id} className="relative bg-white dark:bg-slate-900 p-12 rounded-[4rem] shadow-luna border dark:border-slate-800 group overflow-hidden transition-all hover:-translate-y-2">
               <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-luna-teal/5 blur-3xl rounded-full" />
               
               <div className="relative z-10 space-y-6">
                 <div className="flex justify-between items-start">
                   <span className="text-4xl">💊</span>
-                  <button onClick={() => handleRemove(med.id)} className="text-[8px] font-black uppercase text-rose-400 opacity-0 group-hover:opacity-100 transition-all border border-rose-100 rounded-full px-4 py-1.5">Remove</button>
+                  <button data-testid={`medications-remove-${med.id}`} onClick={() => handleRemove(med.id)} className="text-[8px] font-black uppercase text-rose-400 opacity-0 group-hover:opacity-100 transition-all border border-rose-100 rounded-full px-4 py-1.5">Remove</button>
                 </div>
                 <h4 className="text-3xl font-black uppercase tracking-tighter leading-tight">{med.name}</h4>
                 <div className="space-y-1">

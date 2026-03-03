@@ -5,6 +5,23 @@ import { HealthEvent } from '../types';
 export const HistoryView: React.FC<{ log: HealthEvent[]; onBack?: () => void }> = ({ log, onBack }) => {
   const sortedLog = [...log].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
+  const getEventSummary = (event: HealthEvent) => {
+    if (event.type === 'DAILY_CHECKIN') return 'Daily check-in saved.';
+    if (event.type === 'CYCLE_SYNC') {
+      const day = 'day' in event.payload && typeof event.payload.day === 'number' ? event.payload.day : '?';
+      return `Cycle updated to Day ${day}.`;
+    }
+    if (event.type === 'LAB_MARKER_ENTRY') return 'Health data updated.';
+    if (event.type === 'MEDICATION_LOG') {
+      const name = 'name' in event.payload && typeof event.payload.name === 'string' ? event.payload.name : 'medication';
+      return `Support updated: ${name}.`;
+    }
+    if (event.type === 'AUTH_SUCCESS') return 'Logged in.';
+    if (event.type === 'ONBOARDING_COMPLETE') return 'Started.';
+    if (event.type === 'PROFILE_UPDATE') return 'Profile updated.';
+    return 'System event.';
+  };
+
   return (
     <div className="max-w-6xl mx-auto space-y-24 animate-in fade-in slide-in-from-bottom-12 duration-1000 pb-40">
       <header className="flex flex-col items-center lg:items-start gap-10">
@@ -16,7 +33,7 @@ export const HistoryView: React.FC<{ log: HealthEvent[]; onBack?: () => void }> 
         </p>
       </header>
 
-      <section className="relative space-y-32">
+      <section data-testid="history-timeline" className="relative space-y-32">
         <div className="absolute left-10 lg:left-20 top-0 bottom-0 w-px bg-slate-300 dark:bg-slate-800" />
         
         {sortedLog.length === 0 ? (
@@ -25,7 +42,7 @@ export const HistoryView: React.FC<{ log: HealthEvent[]; onBack?: () => void }> 
           </div>
         ) : (
           sortedLog.map((event, i) => (
-            <div key={event.id} className="relative pl-24 lg:pl-48 group animate-in fade-in slide-in-from-left-4" style={{ animationDelay: `${i * 100}ms` }}>
+            <div data-testid={`history-event-${event.type.toLowerCase()}`} key={event.id} className="relative pl-24 lg:pl-48 group animate-in fade-in slide-in-from-left-4" style={{ animationDelay: `${i * 100}ms` }}>
               <div className="absolute left-[34px] lg:left-[74px] top-4 w-3 h-3 rounded-full bg-luna-purple ring-8 ring-slate-100 dark:ring-slate-950 z-10 transition-transform group-hover:scale-150" />
               
               <div className="flex flex-col lg:flex-row gap-8 lg:items-center">
@@ -47,14 +64,8 @@ export const HistoryView: React.FC<{ log: HealthEvent[]; onBack?: () => void }> 
                       V.{event.version}
                     </span>
                   </div>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 leading-tight italic">
-                    {event.type === 'DAILY_CHECKIN' && "Daily check-in saved."}
-                    {event.type === 'CYCLE_SYNC' && `Cycle updated to Day ${event.payload.day}.`}
-                    {event.type === 'LAB_MARKER_ENTRY' && "Health data updated."}
-                    {event.type === 'MEDICATION_LOG' && `Support updated: ${event.payload.name}.`}
-                    {event.type === 'AUTH_SUCCESS' && "Logged in."}
-                    {event.type === 'ONBOARDING_COMPLETE' && "Started."}
-                    {event.type === 'PROFILE_UPDATE' && "Profile updated."}
+                  <p data-testid="history-event-summary" className="text-2xl font-bold text-slate-900 dark:text-slate-100 leading-tight italic">
+                    {getEventSummary(event)}
                   </p>
                 </div>
               </div>

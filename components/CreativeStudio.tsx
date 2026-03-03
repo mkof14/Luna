@@ -2,46 +2,83 @@
 import React, { useState, useEffect } from 'react';
 import { generateStateVisual, startVeoVideo } from '../services/geminiService';
 
+interface AiStudioApi {
+  hasSelectedApiKey?: () => Promise<boolean>;
+  openSelectKey?: () => Promise<void>;
+}
+
+declare global {
+  interface Window {
+    aistudio?: AiStudioApi;
+  }
+}
+
 export const CreativeStudio: React.FC = () => {
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState<{ type: 'img' | 'vid', url: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Synthesizing state art...");
   const [hasApiKey, setHasApiKey] = useState(false);
+  const [serviceFeedback, setServiceFeedback] = useState<string | null>(null);
 
   useEffect(() => {
     const checkKey = async () => {
-      const aistudio = (window as any).aistudio;
+      const aistudio = window.aistudio;
       if (aistudio && aistudio.hasSelectedApiKey) {
-        const selected = await aistudio.hasSelectedApiKey();
-        setHasApiKey(selected);
+        try {
+          const selected = await aistudio.hasSelectedApiKey();
+          setHasApiKey(selected);
+        } catch {
+          setHasApiKey(false);
+        }
       }
     };
     checkKey();
   }, []);
 
   const handleSelectKey = async () => {
-    const aistudio = (window as any).aistudio;
+    const aistudio = window.aistudio;
     if (aistudio && aistudio.openSelectKey) {
-      await aistudio.openSelectKey();
-      setHasApiKey(true);
+      try {
+        await aistudio.openSelectKey();
+        setHasApiKey(true);
+        return true;
+      } catch {
+        setServiceFeedback('Could not open API key selector.');
+        return false;
+      }
     }
+    setServiceFeedback('API key integration is unavailable in local mode.');
+    return false;
   };
 
   const handleGenerateImage = async () => {
-    if (!hasApiKey) {
-      await handleSelectKey();
+    setServiceFeedback(null);
+    if (!prompt.trim()) {
+      setServiceFeedback('Please describe your current state first.');
+      return;
+    }
+    if (!hasApiKey && window.aistudio) {
+      const selected = await handleSelectKey();
+      if (!selected) return;
     }
     setLoading(true);
     setLoadingMessage("Mapping physiological markers to visual space...");
     const url = await generateStateVisual(prompt, "1:1", "1K");
     if (url) setResult({ type: 'img', url });
+    else setServiceFeedback("Image generation is unavailable in local mode.");
     setLoading(false);
   };
 
   const handleGenerateVideo = async () => {
-    if (!hasApiKey) {
-      await handleSelectKey();
+    setServiceFeedback(null);
+    if (!prompt.trim()) {
+      setServiceFeedback('Please describe your current state first.');
+      return;
+    }
+    if (!hasApiKey && window.aistudio) {
+      const selected = await handleSelectKey();
+      if (!selected) return;
     }
     
     const messages = [
@@ -63,8 +100,10 @@ export const CreativeStudio: React.FC = () => {
     try {
       const url = await startVeoVideo(prompt);
       if (url) setResult({ type: 'vid', url });
+      else setServiceFeedback("Video generation is unavailable in local mode.");
     } catch (err) {
       console.error(err);
+      setServiceFeedback("Video generation failed in local mode.");
     } finally {
       clearInterval(interval);
       setLoading(false);
@@ -126,6 +165,9 @@ export const CreativeStudio: React.FC = () => {
               Animate (Veo)
             </button>
           </div>
+          {serviceFeedback && (
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{serviceFeedback}</p>
+          )}
 
           <div className="min-h-[400px] border-2 border-dashed border-slate-200 dark:border-slate-800 flex items-center justify-center bg-slate-50/50 dark:bg-slate-900/50 relative overflow-hidden">
             {loading ? (

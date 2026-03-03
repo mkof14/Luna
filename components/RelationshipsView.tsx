@@ -1,17 +1,18 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   CyclePhase, 
   PartnerNoteIntent, 
   PartnerNoteTone, 
   PartnerNoteBoundary, 
   PartnerNoteInput, 
-  PartnerNoteOutput,
-  PartnerNoteMessage
+  PartnerNoteOutput
 } from '../types';
 import { INITIAL_HORMONES, TRANSLATIONS, Language } from '../constants';
 import { generatePartnerNote } from '../services/geminiService';
 import { dataService } from '../services/dataService';
+import { normalizePartnerNoteInput } from '../utils/bridge';
+import { copyTextSafely, shareTextSafely } from '../utils/share';
 
 type Step = 'intro' | 'intent' | 'tone' | 'boundary' | 'result';
 
@@ -59,6 +60,7 @@ export const RelationshipsView: React.FC<{ phase: CyclePhase; onBack: () => void
   };
 
   const handleGenerate = async (refinement?: string) => {
+    if (isGenerating) return;
     setIsGenerating(true);
     setError(null);
     setStep('result');
@@ -70,58 +72,61 @@ export const RelationshipsView: React.FC<{ phase: CyclePhase; onBack: () => void
     // Map metrics to low/medium/high
     const mapMetric = (val: number) => val <= 2 ? 'low' : val >= 4 ? 'high' : 'medium';
 
-    const fullInput: PartnerNoteInput = {
+    const fullInput: PartnerNoteInput = normalizePartnerNoteInput({
       state_energy: mapMetric(metrics.energy || 3),
       state_sensitivity: mapMetric(metrics.mood || 3), // Using mood as sensitivity proxy
       state_social_bandwidth: mapMetric(metrics.libido || 3), // Using libido as social proxy
       state_cognitive_load: mapMetric(metrics.stress || 3), // Using stress as cognitive proxy
-      relationship_context: input.relationship_context as any,
-      intent: input.intent as PartnerNoteIntent,
-      tone: input.tone as PartnerNoteTone,
-      boundary_level: input.boundary_level as PartnerNoteBoundary,
+      relationship_context: input.relationship_context ?? 'stable',
+      intent: input.intent ?? PartnerNoteIntent.UNDERSTANDING,
+      tone: input.tone ?? PartnerNoteTone.CALM,
+      boundary_level: input.boundary_level ?? PartnerNoteBoundary.SOFT,
       partner_name: input.partner_name,
       language: lang,
       ...(refinement ? { preferred_terms: `Please apply this refinement: ${refinement}` } : {})
-    };
+    });
 
-    if (input.partner_name) {
-      localStorage.setItem('luna_partner_name', input.partner_name);
+    if (fullInput.partner_name) {
+      localStorage.setItem('luna_partner_name', fullInput.partner_name);
     }
 
-    const result = await generatePartnerNote(fullInput);
-    
-    if ('error' in result) {
-      setError(result.error.message);
-    } else {
-      setNoteOutput(result);
-      setSelectedVariationIndex(0);
+    try {
+      const result = await generatePartnerNote(fullInput);
+      
+      if ('error' in result) {
+        setError(result.error.message);
+      } else {
+        setNoteOutput(result);
+        setSelectedVariationIndex(0);
+      }
+    } catch (_e) {
+      setError('Could not generate a note right now. Please retry.');
     }
     setIsGenerating(false);
   };
 
   const handleShare = async (content: string, id: string) => {
-    // Always copy to clipboard first as requested
-    handleCopy(content, id);
-    
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Luna Partner Note',
-          text: content,
-        });
-      } catch (err) {
-        console.log("Share sheet dismissed or failed, already copied to clipboard.");
-      }
+    const result = await shareTextSafely(content, 'Luna Partner Note');
+    if (result === 'shared' || result === 'copied') {
+      setCopyFeedback(id);
+      setTimeout(() => setCopyFeedback(null), 2000);
+    } else {
+      setError('Could not share this note right now.');
     }
   };
 
-  const handleCopy = (content: string, id: string) => {
-    navigator.clipboard.writeText(content);
-    setCopyFeedback(id);
-    setTimeout(() => setCopyFeedback(null), 2000);
+  const handleCopy = async (content: string, id: string) => {
+    const copied = await copyTextSafely(content);
+    if (copied) {
+      setCopyFeedback(id);
+      setTimeout(() => setCopyFeedback(null), 2000);
+    } else {
+      setError('Could not copy this note right now.');
+    }
   };
 
   const handleRefine = (refinement: string) => {
+    if (isGenerating) return;
     handleGenerate(refinement);
   };
 
@@ -129,7 +134,7 @@ export const RelationshipsView: React.FC<{ phase: CyclePhase; onBack: () => void
     switch (step) {
       case 'intro':
         return (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
+          <div data-testid="relationships-step-intro" className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
             <div className="space-y-4 text-center">
               <h3 className="text-3xl font-black uppercase tracking-tight">{ui.bridge.subtitle}</h3>
               <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto">{ui.bridge.cta.replace('[Name]', input.partner_name || '...')}</p>
@@ -137,6 +142,7 @@ export const RelationshipsView: React.FC<{ phase: CyclePhase; onBack: () => void
             <div className="max-w-sm mx-auto space-y-4">
               <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">{ui.bridge.partnerPlaceholder}</label>
               <input 
+                data-testid="relationships-partner-input"
                 type="text"
                 value={input.partner_name}
                 onChange={(e) => setInput({ ...input, partner_name: e.target.value })}
@@ -144,6 +150,7 @@ export const RelationshipsView: React.FC<{ phase: CyclePhase; onBack: () => void
                 className="w-full bg-slate-100 dark:bg-slate-800 border-2 border-transparent focus:border-luna-purple/30 p-5 rounded-3xl outline-none transition-all text-lg font-bold"
               />
               <button 
+                data-testid="relationships-begin"
                 onClick={handleNext}
                 className="w-full py-5 bg-slate-900 dark:bg-luna-purple text-white rounded-full font-black uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
               >
@@ -160,6 +167,7 @@ export const RelationshipsView: React.FC<{ phase: CyclePhase; onBack: () => void
               {Object.entries(ui.bridge.intents).map(([key, label]) => (
                 <button 
                   key={key}
+                  data-testid={`relationships-intent-${key}`}
                   onClick={() => { setInput({ ...input, intent: key as PartnerNoteIntent }); handleNext(); }}
                   className={`p-5 rounded-3xl text-left transition-all border-2 ${input.intent === key ? 'bg-luna-purple/10 border-luna-purple text-luna-purple font-bold' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'}`}
                 >
@@ -177,6 +185,7 @@ export const RelationshipsView: React.FC<{ phase: CyclePhase; onBack: () => void
               {Object.entries(ui.bridge.tones).map(([key, label]) => (
                 <button 
                   key={key}
+                  data-testid={`relationships-tone-${key}`}
                   onClick={() => { setInput({ ...input, tone: key as PartnerNoteTone }); handleNext(); }}
                   className={`p-5 rounded-3xl text-left transition-all border-2 ${input.tone === key ? 'bg-luna-purple/10 border-luna-purple text-luna-purple font-bold' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'}`}
                 >
@@ -194,6 +203,7 @@ export const RelationshipsView: React.FC<{ phase: CyclePhase; onBack: () => void
               {Object.entries(ui.bridge.boundaries).map(([key, label]) => (
                 <button 
                   key={key}
+                  data-testid={`relationships-boundary-${key}`}
                   onClick={() => { setInput({ ...input, boundary_level: key as PartnerNoteBoundary }); handleNext(); }}
                   className={`p-5 rounded-3xl text-left transition-all border-2 ${input.boundary_level === key ? 'bg-luna-purple/10 border-luna-purple text-luna-purple font-bold' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'}`}
                 >
@@ -245,7 +255,7 @@ export const RelationshipsView: React.FC<{ phase: CyclePhase; onBack: () => void
 
                 <div className="relative group">
                   <div className="absolute -inset-1 bg-gradient-to-r from-luna-purple to-luna-teal rounded-[2.5rem] blur opacity-10 group-hover:opacity-20 transition-opacity" />
-                  <div className="relative p-8 md:p-12 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm min-h-[200px] flex flex-col justify-between">
+                  <div data-testid="relationships-result-message" className="relative p-8 md:p-12 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm min-h-[200px] flex flex-col justify-between">
                     <p className="text-xl md:text-2xl leading-relaxed italic text-slate-700 dark:text-slate-200">
                       "{currentMessage.content}"
                     </p>

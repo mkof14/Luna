@@ -1,5 +1,18 @@
 
-import { HealthEvent, EventType, SystemState, Medication, ProfileData } from '../types';
+import {
+  HealthEvent,
+  EventType,
+  SystemState,
+  Medication,
+  ProfileData,
+  EventPayload,
+  CycleSyncPayload,
+  DailyCheckinPayload,
+  FuelLogPayload,
+  LabMarkerEntryPayload,
+  MedicationLogPayload,
+  ProfileUpdatePayload,
+} from '../types';
 
 const STORAGE_KEY = 'luna_event_log_v3';
 
@@ -23,13 +36,50 @@ const DEFAULT_PROFILE: ProfileData = {
 };
 
 // Security Helper
-const sanitizeInput = (str: any): string => {
+const sanitizeInput = (str: unknown): string => {
   if (typeof str !== 'string') return '';
   return str.replace(/[<>]/g, '').trim();
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const isCycleSyncPayload = (payload: EventPayload): payload is CycleSyncPayload => {
+  if (!isRecord(payload)) return false;
+  const record = payload as Record<string, unknown>;
+  return typeof record.day === 'number' && typeof record.length === 'number';
+};
+
+const isDailyCheckinPayload = (payload: EventPayload): payload is DailyCheckinPayload => {
+  if (!isRecord(payload)) return false;
+  const record = payload as Record<string, unknown>;
+  return isRecord(record.metrics) && Array.isArray(record.symptoms) && typeof record.isPeriod === 'boolean';
+};
+
+const isFuelLogPayload = (payload: EventPayload): payload is FuelLogPayload => {
+  if (!isRecord(payload)) return false;
+  const record = payload as Record<string, unknown>;
+  return typeof record.nutrient === 'string';
+};
+
+const isMedicationLogPayload = (payload: EventPayload): payload is MedicationLogPayload => {
+  if (!isRecord(payload)) return false;
+  const record = payload as Record<string, unknown>;
+  if (typeof record.action !== 'string' || typeof record.medId !== 'string') return false;
+  return record.action === 'REMOVE' || (record.action === 'ADD' && typeof record.name === 'string');
+};
+
+const isLabMarkerEntryPayload = (payload: EventPayload): payload is LabMarkerEntryPayload => {
+  if (!isRecord(payload)) return false;
+  const record = payload as Record<string, unknown>;
+  return typeof record.rawText === 'string';
+};
+
+const isProfileUpdatePayload = (payload: EventPayload): payload is ProfileUpdatePayload =>
+  isRecord(payload);
+
 export const dataService = {
-  logEvent: (type: EventType, payload: any): HealthEvent => {
+  logEvent: (type: EventType, payload: EventPayload): HealthEvent => {
     try {
       const log = dataService.getLog();
       
@@ -74,35 +124,47 @@ export const dataService = {
         case 'ONBOARDING_COMPLETE':
           return { ...state, onboarded: true };
         case 'CYCLE_SYNC':
+          if (!isCycleSyncPayload(event.payload)) return state;
           return { ...state, currentDay: event.payload.day, cycleLength: event.payload.length };
         case 'DAILY_CHECKIN':
-          const symptoms = Array.from(new Set([...state.symptoms, ...(event.payload.symptoms || [])]));
-          return { ...state, symptoms, lastCheckin: { ...event.payload, timestamp: event.timestamp } };
+          if (!isDailyCheckinPayload(event.payload)) return state;
+          {
+            const payload = event.payload;
+            const symptoms = Array.from(new Set([...state.symptoms, ...(payload.symptoms || [])]));
+            return { ...state, symptoms, lastCheckin: { ...payload, timestamp: event.timestamp } };
+          }
         case 'FUEL_LOG':
+          if (!isFuelLogPayload(event.payload)) return state;
           if (eventDate === today) {
             return { ...state, fuelLogs: [...state.fuelLogs, event.payload.nutrient] };
           }
           return state;
         case 'MEDICATION_LOG':
-          if (event.payload.action === 'ADD') {
-            const newMed: Medication = {
-              id: event.payload.medId,
-              name: event.payload.name,
-              dose: event.payload.dose,
-              startDate: event.timestamp,
-              observations: event.payload.observations || [],
-              notes: event.payload.notes || '',
-              addedAt: event.timestamp
-            };
-            return { ...state, medications: [...state.medications, newMed] };
+          if (!isMedicationLogPayload(event.payload)) return state;
+          {
+            const payload = event.payload;
+            if (payload.action === 'ADD') {
+              const newMed: Medication = {
+                id: payload.medId,
+                name: payload.name,
+                dose: payload.dose,
+                startDate: event.timestamp,
+                observations: payload.observations || [],
+                notes: payload.notes || '',
+                addedAt: event.timestamp
+              };
+              return { ...state, medications: [...state.medications, newMed] };
+            }
+            if (payload.action === 'REMOVE') {
+              return { ...state, medications: state.medications.filter(m => m.id !== payload.medId) };
+            }
+            return state;
           }
-          if (event.payload.action === 'REMOVE') {
-            return { ...state, medications: state.medications.filter(m => m.id !== event.payload.medId) };
-          }
-          return state;
         case 'LAB_MARKER_ENTRY':
+          if (!isLabMarkerEntryPayload(event.payload)) return state;
           return { ...state, labData: event.payload.rawText };
         case 'PROFILE_UPDATE':
+          if (!isProfileUpdatePayload(event.payload)) return state;
           return { ...state, profile: { ...state.profile, ...event.payload } };
         default:
           return state;

@@ -10,7 +10,9 @@ interface HormoneGaugeProps {
 }
 
 const HormoneGauge: React.FC<HormoneGaugeProps> = ({ hormone, onClick, isActive = false }) => {
-  const displayName = (UI_COPY.hormones as any).displayNames[hormone.id] || hormone.name;
+  const displayName = hormone.id in UI_COPY.hormones.displayNames
+    ? UI_COPY.hormones.displayNames[hormone.id as keyof typeof UI_COPY.hormones.displayNames]
+    : hormone.name;
   const isAlertState = hormone.status === HormoneStatus.UNSTABLE || hormone.status === HormoneStatus.STRAINED;
 
   return (

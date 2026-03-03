@@ -1,35 +1,6 @@
-
-import { GoogleGenAI, Modality, LiveServerMessage } from '@google/genai';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Logo } from './Logo';
-import { Mic, MicOff, Volume2, VolumeX, X, Monitor, Moon, Sun, Terminal } from 'lucide-react';
-
-// --- Manual Base64 Helpers ---
-function encode(bytes: Uint8Array) {
-  let binary = '';
-  for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-  return btoa(binary);
-}
-
-function decode(base64: string) {
-  const binaryString = atob(base64);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
-  return bytes;
-}
-
-async function decodeAudioData(data: Uint8Array, ctx: AudioContext, sampleRate: number, numChannels: number): Promise<AudioBuffer> {
-  const dataInt16 = new Int16Array(data.buffer);
-  const frameCount = dataInt16.length / numChannels;
-  const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
-  for (let channel = 0; channel < numChannels; channel++) {
-    const channelData = buffer.getChannelData(channel);
-    for (let i = 0; i < frameCount; i++) {
-      channelData[i] = dataInt16[i * numChannels + channel] / 32768.0;
-    }
-  }
-  return buffer;
-}
+import { Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 
 type ConnectionStatus = 'IDLE' | 'CONNECTING' | 'CONNECTED' | 'ERROR';
 type AssistantTheme = 'light' | 'dark' | 'oled';
@@ -37,83 +8,84 @@ type AssistantTheme = 'light' | 'dark' | 'oled';
 interface ChatMessage {
   role: 'user' | 'luna' | 'system';
   text: string;
-  isStreaming?: boolean;
 }
 
-const Typewriter: React.FC<{ text: string; speed?: number; onComplete?: () => void }> = ({ text, speed = 20, onComplete }) => {
-  const [displayedText, setDisplayedText] = useState("");
-  const [index, setIndex] = useState(0);
+const buildLocalReply = (input: string, snapshot: string): string => {
+  const text = input.toLowerCase();
 
-  useEffect(() => {
-    if (index < text.length) {
-      const timeout = setTimeout(() => {
-        setDisplayedText(prev => prev + text[index]);
-        setIndex(prev => prev + 1);
-      }, speed);
-      return () => clearTimeout(timeout);
-    } else if (onComplete) {
-      onComplete();
-    }
-  }, [index, text, speed, onComplete]);
+  if (text.includes('stress') || text.includes('anx') || text.includes('трев')) {
+    return 'I hear that stress is high right now. Keep one simple next step and reduce decision load for this hour.';
+  }
 
-  return <span>{displayedText}</span>;
+  if (text.includes('sleep') || text.includes('устал') || text.includes('сон')) {
+    return 'Your system sounds overloaded. Protect recovery first: lower stimulation, hydrate, and keep tonight predictable.';
+  }
+
+  if (text.includes('partner') || text.includes('отнош')) {
+    return 'Name the state, separate it from blame, ask for one concrete form of support, and close with reassurance.';
+  }
+
+  return `Local mode response: I am tracking your current state snapshot: "${snapshot}". Let's keep actions small, clear, and kind to your bandwidth.`;
 };
 
 export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; stateSnapshot: string }> = ({ isOpen, onClose, stateSnapshot }) => {
   const [status, setStatus] = useState<ConnectionStatus>('IDLE');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [textInput, setTextInput] = useState("");
-  const [inputLevel, setInputLevel] = useState(0);
-  const [outputLevel, setOutputLevel] = useState(0);
+  const [textInput, setTextInput] = useState('');
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [isSpeakerMuted, setIsSpeakerMuted] = useState(false);
   const [assistantTheme, setAssistantTheme] = useState<AssistantTheme>('dark');
-  const [isLunaSpeaking, setIsLunaSpeaking] = useState(false);
-  
-  const sessionRef = useRef<any>(null);
-  const audioInRef = useRef<AudioContext | null>(null);
-  const audioOutRef = useRef<AudioContext | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
-  const processorRef = useRef<ScriptProcessorNode | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const nextStartTimeRef = useRef(0);
-  const activeSources = useRef(new Set<AudioBufferSourceNode>());
-  const currentTranscriptionRef = useRef("");
 
-  const cleanup = useCallback(() => {
-    if (sessionRef.current) {
-      sessionRef.current.close();
-      sessionRef.current = null;
-    }
-    if (processorRef.current) {
-      processorRef.current.disconnect();
-      processorRef.current = null;
-    }
-    if (audioInRef.current) {
-      audioInRef.current.close();
-      audioInRef.current = null;
-    }
-    if (audioOutRef.current) {
-      audioOutRef.current.close();
-      audioOutRef.current = null;
-    }
-    gainNodeRef.current = null;
-    activeSources.current.forEach(s => {
-      try { s.stop(); } catch(e) {}
-    });
-    activeSources.current.clear();
+  const themeClasses = useMemo(
+    () => ({
+      light: 'bg-white text-slate-900 border-slate-200',
+      dark: 'bg-slate-900 text-slate-100 border-slate-800',
+      oled: 'bg-black text-slate-100 border-slate-900'
+    }),
+    []
+  );
+
+  const cleanup = () => {
     setStatus('IDLE');
     setMessages([]);
-    setInputLevel(0);
-    setOutputLevel(0);
-    setIsLunaSpeaking(false);
-  }, []);
+    setTextInput('');
+  };
 
-  useEffect(() => {
-    if (gainNodeRef.current && audioOutRef.current) {
-      gainNodeRef.current.gain.setValueAtTime(isSpeakerMuted ? 0 : 1, audioOutRef.current.currentTime);
-    }
-  }, [isSpeakerMuted]);
+  const startSession = async () => {
+    if (status !== 'IDLE') return;
+    setStatus('CONNECTING');
+
+    // Local development mode without external API.
+    setTimeout(() => {
+      setStatus('CONNECTED');
+      setMessages([
+        {
+          role: 'system',
+          text: '[Local mode active: voice/AI API is disabled]'
+        },
+        {
+          role: 'luna',
+          text: 'I am available in local text mode. Share what feels most important right now.'
+        }
+      ]);
+    }, 300);
+  };
+
+  const handleSendText = () => {
+    const msg = textInput.trim();
+    if (!msg || status !== 'CONNECTED') return;
+
+    setMessages((prev) => [...prev, { role: 'user', text: msg }]);
+    setTextInput('');
+
+    const reply = buildLocalReply(msg, stateSnapshot);
+    setTimeout(() => {
+      if (!isSpeakerMuted) {
+        setMessages((prev) => [...prev, { role: 'luna', text: reply }]);
+      }
+    }, 220);
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -121,189 +93,13 @@ export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; sta
     } else {
       cleanup();
     }
-    return () => cleanup();
-  }, [isOpen, cleanup]);
+  }, [isOpen]);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, textInput]);
-
-  const startSession = async () => {
-    if (status !== 'IDLE') return;
-
-    // Check for API key selection if needed
-    if (typeof window !== 'undefined' && (window as any).aistudio) {
-      const hasKey = await (window as any).aistudio.hasSelectedApiKey();
-      if (!hasKey) {
-        await (window as any).aistudio.openSelectKey();
-        // Proceed anyway as per instructions (race condition handling)
-      }
-    }
-
-    setStatus('CONNECTING');
-
-    try {
-      const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
-      const ai = new GoogleGenAI({ apiKey });
-      const inCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
-      const outCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
-      
-      const gainNode = outCtx.createGain();
-      gainNode.connect(outCtx.destination);
-      gainNodeRef.current = gainNode;
-      gainNode.gain.value = isSpeakerMuted ? 0 : 1;
-
-      if (inCtx.state === 'suspended') await inCtx.resume();
-      if (outCtx.state === 'suspended') await outCtx.resume();
-
-      audioInRef.current = inCtx;
-      audioOutRef.current = outCtx;
-
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const micSource = inCtx.createMediaStreamSource(stream);
-      const processor = inCtx.createScriptProcessor(4096, 1, 1);
-      processorRef.current = processor;
-
-      const sessionPromise = ai.live.connect({
-        model: 'gemini-2.5-flash-native-audio-preview-09-2025',
-        callbacks: {
-          onopen: () => {
-            setStatus('CONNECTED');
-            processor.onaudioprocess = (e) => {
-              const data = e.inputBuffer.getChannelData(0);
-              let sum = 0;
-              for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
-              const rms = Math.sqrt(sum / data.length);
-              setInputLevel(rms * 25); 
-
-              if (isMicMuted) return;
-
-              const int16 = new Int16Array(data.length);
-              for (let i = 0; i < data.length; i++) int16[i] = data[i] * 32768;
-              
-              sessionPromise.then(session => {
-                session.sendRealtimeInput({
-                  media: { data: encode(new Uint8Array(int16.buffer)), mimeType: 'audio/pcm;rate=16000' }
-                });
-              });
-            };
-            micSource.connect(processor);
-            processor.connect(inCtx.destination);
-          },
-          onmessage: async (msg: LiveServerMessage) => {
-            if (msg.serverContent?.outputTranscription) {
-              const text = msg.serverContent.outputTranscription.text || "";
-              currentTranscriptionRef.current += text;
-              setMessages(prev => {
-                const last = prev[prev.length - 1];
-                if (last && last.role === 'luna' && last.isStreaming) {
-                  return [...prev.slice(0, -1), { ...last, text: currentTranscriptionRef.current }];
-                }
-                return [...prev, { role: 'luna', text: currentTranscriptionRef.current, isStreaming: true }];
-              });
-            }
-
-            if (msg.serverContent?.inputTranscription) {
-              const text = msg.serverContent.inputTranscription.text || "";
-              setMessages(prev => {
-                const last = prev[prev.length - 1];
-                if (last && last.role === 'user' && last.isStreaming) {
-                  return [...prev.slice(0, -1), { ...last, text: last.text + text }];
-                }
-                return [...prev, { role: 'user', text: text, isStreaming: !msg.serverContent?.turnComplete }];
-              });
-            }
-
-            if (msg.serverContent?.turnComplete) {
-              setMessages(prev => prev.map(m => ({ ...m, isStreaming: false })));
-              currentTranscriptionRef.current = "";
-            }
-
-            if (msg.serverContent?.interrupted) {
-              activeSources.current.forEach(s => {
-                try { s.stop(); } catch(e) {}
-              });
-              activeSources.current.clear();
-              nextStartTimeRef.current = outCtx.currentTime;
-              setMessages(prev => [...prev, { role: 'system', text: "[Luna paused]" }]);
-            }
-
-            const audioData = msg.serverContent?.modelTurn?.parts?.[0]?.inlineData?.data;
-            if (audioData) {
-              setIsLunaSpeaking(true);
-              const buffer = await decodeAudioData(decode(audioData as string), outCtx, 24000, 1);
-              const source = outCtx.createBufferSource();
-              source.buffer = buffer;
-              const anal = outCtx.createAnalyser();
-              anal.fftSize = 256;
-              source.connect(anal);
-              if (gainNodeRef.current) {
-                anal.connect(gainNodeRef.current);
-              }
-              nextStartTimeRef.current = Math.max(nextStartTimeRef.current, outCtx.currentTime);
-              source.start(nextStartTimeRef.current);
-              nextStartTimeRef.current += buffer.duration;
-              activeSources.current.add(source);
-              const monitor = () => {
-                const freq = new Uint8Array(anal.frequencyBinCount);
-                anal.getByteFrequencyData(freq);
-                let s = 0; for(let i=0; i<freq.length; i++) s += freq[i];
-                setOutputLevel(s / freq.length / 128); 
-                if (activeSources.current.has(source)) requestAnimationFrame(monitor);
-                else {
-                  setOutputLevel(0);
-                  setIsLunaSpeaking(false);
-                }
-              };
-              monitor();
-              source.onended = () => {
-                activeSources.current.delete(source);
-                if (activeSources.current.size === 0) {
-                  setIsLunaSpeaking(false);
-                  setOutputLevel(0);
-                }
-              };
-            }
-          },
-          onclose: () => cleanup(),
-          onerror: (e) => {
-            console.error("Live API Error:", e);
-            setStatus('ERROR');
-          }
-        },
-        config: {
-          responseModalities: [Modality.AUDIO],
-          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } },
-          outputAudioTranscription: {},
-          inputAudioTranscription: {},
-          systemInstruction: `You are Luna, an empathetic health companion. You communicate with warmth and brevity. Use poetic metaphors of nature and cycles. When a user feels overwhelmed, validate their feelings instead of giving advice. Context: ${stateSnapshot}. Respond to voice and text.`
-        }
-      });
-      sessionRef.current = await sessionPromise;
-    } catch (err) {
-      console.error(err);
-      setStatus('ERROR');
-    }
-  };
-
-  const handleSendText = () => {
-    if (!textInput.trim() || !sessionRef.current) return;
-    const msg = textInput.trim();
-    setMessages(prev => [...prev, { role: 'user', text: msg }]);
-    sessionRef.current.sendRealtimeInput({ text: msg });
-    setTextInput("");
-    activeSources.current.forEach(s => { try { s.stop(); } catch(e) {} });
-    activeSources.current.clear();
-    nextStartTimeRef.current = audioOutRef.current?.currentTime || 0;
-  };
-
-  const themeClasses = {
-    light: 'bg-white text-slate-900 border-slate-200',
-    dark: 'bg-slate-900 text-slate-100 border-slate-800',
-    oled: 'bg-black text-slate-100 border-slate-900'
-  };
+  }, [messages]);
 
   if (!isOpen) return null;
 
@@ -316,12 +112,12 @@ export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; sta
               <div className={`w-2.5 h-2.5 rounded-full ${status === 'CONNECTED' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981] animate-pulse' : status === 'CONNECTING' ? 'bg-amber-500 animate-pulse' : 'bg-slate-500'}`} />
               <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Luna Live</span>
             </div>
-            
+
             {status === 'CONNECTED' && (
               <div className="flex gap-3 animate-in fade-in slide-in-from-left-4">
                 <div className="flex items-center gap-1.5 bg-inherit border border-inherit rounded-full px-2 py-1 shadow-sm">
-                  <button 
-                    onClick={() => setIsMicMuted(!isMicMuted)} 
+                  <button
+                    onClick={() => setIsMicMuted(!isMicMuted)}
                     className={`w-7 h-7 flex items-center justify-center rounded-full transition-all ${isMicMuted ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30' : 'bg-emerald-500/20 text-emerald-500'}`}
                   >
                     {isMicMuted ? <MicOff size={12} /> : <Mic size={12} />}
@@ -330,10 +126,10 @@ export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; sta
                     {isMicMuted ? 'Off' : 'On'}
                   </span>
                 </div>
-                
+
                 <div className="flex items-center gap-1.5 bg-inherit border border-inherit rounded-full px-2 py-1 shadow-sm">
-                  <button 
-                    onClick={() => setIsSpeakerMuted(!isSpeakerMuted)} 
+                  <button
+                    onClick={() => setIsSpeakerMuted(!isSpeakerMuted)}
                     className={`w-7 h-7 flex items-center justify-center rounded-full transition-all ${isSpeakerMuted ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30' : 'bg-luna-purple/20 text-luna-purple'}`}
                   >
                     {isSpeakerMuted ? <VolumeX size={12} /> : <Volume2 size={12} />}
@@ -346,73 +142,35 @@ export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; sta
             )}
           </div>
           <div className="flex items-center gap-3">
-             <div className="flex bg-inherit border border-inherit rounded-full p-1 gap-1">
-                {(['light', 'dark', 'oled'] as AssistantTheme[]).map(t => (
-                  <button 
-                    key={t}
-                    onClick={() => setAssistantTheme(t)}
-                    className={`w-6 h-6 rounded-full text-[8px] font-black uppercase transition-all flex items-center justify-center ${assistantTheme === t ? 'bg-luna-purple text-white shadow-lg shadow-luna-purple/30' : 'opacity-40 hover:opacity-100'}`}
-                  >
-                    {t[0]}
-                  </button>
-                ))}
-             </div>
-             <button onClick={() => { cleanup(); onClose(); }} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-500/10 transition-colors text-2xl font-light">×</button>
+            <div className="flex bg-inherit border border-inherit rounded-full p-1 gap-1">
+              {(['light', 'dark', 'oled'] as AssistantTheme[]).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setAssistantTheme(t)}
+                  className={`w-6 h-6 rounded-full text-[8px] font-black uppercase transition-all flex items-center justify-center ${assistantTheme === t ? 'bg-luna-purple text-white shadow-lg shadow-luna-purple/30' : 'opacity-40 hover:opacity-100'}`}
+                >
+                  {t[0]}
+                </button>
+              ))}
+            </div>
+            <button onClick={() => { cleanup(); onClose(); }} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-500/10 transition-colors text-2xl font-light">×</button>
           </div>
         </nav>
 
-        <div className="flex-1 flex flex-col relative overflow-hidden">
-           <div className="h-[30%] flex items-center justify-center relative flex-shrink-0 pt-8 pb-4">
-              {/* Visualizers - More Prominent */}
-              <div 
-                className="absolute w-32 h-32 rounded-full bg-luna-teal/10 border border-luna-teal/30 transition-all duration-150 ease-out" 
-                style={{ transform: `scale(${1 + inputLevel * 2.5})`, opacity: isMicMuted ? 0 : 0.6 }} 
-              />
-              <div 
-                className="absolute w-28 h-28 rounded-full bg-luna-purple/10 border-2 border-luna-purple/30 transition-all duration-300 ease-out" 
-                style={{ transform: `scale(${1 + outputLevel * 3})`, opacity: isSpeakerMuted ? 0.1 : 0.6 }} 
-              />
-              
-              <div className={`relative z-10 w-20 h-20 rounded-full bg-inherit shadow-2xl flex items-center justify-center border-2 ${status === 'CONNECTED' ? 'border-luna-purple' : 'border-slate-500/20 grayscale'}`}>
-                 <Logo size="sm" />
-              </div>
-
-               {status === 'CONNECTED' && (
-                <div className="absolute top-4 flex flex-col items-center gap-2 z-30">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={`text-[9px] font-black uppercase tracking-[0.3em] ${isLunaSpeaking ? 'text-luna-purple animate-pulse' : 'opacity-40'}`}>
-                      {isLunaSpeaking ? 'Luna Speaking' : 'Luna Listening'}
-                    </span>
-                  </div>
-                </div>
-              )}
-           </div>
-
-           <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 no-scrollbar mask-fade-top" ref={scrollRef}>
-             {status === 'IDLE' && (
-               <div className="h-full flex flex-col items-center justify-center text-center gap-6 p-8">
-                  <p className="text-sm font-bold opacity-40 italic">System standby. Biometric link ready.</p>
-                  <button onClick={startSession} className="px-10 py-4 bg-luna-purple text-white font-black uppercase tracking-widest rounded-full shadow-xl shadow-luna-purple/30 hover:scale-105 active:scale-95 transition-all">Initialize</button>
-               </div>
-             )}
-             {messages.map((m, i) => (
-               <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : m.role === 'system' ? 'items-center' : 'items-start'} animate-in fade-in slide-in-from-bottom-2`}>
-                 <div className={`max-w-[90%] px-5 py-3 rounded-3xl text-sm leading-relaxed ${
-                   m.role === 'user' 
-                    ? 'bg-luna-purple text-white rounded-tr-none font-bold' 
-                    : m.role === 'system' ? 'text-[9px] font-black uppercase opacity-30 text-center py-2'
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 no-scrollbar" ref={scrollRef}>
+          {messages.map((m, i) => (
+            <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : m.role === 'system' ? 'items-center' : 'items-start'} animate-in fade-in slide-in-from-bottom-2`}>
+              <div className={`max-w-[90%] px-5 py-3 rounded-3xl text-sm leading-relaxed ${
+                m.role === 'user'
+                  ? 'bg-luna-purple text-white rounded-tr-none font-bold'
+                  : m.role === 'system'
+                    ? 'text-[9px] font-black uppercase opacity-40 text-center py-2'
                     : 'bg-inherit border border-inherit rounded-tl-none font-medium italic opacity-90'
-                 }`}>
-                   {m.role === 'luna' && !m.isStreaming ? (
-                     <Typewriter text={m.text} speed={15} />
-                   ) : (
-                     <span>{m.text}</span>
-                   )}
-                   {m.isStreaming && <span className="inline-block w-1.5 h-3 ml-1 bg-luna-purple/40 animate-pulse rounded-full" />}
-                 </div>
-               </div>
-             ))}
-           </div>
+              }`}>
+                <span>{m.text}</span>
+              </div>
+            </div>
+          ))}
         </div>
 
         {status === 'CONNECTED' && (
@@ -421,7 +179,12 @@ export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; sta
               <textarea
                 value={textInput}
                 onChange={(e) => setTextInput(e.target.value)}
-                onKeyDown={(e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendText(); } }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendText();
+                  }
+                }}
                 placeholder="Share your reflection..."
                 className="flex-1 bg-transparent p-3 outline-none text-sm resize-none min-h-[44px] max-h-[120px]"
                 rows={1}
@@ -435,15 +198,14 @@ export const LiveAssistant: React.FC<{ isOpen: boolean; onClose: () => void; sta
 
         {status === 'ERROR' && (
           <div className="absolute inset-0 bg-rose-500/20 backdrop-blur-sm flex items-center justify-center p-8 z-[50]">
-             <div className="bg-inherit p-10 rounded-[3rem] border-2 border-rose-500 text-center space-y-6 shadow-2xl">
-                <h3 className="text-xl font-black text-rose-500 uppercase tracking-tighter">Sync Interrupted</h3>
-                <p className="text-sm font-medium opacity-60">The temporal link has shifted.</p>
-                <button onClick={() => { cleanup(); startSession(); }} className="w-full py-4 bg-rose-500 text-white font-black uppercase rounded-full shadow-lg shadow-rose-500/20">Restart Link</button>
-             </div>
+            <div className="bg-inherit p-10 rounded-[3rem] border-2 border-rose-500 text-center space-y-6 shadow-2xl">
+              <h3 className="text-xl font-black text-rose-500 uppercase tracking-tighter">Sync Interrupted</h3>
+              <p className="text-sm font-medium opacity-60">The local assistant failed to initialize.</p>
+              <button onClick={() => { cleanup(); startSession(); }} className="w-full py-4 bg-rose-500 text-white font-black uppercase rounded-full shadow-lg shadow-rose-500/20">Restart</button>
+            </div>
           </div>
         )}
       </div>
-      <style>{`.mask-fade-top { mask-image: linear-gradient(to bottom, transparent 0%, black 10%); } .typewriter-chunk { animation: typewriter-pop 0.2s ease-out forwards; } @keyframes typewriter-pop { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </div>
   );
 };

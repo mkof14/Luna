@@ -48,8 +48,57 @@ export interface HealthEvent {
   timestamp: string;
   type: EventType;
   version: number;
-  payload: any;
+  payload: EventPayload;
 }
+
+export interface DailyCheckinPayload {
+  metrics: Record<string, number>;
+  symptoms: string[];
+  isPeriod: boolean;
+}
+
+export interface CycleSyncPayload {
+  day: number;
+  length: number;
+}
+
+export interface FuelLogPayload {
+  nutrient: string;
+}
+
+export interface MedicationAddPayload {
+  action: 'ADD';
+  medId: string;
+  name: string;
+  dose?: string;
+  observations?: string[];
+  notes?: string;
+}
+
+export interface MedicationRemovePayload {
+  action: 'REMOVE';
+  medId: string;
+}
+
+export type MedicationLogPayload = MedicationAddPayload | MedicationRemovePayload;
+
+export interface LabMarkerEntryPayload {
+  rawText: string;
+  analysis?: string;
+  day?: number;
+}
+
+export type ProfileUpdatePayload = Partial<ProfileData>;
+
+export type EventPayload =
+  | Record<string, never>
+  | Record<string, unknown>
+  | DailyCheckinPayload
+  | CycleSyncPayload
+  | FuelLogPayload
+  | MedicationLogPayload
+  | LabMarkerEntryPayload
+  | ProfileUpdatePayload;
 
 export interface ProfileData {
   name: string;
@@ -80,7 +129,7 @@ export interface SystemState {
   medications: Medication[];
   symptoms: string[];
   labData: string;
-  lastCheckin?: any;
+  lastCheckin?: DailyCheckinPayload & { timestamp: string };
   fuelLogs: string[]; // List of nutrients consumed today
   profile: ProfileData;
   activeArchetype?: SymptomArchetype;

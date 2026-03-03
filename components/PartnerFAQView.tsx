@@ -7,6 +7,7 @@ export const PartnerFAQView: React.FC<{ onBack: () => void }> = ({ onBack }) => 
   const [lang] = useState<Language>(() => (localStorage.getItem('luna_lang') as Language) || 'en');
   const ui = TRANSLATIONS[lang];
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  type PartnerFaqItem = (typeof ui.bridge.partnerFAQ.items)[number];
 
   const toggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -32,7 +33,7 @@ export const PartnerFAQView: React.FC<{ onBack: () => void }> = ({ onBack }) => 
       </div>
 
       <div className="space-y-4">
-        {ui.bridge.partnerFAQ.items.map((item: any, idx: number) => (
+        {ui.bridge.partnerFAQ.items.map((item: PartnerFaqItem, idx: number) => (
           <div 
             key={idx} 
             className={`border-2 rounded-[2.5rem] transition-all duration-500 overflow-hidden ${openIndex === idx ? 'border-luna-purple bg-white dark:bg-slate-900 shadow-luna-rich' : 'border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50'}`}
