@@ -34,8 +34,8 @@ export const CheckinOverlay: React.FC<CheckinOverlayProps> = ({
           <button onClick={onClose} className="w-14 h-14 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 shadow-luna-rich hover:bg-slate-50 transition-all text-3xl font-light border border-slate-300">×</button>
         </header>
         <div className="text-center space-y-4">
-          <h2 className="text-5xl font-black uppercase tracking-tight text-slate-950 dark:text-white leading-tight">{lang === 'ru' ? 'Как вы сегодня?' : 'Daily Check-in'}</h2>
-          <p className="text-lg font-medium text-slate-600 dark:text-slate-400 italic">{lang === 'ru' ? 'Отметьте свое текущее состояние.' : 'Capture your current state.'}</p>
+          <h2 className="text-5xl font-black uppercase tracking-tight text-slate-950 dark:text-white leading-tight">{ui.checkinOverlay.headline}</h2>
+          <p className="text-lg font-medium text-slate-600 dark:text-slate-400 italic">{ui.checkinOverlay.subheadline}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white/60 dark:bg-slate-900/40 p-12 rounded-[4rem] border-2 border-white dark:border-slate-800 shadow-luna-inset">
           {(Object.keys(ui.checkin) as Array<keyof TranslationSchema['checkin']>).map((key) => (
@@ -51,10 +51,10 @@ export const CheckinOverlay: React.FC<CheckinOverlayProps> = ({
         </div>
         <div className="flex flex-col gap-4">
           <button data-testid="checkin-save" onClick={onSave} className="w-full py-8 bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-black text-2xl rounded-full shadow-luna-deep transition-all active:scale-95">
-            {lang === 'ru' ? 'Сохранить' : 'Save'}
+            {ui.checkinOverlay.save}
           </button>
           <button data-testid="checkin-save-and-bridge" onClick={onSaveAndBridge} className="w-full py-4 bg-luna-purple/10 text-luna-purple font-black text-sm uppercase tracking-widest rounded-full border-2 border-luna-purple/20 transition-all hover:bg-luna-purple/20">
-            {lang === 'ru' ? '+ Мост' : '+ The Bridge'}
+            {ui.checkinOverlay.saveAndBridge}
           </button>
         </div>
       </div>

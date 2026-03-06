@@ -21,6 +21,29 @@ export enum ConfidenceLevel {
   HIGH = 'High'
 }
 
+export type AuthProvider = 'password' | 'google';
+
+export type AdminRole = 'viewer' | 'operator' | 'content_manager' | 'finance_manager' | 'super_admin';
+
+export type AdminPermission =
+  | 'manage_services'
+  | 'manage_marketing'
+  | 'manage_email_templates'
+  | 'manage_admin_roles'
+  | 'view_financials'
+  | 'view_technical_metrics';
+
+export interface AuthSession {
+  id: string;
+  name: string;
+  email: string;
+  provider: AuthProvider;
+  role: AdminRole;
+  permissions: AdminPermission[];
+  lastLoginAt: string;
+  avatarUrl?: string;
+}
+
 export interface SymptomArchetype {
   id: string;
   name: string;

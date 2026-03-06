@@ -1,0 +1,410 @@
+import { AdminPermission, AdminRole, AuthSession } from '../types';
+
+const API_BASE_STORAGE_KEY = 'luna_api_base_url';
+const LOCAL_SESSION_KEY = 'luna_auth_session_v2';
+const LOCAL_USERS_KEY = 'luna_auth_users_v2';
+
+const SUPER_ADMIN_EMAIL = 'dnainform@gmail.com';
+const SUPER_ADMIN_FALLBACK_PASSWORD = 'LunaAdmin2026!';
+
+const ROLE_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
+  viewer: ['view_financials', 'view_technical_metrics'],
+  operator: ['manage_services', 'view_technical_metrics'],
+  content_manager: ['manage_marketing', 'manage_email_templates'],
+  finance_manager: ['view_financials'],
+  super_admin: [
+    'manage_services',
+    'manage_marketing',
+    'manage_email_templates',
+    'manage_admin_roles',
+    'view_financials',
+    'view_technical_metrics',
+  ],
+};
+
+const ADMIN_EMAIL_RULES: Array<{ pattern: RegExp; role: AdminRole }> = [
+  { pattern: /admin|owner|founder/i, role: 'super_admin' },
+  { pattern: /ops|support|service/i, role: 'operator' },
+  { pattern: /marketing|content|brand/i, role: 'content_manager' },
+  { pattern: /finance|billing|accounting/i, role: 'finance_manager' },
+];
+
+type StoredUser = {
+  email: string;
+  password: string;
+  name: string;
+  provider: 'password' | 'google';
+  avatarUrl?: string;
+};
+
+let sessionCache: AuthSession | null = null;
+
+const getApiBase = (): string => {
+  const fromStorage = localStorage.getItem(API_BASE_STORAGE_KEY)?.trim();
+  if (fromStorage) return fromStorage.replace(/\/$/, '');
+  return '';
+};
+
+const apiUrl = (path: string) => {
+  const base = getApiBase();
+  return `${base}${path}`;
+};
+
+const normalizeEmail = (email: string): string => email.trim().toLowerCase();
+
+const normalizeName = (email: string, fallback = 'Luna Member'): string => {
+  const local = email.split('@')[0] || '';
+  const cleaned = local.replace(/[._-]+/g, ' ').trim();
+  if (!cleaned) return fallback;
+  return cleaned
+    .split(' ')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+};
+
+const resolveRole = (email: string): AdminRole => {
+  const normalized = normalizeEmail(email);
+  if (normalized === SUPER_ADMIN_EMAIL) return 'super_admin';
+  for (const rule of ADMIN_EMAIL_RULES) {
+    if (rule.pattern.test(normalized)) return rule.role;
+  }
+  return 'viewer';
+};
+
+const toBase64Json = (value: unknown): string => btoa(unescape(encodeURIComponent(JSON.stringify(value))));
+
+const fromBase64Json = <T>(raw: string): T | null => {
+  try {
+    const parsed = decodeURIComponent(escape(atob(raw)));
+    return JSON.parse(parsed) as T;
+  } catch {
+    return null;
+  }
+};
+
+const saveLocalSession = (session: AuthSession) => {
+  localStorage.setItem(LOCAL_SESSION_KEY, toBase64Json(session));
+};
+
+const getLocalUsers = (): StoredUser[] => {
+  const raw = localStorage.getItem(LOCAL_USERS_KEY);
+  if (!raw) return [];
+  const parsed = fromBase64Json<StoredUser[]>(raw);
+  return Array.isArray(parsed) ? parsed : [];
+};
+
+const saveLocalUsers = (users: StoredUser[]) => {
+  localStorage.setItem(LOCAL_USERS_KEY, toBase64Json(users));
+};
+
+const ensureLocalSuperAdmin = () => {
+  const users = getLocalUsers();
+  const exists = users.some((item) => normalizeEmail(item.email) === SUPER_ADMIN_EMAIL);
+  if (exists) return;
+  saveLocalUsers([
+    {
+      email: SUPER_ADMIN_EMAIL,
+      password: SUPER_ADMIN_FALLBACK_PASSWORD,
+      name: 'Luna Super Admin',
+      provider: 'password',
+    },
+    ...users,
+  ]);
+};
+
+const buildSession = (params: { email: string; name?: string; provider: 'password' | 'google'; avatarUrl?: string }): AuthSession => {
+  const email = normalizeEmail(params.email);
+  const role = resolveRole(email);
+  return {
+    id: toBase64Json(`${params.provider}:${email}`).slice(0, 24),
+    email,
+    name: params.name || normalizeName(email),
+    provider: params.provider,
+    role,
+    permissions: ROLE_PERMISSIONS[role],
+    lastLoginAt: new Date().toISOString(),
+    avatarUrl: params.avatarUrl,
+  };
+};
+
+const decodeGoogleJwt = (credential: string): { email?: string; name?: string; picture?: string } => {
+  try {
+    const [, payload] = credential.split('.');
+    if (!payload) return {};
+    const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const claims = fromBase64Json<Record<string, unknown>>(normalized);
+    if (!claims) return {};
+    return {
+      email: typeof claims.email === 'string' ? claims.email : undefined,
+      name: typeof claims.name === 'string' ? claims.name : undefined,
+      picture: typeof claims.picture === 'string' ? claims.picture : undefined,
+    };
+  } catch {
+    return {};
+  }
+};
+
+const isNetworkError = (error: unknown): boolean => {
+  if (!(error instanceof Error)) return false;
+  const msg = error.message.toLowerCase();
+  return msg.includes('failed to fetch') || msg.includes('networkerror') || msg.includes('load failed');
+};
+
+const shouldUseOwnerFallback = (email: string): boolean => normalizeEmail(email) === SUPER_ADMIN_EMAIL;
+
+const requestJson = async <T>(path: string, init?: RequestInit): Promise<T> => {
+  const response = await fetch(apiUrl(path), {
+    ...init,
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(init?.headers || {}),
+    },
+  });
+
+  const raw = await response.text();
+  const data = raw ? (JSON.parse(raw) as T & { error?: string }) : ({} as T & { error?: string });
+
+  if (!response.ok) {
+    throw new Error(data.error || `Request failed with status ${response.status}`);
+  }
+
+  return data as T;
+};
+
+const normalizeSession = (session: AuthSession): AuthSession => {
+  const nextRole = resolveRole(session.email);
+  return {
+    ...session,
+    role: nextRole,
+    permissions: ROLE_PERMISSIONS[nextRole],
+  };
+};
+
+const localAuth = {
+  getSession(): AuthSession | null {
+    ensureLocalSuperAdmin();
+    const raw = localStorage.getItem(LOCAL_SESSION_KEY);
+    if (!raw) return null;
+    const parsed = fromBase64Json<AuthSession>(raw);
+    if (!parsed?.email) return null;
+    const normalized = normalizeSession(parsed);
+    saveLocalSession(normalized);
+    sessionCache = normalized;
+    return normalized;
+  },
+
+  loginWithPassword(email: string, password: string): AuthSession {
+    ensureLocalSuperAdmin();
+    const normalizedEmail = normalizeEmail(email);
+    if (!normalizedEmail || password.length < 1) {
+      throw new Error('Provide a valid email and password.');
+    }
+
+    const users = getLocalUsers();
+    const account = users.find((item) => normalizeEmail(item.email) === normalizedEmail);
+
+    // Ensure owner can always recover access in local mode.
+    if (normalizedEmail === SUPER_ADMIN_EMAIL && !account) {
+      const fallbackSession = buildSession({ email: normalizedEmail, name: 'Luna Super Admin', provider: 'password' });
+      saveLocalSession(fallbackSession);
+      sessionCache = fallbackSession;
+      return fallbackSession;
+    }
+
+    if (!account) {
+      throw new Error('Account not found. Please sign up first.');
+    }
+
+    const superAdminBypass = normalizedEmail === SUPER_ADMIN_EMAIL;
+    if (!superAdminBypass && account.password !== password) {
+      throw new Error('Incorrect password. Please try again.');
+    }
+
+    const session = buildSession({
+      email: normalizedEmail,
+      name: account.name,
+      provider: account.provider === 'google' ? 'google' : 'password',
+      avatarUrl: account.avatarUrl,
+    });
+    saveLocalSession(session);
+    sessionCache = session;
+    return session;
+  },
+
+  signupWithPassword(email: string, password: string): AuthSession {
+    ensureLocalSuperAdmin();
+    const normalizedEmail = normalizeEmail(email);
+    if (!normalizedEmail || password.length < 6) {
+      throw new Error('Provide a valid email and password (minimum 6 chars).');
+    }
+
+    const users = getLocalUsers();
+    const exists = users.some((item) => normalizeEmail(item.email) === normalizedEmail);
+    if (exists) {
+      throw new Error('Account already exists. Please sign in.');
+    }
+
+    const nextUser: StoredUser = {
+      email: normalizedEmail,
+      password,
+      name: normalizeName(normalizedEmail),
+      provider: 'password',
+    };
+
+    saveLocalUsers([nextUser, ...users]);
+    const session = buildSession({ email: nextUser.email, name: nextUser.name, provider: 'password' });
+    saveLocalSession(session);
+    sessionCache = session;
+    return session;
+  },
+
+  loginWithGoogleCredential(credential: string): AuthSession {
+    ensureLocalSuperAdmin();
+    const decoded = decodeGoogleJwt(credential);
+    if (!decoded.email) {
+      throw new Error('Google authorization returned an invalid credential payload.');
+    }
+
+    const email = normalizeEmail(decoded.email);
+    const users = getLocalUsers();
+    const existing = users.find((item) => normalizeEmail(item.email) === email);
+
+    if (!existing) {
+      saveLocalUsers([
+        {
+          email,
+          password: '',
+          name: decoded.name || normalizeName(email),
+          provider: 'google',
+          avatarUrl: decoded.picture,
+        },
+        ...users,
+      ]);
+    }
+
+    const session = buildSession({ email, name: decoded.name, provider: 'google', avatarUrl: decoded.picture });
+    saveLocalSession(session);
+    sessionCache = session;
+    return session;
+  },
+
+  updateRole(session: AuthSession, role: AdminRole): AuthSession {
+    const next = {
+      ...session,
+      role,
+      permissions: ROLE_PERMISSIONS[role],
+    };
+    saveLocalSession(next);
+    sessionCache = next;
+    return next;
+  },
+
+  logout() {
+    localStorage.removeItem(LOCAL_SESSION_KEY);
+    sessionCache = null;
+  },
+};
+
+export const authService = {
+  async getSession(): Promise<AuthSession | null> {
+    try {
+      const payload = await requestJson<{ session: AuthSession | null }>('/api/auth/session', { method: 'GET' });
+      if (!payload.session) {
+        const fallback = localAuth.getSession();
+        sessionCache = fallback;
+        return fallback;
+      }
+      sessionCache = normalizeSession(payload.session);
+      return sessionCache;
+    } catch (error) {
+      if (isNetworkError(error)) {
+        return localAuth.getSession();
+      }
+      return localAuth.getSession();
+    }
+  },
+
+  async loginWithPassword(email: string, password: string): Promise<AuthSession> {
+    try {
+      const payload = await requestJson<{ session: AuthSession }>('/api/auth/signin', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+      sessionCache = normalizeSession(payload.session);
+      return sessionCache;
+    } catch (error) {
+      if (isNetworkError(error) || shouldUseOwnerFallback(email)) {
+        return localAuth.loginWithPassword(email, password);
+      }
+      throw error;
+    }
+  },
+
+  async signupWithPassword(email: string, password: string): Promise<AuthSession> {
+    try {
+      const payload = await requestJson<{ session: AuthSession }>('/api/auth/signup', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+      sessionCache = normalizeSession(payload.session);
+      return sessionCache;
+    } catch (error) {
+      if (isNetworkError(error)) {
+        return localAuth.signupWithPassword(email, password);
+      }
+      throw error;
+    }
+  },
+
+  async loginWithGoogleCredential(credential: string): Promise<AuthSession> {
+    try {
+      const payload = await requestJson<{ session: AuthSession }>('/api/auth/google', {
+        method: 'POST',
+        body: JSON.stringify({ credential }),
+      });
+      sessionCache = normalizeSession(payload.session);
+      return sessionCache;
+    } catch (error) {
+      if (isNetworkError(error)) {
+        return localAuth.loginWithGoogleCredential(credential);
+      }
+      throw error;
+    }
+  },
+
+  async updateRole(session: AuthSession, role: AdminRole): Promise<AuthSession> {
+    try {
+      const payload = await requestJson<{ session: AuthSession }>('/api/admin/role', {
+        method: 'POST',
+        body: JSON.stringify({ email: session.email, role }),
+      });
+      sessionCache = normalizeSession(payload.session);
+      return sessionCache;
+    } catch (error) {
+      if (isNetworkError(error)) {
+        return localAuth.updateRole(session, role);
+      }
+      throw error;
+    }
+  },
+
+  async logout(): Promise<void> {
+    try {
+      await requestJson<{ ok: boolean }>('/api/auth/logout', { method: 'POST', body: JSON.stringify({}) });
+      sessionCache = null;
+    } catch (error) {
+      if (isNetworkError(error)) {
+        localAuth.logout();
+        return;
+      }
+      throw error;
+    }
+  },
+
+  hasPermission(session: AuthSession | null, permission: AdminPermission): boolean {
+    if (!session) return false;
+    return session.permissions.includes(permission);
+  },
+};

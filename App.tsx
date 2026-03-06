@@ -1,6 +1,6 @@
 
-import React, { useState, useMemo, lazy, Suspense, useCallback } from 'react';
-import { HormoneData } from './types';
+import React, { useState, useMemo, lazy, Suspense, useCallback, useEffect } from 'react';
+import { AdminRole, AuthSession, HormoneData } from './types';
 import { dataService } from './services/dataService';
 import { useAppPreferences } from './hooks/useAppPreferences';
 import { buildBottomNavItems, buildSidebarGroups, TabType } from './utils/navigation';
@@ -10,6 +10,9 @@ import { AppMobileNav } from './components/AppMobileNav';
 import { MainContentRouter } from './components/MainContentRouter';
 import { OnboardingGate } from './components/OnboardingGate';
 import { useHealthModel } from './hooks/useHealthModel';
+import { AuthView } from './components/AuthView';
+import { authService } from './services/authService';
+import { PublicLandingView } from './components/PublicLandingView';
 
 // SHARED COMPONENTS
 import { LunaLiveButton } from './components/LunaLiveButton';
@@ -18,6 +21,10 @@ const HormoneDetail = lazy(() => import('./components/HormoneDetail'));
 const CheckinOverlay = lazy(() => import('./components/CheckinOverlay').then((m) => ({ default: m.CheckinOverlay })));
 
 const App: React.FC = () => {
+  const [session, setSession] = useState<AuthSession | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(() => dataService.projectState(dataService.getLog()).onboarded);
   const [showLive, setShowLive] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
@@ -30,6 +37,24 @@ const App: React.FC = () => {
   });
   
   const { lang, setLang, theme, setTheme, ui } = useAppPreferences();
+
+  useEffect(() => {
+    let isMounted = true;
+    authService
+      .getSession()
+      .then((nextSession) => {
+        if (isMounted) setSession(nextSession);
+      })
+      .catch(() => {
+        if (isMounted) setSession(null);
+      })
+      .finally(() => {
+        if (isMounted) setIsAuthLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
   const {
     log,
     setLog,
@@ -62,8 +87,71 @@ const App: React.FC = () => {
     navigateTo('bridge');
   }, [saveCheckin, navigateTo]);
 
-  const sidebarGroups = useMemo(() => buildSidebarGroups(ui), [ui]);
+  const canAccessAdmin = useMemo(() => authService.hasPermission(session, 'manage_services') || authService.hasPermission(session, 'manage_admin_roles'), [session]);
+
+  const sidebarGroups = useMemo(() => buildSidebarGroups(ui, canAccessAdmin), [ui, canAccessAdmin]);
   const bottomNavItems = useMemo(() => buildBottomNavItems(ui), [ui]);
+  const handleRoleChange = useCallback((role: AdminRole) => {
+    if (!session) return;
+    authService
+      .updateRole(session, role)
+      .then((updatedSession) => setSession(updatedSession))
+      .catch((error) => {
+        // Keep existing state on failed role update; Admin UI remains accessible.
+        console.error('Role update failed', error);
+      });
+  }, [session]);
+
+  const handleLogout = useCallback(() => {
+    authService
+      .logout()
+      .catch(() => undefined)
+      .finally(() => {
+        setSession(null);
+        setActiveTab('dashboard');
+      });
+  }, []);
+
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-950 text-slate-500 dark:text-slate-400">
+        <div className="text-[10px] font-black uppercase tracking-[0.3em]">Loading Session...</div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen flex flex-col bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans relative overflow-x-hidden">
+        <PublicLandingView
+          onSignIn={() => {
+            setAuthMode('signin');
+            setShowAuthModal(true);
+          }}
+          onSignUp={() => {
+            setAuthMode('signup');
+            setShowAuthModal(true);
+          }}
+          lang={lang}
+          setLang={setLang}
+          theme={theme}
+          setTheme={setTheme}
+          ui={ui}
+        />
+        {showAuthModal && (
+          <AuthView
+            ui={ui}
+            initialMode={authMode}
+            onClose={() => setShowAuthModal(false)}
+            onSuccess={(nextSession) => {
+              setShowAuthModal(false);
+              setSession(nextSession);
+            }}
+          />
+        )}
+      </div>
+    );
+  }
 
   if (!hasCompletedOnboarding) {
     return <OnboardingGate onComplete={() => { setLog(dataService.getLog()); setHasCompletedOnboarding(true); }} />;
@@ -81,6 +169,7 @@ const App: React.FC = () => {
           setLang={setLang}
           theme={theme}
           setTheme={setTheme}
+          onLogout={handleLogout}
         />
 
       <MainContentRouter
@@ -99,9 +188,12 @@ const App: React.FC = () => {
         setShowLive={setShowLive}
         setLog={setLog}
         navigateTo={navigateTo}
+        session={session}
+        onRoleChange={handleRoleChange}
+        onLogout={handleLogout}
       />
 
-      <AppFooter ui={ui} navigateTo={navigateTo} />
+      <AppFooter ui={ui} lang={lang} navigateTo={navigateTo} canAccessAdmin={canAccessAdmin} />
 
       <Suspense fallback={null}>
         <CheckinOverlay
@@ -118,8 +210,8 @@ const App: React.FC = () => {
 
       <LunaLiveButton onClick={() => setShowLive(true)} isActive={showLive} />
       <Suspense fallback={null}>
-        <LiveAssistant isOpen={showLive} onClose={() => setShowLive(false)} stateSnapshot={stateNarrative || "Presence."} />
-        {selectedHormone && <HormoneDetail hormone={selectedHormone} onClose={() => setSelectedHormone(null)} />}
+        <LiveAssistant isOpen={showLive} onClose={() => setShowLive(false)} stateSnapshot={stateNarrative || "Presence."} lang={lang} />
+        {selectedHormone && <HormoneDetail hormone={selectedHormone} lang={lang} onClose={() => setSelectedHormone(null)} />}
       </Suspense>
 
       <AppMobileNav

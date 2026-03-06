@@ -111,7 +111,7 @@ export const CreativeStudio: React.FC = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-12 animate-in fade-in duration-500">
+    <div className="max-w-5xl mx-auto luna-page-shell luna-page-create space-y-12 animate-in fade-in duration-500 p-8 md:p-10">
       <header className="border-b-2 border-slate-900 dark:border-slate-100 pb-8 flex justify-between items-end">
         <div>
           <h2 className="text-4xl font-black uppercase tracking-tighter">State Visualizer</h2>
@@ -122,7 +122,7 @@ export const CreativeStudio: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         <aside className="lg:col-span-4 space-y-8">
           {!hasApiKey && (
-            <div className="p-8 border-2 border-pink-500 bg-pink-50 dark:bg-pink-900/10 space-y-4">
+            <div className="p-8 border-2 border-pink-500 luna-vivid-card-alt-1 space-y-4">
               <h4 className="text-[10px] font-black uppercase text-pink-500 tracking-widest">Premium System Required</h4>
               <p className="text-xs font-bold leading-relaxed text-slate-600 dark:text-pink-200">
                 To use high-resolution imaging and animation, you must select a paid API key.
@@ -146,7 +146,7 @@ export const CreativeStudio: React.FC = () => {
             value={prompt}
             onChange={e => setPrompt(e.target.value)}
             placeholder="Describe how your body feels right now..."
-            className="w-full h-32 p-6 border-2 border-slate-900 dark:border-slate-100 bg-white dark:bg-slate-900 outline-none font-medium text-lg focus:ring-4 ring-pink-500/10"
+            className="w-full h-32 p-6 border-2 border-slate-900 dark:border-slate-100 luna-vivid-surface outline-none font-medium text-lg focus:ring-4 ring-pink-500/10"
           />
           
           <div className="grid grid-cols-2 gap-4">
@@ -169,7 +169,7 @@ export const CreativeStudio: React.FC = () => {
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{serviceFeedback}</p>
           )}
 
-          <div className="min-h-[400px] border-2 border-dashed border-slate-200 dark:border-slate-800 flex items-center justify-center bg-slate-50/50 dark:bg-slate-900/50 relative overflow-hidden">
+          <div className="min-h-[400px] border-2 border-dashed border-slate-200 dark:border-slate-800 flex items-center justify-center luna-vivid-card-soft relative overflow-hidden">
             {loading ? (
               <div className="text-center space-y-4">
                 <div className="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto" />

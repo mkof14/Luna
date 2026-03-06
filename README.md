@@ -24,6 +24,21 @@ View your app in AI Studio: https://ai.studio/apps/2982aa11-1f40-4a50-bc23-4f3bf
 - Current local mode is API-free by default (`VITE_ENABLE_AI=false`).
 - AI endpoints are intentionally disabled in the client build to avoid exposing credentials.
 
+## Deploy to Vercel
+
+1. Import this repo in Vercel.
+2. Keep the default install/build commands:
+   - Install: `npm install`
+   - Build: `npm run build`
+3. Set environment variables in Vercel Project Settings:
+   - `VITE_ENABLE_AI=false` (or `true` only with a secure backend proxy)
+   - `SUPER_ADMIN_EMAILS=your-email@example.com`
+   - `SUPER_ADMIN_BOOTSTRAP_PASSWORD=<strong-password>`
+   - `AUTH_ALLOWED_ORIGINS=https://<your-vercel-domain>`
+4. Deploy.
+
+This repo is configured so Vercel serves the SPA from `dist` and handles `/api/*` via `api/index.mjs` (Vercel Function).
+
 ## Architecture Snapshot
 
 - App orchestration: `/Users/mk/Desktop/Luna/App.tsx`

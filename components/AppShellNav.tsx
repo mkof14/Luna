@@ -26,6 +26,7 @@ interface AppShellNavProps {
   setLang: (lang: Language) => void;
   theme: 'light' | 'dark';
   setTheme: (theme: 'light' | 'dark') => void;
+  onLogout: () => void;
 }
 
 export const AppShellNav: React.FC<AppShellNavProps> = ({
@@ -38,13 +39,38 @@ export const AppShellNav: React.FC<AppShellNavProps> = ({
   setLang,
   theme,
   setTheme,
+  onLogout,
 }) => {
+  const moreByLang: Record<Language, string> = {
+    en: 'More',
+    ru: 'Еще',
+    uk: 'Ще',
+    es: 'Más',
+    fr: 'Plus',
+    de: 'Mehr',
+    zh: '更多',
+    ja: 'その他',
+    pt: 'Mais'
+  };
+  const logoutByLang: Record<Language, string> = {
+    en: 'Logout',
+    ru: 'Выйти',
+    uk: 'Вийти',
+    es: 'Salir',
+    fr: 'Quitter',
+    de: 'Abmelden',
+    zh: '退出',
+    ja: 'ログアウト',
+    pt: 'Sair',
+  };
+  const copy = { more: moreByLang[lang], logout: logoutByLang[lang] };
+
   return (
     <>
       <nav className={`fixed inset-0 z-[1000] bg-slate-950/40 backdrop-blur-md transition-opacity duration-500 ${showSidebar ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setShowSidebar(false)}>
         <div className={`absolute left-0 top-0 h-full w-[340px] bg-white dark:bg-slate-900 shadow-luna-deep transition-transform duration-500 ease-out p-8 flex flex-col overflow-y-auto no-scrollbar ${showSidebar ? 'translate-x-0' : '-translate-x-full'}`} onClick={e => e.stopPropagation()}>
           <header className="flex justify-between items-center mb-12">
-            <Logo size="sm" />
+            <Logo size="sm" className="text-5xl leading-none" />
             <button onClick={() => setShowSidebar(false)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-2xl font-light">×</button>
           </header>
 
@@ -68,6 +94,14 @@ export const AppShellNav: React.FC<AppShellNavProps> = ({
               </div>
             ))}
           </div>
+          <div className="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800">
+            <button
+              onClick={onLogout}
+              className="w-full px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/50 transition-colors"
+            >
+              {copy.logout}
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -79,7 +113,7 @@ export const AppShellNav: React.FC<AppShellNavProps> = ({
               onClick={() => navigateTo('dashboard')}
               className="flex items-center hover:scale-105 active:scale-95 transition-transform"
             >
-              <Logo size="sm" />
+              <Logo size="sm" className="text-5xl leading-none" />
             </button>
           </div>
 
@@ -101,7 +135,7 @@ export const AppShellNav: React.FC<AppShellNavProps> = ({
               className="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all whitespace-nowrap flex items-center gap-2"
             >
               <span className="text-sm">➕</span>
-              <span className="hidden sm:inline">More</span>
+              <span className="hidden sm:inline">{copy.more}</span>
             </button>
           </nav>
 
@@ -110,6 +144,12 @@ export const AppShellNav: React.FC<AppShellNavProps> = ({
               <LanguageSelector current={lang} onSelect={setLang} />
             </div>
             <ThemeToggle theme={theme} toggle={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
+            <button
+              onClick={onLogout}
+              className="hidden md:inline-flex px-3 py-2 rounded-full border border-slate-300/80 dark:border-slate-700/80 text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/60 transition-colors"
+            >
+              {copy.logout}
+            </button>
           </div>
         </div>
       </header>

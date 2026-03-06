@@ -14,13 +14,15 @@ const en = {
     bridge: "The Bridge",
     creative: "Create",
     reflections: "Voice Journal",
+    voiceFiles: "My Voice Files",
     relationships: "Connection",
     family: "Home Seasons",
     profile: "Profile",
     library: "Knowledge",
     faq: "Questions",
     contact: "Contact",
-    crisis: "Support",
+    crisis: "Reset Room",
+    admin: "Admin",
     partner: "Partner Info",
     support: "Support",
     healthHub: "Health Hub",
@@ -63,6 +65,31 @@ const en = {
     libido: { label: "Inner Drive", min: "Quiet", max: "Active" },
     irritability: { label: "Patience Level", min: "Short", max: "Calm/High" },
     stress: { label: "Current Load", min: "Grounded", max: "Overloaded" }
+  },
+  dashboard: {
+    quickCheckin: "Check-in",
+    journal: "Journal",
+    bridge: "Bridge",
+    cycle: "Cycle",
+    startCheckin: "Start Check-in",
+    talkToLuna: "Talk to Luna",
+    archetypeModeActive: "Mode Active",
+    thinking: "Thinking...",
+    balanced: "Balanced.",
+    insight: "Insight",
+    dailyTip: "Daily Tip",
+    hydrateTip: "Hydrate intentionally today to support your rhythm.",
+    learnWhy: "Learn Why →",
+    bodyMap: "Body Map",
+    exploreKnowledge: "Explore Knowledge →",
+    reassurance: "Nature is never in a hurry.",
+    baselineInsight: "Your body is operating at a balanced baseline."
+  },
+  checkinOverlay: {
+    headline: "Daily Check-in",
+    subheadline: "Capture your current state.",
+    save: "Save",
+    saveAndBridge: "+ The Bridge"
   },
   bridge: {
     title: "Relationship Mode",
@@ -131,9 +158,82 @@ const en = {
     message: "Message",
     send: "Send"
   },
+  auth: {
+    recoveryHeadline: "Restore Access",
+    recoveryText: "Enter your account email and Luna will prepare a secure recovery route.",
+    email: "Email",
+    recoveryCta: "Send Recovery Link",
+    headline: "Luna Authorization",
+    subheadline: "Private access to your Luna workspace and admin systems.",
+    google: "Continue with Google",
+    password: "Password",
+    hide: "Hide",
+    show: "Show",
+    forgot: "Forgot Password?",
+    login: "Sign In",
+    signup: "Create Account",
+    noAccount: "Need an account?",
+    hasAccount: "Already have an account?"
+  },
+  publicHome: {
+    tabs: {
+      home: "Home",
+      map: "Body Map",
+      ritual: "Ritual Path"
+    },
+    pageTitle: {
+      home: "Public Home",
+      map: "Body Map",
+      ritual: "Ritual Path",
+      privacy: "Privacy"
+    },
+    signInUp: "Sign In / Up",
+    heroTitleA: "Daily",
+    heroTitleB: "Mirror.",
+    heroSubtitle: "Luna Home is a calm public entry point: observe your rhythm, understand your state, and enter private space when ready.",
+    panel: {
+      phase: "Open",
+      summary: "Presence before pressure. Rhythm before reaction.",
+      reassurance: "You can move slowly and still move deeply."
+    },
+    map: {
+      eyebrow: "Body Map",
+      title: "Map The Invisible",
+      subtitle: "A section for sensing subtle shifts. Less diagnosis, more orientation.",
+      cards: {
+        weatherTitle: "Inner Weather",
+        weatherText: "Luna reads your state as weather: changing, valid, and worth listening to.",
+        memoryTitle: "Rhythm Memory",
+        memoryText: "Patterns become visible over days and weeks, helping you respond with less friction.",
+        languageTitle: "Gentle Language",
+        languageText: "No alarmist tone. No pressure to optimize. Just clarity and grounded reflection."
+      }
+    },
+    ritual: {
+      eyebrow: "Ritual Path",
+      title: "A Path, Not A Checklist",
+      morningTitle: "Morning",
+      morningText: "Name your baseline before the world names your pace.",
+      middayTitle: "Midday",
+      middayText: "Re-check capacity and adjust plans with respect for your energy.",
+      eveningTitle: "Evening",
+      eveningText: "Close the day with a short reflection to preserve signal, not noise.",
+      noteTitle: "Luna Note",
+      noteMain: "This Home is public by design. It gives orientation without extracting attention.",
+      noteSub: "Your private member zone is where personal data, check-ins, and deeper tools live."
+    },
+    privacy: {
+      title: "Privacy Promise",
+      subtitle: "A protected center for your personal rhythm data.",
+      cta: "Enter Member Zone",
+      body: "Luna follows a local-first approach. The public page remains informational and open. Personal records and role-specific tools stay inside the authenticated member space."
+    },
+    footerTagline: "Public Home for orientation, rhythm, and reflection.",
+    footerCopy: "© 2026 LUNA • PUBLIC HOME"
+  },
   shared: {
     footer: "Private & Local. Your data stays on your device.",
-    disclaimer: "Luna is a mirror for self-observation. Consult a health professional for any medical advice."
+    disclaimer: "Luna is not a medical service, medical device, diagnostic tool, or treatment provider. Luna does not provide medical advice, diagnosis, monitoring, or emergency care. Always consult a licensed healthcare professional."
   }
 };
 
@@ -152,13 +252,15 @@ const ru = {
     bridge: "Мост",
     creative: "Творчество",
     reflections: "Голосовой дневник",
+    voiceFiles: "Мои голосовые файлы",
     relationships: "Связь",
     family: "Сезоны Дома",
     profile: "Профиль",
     library: "Знания",
     faq: "Вопросы",
     contact: "Контакт",
-    crisis: "Поддержка",
+    crisis: "Комната Стабилизации",
+    admin: "Админ",
     partner: "Для партнера",
     support: "Поддержка",
     healthHub: "Центр здоровья",
@@ -187,6 +289,31 @@ const ru = {
       ritual: "Поддерживающие ритуалы"
     },
     avoid: "Ограничения"
+  },
+  dashboard: {
+    quickCheckin: "Отметиться",
+    journal: "Дневник",
+    bridge: "Мост",
+    cycle: "Цикл",
+    startCheckin: "Начать проверку",
+    talkToLuna: "Поговорить с Луной",
+    archetypeModeActive: "Режим активен",
+    thinking: "Думаю...",
+    balanced: "Сбалансировано.",
+    insight: "Инсайт",
+    dailyTip: "Совет дня",
+    hydrateTip: "Пейте больше воды сегодня для поддержания баланса.",
+    learnWhy: "Почему это важно →",
+    bodyMap: "Карта тела",
+    exploreKnowledge: "Изучить знания →",
+    reassurance: "Природа никогда не спешит.",
+    baselineInsight: "Ваше тело работает в сбалансированном режиме."
+  },
+  checkinOverlay: {
+    headline: "Как вы сегодня?",
+    subheadline: "Отметьте свое текущее состояние.",
+    save: "Сохранить",
+    saveAndBridge: "+ Мост"
   },
   bridge: {
     title: "Режим Отношений",
@@ -241,6 +368,83 @@ const ru = {
         { q: "Как читать «Записку партнера»?", a: "Это мост. В ней используются «Я-сообщения» для объяснения ее внутреннего ландшафта. Читайте это как прогноз погоды на ее день." }
       ]
     }
+  },
+  auth: {
+    recoveryHeadline: "Восстановление доступа",
+    recoveryText: "Введите email аккаунта, и Luna подготовит безопасное восстановление.",
+    email: "Email",
+    recoveryCta: "Отправить ссылку",
+    headline: "Авторизация Luna",
+    subheadline: "Приватный вход в рабочее пространство Luna и админ-системы.",
+    google: "Войти через Google",
+    password: "Пароль",
+    hide: "Скрыть",
+    show: "Показать",
+    forgot: "Забыли пароль?",
+    login: "Войти",
+    signup: "Создать аккаунт",
+    noAccount: "Нужен аккаунт?",
+    hasAccount: "Уже есть аккаунт?"
+  },
+  publicHome: {
+    tabs: {
+      home: "Главная",
+      map: "Карта Тела",
+      ritual: "Ритуальный Путь"
+    },
+    pageTitle: {
+      home: "Публичная Главная",
+      map: "Карта Тела",
+      ritual: "Ритуальный Путь",
+      privacy: "Приватность"
+    },
+    signInUp: "Вход / Регистрация",
+    heroTitleA: "Ежедневное",
+    heroTitleB: "Зеркало.",
+    heroSubtitle: "Luna Home — это спокойная публичная точка входа: наблюдайте свой ритм, понимайте состояние и входите в личное пространство, когда будете готовы.",
+    panel: {
+      phase: "Открыто",
+      summary: "Сначала присутствие. Потом действие.",
+      reassurance: "Можно двигаться медленно и всё равно глубоко."
+    },
+    map: {
+      eyebrow: "Карта Тела",
+      title: "Картируйте Невидимое",
+      subtitle: "Раздел для тонких сдвигов состояния. Меньше диагнозов, больше ориентации.",
+      cards: {
+        weatherTitle: "Внутренняя Погода",
+        weatherText: "Luna читает состояние как погоду: изменчивую, важную и достойную внимания.",
+        memoryTitle: "Память Ритма",
+        memoryText: "Паттерны проявляются по дням и неделям, помогая действовать с меньшим напряжением.",
+        languageTitle: "Мягкий Язык",
+        languageText: "Без давления и тревожных формулировок. Только ясность и бережное наблюдение."
+      }
+    },
+    ritual: {
+      eyebrow: "Ритуальный Путь",
+      title: "Путь, А Не Чеклист",
+      morningTitle: "Утро",
+      morningText: "Назовите свою базовую точку до того, как день задаст темп.",
+      middayTitle: "День",
+      middayText: "Проверьте ресурс и скорректируйте планы с уважением к энергии.",
+      eveningTitle: "Вечер",
+      eveningText: "Закройте день короткой рефлексией, чтобы сохранять сигнал, а не шум.",
+      noteTitle: "Заметка Luna",
+      noteMain: "Эта Home публичная по дизайну. Она дает ориентир без борьбы за внимание.",
+      noteSub: "Личная зона — это ваши данные, отметки состояния и более глубокие инструменты."
+    },
+    privacy: {
+      title: "Обещание Приватности",
+      subtitle: "Защищенное пространство для ваших ритмов.",
+      cta: "Войти в личную зону",
+      body: "Luna следует local-first подходу. Публичная страница остается информационной и открытой. Личные записи и ролевые инструменты находятся внутри авторизованной зоны."
+    },
+    footerTagline: "Публичная Home для ориентации, ритма и рефлексии.",
+    footerCopy: "© 2026 LUNA • ПУБЛИЧНАЯ HOME"
+  },
+  shared: {
+    footer: "Приватно и локально. Ваши данные остаются на вашем устройстве.",
+    disclaimer: "Luna не является медицинским сервисом, медицинским устройством, диагностическим инструментом или поставщиком лечения. Luna не предоставляет медицинских советов, диагнозов, мониторинга или экстренной помощи. Всегда обращайтесь к лицензированному медицинскому специалисту."
   }
 };
 
@@ -260,16 +464,520 @@ export const UI_COPY = {
   }
 };
 
+const uk: TranslationSchema = {
+  ...en,
+  navigation: {
+    ...en.navigation,
+    home: 'Головна',
+    dashboard: 'Сьогодні',
+    cycle: 'Мій цикл',
+    labs: "Звіти здоров'я",
+    meds: 'Моя підтримка',
+    history: 'Мій шлях',
+    bridge: 'Міст',
+    creative: 'Творчість',
+    reflections: 'Голосовий щоденник',
+    voiceFiles: 'Мої голосові файли',
+    relationships: "Зв'язок",
+    family: 'Сезони Дому',
+    profile: 'Профіль',
+    library: 'Знання',
+    faq: 'Питання',
+    contact: 'Контакт',
+    crisis: 'Кімната Стабілізації',
+    admin: 'Адмін',
+    partner: 'Для партнера',
+  },
+  dashboard: {
+    ...en.dashboard,
+    quickCheckin: 'Чек-ін',
+    startCheckin: 'Почати чек-ін',
+    talkToLuna: 'Поговорити з Luna',
+    dailyTip: 'Порада дня',
+    bodyMap: 'Карта тіла',
+  },
+  checkinOverlay: {
+    headline: 'Щоденний чек-ін',
+    subheadline: 'Зафіксуйте поточний стан.',
+    save: 'Зберегти',
+    saveAndBridge: '+ Міст'
+  },
+  auth: {
+    ...en.auth,
+    recoveryHeadline: 'Відновити доступ',
+    recoveryText: 'Введіть email облікового запису, і Luna підготує безпечне відновлення.',
+    recoveryCta: 'Надіслати посилання',
+    headline: 'Авторизація Luna',
+    subheadline: 'Приватний доступ до вашого простору Luna та адмін-систем.',
+    google: 'Продовжити з Google',
+    password: 'Пароль',
+    hide: 'Сховати',
+    show: 'Показати',
+    forgot: 'Забули пароль?',
+    login: 'Увійти',
+    signup: 'Створити акаунт',
+    noAccount: 'Потрібен акаунт?',
+    hasAccount: 'Вже маєте акаунт?'
+  },
+  publicHome: {
+    ...en.publicHome,
+    tabs: { home: 'Головна', map: 'Карта тіла', ritual: 'Ритуальний шлях' },
+    pageTitle: { home: 'Публічна головна', map: 'Карта тіла', ritual: 'Ритуальний шлях', privacy: 'Приватність' },
+    signInUp: 'Вхід / Реєстрація',
+    heroTitleA: 'Щоденне',
+    heroTitleB: 'Дзеркало.',
+    heroSubtitle: 'Luna Home - спокійна публічна точка входу: спостерігайте ритм, розумійте стан і заходьте у приватний простір, коли будете готові.',
+    footerTagline: 'Публічна Home для орієнтації, ритму та рефлексії.',
+    footerCopy: '© 2026 LUNA • ПУБЛІЧНА HOME'
+  },
+  shared: {
+    footer: 'Приватно і локально. Ваші дані залишаються на вашому пристрої.',
+    disclaimer: 'Luna не є медичним сервісом, медичним пристроєм, діагностичним інструментом або засобом лікування. Luna не надає медичних порад, діагнозів, моніторингу чи екстреної допомоги. Завжди звертайтесь до ліцензованого медичного фахівця.'
+  }
+};
+
+const es: TranslationSchema = {
+  ...en,
+  navigation: {
+    ...en.navigation,
+    home: 'Inicio',
+    dashboard: 'Hoy',
+    cycle: 'Mi ciclo',
+    labs: 'Informes de salud',
+    meds: 'Mi apoyo',
+    history: 'Mi camino',
+    bridge: 'Puente',
+    creative: 'Crear',
+    reflections: 'Diario de voz',
+    voiceFiles: 'Mis archivos de voz',
+    relationships: 'Conexión',
+    family: 'Estaciones del hogar',
+    profile: 'Perfil',
+    library: 'Conocimiento',
+    faq: 'Preguntas',
+    contact: 'Contacto',
+    crisis: 'Sala Reset',
+    admin: 'Admin',
+    partner: 'Para la pareja',
+  },
+  dashboard: {
+    ...en.dashboard,
+    quickCheckin: 'Check-in',
+    startCheckin: 'Iniciar check-in',
+    talkToLuna: 'Hablar con Luna',
+    dailyTip: 'Consejo diario',
+    bodyMap: 'Mapa corporal',
+  },
+  checkinOverlay: {
+    headline: 'Check-in diario',
+    subheadline: 'Captura tu estado actual.',
+    save: 'Guardar',
+    saveAndBridge: '+ Puente'
+  },
+  auth: {
+    ...en.auth,
+    recoveryHeadline: 'Restablecer acceso',
+    recoveryText: 'Introduce el email de tu cuenta y Luna preparará una ruta segura de recuperación.',
+    recoveryCta: 'Enviar enlace',
+    headline: 'Autorización Luna',
+    subheadline: 'Acceso privado a tu espacio Luna y sistemas de admin.',
+    google: 'Continuar con Google',
+    password: 'Contraseña',
+    hide: 'Ocultar',
+    show: 'Mostrar',
+    forgot: '¿Olvidaste tu contraseña?',
+    login: 'Iniciar sesión',
+    signup: 'Crear cuenta',
+    noAccount: '¿Necesitas una cuenta?',
+    hasAccount: '¿Ya tienes cuenta?'
+  },
+  publicHome: {
+    ...en.publicHome,
+    tabs: { home: 'Inicio', map: 'Mapa corporal', ritual: 'Ruta ritual' },
+    pageTitle: { home: 'Inicio público', map: 'Mapa corporal', ritual: 'Ruta ritual', privacy: 'Privacidad' },
+    signInUp: 'Entrar / Crear cuenta',
+    heroTitleA: 'Espejo',
+    heroTitleB: 'Diario.',
+    heroSubtitle: 'Luna Home es una entrada pública y tranquila: observa tu ritmo, comprende tu estado y entra al espacio privado cuando quieras.',
+    footerTagline: 'Home pública para orientación, ritmo y reflexión.',
+    footerCopy: '© 2026 LUNA • HOME PÚBLICA'
+  },
+  shared: {
+    footer: 'Privado y local. Tus datos se quedan en tu dispositivo.',
+    disclaimer: 'Luna no es un servicio médico, dispositivo médico, herramienta de diagnóstico ni proveedor de tratamiento. Luna no ofrece consejo médico, diagnóstico, monitorización ni atención de emergencia. Consulta siempre a un profesional sanitario autorizado.'
+  }
+};
+
+const fr: TranslationSchema = {
+  ...en,
+  navigation: {
+    ...en.navigation,
+    home: 'Accueil',
+    dashboard: "Aujourd'hui",
+    cycle: 'Mon cycle',
+    labs: 'Rapports santé',
+    meds: 'Mon soutien',
+    history: 'Mon parcours',
+    bridge: 'Pont',
+    creative: 'Créer',
+    reflections: 'Journal vocal',
+    voiceFiles: 'Mes fichiers vocaux',
+    relationships: 'Connexion',
+    family: 'Saisons du foyer',
+    profile: 'Profil',
+    library: 'Connaissance',
+    faq: 'Questions',
+    contact: 'Contact',
+    crisis: 'Salle Reset',
+    admin: 'Admin',
+    partner: 'Partenaire',
+  },
+  dashboard: {
+    ...en.dashboard,
+    quickCheckin: 'Check-in',
+    startCheckin: 'Commencer le check-in',
+    talkToLuna: 'Parler à Luna',
+    dailyTip: 'Conseil du jour',
+    bodyMap: 'Carte du corps',
+  },
+  checkinOverlay: {
+    headline: 'Check-in quotidien',
+    subheadline: 'Capturez votre état actuel.',
+    save: 'Enregistrer',
+    saveAndBridge: '+ Pont'
+  },
+  auth: {
+    ...en.auth,
+    recoveryHeadline: "Rétablir l'accès",
+    recoveryText: 'Entrez votre email de compte et Luna préparera une récupération sécurisée.',
+    recoveryCta: 'Envoyer le lien',
+    headline: 'Autorisation Luna',
+    subheadline: 'Accès privé à votre espace Luna et aux systèmes admin.',
+    google: 'Continuer avec Google',
+    password: 'Mot de passe',
+    hide: 'Masquer',
+    show: 'Afficher',
+    forgot: 'Mot de passe oublié ?',
+    login: 'Se connecter',
+    signup: 'Créer un compte',
+    noAccount: 'Besoin d’un compte ?',
+    hasAccount: 'Vous avez déjà un compte ?'
+  },
+  publicHome: {
+    ...en.publicHome,
+    tabs: { home: 'Accueil', map: 'Carte du corps', ritual: 'Chemin rituel' },
+    pageTitle: { home: 'Accueil public', map: 'Carte du corps', ritual: 'Chemin rituel', privacy: 'Confidentialité' },
+    signInUp: 'Connexion / Inscription',
+    heroTitleA: 'Miroir',
+    heroTitleB: 'Quotidien.',
+    heroSubtitle: 'Luna Home est une entrée publique et apaisée: observez votre rythme, comprenez votre état et entrez dans votre espace privé quand vous êtes prête.',
+    footerTagline: 'Accueil public pour orientation, rythme et réflexion.',
+    footerCopy: '© 2026 LUNA • ACCUEIL PUBLIC'
+  },
+  shared: {
+    footer: 'Privé et local. Vos données restent sur votre appareil.',
+    disclaimer: 'Luna n est pas un service medical, un dispositif medical, un outil de diagnostic ni un service de traitement. Luna ne fournit pas de conseil medical, de diagnostic, de suivi clinique ni de soins d urgence. Consultez toujours un professionnel de sante autorise.'
+  }
+};
+
+const de: TranslationSchema = {
+  ...en,
+  navigation: {
+    ...en.navigation,
+    home: 'Start',
+    dashboard: 'Heute',
+    cycle: 'Mein Zyklus',
+    labs: 'Gesundheitsberichte',
+    meds: 'Meine Unterstützung',
+    history: 'Mein Weg',
+    bridge: 'Brücke',
+    creative: 'Kreativ',
+    reflections: 'Sprachjournal',
+    voiceFiles: 'Meine Sprachdateien',
+    relationships: 'Verbindung',
+    family: 'Jahreszeiten Zuhause',
+    profile: 'Profil',
+    library: 'Wissen',
+    faq: 'Fragen',
+    contact: 'Kontakt',
+    crisis: 'Reset Raum',
+    admin: 'Admin',
+    partner: 'Partner',
+  },
+  dashboard: {
+    ...en.dashboard,
+    quickCheckin: 'Check-in',
+    startCheckin: 'Check-in starten',
+    talkToLuna: 'Mit Luna sprechen',
+    dailyTip: 'Tageshinweis',
+    bodyMap: 'Körperkarte',
+  },
+  checkinOverlay: {
+    headline: 'Täglicher Check-in',
+    subheadline: 'Erfasse deinen aktuellen Zustand.',
+    save: 'Speichern',
+    saveAndBridge: '+ Brücke'
+  },
+  auth: {
+    ...en.auth,
+    recoveryHeadline: 'Zugang wiederherstellen',
+    recoveryText: 'Gib deine Konto-E-Mail ein und Luna bereitet einen sicheren Wiederherstellungsweg vor.',
+    recoveryCta: 'Link senden',
+    headline: 'Luna Anmeldung',
+    subheadline: 'Privater Zugang zu deinem Luna-Bereich und Admin-Systemen.',
+    google: 'Mit Google fortfahren',
+    password: 'Passwort',
+    hide: 'Ausblenden',
+    show: 'Anzeigen',
+    forgot: 'Passwort vergessen?',
+    login: 'Anmelden',
+    signup: 'Konto erstellen',
+    noAccount: 'Brauchst du ein Konto?',
+    hasAccount: 'Hast du bereits ein Konto?'
+  },
+  publicHome: {
+    ...en.publicHome,
+    tabs: { home: 'Start', map: 'Körperkarte', ritual: 'Ritualpfad' },
+    pageTitle: { home: 'Öffentliche Startseite', map: 'Körperkarte', ritual: 'Ritualpfad', privacy: 'Datenschutz' },
+    signInUp: 'Anmelden / Registrieren',
+    heroTitleA: 'Täglicher',
+    heroTitleB: 'Spiegel.',
+    heroSubtitle: 'Luna Home ist ein ruhiger öffentlicher Einstieg: beobachte deinen Rhythmus, verstehe deinen Zustand und betrete den privaten Bereich, wenn du bereit bist.',
+    footerTagline: 'Öffentliche Home für Orientierung, Rhythmus und Reflexion.',
+    footerCopy: '© 2026 LUNA • ÖFFENTLICHE HOME'
+  },
+  shared: {
+    footer: 'Privat und lokal. Deine Daten bleiben auf deinem Gerät.',
+    disclaimer: 'Luna ist kein medizinischer Dienst, kein Medizinprodukt, kein Diagnosetool und kein Behandlungsanbieter. Luna bietet keine medizinische Beratung, Diagnose, Ueberwachung oder Notfallversorgung. Wende dich immer an eine zugelassene medizinische Fachperson.'
+  }
+};
+
+const zh: TranslationSchema = {
+  ...en,
+  navigation: {
+    ...en.navigation,
+    home: '主页',
+    dashboard: '今日',
+    cycle: '我的周期',
+    labs: '健康报告',
+    meds: '我的支持',
+    history: '我的旅程',
+    bridge: '桥接',
+    creative: '创作',
+    reflections: '语音日记',
+    voiceFiles: '我的语音文件',
+    relationships: '连接',
+    family: '家庭季节',
+    profile: '个人资料',
+    library: '知识库',
+    faq: '常见问题',
+    contact: '联系',
+    crisis: '重置空间',
+    admin: '管理',
+    partner: '伴侣',
+  },
+  dashboard: {
+    ...en.dashboard,
+    quickCheckin: '打卡',
+    startCheckin: '开始打卡',
+    talkToLuna: '与 Luna 对话',
+    dailyTip: '每日提示',
+    bodyMap: '身体地图',
+  },
+  checkinOverlay: {
+    headline: '每日打卡',
+    subheadline: '记录你当前的状态。',
+    save: '保存',
+    saveAndBridge: '+ 桥接'
+  },
+  auth: {
+    ...en.auth,
+    recoveryHeadline: '恢复访问',
+    recoveryText: '输入你的账号邮箱，Luna 将准备安全的恢复路径。',
+    recoveryCta: '发送恢复链接',
+    headline: 'Luna 登录',
+    subheadline: '私密访问你的 Luna 空间和管理系统。',
+    google: '使用 Google 继续',
+    password: '密码',
+    hide: '隐藏',
+    show: '显示',
+    forgot: '忘记密码？',
+    login: '登录',
+    signup: '创建账户',
+    noAccount: '需要账户？',
+    hasAccount: '已有账户？'
+  },
+  publicHome: {
+    ...en.publicHome,
+    tabs: { home: '主页', map: '身体地图', ritual: '仪式路径' },
+    pageTitle: { home: '公开首页', map: '身体地图', ritual: '仪式路径', privacy: '隐私' },
+    signInUp: '登录 / 注册',
+    heroTitleA: '每日',
+    heroTitleB: '镜像。',
+    heroSubtitle: 'Luna Home 是平静的公开入口：观察你的节律，理解你的状态，并在准备好时进入私密空间。',
+    footerTagline: '公开 Home：用于定位、节律与反思。',
+    footerCopy: '© 2026 LUNA • 公开 HOME'
+  },
+  shared: {
+    footer: '私密且本地化。你的数据保留在你的设备上。',
+    disclaimer: 'Luna 不是医疗服务、医疗设备、诊断工具或治疗提供方。Luna 不提供医疗建议、诊断、医疗监测或紧急护理。请始终咨询持证医疗专业人员。'
+  }
+};
+
+const ja: TranslationSchema = {
+  ...en,
+  navigation: {
+    ...en.navigation,
+    home: 'ホーム',
+    dashboard: '今日',
+    cycle: '私のサイクル',
+    labs: '健康レポート',
+    meds: 'サポート',
+    history: '私の記録',
+    bridge: 'ブリッジ',
+    creative: 'クリエイト',
+    reflections: '音声ジャーナル',
+    voiceFiles: 'マイ音声ファイル',
+    relationships: 'つながり',
+    family: 'ホームシーズン',
+    profile: 'プロフィール',
+    library: '知識',
+    faq: 'よくある質問',
+    contact: '連絡先',
+    crisis: 'リセットルーム',
+    admin: '管理',
+    partner: 'パートナー',
+  },
+  dashboard: {
+    ...en.dashboard,
+    quickCheckin: 'チェックイン',
+    startCheckin: 'チェックイン開始',
+    talkToLuna: 'Lunaと話す',
+    dailyTip: '今日のヒント',
+    bodyMap: 'ボディマップ',
+  },
+  checkinOverlay: {
+    headline: 'デイリーチェックイン',
+    subheadline: '今の状態を記録しましょう。',
+    save: '保存',
+    saveAndBridge: '+ ブリッジ'
+  },
+  auth: {
+    ...en.auth,
+    recoveryHeadline: 'アクセスを復元',
+    recoveryText: 'アカウントのメールを入力すると、Luna が安全な復旧ルートを準備します。',
+    recoveryCta: '復旧リンクを送信',
+    headline: 'Luna 認証',
+    subheadline: 'Lunaワークスペースと管理システムへのプライベートアクセス。',
+    google: 'Googleで続行',
+    password: 'パスワード',
+    hide: '非表示',
+    show: '表示',
+    forgot: 'パスワードをお忘れですか？',
+    login: 'サインイン',
+    signup: 'アカウント作成',
+    noAccount: 'アカウントが必要ですか？',
+    hasAccount: 'すでにアカウントをお持ちですか？'
+  },
+  publicHome: {
+    ...en.publicHome,
+    tabs: { home: 'ホーム', map: 'ボディマップ', ritual: 'リチュアルパス' },
+    pageTitle: { home: '公開ホーム', map: 'ボディマップ', ritual: 'リチュアルパス', privacy: 'プライバシー' },
+    signInUp: 'サインイン / サインアップ',
+    heroTitleA: '毎日の',
+    heroTitleB: 'ミラー。',
+    heroSubtitle: 'Luna Home は穏やかな公開入口です。リズムを観察し、状態を理解し、準備ができたらプライベート空間へ。',
+    footerTagline: '公開Home: 方向づけ、リズム、リフレクションのために。',
+    footerCopy: '© 2026 LUNA • 公開 HOME'
+  },
+  shared: {
+    footer: 'プライベートかつローカル。データはあなたの端末に保存されます。',
+    disclaimer: 'Luna は医療サービス、医療機器、診断ツール、治療提供者ではありません。Luna は医療助言、診断、医療モニタリング、緊急対応を提供しません。必ず有資格の医療専門家に相談してください。'
+  }
+};
+
+const pt: TranslationSchema = {
+  ...en,
+  navigation: {
+    ...en.navigation,
+    home: 'Início',
+    dashboard: 'Hoje',
+    cycle: 'Meu ciclo',
+    labs: 'Relatórios de saúde',
+    meds: 'Meu suporte',
+    history: 'Minha jornada',
+    bridge: 'Ponte',
+    creative: 'Criar',
+    reflections: 'Diário de voz',
+    voiceFiles: 'Meus arquivos de voz',
+    relationships: 'Conexão',
+    family: 'Estações da casa',
+    profile: 'Perfil',
+    library: 'Conhecimento',
+    faq: 'Perguntas',
+    contact: 'Contato',
+    crisis: 'Sala Reset',
+    admin: 'Admin',
+    partner: 'Parceiro',
+  },
+  dashboard: {
+    ...en.dashboard,
+    quickCheckin: 'Check-in',
+    startCheckin: 'Iniciar check-in',
+    talkToLuna: 'Falar com Luna',
+    dailyTip: 'Dica diária',
+    bodyMap: 'Mapa corporal',
+  },
+  checkinOverlay: {
+    headline: 'Check-in diário',
+    subheadline: 'Registre seu estado atual.',
+    save: 'Salvar',
+    saveAndBridge: '+ Ponte'
+  },
+  auth: {
+    ...en.auth,
+    recoveryHeadline: 'Restaurar acesso',
+    recoveryText: 'Digite o email da sua conta e a Luna preparará uma rota segura de recuperação.',
+    recoveryCta: 'Enviar link',
+    headline: 'Autorização Luna',
+    subheadline: 'Acesso privado ao seu espaço Luna e sistemas admin.',
+    google: 'Continuar com Google',
+    password: 'Senha',
+    hide: 'Ocultar',
+    show: 'Mostrar',
+    forgot: 'Esqueceu a senha?',
+    login: 'Entrar',
+    signup: 'Criar conta',
+    noAccount: 'Precisa de uma conta?',
+    hasAccount: 'Já tem uma conta?'
+  },
+  publicHome: {
+    ...en.publicHome,
+    tabs: { home: 'Início', map: 'Mapa corporal', ritual: 'Caminho ritual' },
+    pageTitle: { home: 'Home pública', map: 'Mapa corporal', ritual: 'Caminho ritual', privacy: 'Privacidade' },
+    signInUp: 'Entrar / Cadastrar',
+    heroTitleA: 'Espelho',
+    heroTitleB: 'Diário.',
+    heroSubtitle: 'Luna Home é uma entrada pública e calma: observe seu ritmo, entenda seu estado e entre no espaço privado quando estiver pronta.',
+    footerTagline: 'Home pública para orientação, ritmo e reflexão.',
+    footerCopy: '© 2026 LUNA • HOME PÚBLICA'
+  },
+  shared: {
+    footer: 'Privado e local. Seus dados ficam no seu dispositivo.',
+    disclaimer: 'Luna nao e um servico medico, dispositivo medico, ferramenta diagnostica ou provedor de tratamento. Luna nao fornece aconselhamento medico, diagnostico, monitoramento clinico ou atendimento de emergencia. Consulte sempre um profissional de saude licenciado.'
+  }
+};
+
 export const TRANSLATIONS: Record<Language, TranslationSchema> = {
   en,
   ru,
-  uk: en,
-  es: en,
-  fr: en,
-  de: en,
-  zh: en,
-  ja: en,
-  pt: en,
+  uk,
+  es,
+  fr,
+  de,
+  zh,
+  ja,
+  pt,
 };
 
 export interface FuelPhaseData {
