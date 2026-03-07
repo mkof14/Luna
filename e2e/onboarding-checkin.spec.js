@@ -10,7 +10,7 @@ test('onboarding and first check-in flow works', async ({ page }) => {
   await expect(page.getByTestId('dashboard-checkin-start')).toBeVisible();
   await page.getByTestId('dashboard-checkin-start').click();
 
-  await expect(page.getByRole('heading', { name: /daily check-in|как вы сегодня/i })).toBeVisible();
+  await expect(page.getByTestId('checkin-save')).toBeVisible();
   await page.getByTestId('checkin-save').click();
 
   const eventTypes = await page.evaluate(() => {
