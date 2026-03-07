@@ -1540,9 +1540,21 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 <head>
   <meta charset="utf-8"/>
   <title>${escapeHtml(detailedUi.title)}</title>
+  <style>
+    @page { size: A4; margin: 11mm; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #eaf0f8; color: #0f172a; padding: 24px; }
+    .report-root { max-width: 1040px; margin: 0 auto; background: white; border: 1px solid #cbd5e1; border-radius: 18px; overflow: hidden; box-shadow: 0 20px 54px rgba(15,23,42,0.12); }
+    .print-avoid { break-inside: avoid; page-break-inside: avoid; }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .report-root { max-width: 100%; border: none; border-radius: 0; box-shadow: none; }
+      .print-avoid { break-inside: avoid; page-break-inside: avoid; }
+    }
+  </style>
 </head>
-<body style="font-family:Arial,sans-serif;background:#eaf0f8;color:#0f172a;padding:24px;">
-  <div style="max-width:1040px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:18px;overflow:hidden;box-shadow:0 20px 54px rgba(15,23,42,0.12);">
+<body>
+  <div class="report-root">
     <div style="padding:26px;background:linear-gradient(120deg,#ede9fe,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
         <div style="display:flex;align-items:center;gap:12px;">
@@ -1560,7 +1572,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       </div>
     </div>
 
-    <div style="padding:20px 24px 4px;">
+    <div class="print-avoid" style="padding:20px 24px 4px;">
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;">
         <div style="border:1px solid #dbeafe;background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:14px;padding:12px;">
           <p style="margin:0 0 6px;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#1d4ed8;">Marker Coverage</p>
@@ -1594,14 +1606,14 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       </div>
     </div>
 
-    <div style="padding:10px 24px 0;">
+    <div class="print-avoid" style="padding:10px 24px 0;">
       <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">Category Map</h3>
       <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;">
         ${categoryRows || `<p style="margin:0;font-size:12px;color:#64748b;">${escapeHtml(detailedUi.noMarkers)}</p>`}
       </div>
     </div>
 
-    <div style="padding:12px 24px 0;">
+    <div class="print-avoid" style="padding:12px 24px 0;">
       <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:10px;">
         <article style="border:1px solid #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc;">
           <p style="margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#334155;">Hormone Infographic</p>
@@ -1614,7 +1626,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       </div>
     </div>
 
-    <div style="padding:12px 24px 0;">
+    <div class="print-avoid" style="padding:12px 24px 0;">
       <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:10px;">
         <article style="border:1px solid #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc;">
           <p style="margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#334155;">Lab Results Infographic</p>
@@ -1630,14 +1642,14 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       </div>
     </div>
 
-    <div style="padding:14px 24px 0;">
+    <div class="print-avoid" style="padding:14px 24px 0;">
       <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${escapeHtml(detailedUi.keyFindings)}</h3>
       <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;">
         <ul style="margin:0;padding-left:18px;font-size:13px;">${findingsHtml}</ul>
       </div>
     </div>
 
-    <div style="padding:14px 24px 0;">
+    <div class="print-avoid" style="padding:14px 24px 0;">
       <h3 style="margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${escapeHtml(womenUi.clinicalFocusTitle)}</h3>
       <p style="margin:0 0 10px;font-size:12px;color:#475569;">${escapeHtml(womenUi.clinicalFocusLead)}</p>
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
@@ -1645,7 +1657,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       </div>
     </div>
 
-    <div style="padding:14px 24px 0;">
+    <div class="print-avoid" style="padding:14px 24px 0;">
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;">
         <article style="border:1px solid #cbd5e1;border-radius:12px;padding:12px;background:#eff6ff;">
           <h4 style="margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:#1d4ed8;">${escapeHtml(womenUi.effectsTitle)}</h4>
@@ -1662,7 +1674,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       </div>
     </div>
 
-    <div style="padding:14px 24px 0;">
+    <div class="print-avoid" style="padding:14px 24px 0;">
       <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${medForm.allMarkers}</h3>
       <table style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;">
         <thead>
@@ -1679,19 +1691,19 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       </table>
     </div>
 
-    <div style="padding:16px 24px 0;">
+    <div class="print-avoid" style="padding:16px 24px 0;">
       <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${escapeHtml(detailedUi.whatHappening)}</h3>
       <p style="white-space:pre-wrap;line-height:1.68;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;font-size:13px;">${summary}</p>
     </div>
 
-    <div style="padding:16px 24px 0;">
+    <div class="print-avoid" style="padding:16px 24px 0;">
       <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${escapeHtml(detailedUi.doctorQuestions)}</h3>
       <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;">
         <ul style="margin:0;padding-left:18px;font-size:13px;">${doctorQuestionsHtml}</ul>
       </div>
     </div>
 
-    <div style="padding:16px 24px 20px;">
+    <div class="print-avoid" style="padding:16px 24px 20px;">
       <div style="border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;">
         <p style="margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;">${medForm.disclaimerTitle}</p>
         <p style="margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;">${medForm.disclaimerBody}</p>
@@ -1812,7 +1824,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
         </div>`;
       })
       .join('');
-    const sampleHtml = `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Sample Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f1f5f9;color:#0f172a;padding:24px;\"><div style=\"max-width:960px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:16px;overflow:hidden;\"><div style=\"padding:22px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\"><div style=\"display:flex;align-items:center;gap:10px;\"><img src=\"${logoUrl}\" alt=\"Luna logo\" style=\"width:52px;height:52px;object-fit:contain;border-radius:10px;background:#fff;padding:6px;border:1px solid #e2e8f0;\"/><div><p style=\"margin:0;font-size:34px;line-height:1;font-family:'Brush Script MT','Segoe Script',cursive;\">Luna</p><p style=\"margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">${escapeHtml(detailedUi.subtitle)} - SAMPLE</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:11px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:4px 0 0;font-size:11px;\">${medForm.patientId}: SAMPLE-001</p></div></div></div><div style=\"padding:20px 22px;\"><div style=\"display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;\"><div style=\"padding:10px;border-radius:10px;background:#ecfdf5;border:1px solid #a7f3d0;\"><p style=\"margin:0;font-size:10px;font-weight:800;text-transform:uppercase;color:#047857;\">Normal</p><p style=\"margin:2px 0 0;font-size:22px;font-weight:900;color:#047857;\">2</p></div><div style=\"padding:10px;border-radius:10px;background:#fff1f2;border:1px solid #fecdd3;\"><p style=\"margin:0;font-size:10px;font-weight:800;text-transform:uppercase;color:#be123c;\">High</p><p style=\"margin:2px 0 0;font-size:22px;font-weight:900;color:#be123c;\">1</p></div><div style=\"padding:10px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;\"><p style=\"margin:0;font-size:10px;font-weight:800;text-transform:uppercase;color:#b45309;\">Low / Watch</p><p style=\"margin:2px 0 0;font-size:22px;font-weight:900;color:#b45309;\">1</p></div></div><div style=\"display:grid;grid-template-columns:1.2fr 1fr;gap:8px;margin-top:10px;\"><article style=\"border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc;\"><p style=\"margin:0 0 8px;font-size:11px;font-weight:800;text-transform:uppercase;color:#334155;\">Hormone Spotlight</p><div style=\"display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;\">${sampleSpotlight}</div></article><article style=\"border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc;\"><p style=\"margin:0 0 8px;font-size:11px;font-weight:800;text-transform:uppercase;color:#334155;\">Cycle Visual</p><img src=\"${phaseArcImageUrl}\" alt=\"Cycle visual\" style=\"width:100%;height:90px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;\"/></article></div><table style=\"width:100%;border-collapse:collapse;font-size:13px;margin-top:12px;\"><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Cycle day 21</td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Sexual score 3.5/5 | pain 2/5</td></tr><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:8px;border:1px solid #e2e8f0;\">Lab PDF scan + manual profile</td></tr></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Category</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(detailedUi.explanation)}</th></tr></thead><tbody>${sampleRows.map((row) => { const topic = hormoneTopic(String(row[0])); return `<tr><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\"><strong style=\"color:${topic.accent};\">${escapeHtml(String(row[0]))}</strong></td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\"><strong style=\"color:${topic.accent};font-size:14px;\">${escapeHtml(String(row[1]))}</strong></td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[2]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[3]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;color:${topic.accent};font-weight:700;\">${escapeHtml(String(row[4]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[5]))}</td></tr>`; }).join('')}</tbody></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(womenUi.clinicalFocusTitle)}</h3><div style=\"border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\"><p style=\"margin:0 0 8px;font-size:12px;font-weight:800;\">${escapeHtml(womenUi.estProgTitle)}</p><p style=\"margin:0 0 10px;font-size:12px;line-height:1.55;\">${escapeHtml(womenUi.estProgBody)}</p><p style=\"margin:0 0 8px;font-size:12px;font-weight:800;\">${escapeHtml(womenUi.insulinAndrogenTitle)}</p><p style=\"margin:0;font-size:12px;line-height:1.55;\">${escapeHtml(womenUi.insulinAndrogenBody)}</p></div><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(womenUi.recommendationsTitle)}</h3><ul style=\"margin:0;padding-left:18px;font-size:12px;line-height:1.55;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#ecfeff;\"><li>${escapeHtml(womenUi.recCycle)}</li><li>${escapeHtml(womenUi.recRepeat)}</li><li>${escapeHtml(womenUi.recDoctor)}</li><li>${escapeHtml(womenUi.recLifestyle)}</li></ul><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.summary}</h3><p style=\"white-space:pre-wrap;line-height:1.6;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\">${escapeHtml(reportUi.servicePromise)}\n• ${reportUi.serviceBullets.map(escapeHtml).join('\n• ')}</p><div style=\"margin-top:18px;border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div><div style=\"padding:12px 22px;border-top:1px solid #e2e8f0;background:#f8fafc;\"><p style=\"margin:0;font-size:11px;color:#475569;\">${escapeHtml(reportCopyright)}</p></div></div></body></html>`;
+    const sampleHtml = `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Sample Report</title><style>@page{size:A4;margin:11mm;}*{box-sizing:border-box;}body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#0f172a;padding:24px;} .sample-root{max-width:960px;margin:0 auto;background:#fff;border:1px solid #cbd5e1;border-radius:16px;overflow:hidden;} @media print{body{background:#fff;padding:0;}.sample-root{max-width:100%;border:none;border-radius:0;}}</style></head><body><div class=\"sample-root\"><div style=\"padding:22px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\"><div style=\"display:flex;align-items:center;gap:10px;\"><img src=\"${logoUrl}\" alt=\"Luna logo\" style=\"width:52px;height:52px;object-fit:contain;border-radius:10px;background:#fff;padding:6px;border:1px solid #e2e8f0;\"/><div><p style=\"margin:0;font-size:34px;line-height:1;font-family:'Brush Script MT','Segoe Script',cursive;\">Luna</p><p style=\"margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">${escapeHtml(detailedUi.subtitle)} - SAMPLE</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:11px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:4px 0 0;font-size:11px;\">${medForm.patientId}: SAMPLE-001</p></div></div></div><div style=\"padding:20px 22px;\"><div style=\"display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;\"><div style=\"padding:10px;border-radius:10px;background:#ecfdf5;border:1px solid #a7f3d0;\"><p style=\"margin:0;font-size:10px;font-weight:800;text-transform:uppercase;color:#047857;\">Normal</p><p style=\"margin:2px 0 0;font-size:22px;font-weight:900;color:#047857;\">2</p></div><div style=\"padding:10px;border-radius:10px;background:#fff1f2;border:1px solid #fecdd3;\"><p style=\"margin:0;font-size:10px;font-weight:800;text-transform:uppercase;color:#be123c;\">High</p><p style=\"margin:2px 0 0;font-size:22px;font-weight:900;color:#be123c;\">1</p></div><div style=\"padding:10px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;\"><p style=\"margin:0;font-size:10px;font-weight:800;text-transform:uppercase;color:#b45309;\">Low / Watch</p><p style=\"margin:2px 0 0;font-size:22px;font-weight:900;color:#b45309;\">1</p></div></div><div style=\"display:grid;grid-template-columns:1.2fr 1fr;gap:8px;margin-top:10px;\"><article style=\"border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc;\"><p style=\"margin:0 0 8px;font-size:11px;font-weight:800;text-transform:uppercase;color:#334155;\">Hormone Spotlight</p><div style=\"display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;\">${sampleSpotlight}</div></article><article style=\"border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc;\"><p style=\"margin:0 0 8px;font-size:11px;font-weight:800;text-transform:uppercase;color:#334155;\">Cycle Visual</p><img src=\"${phaseArcImageUrl}\" alt=\"Cycle visual\" style=\"width:100%;height:90px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;\"/></article></div><table style=\"width:100%;border-collapse:collapse;font-size:13px;margin-top:12px;\"><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Cycle day 21</td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Sexual score 3.5/5 | pain 2/5</td></tr><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:8px;border:1px solid #e2e8f0;\">Lab PDF scan + manual profile</td></tr></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Category</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(detailedUi.explanation)}</th></tr></thead><tbody>${sampleRows.map((row) => { const topic = hormoneTopic(String(row[0])); return `<tr><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\"><strong style=\"color:${topic.accent};\">${escapeHtml(String(row[0]))}</strong></td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\"><strong style=\"color:${topic.accent};font-size:14px;\">${escapeHtml(String(row[1]))}</strong></td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[2]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[3]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;color:${topic.accent};font-weight:700;\">${escapeHtml(String(row[4]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[5]))}</td></tr>`; }).join('')}</tbody></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(womenUi.clinicalFocusTitle)}</h3><div style=\"border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\"><p style=\"margin:0 0 8px;font-size:12px;font-weight:800;\">${escapeHtml(womenUi.estProgTitle)}</p><p style=\"margin:0 0 10px;font-size:12px;line-height:1.55;\">${escapeHtml(womenUi.estProgBody)}</p><p style=\"margin:0 0 8px;font-size:12px;font-weight:800;\">${escapeHtml(womenUi.insulinAndrogenTitle)}</p><p style=\"margin:0;font-size:12px;line-height:1.55;\">${escapeHtml(womenUi.insulinAndrogenBody)}</p></div><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(womenUi.recommendationsTitle)}</h3><ul style=\"margin:0;padding-left:18px;font-size:12px;line-height:1.55;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#ecfeff;\"><li>${escapeHtml(womenUi.recCycle)}</li><li>${escapeHtml(womenUi.recRepeat)}</li><li>${escapeHtml(womenUi.recDoctor)}</li><li>${escapeHtml(womenUi.recLifestyle)}</li></ul><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.summary}</h3><p style=\"white-space:pre-wrap;line-height:1.6;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\">${escapeHtml(reportUi.servicePromise)}\n• ${reportUi.serviceBullets.map(escapeHtml).join('\n• ')}</p><div style=\"margin-top:18px;border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div><div style=\"padding:12px 22px;border-top:1px solid #e2e8f0;background:#f8fafc;\"><p style=\"margin:0;font-size:11px;color:#475569;\">${escapeHtml(reportCopyright)}</p></div></div></body></html>`;
     downloadFile(`luna-sample-report-${reportLang}.html`, sampleHtml, 'text/html;charset=utf-8');
     setReportActionFeedback(reportActions.sampleDownloaded);
     setTimeout(() => setReportActionFeedback(null), 2000);
