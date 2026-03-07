@@ -13,7 +13,7 @@ interface AppFooterProps {
 export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canAccessAdmin }) => {
   const footerCopyByLang: Record<Language, { sanctuary: string; howItWorks: string; terms: string; legal: string; about: string; privacy: string; medical: string; cookies: string; dataRights: string }> = {
     en: {
-      sanctuary: 'A biological sanctuary. Your physiological data is sovereign, stored locally, and processed by edge intelligence.',
+      sanctuary: 'A biological sanctuary. Luna uses a local-first model: core reflections stay on device, and account/security workflows may use protected backend services.',
       howItWorks: 'How It Works',
       terms: 'Terms of Service',
       legal: 'Legal',
@@ -24,7 +24,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
       dataRights: 'Data Rights',
     },
     ru: {
-      sanctuary: 'Биологическое пространство опоры. Ваши физиологические данные принадлежат вам, хранятся локально и обрабатываются на edge-уровне.',
+      sanctuary: 'Биологическое пространство опоры. Luna работает в local-first режиме: основные записи остаются на устройстве, а аккаунт и безопасность могут использовать защищенный backend.',
       howItWorks: 'Как Это Работает',
       terms: 'Условия Сервиса',
       legal: 'Юридический раздел',
@@ -35,7 +35,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
       dataRights: 'Права на данные',
     },
     uk: {
-      sanctuary: 'Біологічний простір опори. Ваші фізіологічні дані належать вам, зберігаються локально та обробляються на edge-рівні.',
+      sanctuary: 'Біологічний простір опори. Luna працює у local-first режимі: основні записи лишаються на пристрої, а акаунт та безпека можуть використовувати захищений backend.',
       howItWorks: 'Як Це Працює',
       terms: 'Умови Сервісу',
       legal: 'Юридичний розділ',
@@ -46,7 +46,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
       dataRights: 'Права на дані',
     },
     es: {
-      sanctuary: 'Un santuario biologico. Tus datos fisiologicos te pertenecen, se guardan localmente y se procesan en edge.',
+      sanctuary: 'Un santuario biologico. Luna usa modelo local-first: registros clave en tu dispositivo y flujos de cuenta/seguridad en backend protegido cuando es necesario.',
       howItWorks: 'Como Funciona',
       terms: 'Terminos Del Servicio',
       legal: 'Legal',
@@ -57,7 +57,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
       dataRights: 'Derechos De Datos',
     },
     fr: {
-      sanctuary: 'Un sanctuaire biologique. Vos donnees physiologiques restent souveraines, stockees localement et traitees en edge.',
+      sanctuary: 'Un sanctuaire biologique. Luna suit une approche local-first: donnees principales sur appareil, compte/securite via backend protege si necessaire.',
       howItWorks: 'Comment Ca Marche',
       terms: 'Conditions Du Service',
       legal: 'Juridique',
@@ -68,7 +68,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
       dataRights: 'Droits Sur Les Donnees',
     },
     de: {
-      sanctuary: 'Ein biologischer Schutzraum. Deine physiologischen Daten bleiben bei dir, lokal gespeichert und per Edge-Intelligenz verarbeitet.',
+      sanctuary: 'Ein biologischer Schutzraum. Luna nutzt local-first: Kerndaten lokal auf dem Geraet, Konto/Sicherheit bei Bedarf ueber geschuetztes Backend.',
       howItWorks: 'So Funktioniert Es',
       terms: 'Nutzungsbedingungen',
       legal: 'Rechtliches',
@@ -79,7 +79,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
       dataRights: 'Datenrechte',
     },
     zh: {
-      sanctuary: '生理数据庇护空间。你的数据由你掌控，本地存储，并通过边缘智能处理。',
+      sanctuary: '生理数据庇护空间。Luna 采用 local-first：核心记录保存在设备本地，账号与安全流程在需要时使用受保护后端。',
       howItWorks: '如何使用',
       terms: '服务条款',
       legal: '法律',
@@ -90,7 +90,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
       dataRights: '数据权利',
     },
     ja: {
-      sanctuary: '生体データのサンクチュアリ。データは本人に帰属し、ローカル保存され、エッジで処理されます。',
+      sanctuary: '生体データのサンクチュアリ。Luna は local-first 方針で、主要データは端末保存、アカウント/セキュリティは必要時に保護バックエンドを利用します。',
       howItWorks: '使い方',
       terms: '利用規約',
       legal: '法務',
@@ -101,7 +101,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
       dataRights: 'データ権利',
     },
     pt: {
-      sanctuary: 'Um santuario biologico. Seus dados fisiologicos sao soberanos, salvos localmente e processados com inteligencia edge.',
+      sanctuary: 'Um santuario biologico. Luna usa modelo local-first: dados principais no dispositivo e fluxos de conta/seguranca em backend protegido quando necessario.',
       howItWorks: 'Como Funciona',
       terms: 'Termos De Servico',
       legal: 'Legal',
@@ -234,7 +234,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
 
         <div className="pt-12 border-t border-slate-300 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-10">
           <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-500 dark:text-slate-400">
-            © 2026 LUNA BALANCE SYSTEMS • PURE LOCAL ARCHITECTURE
+            © 2026 LUNA BALANCE SYSTEMS • LOCAL-FIRST HYBRID ARCHITECTURE
           </p>
           <div className="flex flex-wrap items-center justify-end gap-6">
             <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">{sectionTitles.account}</span>

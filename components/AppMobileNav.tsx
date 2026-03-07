@@ -21,7 +21,7 @@ export const AppMobileNav: React.FC<AppMobileNavProps> = ({
   setShowSidebar,
 }) => {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-[500] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 px-6 py-3 flex justify-between items-center md:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+    <nav className="fixed bottom-0 left-0 right-0 z-[500] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 px-6 py-2.5 md:py-3 flex justify-between items-center md:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
       {bottomNavItems.map((item) => (
         <button
           key={item.id}

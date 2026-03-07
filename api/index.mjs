@@ -23,6 +23,14 @@ const SUPER_ADMIN_EMAILS = new Set(
     .filter(Boolean)
 );
 
+const GOOGLE_CLIENT_IDS = new Set(
+  (process.env.AUTH_GOOGLE_CLIENT_IDS || process.env.VITE_GOOGLE_CLIENT_ID || '')
+    .split(',')
+    .map((id) => id.trim())
+    .filter(Boolean)
+);
+const AUTH_ALLOW_UNVERIFIED_GOOGLE = process.env.AUTH_ALLOW_UNVERIFIED_GOOGLE === 'true';
+
 const ROLE_PERMISSIONS = {
   viewer: ['view_financials', 'view_technical_metrics'],
   operator: ['manage_services', 'view_technical_metrics'],
@@ -225,6 +233,41 @@ const decodeGoogleJwt = (credential) => {
     };
   } catch {
     return {};
+  }
+};
+
+const verifyGoogleCredential = async (credential) => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 5000);
+  try {
+    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`, {
+      method: 'GET',
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      throw new Error('Google token verification failed.');
+    }
+    const claims = await response.json();
+    const email = typeof claims.email === 'string' ? claims.email.trim().toLowerCase() : '';
+    const emailVerified = String(claims.email_verified || '').toLowerCase() === 'true';
+    const audience = typeof claims.aud === 'string' ? claims.aud.trim() : '';
+    const issuer = typeof claims.iss === 'string' ? claims.iss : '';
+    const issuedByGoogle = issuer === 'accounts.google.com' || issuer === 'https://accounts.google.com';
+
+    if (!email || !emailVerified || !issuedByGoogle) {
+      throw new Error('Google token is invalid or email is not verified.');
+    }
+    if (GOOGLE_CLIENT_IDS.size > 0 && !GOOGLE_CLIENT_IDS.has(audience)) {
+      throw new Error('Google token audience mismatch.');
+    }
+
+    return {
+      email,
+      name: typeof claims.name === 'string' ? claims.name : undefined,
+      picture: typeof claims.picture === 'string' ? claims.picture : undefined,
+    };
+  } finally {
+    clearTimeout(timer);
   }
 };
 
@@ -679,7 +722,22 @@ const start = async () => {
 
       try {
         const body = await readBody(req);
-        const claims = decodeGoogleJwt(body.credential);
+        const credential = safeText(body.credential, 8192);
+        if (!credential) {
+          send(res, 400, { error: 'Google credential payload is invalid.' }, headers);
+          return;
+        }
+
+        let claims;
+        try {
+          claims = await verifyGoogleCredential(credential);
+        } catch (error) {
+          if (!AUTH_ALLOW_UNVERIFIED_GOOGLE) {
+            throw error;
+          }
+          claims = decodeGoogleJwt(credential);
+        }
+
         const email = normalizeEmail(claims.email);
         if (!email) {
           send(res, 400, { error: 'Google credential payload is invalid.' }, headers);

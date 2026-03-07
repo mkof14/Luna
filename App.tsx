@@ -3,22 +3,22 @@ import React, { useState, useMemo, lazy, Suspense, useCallback, useEffect } from
 import { AdminRole, AuthSession, HormoneData } from './types';
 import { dataService } from './services/dataService';
 import { useAppPreferences } from './hooks/useAppPreferences';
-import { buildBottomNavItems, buildSidebarGroups, TabType } from './utils/navigation';
+import { buildBottomNavItems, buildSidebarGroups, buildTopNavItems, TabType } from './utils/navigation';
 import { AppShellNav } from './components/AppShellNav';
 import { AppFooter } from './components/AppFooter';
 import { AppMobileNav } from './components/AppMobileNav';
 import { MainContentRouter } from './components/MainContentRouter';
 import { OnboardingGate } from './components/OnboardingGate';
 import { useHealthModel } from './hooks/useHealthModel';
-import { AuthView } from './components/AuthView';
 import { authService } from './services/authService';
-import { PublicLandingView } from './components/PublicLandingView';
 
 // SHARED COMPONENTS
 import { LunaLiveButton } from './components/LunaLiveButton';
 const LiveAssistant = lazy(() => import('./components/LiveAssistant').then((m) => ({ default: m.LiveAssistant })));
 const HormoneDetail = lazy(() => import('./components/HormoneDetail'));
 const CheckinOverlay = lazy(() => import('./components/CheckinOverlay').then((m) => ({ default: m.CheckinOverlay })));
+const AuthView = lazy(() => import('./components/AuthView').then((m) => ({ default: m.AuthView })));
+const PublicLandingView = lazy(() => import('./components/PublicLandingView').then((m) => ({ default: m.PublicLandingView })));
 
 const App: React.FC = () => {
   const [session, setSession] = useState<AuthSession | null>(null);
@@ -90,6 +90,7 @@ const App: React.FC = () => {
   const canAccessAdmin = useMemo(() => authService.hasPermission(session, 'manage_services') || authService.hasPermission(session, 'manage_admin_roles'), [session]);
 
   const sidebarGroups = useMemo(() => buildSidebarGroups(ui, canAccessAdmin), [ui, canAccessAdmin]);
+  const topNavItems = useMemo(() => buildTopNavItems(ui), [ui]);
   const bottomNavItems = useMemo(() => buildBottomNavItems(ui), [ui]);
   const handleRoleChange = useCallback((role: AdminRole) => {
     if (!session) return;
@@ -123,38 +124,50 @@ const App: React.FC = () => {
   if (!session) {
     return (
       <div className="min-h-screen flex flex-col bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans relative overflow-x-hidden">
-        <PublicLandingView
-          onSignIn={() => {
-            setAuthMode('signin');
-            setShowAuthModal(true);
-          }}
-          onSignUp={() => {
-            setAuthMode('signup');
-            setShowAuthModal(true);
-          }}
-          lang={lang}
-          setLang={setLang}
-          theme={theme}
-          setTheme={setTheme}
-          ui={ui}
-        />
-        {showAuthModal && (
-          <AuthView
-            ui={ui}
-            initialMode={authMode}
-            onClose={() => setShowAuthModal(false)}
-            onSuccess={(nextSession) => {
-              setShowAuthModal(false);
-              setSession(nextSession);
+        <Suspense fallback={null}>
+          <PublicLandingView
+            onSignIn={() => {
+              setAuthMode('signin');
+              setShowAuthModal(true);
             }}
+            onSignUp={() => {
+              setAuthMode('signup');
+              setShowAuthModal(true);
+            }}
+            lang={lang}
+            setLang={setLang}
+            theme={theme}
+            setTheme={setTheme}
+            ui={ui}
           />
-        )}
+          {showAuthModal && (
+            <AuthView
+              ui={ui}
+              initialMode={authMode}
+              onClose={() => setShowAuthModal(false)}
+              onSuccess={(nextSession) => {
+                setShowAuthModal(false);
+                setSession(nextSession);
+              }}
+            />
+          )}
+        </Suspense>
       </div>
     );
   }
 
   if (!hasCompletedOnboarding) {
-    return <OnboardingGate onComplete={() => { setLog(dataService.getLog()); setHasCompletedOnboarding(true); }} />;
+    return (
+      <OnboardingGate
+        lang={lang}
+        onComplete={() => {
+          setLog(dataService.getLog());
+          setHasCompletedOnboarding(true);
+          setActiveTab('dashboard');
+          setShowSyncOverlay(true);
+        }}
+      />
+    );
   }
 
   return (
@@ -165,6 +178,7 @@ const App: React.FC = () => {
           setShowSidebar={setShowSidebar}
           navigateTo={navigateTo}
           sidebarGroups={sidebarGroups}
+          topNavItems={topNavItems}
           lang={lang}
           setLang={setLang}
           theme={theme}

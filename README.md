@@ -35,6 +35,8 @@ View your app in AI Studio: https://ai.studio/apps/2982aa11-1f40-4a50-bc23-4f3bf
    - `SUPER_ADMIN_EMAILS=your-email@example.com`
    - `SUPER_ADMIN_BOOTSTRAP_PASSWORD=<strong-password>`
    - `AUTH_ALLOWED_ORIGINS=https://<your-vercel-domain>`
+   - `AUTH_GOOGLE_CLIENT_IDS=<your-google-client-id.apps.googleusercontent.com>`
+   - `AUTH_ALLOW_UNVERIFIED_GOOGLE=false`
 4. Deploy.
 
 This repo is configured so Vercel serves the SPA from `dist` and handles `/api/*` via `api/index.mjs` (Vercel Function).

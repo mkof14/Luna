@@ -5,6 +5,7 @@ import { CyclePhase } from '../types';
 import { PHASE_INFO } from '../constants';
 import { Language } from '../constants';
 import PhaseIndicator from './PhaseIndicator';
+import { JourneyProgress } from './JourneyProgress';
 
 interface CycleTimelineProps {
   currentDay: number;
@@ -121,6 +122,7 @@ const CycleTimeline: React.FC<CycleTimelineProps> = ({ currentDay, onDayChange, 
           {ui.back}
         </button>
       )}
+      <JourneyProgress lang={lang} currentStep={2} />
 
       <div className="relative w-full h-40 mb-12 overflow-hidden bg-gradient-to-br from-[#faedf5]/88 via-[#eee3f2]/82 to-[#e2ebf8]/78 dark:from-slate-900/55 dark:to-slate-900/45 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-[0_18px_42px_rgba(91,74,131,0.2)] dark:shadow-[0_14px_34px_rgba(0,0,0,0.38)]">
         <svg viewBox="0 0 1000 200" className="absolute inset-0 w-full h-full preserve-3d" preserveAspectRatio="none">

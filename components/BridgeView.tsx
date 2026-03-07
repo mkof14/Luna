@@ -7,6 +7,7 @@ import { incrementBridgeUsage, parseBridgeUsage } from '../utils/runtimeGuards';
 import { normalizeBridgeReflectionInput } from '../utils/bridge';
 import { shareTextSafely } from '../utils/share';
 import { Language } from '../constants';
+import { JourneyProgress } from './JourneyProgress';
 
 type BridgeStep = 'entry' | 'reflection' | 'result';
 
@@ -284,6 +285,7 @@ export const BridgeView: React.FC<{ lang: Language; onBack: () => void }> = ({ l
 
   return (
     <div className="max-w-5xl mx-auto min-h-[70vh] luna-page-shell luna-page-bridge flex flex-col p-6 md:p-8 text-center space-y-10">
+      <JourneyProgress lang={lang} currentStep={3} />
       <section className="rounded-[2.6rem] border border-slate-200/70 dark:border-slate-800/80 bg-gradient-to-br from-[#f6ebf4]/90 via-[#eee8f3]/86 to-[#e5edf9]/82 dark:from-[#07122a]/94 dark:via-[#0b1a35]/92 dark:to-[#112446]/90 p-7 md:p-9 shadow-[0_18px_46px_rgba(88,70,126,0.18)] dark:shadow-[0_22px_54px_rgba(0,0,0,0.5)] space-y-6">
         <p className="text-[10px] font-black uppercase tracking-[0.45em] text-luna-purple">{info.eyebrow}</p>
         <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-100">{info.title}</h1>

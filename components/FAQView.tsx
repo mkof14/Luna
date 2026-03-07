@@ -617,6 +617,8 @@ export const FAQView: React.FC<{ lang?: Language; onBack?: () => void }> = ({ la
     }
   };
   const copy = copyByLang[lang];
+  const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
+  const activeCategory = data[activeCategoryIndex] || data[0];
 
   const toggleItem = (catIdx: number, itemIdx: number) => {
     const key = `${catIdx}-${itemIdx}`;
@@ -628,15 +630,17 @@ export const FAQView: React.FC<{ lang?: Language; onBack?: () => void }> = ({ la
 
   return (
     <div className="max-w-6xl mx-auto luna-page-shell luna-page-questions space-y-24 animate-in fade-in slide-in-from-bottom-12 duration-1000 p-8 md:p-10 pb-40 px-6">
-      <div className="flex justify-start">
-        <button 
-          onClick={onBack} 
-          className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-luna-purple transition-all"
-        >
-          <span className="text-lg group-hover:-translate-x-1 transition-transform">←</span>
-          {copy.back}
-        </button>
-      </div>
+      {onBack && (
+        <div className="flex justify-start">
+          <button 
+            onClick={onBack} 
+            className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-luna-purple transition-all"
+          >
+            <span className="text-lg group-hover:-translate-x-1 transition-transform">←</span>
+            {copy.back}
+          </button>
+        </div>
+      )}
 
       <header className="flex flex-col items-center gap-8 text-center">
         <h2 className="text-6xl lg:text-9xl font-black tracking-tighter leading-none uppercase text-slate-950 dark:text-white">
@@ -648,25 +652,49 @@ export const FAQView: React.FC<{ lang?: Language; onBack?: () => void }> = ({ la
         </p>
       </header>
 
-      <section className="space-y-32">
-        {data.map((cat, i) => (
-          <article key={i} className="space-y-12">
+      <section className="space-y-10">
+        <div className="flex flex-wrap gap-2 md:gap-3">
+          {data.map((cat, idx) => {
+            const isActive = idx === activeCategoryIndex;
+            return (
+              <button
+                key={`${cat.title}-${idx}`}
+                onClick={() => {
+                  setActiveCategoryIndex(idx);
+                  setOpenItems({});
+                }}
+                className={`px-4 py-2 rounded-full text-[10px] md:text-xs font-black uppercase tracking-[0.15em] transition-all ${
+                  isActive
+                    ? 'bg-luna-purple text-white shadow-luna-rich'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
+              >
+                {cat.title}
+              </button>
+            );
+          })}
+        </div>
+
+        {activeCategory && (
+          <article className="space-y-12">
             <div className="flex items-center gap-6">
-              <span className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-300 dark:text-slate-700">0{i+1}</span>
-              <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">{cat.title}</h3>
+              <span className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-300 dark:text-slate-700">
+                {String(activeCategoryIndex + 1).padStart(2, '0')}
+              </span>
+              <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">{activeCategory.title}</h3>
               <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800" />
             </div>
 
             <div className="grid grid-cols-1 gap-4">
-              {cat.items.map((item, j) => {
-                const isOpen = openItems[`${i}-${j}`];
+              {activeCategory.items.map((item, j) => {
+                const isOpen = openItems[`${activeCategoryIndex}-${j}`];
                 return (
                   <div 
                     key={j} 
                     className={`border-2 rounded-[2.5rem] transition-all duration-500 overflow-hidden ${isOpen ? 'border-luna-purple luna-vivid-card shadow-luna-rich' : 'border-slate-100 dark:border-slate-800 luna-vivid-card-soft hover:border-slate-300 dark:hover:border-slate-700'}`}
                   >
                     <button 
-                      onClick={() => toggleItem(i, j)}
+                      onClick={() => toggleItem(activeCategoryIndex, j)}
                       className="w-full p-8 md:p-10 flex items-center justify-between text-left group"
                     >
                       <span className={`text-lg md:text-xl font-bold transition-colors ${isOpen ? 'text-luna-purple' : 'text-slate-800 dark:text-slate-200 group-hover:text-slate-950 dark:group-hover:text-white'}`}>
@@ -701,7 +729,7 @@ export const FAQView: React.FC<{ lang?: Language; onBack?: () => void }> = ({ la
               })}
             </div>
           </article>
-        ))}
+        )}
       </section>
 
       <section className="space-y-6">

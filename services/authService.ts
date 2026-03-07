@@ -6,6 +6,10 @@ const LOCAL_USERS_KEY = 'luna_auth_users_v2';
 
 const SUPER_ADMIN_EMAIL = 'dnainform@gmail.com';
 const SUPER_ADMIN_FALLBACK_PASSWORD = 'LunaAdmin2026!';
+const isLocalHostRuntime = (() => {
+  if (typeof window === 'undefined') return false;
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+})();
 
 const ROLE_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
   viewer: ['view_financials', 'view_technical_metrics'],
@@ -152,6 +156,15 @@ const isNetworkError = (error: unknown): boolean => {
 };
 
 const shouldUseOwnerFallback = (email: string): boolean => normalizeEmail(email) === SUPER_ADMIN_EMAIL;
+const localFallbackOverrideEnabled = (): boolean => {
+  try {
+    return localStorage.getItem('luna_allow_local_auth_fallback') === 'true';
+  } catch {
+    return false;
+  }
+};
+const canUseLocalFallback = (email?: string): boolean =>
+  isLocalHostRuntime || localFallbackOverrideEnabled() || (typeof email === 'string' && shouldUseOwnerFallback(email));
 
 const requestJson = async <T>(path: string, init?: RequestInit): Promise<T> => {
   const response = await fetch(apiUrl(path), {
@@ -312,6 +325,7 @@ export const authService = {
     try {
       const payload = await requestJson<{ session: AuthSession | null }>('/api/auth/session', { method: 'GET' });
       if (!payload.session) {
+        if (!canUseLocalFallback()) return null;
         const fallback = localAuth.getSession();
         sessionCache = fallback;
         return fallback;
@@ -319,10 +333,10 @@ export const authService = {
       sessionCache = normalizeSession(payload.session);
       return sessionCache;
     } catch (error) {
-      if (isNetworkError(error)) {
+      if (isNetworkError(error) && canUseLocalFallback()) {
         return localAuth.getSession();
       }
-      return localAuth.getSession();
+      return null;
     }
   },
 
@@ -335,7 +349,7 @@ export const authService = {
       sessionCache = normalizeSession(payload.session);
       return sessionCache;
     } catch (error) {
-      if (isNetworkError(error) || shouldUseOwnerFallback(email)) {
+      if (isNetworkError(error) && canUseLocalFallback(email)) {
         return localAuth.loginWithPassword(email, password);
       }
       throw error;
@@ -351,7 +365,7 @@ export const authService = {
       sessionCache = normalizeSession(payload.session);
       return sessionCache;
     } catch (error) {
-      if (isNetworkError(error)) {
+      if (isNetworkError(error) && canUseLocalFallback()) {
         return localAuth.signupWithPassword(email, password);
       }
       throw error;
@@ -367,7 +381,7 @@ export const authService = {
       sessionCache = normalizeSession(payload.session);
       return sessionCache;
     } catch (error) {
-      if (isNetworkError(error)) {
+      if (isNetworkError(error) && canUseLocalFallback()) {
         return localAuth.loginWithGoogleCredential(credential);
       }
       throw error;
@@ -383,7 +397,7 @@ export const authService = {
       sessionCache = normalizeSession(payload.session);
       return sessionCache;
     } catch (error) {
-      if (isNetworkError(error)) {
+      if (isNetworkError(error) && canUseLocalFallback()) {
         return localAuth.updateRole(session, role);
       }
       throw error;
@@ -395,7 +409,7 @@ export const authService = {
       await requestJson<{ ok: boolean }>('/api/auth/logout', { method: 'POST', body: JSON.stringify({}) });
       sessionCache = null;
     } catch (error) {
-      if (isNetworkError(error)) {
+      if (isNetworkError(error) && canUseLocalFallback()) {
         localAuth.logout();
         return;
       }

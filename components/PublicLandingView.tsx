@@ -1,11 +1,17 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { Logo } from './Logo';
-import { HowItWorksView } from './HowItWorksView';
-import { LegalDocumentView } from './LegalDocumentView';
-import { AboutLunaView } from './AboutLunaView';
 import { Language, TranslationSchema } from '../constants';
 import LanguageSelector from './LanguageSelector';
 import ThemeToggle from './ThemeToggle';
+import { ABOUT_COPY } from '../utils/aboutContent';
+
+const HowItWorksView = lazy(() => import('./HowItWorksView').then((m) => ({ default: m.HowItWorksView })));
+const LegalDocumentView = lazy(() => import('./LegalDocumentView').then((m) => ({ default: m.LegalDocumentView })));
+const AboutLunaView = lazy(() => import('./AboutLunaView').then((m) => ({ default: m.AboutLunaView })));
+const PublicMapSection = lazy(() => import('./public/PublicMapSection').then((m) => ({ default: m.PublicMapSection })));
+const PublicRitualSection = lazy(() => import('./public/PublicRitualSection').then((m) => ({ default: m.PublicRitualSection })));
+const PublicBridgeSection = lazy(() => import('./public/PublicBridgeSection').then((m) => ({ default: m.PublicBridgeSection })));
+const PublicPricingSection = lazy(() => import('./public/PublicPricingSection').then((m) => ({ default: m.PublicPricingSection })));
 
 interface PublicLandingViewProps {
   onSignIn: () => void;
@@ -63,9 +69,27 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     if (typeof window === 'undefined') return 'home';
     return resolvePageFromPath(window.location.pathname);
   });
+  const [isHomeExpanded, setIsHomeExpanded] = useState(false);
   const [billingPeriod, setBillingPeriod] = useState<'month' | 'year'>('month');
   const [trialState, setTrialState] = useState<TrialState | null>(null);
   const [trialFeedback, setTrialFeedback] = useState('');
+
+  const loadingLabelByLang: Record<Language, string> = {
+    en: 'Loading',
+    ru: 'Загрузка',
+    uk: 'Завантаження',
+    es: 'Cargando',
+    fr: 'Chargement',
+    de: 'Laden',
+    zh: '加载中',
+    ja: '読み込み中',
+    pt: 'Carregando',
+  };
+  const lazyFallback = (
+    <div className="min-h-[40vh] flex items-center justify-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
+      {loadingLabelByLang[lang]}...
+    </div>
+  );
 
   const pricingUiByLang: Record<
     Language,
@@ -416,27 +440,26 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     pt: 'Como Funciona',
   };
 
-  const homeStoryByLang: Record<
-    Language,
-    {
-      heroTitle: string;
-      heroLead: string;
-      heroBody: string;
-      heroCta: string;
-      heroSub: string;
-      explainTitle: string;
-      explainParagraphs: string[];
-      flowTitle: string;
-      flowItems: Array<{ title: string; text: string }>;
-      sections: Array<{ title: string; body: string }>;
-      differenceTitle: string;
-      differenceList: string[];
-      differenceBody: string;
-      finalTitle: string;
-      finalBody: string;
-      finalCta: string;
-    }
-  > = {
+  type HomeStory = {
+    heroTitle: string;
+    heroLead: string;
+    heroBody: string;
+    heroCta: string;
+    heroSub: string;
+    explainTitle: string;
+    explainParagraphs: string[];
+    flowTitle: string;
+    flowItems: Array<{ title: string; text: string }>;
+    sections: Array<{ title: string; body: string }>;
+    differenceTitle: string;
+    differenceList: string[];
+    differenceBody: string;
+    finalTitle: string;
+    finalBody: string;
+    finalCta: string;
+  };
+
+  const homeStoryByLang: Partial<Record<Language, HomeStory>> = {
     ru: {
       heroTitle: 'Luna',
       heroLead: 'Luna — The physiology of feeling.',
@@ -511,17 +534,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       finalBody: 'It is a quiet space to pause, understand your state, and return to clarity.',
       finalCta: 'Try Luna',
     },
-    uk: {} as any,
-    es: {} as any,
-    fr: {} as any,
-    de: {} as any,
-    zh: {} as any,
-    ja: {} as any,
-    pt: {} as any,
   };
-  (['uk', 'es', 'fr', 'de', 'zh', 'ja', 'pt'] as Language[]).forEach((code) => {
-    homeStoryByLang[code] = homeStoryByLang.en;
-  });
 
   const pricingCopyByLang: Record<Language, { title: string; subtitle: string; month: string; year: string; monthNote: string; yearNote: string; saveBadge: string; cta: string; recommended: string }> = {
     en: {
@@ -565,7 +578,21 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     pt: { title: 'Preco Simples E Claro', subtitle: 'Um plano com acesso completo. Mensal ou anual.', month: '$12.99', year: '$89', monthNote: 'por mes', yearNote: 'por ano', saveBadge: 'Economize 25% no anual', cta: 'Comprar Luna', recommended: 'Recomendado: $12.99/mes.' },
   };
 
-  const homeStory = homeStoryByLang[lang] || homeStoryByLang.en;
+  const homeStory = homeStoryByLang[lang] || homeStoryByLang.en!;
+  const homeToggleByLang: Record<Language, { more: string; less: string }> = {
+    en: { more: 'Show Full Story', less: 'Show Less' },
+    ru: { more: 'Показать Полную Версию', less: 'Скрыть Детали' },
+    uk: { more: 'Показати Повну Версію', less: 'Приховати Деталі' },
+    es: { more: 'Ver Historia Completa', less: 'Mostrar Menos' },
+    fr: { more: 'Afficher La Version Complete', less: 'Afficher Moins' },
+    de: { more: 'Vollstaendige Version Zeigen', less: 'Weniger Anzeigen' },
+    zh: { more: '显示完整内容', less: '收起详情' },
+    ja: { more: '全文を表示', less: '表示を減らす' },
+    pt: { more: 'Mostrar Historia Completa', less: 'Mostrar Menos' },
+  };
+  const homeToggle = homeToggleByLang[lang] || homeToggleByLang.en;
+  const visibleExplainParagraphs = isHomeExpanded ? homeStory.explainParagraphs : homeStory.explainParagraphs.slice(0, 2);
+  const visibleSections = isHomeExpanded ? homeStory.sections : homeStory.sections.slice(0, 2);
   const pricingCopy = pricingCopyByLang[lang] || pricingCopyByLang.en;
   const pricingUi = pricingUiByLang[lang] || pricingUiByLang.en;
 
@@ -623,171 +650,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     ja: 'Luna について',
     pt: 'Sobre Luna',
   };
-  const aboutCopyByLang: Record<
-    Language,
-    {
-      eyebrow: string;
-      title: string;
-      lead: string;
-      intro: string;
-      block1Title: string;
-      block1Text1: string;
-      block1Text2: string;
-      block2Title: string;
-      block2Text1: string;
-      block2Text2: string;
-      finalTitle: string;
-      finalText1: string;
-      finalText2: string;
-      finalText3: string;
-    }
-  > = {
-    en: {
-      eyebrow: 'About',
-      title: 'About Luna',
-      lead: 'Luna was born inside a much larger research environment.',
-      intro: 'For many years our team has been working on a long-term project called BioMath — a digital modeling initiative focused on understanding how the human body changes over time. The work behind BioMath explores physiological rhythms, biological signals, behavioral patterns, and the complex ways they interact to shape energy, mood, and recovery.',
-      block1Title: 'From BioMath To Luna',
-      block1Text1: 'Within this broader system, more than 200 different services and tools are being developed to help people better observe and understand their own biological dynamics.',
-      block1Text2: 'Luna is one of those services. During the development of BioMath we realized that one part of this work — helping women calmly observe their internal rhythms and translate those signals into clear understanding — could stand on its own. The result is Luna.',
-      block2Title: 'What Luna Focuses On',
-      block2Text1: 'Luna focuses on a simple but often overlooked need: the ability to pause, observe internal signals, and form a clear picture of what is happening inside the body and mind at a given moment.',
-      block2Text2: 'Behind Luna are years of work in digital modeling, data structures for human physiology, and the study of long-term biological patterns. These efforts were not originally intended to create a single application.',
-      finalTitle: 'A Distilled Practical Layer',
-      finalText1: 'Luna represents a distilled, practical part of that work.',
-      finalText2: 'It does not attempt to diagnose or treat. Instead, it offers a quiet digital environment where physiological rhythms, personal observations, and reflection can come together to create a deeper sense of clarity.',
-      finalText3: 'In the broader BioMath ecosystem, Luna is one piece of a much larger vision. On its own, it is a simple tool designed to bring that deeper research into everyday life in a calm and accessible way.',
-    },
-    ru: {
-      eyebrow: 'О проекте',
-      title: 'О Luna',
-      lead: 'Luna родилась внутри гораздо более широкой исследовательской среды.',
-      intro: 'На протяжении многих лет наша команда работает над долгосрочным проектом BioMath — инициативой цифрового моделирования, направленной на понимание того, как человеческое тело меняется во времени. Работа в BioMath исследует физиологические ритмы, биологические сигналы, поведенческие паттерны и сложные связи между ними, влияющие на энергию, настроение и восстановление.',
-      block1Title: 'От BioMath к Luna',
-      block1Text1: 'Внутри этой широкой системы разрабатывается более 200 сервисов и инструментов, которые помогают людям лучше наблюдать и понимать собственную биологическую динамику.',
-      block1Text2: 'Luna — один из таких сервисов. В процессе разработки BioMath мы поняли, что отдельная часть этой работы — спокойное наблюдение внутренних ритмов у женщин и перевод этих сигналов в ясное понимание — может существовать как самостоятельный инструмент. Так появилась Luna.',
-      block2Title: 'На чем фокусируется Luna',
-      block2Text1: 'Luna сосредоточена на простой, но часто недооцененной потребности: умении остановиться, заметить внутренние сигналы и сформировать ясную картину того, что происходит в теле и сознании в конкретный момент.',
-      block2Text2: 'За Luna стоят годы работы в цифровом моделировании, структуры данных человеческой физиологии и исследования долгосрочных биологических паттернов. Изначально эти усилия не были направлены на создание одного приложения.',
-      finalTitle: 'Сжатый практический слой',
-      finalText1: 'Luna — это концентрированная практическая часть этой большой работы.',
-      finalText2: 'Она не пытается ставить диагнозы или лечить. Вместо этого Luna дает тихую цифровую среду, где физиологические ритмы, личные наблюдения и рефлексия соединяются в более ясное понимание состояния.',
-      finalText3: 'В экосистеме BioMath Luna — лишь часть гораздо более широкой визии. Но сама по себе это простой инструмент, который делает глубокие исследования доступными в повседневной жизни — спокойно и понятно.',
-    },
-    uk: {
-      eyebrow: 'Про проект',
-      title: 'Про Luna',
-      lead: 'Luna народилася всередині значно ширшого дослідницького середовища.',
-      intro: 'Протягом багатьох років наша команда працює над довгостроковим проєктом BioMath — ініціативою цифрового моделювання, що вивчає, як людське тіло змінюється з часом. Робота BioMath досліджує фізіологічні ритми, біологічні сигнали, поведінкові патерни та їхні складні взаємозвʼязки, які формують енергію, настрій і відновлення.',
-      block1Title: 'Від BioMath до Luna',
-      block1Text1: 'У межах цієї ширшої системи розробляється понад 200 сервісів та інструментів, що допомагають людям краще спостерігати й розуміти власну біологічну динаміку.',
-      block1Text2: 'Luna — один із цих сервісів. Під час розвитку BioMath ми побачили, що окрема частина цієї роботи — допомога жінкам спокійно спостерігати внутрішні ритми та перетворювати сигнали на ясне розуміння — може існувати самостійно.',
-      block2Title: 'Фокус Luna',
-      block2Text1: 'Luna зосереджена на простій, але часто недооціненій потребі: зупинитися, помітити внутрішні сигнали та сформувати чітку картину того, що відбувається в тілі й свідомості саме зараз.',
-      block2Text2: 'За Luna стоять роки праці в цифровому моделюванні, структурах даних людської фізіології та вивченні довгострокових біологічних патернів.',
-      finalTitle: 'Практичне втілення великої роботи',
-      finalText1: 'Luna — це концентрована практична частина цього великого напрямку.',
-      finalText2: 'Вона не діагностує і не лікує. Натомість Luna надає тихий цифровий простір, де фізіологічні ритми, особисті спостереження й рефлексія поєднуються у ясність.',
-      finalText3: 'У ширшій екосистемі BioMath Luna — лише одна частина великого бачення. Але окремо це простий інструмент, що переносить глибокі дослідження в повсякденне життя спокійно й доступно.',
-    },
-    es: {
-      eyebrow: 'Acerca',
-      title: 'Sobre Luna',
-      lead: 'Luna nació dentro de un entorno de investigación mucho más amplio.',
-      intro: 'Durante muchos años nuestro equipo ha trabajado en un proyecto de largo plazo llamado BioMath — una iniciativa de modelado digital enfocada en comprender cómo cambia el cuerpo humano con el tiempo. BioMath explora ritmos fisiológicos, señales biológicas, patrones de comportamiento y sus interacciones complejas.',
-      block1Title: 'De BioMath a Luna',
-      block1Text1: 'Dentro de este sistema más amplio se están desarrollando más de 200 servicios y herramientas para ayudar a las personas a observar y comprender mejor su dinámica biológica.',
-      block1Text2: 'Luna es uno de esos servicios. En el desarrollo de BioMath entendimos que una parte de ese trabajo — ayudar a las mujeres a observar sus ritmos internos con calma y traducir esas señales en comprensión clara — podía funcionar por sí sola.',
-      block2Title: 'En qué se enfoca Luna',
-      block2Text1: 'Luna se centra en una necesidad simple pero olvidada: pausar, observar señales internas y formar una imagen clara de lo que sucede en cuerpo y mente.',
-      block2Text2: 'Detrás de Luna hay años de modelado digital, estructuras de datos fisiológicos y estudio de patrones biológicos de largo plazo.',
-      finalTitle: 'Una capa práctica condensada',
-      finalText1: 'Luna representa una parte práctica y destilada de ese trabajo.',
-      finalText2: 'No intenta diagnosticar ni tratar. Ofrece un entorno digital tranquilo donde ritmos fisiológicos, observaciones personales y reflexión se unen para generar claridad.',
-      finalText3: 'En el ecosistema BioMath, Luna es una pieza de una visión mucho mayor. Por sí sola, es una herramienta simple que acerca esa investigación a la vida cotidiana.',
-    },
-    fr: {
-      eyebrow: 'A Propos',
-      title: 'A propos de Luna',
-      lead: 'Luna est nee au sein d un environnement de recherche beaucoup plus vaste.',
-      intro: 'Depuis des annees, notre equipe travaille sur BioMath, une initiative de modelisation numerique consacree a la comprehension des evolutions du corps humain dans le temps.',
-      block1Title: 'De BioMath a Luna',
-      block1Text1: 'Dans cet ecosysteme, plus de 200 services et outils sont en cours de developpement pour aider les personnes a observer et comprendre leur dynamique biologique.',
-      block1Text2: 'Luna est l un de ces services. Nous avons compris qu une partie de ce travail pouvait exister de facon autonome: aider les femmes a observer calmement leurs rythmes internes et a les traduire en clarte.',
-      block2Title: 'Le focus de Luna',
-      block2Text1: 'Luna repond a un besoin simple: faire une pause, observer les signaux internes et clarifier ce qui se passe dans le corps et l esprit.',
-      block2Text2: 'Derriere Luna, il y a des annees de modelisation numerique, de structures de donnees physiologiques et d etudes des patterns biologiques de long terme.',
-      finalTitle: 'Une couche pratique distillee',
-      finalText1: 'Luna represente une partie pratique et distillee de ce travail.',
-      finalText2: 'Elle ne diagnostique pas et ne traite pas. Elle propose un environnement numerique calme ou rythmes physiologiques, observations personnelles et reflexion se rencontrent.',
-      finalText3: 'Dans l ecosysteme BioMath, Luna n est qu une piece d une vision plus large. A elle seule, c est un outil simple et accessible pour la vie quotidienne.',
-    },
-    de: {
-      eyebrow: 'Uber',
-      title: 'Uber Luna',
-      lead: 'Luna entstand in einem deutlich groesseren Forschungsumfeld.',
-      intro: 'Seit vielen Jahren arbeitet unser Team an BioMath, einer langfristigen digitalen Modellierungsinitiative, die untersucht, wie sich der menschliche Koerper im Zeitverlauf veraendert.',
-      block1Title: 'Von BioMath zu Luna',
-      block1Text1: 'Innerhalb dieses groesseren Systems entstehen ueber 200 Services und Tools, die Menschen helfen sollen, ihre biologische Dynamik besser zu beobachten und zu verstehen.',
-      block1Text2: 'Luna ist einer dieser Services. Waehrend der Entwicklung wurde klar, dass ein Teil davon eigenstaendig funktionieren kann: Frauen dabei zu helfen, innere Rhythmen ruhig zu beobachten und in klare Einsicht zu uebersetzen.',
-      block2Title: 'Worauf Luna fokussiert',
-      block2Text1: 'Luna konzentriert sich auf ein einfaches, oft uebersehenes Beduerfnis: innehalten, innere Signale wahrnehmen und ein klares Bild vom aktuellen Zustand in Koerper und Geist bilden.',
-      block2Text2: 'Hinter Luna stehen Jahre an digitaler Modellierung, physiologischen Datenstrukturen und Forschung zu langfristigen biologischen Mustern.',
-      finalTitle: 'Ein verdichteter praktischer Teil',
-      finalText1: 'Luna ist ein verdichteter, praktischer Teil dieser Arbeit.',
-      finalText2: 'Luna diagnostiziert oder behandelt nicht. Stattdessen bietet sie einen ruhigen digitalen Raum, in dem Rhythmen, Beobachtungen und Reflexion zu Klarheit fuehren.',
-      finalText3: 'Im BioMath-Oekosystem ist Luna ein Teil einer groesseren Vision. Fuer sich ist es ein einfaches Werkzeug fuer alltagstaugliche Klarheit.',
-    },
-    zh: {
-      eyebrow: '关于',
-      title: '关于 Luna',
-      lead: 'Luna 诞生于一个更大的长期研究环境。',
-      intro: '多年来，我们团队一直在推进名为 BioMath 的长期项目。这是一个数字建模计划，目标是理解人体如何随时间变化。BioMath 研究生理节律、生物信号、行为模式及其复杂互动。',
-      block1Title: '从 BioMath 到 Luna',
-      block1Text1: '在这个更大的系统中，我们正在开发 200 多个服务和工具，帮助人们更好地观察并理解自身的生物动力学。',
-      block1Text2: 'Luna 是其中之一。在 BioMath 的开发过程中，我们发现有一部分工作可以独立存在：帮助女性平静地观察内在节律，并将这些信号转化为清晰理解。',
-      block2Title: 'Luna 的核心',
-      block2Text1: 'Luna 专注于一个常被忽视但非常重要的能力：暂停、观察内部信号，并形成当下身心状态的清晰图景。',
-      block2Text2: 'Luna 背后是多年数字建模、人体生理数据结构研究以及长期生物模式研究的积累。',
-      finalTitle: '可落地的精炼成果',
-      finalText1: 'Luna 是这项大规模工作的一个精炼且实用的部分。',
-      finalText2: '它不做诊断，也不做治疗。它提供一个安静的数字环境，让生理节律、个人观察与反思汇聚成更深层的清晰感。',
-      finalText3: '在更广阔的 BioMath 生态中，Luna 只是其中一块拼图；但作为独立产品，它把深层研究以平静、易用的方式带入日常生活。',
-    },
-    ja: {
-      eyebrow: '概要',
-      title: 'Luna について',
-      lead: 'Luna は、より大きな研究環境の中で生まれました。',
-      intro: '私たちのチームは長年にわたり、BioMath という長期プロジェクトに取り組んできました。これは、人間の身体が時間とともにどう変化するかを理解するためのデジタルモデリングの取り組みです。',
-      block1Title: 'BioMath から Luna へ',
-      block1Text1: 'この大きなシステムの中で、200 を超えるサービスとツールが開発されており、個々の生体ダイナミクスをよりよく観察・理解できるように設計されています。',
-      block1Text2: 'Luna はその一つです。BioMath 開発の過程で、女性が内的リズムを落ち着いて観察し、信号を明確な理解へ変換する部分は独立して成立すると分かりました。',
-      block2Title: 'Luna の焦点',
-      block2Text1: 'Luna は、見落とされがちなシンプルなニーズに焦点を当てます。立ち止まり、内側の信号を観察し、心身で何が起きているかを明確に捉えることです。',
-      block2Text2: 'Luna の背後には、デジタルモデリング、生理データ構造、長期的な生物学的パターン研究の積み重ねがあります。',
-      finalTitle: '実用に落とし込んだ要素',
-      finalText1: 'Luna は、その研究の中から抽出された実用的なレイヤーです。',
-      finalText2: '診断や治療を目的とせず、静かなデジタル環境の中で、生理リズム・個人観察・リフレクションを結び、より深い明瞭さを生みます。',
-      finalText3: 'BioMath 全体では Luna は大きなビジョンの一部ですが、単体でも日常に研究知見を届けるシンプルで使いやすいツールです。',
-    },
-    pt: {
-      eyebrow: 'Sobre',
-      title: 'Sobre Luna',
-      lead: 'A Luna nasceu dentro de um ambiente de pesquisa muito maior.',
-      intro: 'Por muitos anos, nossa equipe vem trabalhando no BioMath, uma iniciativa de modelagem digital focada em entender como o corpo humano muda ao longo do tempo.',
-      block1Title: 'De BioMath para Luna',
-      block1Text1: 'Dentro desse sistema mais amplo, mais de 200 servicos e ferramentas estao sendo desenvolvidos para ajudar as pessoas a observar e entender melhor sua dinamica biologica.',
-      block1Text2: 'Luna e um desses servicos. Durante o desenvolvimento do BioMath percebemos que uma parte desse trabalho poderia existir de forma independente: ajudar mulheres a observar ritmos internos com calma e transformar sinais em clareza.',
-      block2Title: 'No que a Luna foca',
-      block2Text1: 'Luna foca em uma necessidade simples e muitas vezes ignorada: pausar, observar sinais internos e formar uma visao clara do que esta acontecendo no corpo e na mente.',
-      block2Text2: 'Por tras da Luna ha anos de modelagem digital, estruturas de dados da fisiologia humana e estudo de padroes biologicos de longo prazo.',
-      finalTitle: 'Uma camada pratica destilada',
-      finalText1: 'A Luna representa uma parte pratica e destilada desse trabalho.',
-      finalText2: 'Ela nao tenta diagnosticar nem tratar. Em vez disso, oferece um ambiente digital calmo onde ritmos fisiologicos, observacoes pessoais e reflexao se unem para gerar clareza.',
-      finalText3: 'No ecossistema BioMath, Luna e uma parte de uma visao muito maior. Sozinha, e uma ferramenta simples para trazer essa pesquisa ao dia a dia de forma acessivel.',
-    },
-  };
-  const aboutCopy = aboutCopyByLang[lang] || aboutCopyByLang.en;
+  const aboutCopy = ABOUT_COPY[lang] || ABOUT_COPY.en;
   const lunaBalanceVisionByLang: Record<Language, { title: string; subtitle: string; points: [string, string, string, string]; ending: string }> = {
     en: {
       title: 'Luna Balance',
@@ -890,7 +753,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     },
   };
   const innerWeather = innerWeatherByLang[lang] || innerWeatherByLang.en;
-  const bridgePublicByLang: Record<Language, { eyebrow: string; title: string; problemTitle: string; problemBody: string; helpsTitle: string; helps: [string, string, string]; unique: string; cta: string; subCta: string; memberLinkTitle: string; memberLinkBody: string }> = {
+  const bridgePublicByLang: Record<Language, { eyebrow: string; title: string; problemTitle: string; problemBody: string; helpsTitle: string; helps: [string, string, string]; unique: string; memberLinkTitle: string; memberLinkBody: string }> = {
     en: {
       eyebrow: 'THE BRIDGE',
       title: 'Say Your State Clearly',
@@ -899,8 +762,6 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       helpsTitle: 'Bridge helps',
       helps: ['formulate your state', 'explain it calmly', 'preserve respect in conversation'],
       unique: 'This is one of Luna’s unique functions.',
-      cta: 'Enter Member Zone',
-      subCta: 'Already a member? Sign in',
       memberLinkTitle: 'Connected to Member Logic',
       memberLinkBody: 'In the member zone, The Bridge runs the guided 3-question flow and forms a calm reflection message you can keep or share.',
     },
@@ -912,8 +773,6 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       helpsTitle: 'Bridge помогает',
       helps: ['сформулировать состояние', 'объяснить его спокойно', 'сохранить уважение в разговоре'],
       unique: 'Это одна из уникальных функций Luna.',
-      cta: 'Перейти в Member Zone',
-      subCta: 'Уже участник? Sign in',
       memberLinkTitle: 'Связано с логикой Member Zone',
       memberLinkBody: 'В member-зоне The Bridge использует поток из 3 вопросов и формирует спокойное сообщение-рефлексию, которое можно сохранить или отправить.',
     },
@@ -925,8 +784,6 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       helpsTitle: 'Bridge допомагає',
       helps: ['сформулювати стан', 'пояснити його спокійно', 'зберегти повагу в розмові'],
       unique: 'Це одна з унікальних функцій Luna.',
-      cta: 'Увійти в Member Zone',
-      subCta: 'Вже учасник? Sign in',
       memberLinkTitle: 'Повʼязано з логікою Member Zone',
       memberLinkBody: 'У member-зоні The Bridge запускає 3-питаньний сценарій та формує спокійне рефлексивне повідомлення, яке можна зберегти або надіслати.',
     },
@@ -938,8 +795,6 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       helpsTitle: 'Bridge ayuda a',
       helps: ['formular tu estado', 'explicarlo con calma', 'preservar el respeto en la conversación'],
       unique: 'Esta es una de las funciones únicas de Luna.',
-      cta: 'Enter Member Zone',
-      subCta: 'Already a member? Sign in',
       memberLinkTitle: 'Conectado con la lógica de Member Zone',
       memberLinkBody: 'En la zona de miembros, The Bridge ejecuta el flujo guiado de 3 preguntas y forma un mensaje de reflexión calmado para guardar o compartir.',
     },
@@ -951,8 +806,6 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       helpsTitle: 'Bridge aide à',
       helps: ['formuler votre état', 'l’expliquer calmement', 'préserver le respect dans la conversation'],
       unique: 'C’est une des fonctions uniques de Luna.',
-      cta: 'Enter Member Zone',
-      subCta: 'Already a member? Sign in',
       memberLinkTitle: 'Connecté à la logique Member Zone',
       memberLinkBody: 'Dans la zone membre, The Bridge lance le flux guidé en 3 questions et crée un message de réflexion calme à conserver ou partager.',
     },
@@ -964,8 +817,6 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       helpsTitle: 'Bridge hilft dabei',
       helps: ['den Zustand zu formulieren', 'ihn ruhig zu erklären', 'Respekt im Gespräch zu bewahren'],
       unique: 'Das ist eine der einzigartigen Funktionen von Luna.',
-      cta: 'Enter Member Zone',
-      subCta: 'Already a member? Sign in',
       memberLinkTitle: 'Mit Member-Logik verbunden',
       memberLinkBody: 'In der Member Zone läuft The Bridge durch den geführten 3-Fragen-Flow und erstellt eine ruhige Reflexionsnachricht zum Behalten oder Teilen.',
     },
@@ -977,8 +828,6 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       helpsTitle: 'Bridge 帮你',
       helps: ['组织你的状态表达', '平静地说明感受', '在对话中保留尊重'],
       unique: '这是 Luna 的独特功能之一。',
-      cta: 'Enter Member Zone',
-      subCta: 'Already a member? Sign in',
       memberLinkTitle: '与 Member Zone 逻辑联动',
       memberLinkBody: '在会员区，The Bridge 会运行 3 个引导问题流程，并生成可保存或分享的平静反思信息。',
     },
@@ -990,8 +839,6 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       helpsTitle: 'Bridge は次を助けます',
       helps: ['状態を言語化する', '落ち着いて説明する', '会話の尊重を保つ'],
       unique: 'これは Luna のユニークな機能の一つです。',
-      cta: 'Enter Member Zone',
-      subCta: 'Already a member? Sign in',
       memberLinkTitle: 'Member Zone ロジックと接続',
       memberLinkBody: 'メンバーゾーンでは The Bridge が3つの質問フローを実行し、保存・共有できる落ち着いたリフレクション文を生成します。',
     },
@@ -1003,13 +850,58 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       helpsTitle: 'Bridge ajuda a',
       helps: ['formular seu estado', 'explicar com calma', 'preservar o respeito na conversa'],
       unique: 'Esta é uma das funções únicas da Luna.',
-      cta: 'Enter Member Zone',
-      subCta: 'Already a member? Sign in',
       memberLinkTitle: 'Conectado à lógica da Member Zone',
       memberLinkBody: 'Na área de membros, The Bridge executa o fluxo guiado de 3 perguntas e forma uma mensagem de reflexão calma para manter ou compartilhar.',
     },
   };
   const bridgePublic = bridgePublicByLang[lang] || bridgePublicByLang.en;
+  const publicSharedByLang: Partial<
+    Record<
+      Language,
+      {
+      enterMember: string;
+      memberSignIn: string;
+      flowSummary: string;
+      appliedTitle: string;
+      appliedBody: string;
+      noteTitle: string;
+      noteLine1: string;
+      noteLine2: string;
+      }
+    >
+  > = {
+    en: {
+      enterMember: 'Enter Member Zone',
+      memberSignIn: 'Already a member? Sign in',
+      flowSummary: 'Together this forms a clear picture of your inner state.',
+      appliedTitle: 'Applied In Member Zone',
+      appliedBody: 'In the member zone, Luna Balance becomes practical: move through cycle day, see phase shifts, read sensitivity states, and connect markers to daily decisions.',
+      noteTitle: 'LUNA NOTE',
+      noteLine1: 'This Home is public by design. It gives orientation without extracting attention.',
+      noteLine2: 'Your private member zone is where personal data, check-ins, and deeper tools live.',
+    },
+    ru: {
+      enterMember: 'Перейти в Member Zone',
+      memberSignIn: 'Уже участник? Sign in',
+      flowSummary: 'Вместе это формирует понятную картину внутреннего состояния.',
+      appliedTitle: 'Практика В Member Zone',
+      appliedBody: 'В member-зоне Luna Balance становится практичной: вы двигаетесь по дню цикла, видите сдвиги фаз, состояния чувствительности и связываете маркеры с ежедневными решениями.',
+      noteTitle: 'ЗАМЕТКА LUNA',
+      noteLine1: 'Этот Home сделан публичным по дизайну: он дает ориентир без перегруза внимания.',
+      noteLine2: 'Приватная member-зона — место для личных данных, check-in и более глубоких инструментов.',
+    },
+    uk: {
+      enterMember: 'Увійти в Member Zone',
+      memberSignIn: 'Вже учасник? Sign in',
+      flowSummary: 'Разом це формує зрозумілу картину внутрішнього стану.',
+      appliedTitle: 'Практика В Member Zone',
+      appliedBody: 'У member-зоні Luna Balance стає практичною: рух по дню циклу, зміни фаз, стани чутливості та звʼязок маркерів із щоденними рішеннями.',
+      noteTitle: 'НОТАТКА LUNA',
+      noteLine1: 'Цей Home публічний за задумом: він дає орієнтацію без виснаження уваги.',
+      noteLine2: 'Приватна member-зона — місце для персональних даних, check-in і глибших інструментів.',
+    },
+  };
+  const publicShared = publicSharedByLang[lang] || publicSharedByLang.en!;
 
   const cards = [
     {
@@ -1086,6 +978,12 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     }
   }, [activePage]);
 
+  useEffect(() => {
+    if (activePage !== 'home') {
+      setIsHomeExpanded(false);
+    }
+  }, [activePage]);
+
   const heroBackgroundStyle = useMemo<React.CSSProperties>(() => {
     if (theme === 'dark') {
       return {
@@ -1138,6 +1036,10 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
             <img
               src="/images/Luna%20logo3.png"
               alt="Luna symbol"
+              width={64}
+              height={64}
+              decoding="async"
+              fetchPriority="high"
               className="h-16 w-16 object-contain"
             />
             <Logo size="sm" className="cursor-default text-5xl leading-none" />
@@ -1153,6 +1055,21 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
               </button>
             ))}
           </nav>
+          <div className="md:hidden flex-1 max-w-[12rem]">
+            <label className="sr-only" htmlFor="public-section-select">Public section</label>
+            <select
+              id="public-section-select"
+              value={activePage}
+              onChange={(e) => setActivePage(e.target.value as PublicPage)}
+              className="w-full px-3 py-2 rounded-xl border border-slate-300/70 dark:border-slate-700/70 bg-white/90 dark:bg-slate-900/80 text-[10px] font-black uppercase tracking-[0.15em] text-slate-600 dark:text-slate-300"
+            >
+              {sections.map((section) => (
+                <option key={section.id} value={section.id}>
+                  {section.label}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="flex items-center gap-2">
             <div>
               <LanguageSelector current={lang} onSelect={setLang} />
@@ -1207,7 +1124,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
               <article className="lg:col-span-6 rounded-[2.5rem] border border-slate-200/70 dark:border-slate-800 bg-gradient-to-br from-[#f5e7ee]/92 via-[#eee3ef]/90 to-[#e2e8f4]/88 dark:from-slate-900/82 dark:to-slate-800/82 p-7 md:p-8 shadow-luna-rich space-y-4 relative overflow-hidden">
                 <div className="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-luna-coral/18 blur-2xl" />
                 <p className="text-[10px] font-black uppercase tracking-[0.45em] text-luna-purple">{homeStory.explainTitle}</p>
-                {homeStory.explainParagraphs.map((paragraph) => (
+                {visibleExplainParagraphs.map((paragraph) => (
                   <p key={paragraph} className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{paragraph}</p>
                 ))}
               </article>
@@ -1224,12 +1141,12 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
                     </div>
                   ))}
                 </div>
-                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">Из этого формируется понятная картина внутреннего состояния.</p>
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{publicShared.flowSummary}</p>
               </article>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {homeStory.sections.map((section, idx) => (
+              {visibleSections.map((section, idx) => (
                 <article
                   key={section.title}
                   style={{ animationDelay: `${idx * 90}ms` }}
@@ -1252,211 +1169,81 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
               ))}
             </div>
 
-            <article className="rounded-[2.6rem] border border-slate-200/70 dark:border-slate-800 bg-gradient-to-br from-[#eadce8]/94 via-[#e1dae8]/92 to-[#d5dfef]/90 dark:from-slate-900/84 dark:to-slate-800/82 p-8 md:p-10 shadow-[0_20px_56px_rgba(82,64,122,0.16),0_8px_24px_rgba(70,121,143,0.14)] space-y-5">
-              <p className="text-[10px] font-black uppercase tracking-[0.45em] text-luna-purple">{homeStory.differenceTitle}</p>
-              <div className="flex flex-wrap gap-3">
-                {homeStory.differenceList.map((item) => (
-                  <span key={item} className="px-4 py-2 rounded-full border border-slate-300/70 dark:border-slate-700/70 bg-gradient-to-r from-white/90 to-[#f4edf8]/80 dark:from-slate-900/80 dark:to-slate-800/75 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
-                    {item}
-                  </span>
-                ))}
-              </div>
-              <p className="text-base md:text-lg font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{homeStory.differenceBody}</p>
-            </article>
-
-            <article className="rounded-[3rem] border border-slate-200/70 dark:border-slate-800 bg-gradient-to-br from-[#e7d7e5]/95 via-[#ded6e6]/93 to-[#d1dbee]/91 dark:from-slate-900/86 dark:to-slate-800/84 p-8 md:p-12 shadow-[0_26px_80px_rgba(84,62,126,0.18),0_10px_28px_rgba(68,116,139,0.16)] text-center space-y-5">
-              <h3 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-100">{homeStory.finalTitle}</h3>
-              <p className="text-base md:text-xl font-semibold text-slate-700 dark:text-slate-300 max-w-3xl mx-auto">{homeStory.finalBody}</p>
+            <div className="flex justify-center">
               <button
-                onClick={onSignIn}
-                className="px-9 py-4 rounded-full bg-gradient-to-r from-luna-purple via-luna-coral to-luna-teal text-white text-[11px] font-black uppercase tracking-[0.22em] shadow-luna-deep hover:brightness-110 hover:scale-[1.03] active:scale-[0.98] transition-all"
+                onClick={() => setIsHomeExpanded((prev) => !prev)}
+                className="px-6 py-3 rounded-full border border-luna-purple/40 bg-white/80 dark:bg-slate-900/70 text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple shadow-luna-rich hover:bg-luna-purple/10 transition-all"
               >
-                {homeStory.finalCta}
+                {isHomeExpanded ? homeToggle.less : homeToggle.more}
               </button>
-            </article>
+            </div>
+
+            {isHomeExpanded && (
+              <>
+                <article className="rounded-[2.6rem] border border-slate-200/70 dark:border-slate-800 bg-gradient-to-br from-[#eadce8]/94 via-[#e1dae8]/92 to-[#d5dfef]/90 dark:from-slate-900/84 dark:to-slate-800/82 p-8 md:p-10 shadow-[0_20px_56px_rgba(82,64,122,0.16),0_8px_24px_rgba(70,121,143,0.14)] space-y-5">
+                  <p className="text-[10px] font-black uppercase tracking-[0.45em] text-luna-purple">{homeStory.differenceTitle}</p>
+                  <div className="flex flex-wrap gap-3">
+                    {homeStory.differenceList.map((item) => (
+                      <span key={item} className="px-4 py-2 rounded-full border border-slate-300/70 dark:border-slate-700/70 bg-gradient-to-r from-white/90 to-[#f4edf8]/80 dark:from-slate-900/80 dark:to-slate-800/75 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="text-base md:text-lg font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{homeStory.differenceBody}</p>
+                </article>
+
+                <article className="rounded-[3rem] border border-slate-200/70 dark:border-slate-800 bg-gradient-to-br from-[#e7d7e5]/95 via-[#ded6e6]/93 to-[#d1dbee]/91 dark:from-slate-900/86 dark:to-slate-800/84 p-8 md:p-12 shadow-[0_26px_80px_rgba(84,62,126,0.18),0_10px_28px_rgba(68,116,139,0.16)] text-center space-y-5">
+                  <h3 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-100">{homeStory.finalTitle}</h3>
+                  <p className="text-base md:text-xl font-semibold text-slate-700 dark:text-slate-300 max-w-3xl mx-auto">{homeStory.finalBody}</p>
+                  <button
+                    onClick={onSignIn}
+                    className="px-9 py-4 rounded-full bg-gradient-to-r from-luna-purple via-luna-coral to-luna-teal text-white text-[11px] font-black uppercase tracking-[0.22em] shadow-luna-deep hover:brightness-110 hover:scale-[1.03] active:scale-[0.98] transition-all"
+                  >
+                    {homeStory.finalCta}
+                  </button>
+                </article>
+              </>
+            )}
           </section>
         )}
 
         {activePage === 'map' && (
-          <section
-            className={`luna-page-shell luna-page-bodymap rounded-[3rem] p-8 md:p-10 space-y-8 relative overflow-hidden animate-in fade-in duration-500 ${
-              theme === 'dark'
-                ? 'text-white border border-slate-800 shadow-luna-deep'
-                : 'text-slate-800 border border-slate-200/70 shadow-luna-rich'
-            }`}
-          >
-          <div className="absolute -top-24 -right-16 w-80 h-80 rounded-full bg-luna-purple/34 blur-[105px]" />
-          <div className="absolute -bottom-24 -left-20 w-80 h-80 rounded-full bg-luna-teal/30 blur-[105px]" />
-          <div className="absolute top-1/3 left-1/3 w-72 h-72 rounded-full bg-luna-coral/24 blur-[110px]" />
-          <div className="relative z-10 h-56 md:h-72 lg:h-80 rounded-[2.5rem] overflow-hidden border border-transparent bg-transparent">
-            <div className="absolute inset-0" style={bodyMapBackgroundStyle} />
-            <div className="absolute inset-0 bg-gradient-to-r from-[rgba(247,236,230,0.32)] via-transparent to-[rgba(240,230,238,0.3)] dark:from-[rgba(12,16,30,0.44)] dark:via-transparent dark:to-[rgba(14,18,32,0.42)]" />
-          </div>
-          <header className="space-y-2 relative z-10">
-            <p className={`text-[10px] font-black uppercase tracking-[0.45em] ${theme === 'dark' ? 'text-slate-500' : 'text-slate-500'}`}>{ui.publicHome.map.eyebrow}</p>
-            <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">{lunaBalanceVision.title}</h2>
-            <p className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} font-semibold max-w-3xl`}>
-              {lunaBalanceVision.subtitle}
-            </p>
-          </header>
-          <div className="relative z-10 rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#fff4fb]/90 via-[#f5e8f8]/84 to-[#e5eef9]/78 dark:from-slate-900/72 dark:via-slate-900/65 dark:to-slate-800/62 p-6 md:p-7 shadow-[0_22px_54px_rgba(86,66,128,0.24)] dark:shadow-[0_18px_46px_rgba(0,0,0,0.45)]">
-            <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple mb-3">Luna Balance Core</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {lunaBalanceVision.points.map((point) => (
-                <div key={point} className="rounded-2xl border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#fff8fd]/92 via-[#f3e9f8]/84 to-[#e4ecf9]/78 dark:from-slate-900/72 dark:to-slate-900/58 p-4 text-center shadow-[0_12px_28px_rgba(91,76,131,0.2)] dark:shadow-[0_10px_24px_rgba(0,0,0,0.35)]">
-                  <p className="text-sm md:text-base font-black uppercase tracking-[0.12em] text-slate-800 dark:text-slate-100">{point}</p>
-                </div>
-              ))}
-            </div>
-            <p className="mt-4 text-sm md:text-base font-semibold text-slate-600 dark:text-slate-300 leading-relaxed">{lunaBalanceVision.ending}</p>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 relative z-10">
-            {cards.map((item) => (
-              <article
-                key={item.title}
-                className={`p-6 rounded-[2rem] backdrop-blur-sm relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 ${
-                  theme === 'dark'
-                    ? 'bg-gradient-to-br from-slate-900/70 via-slate-900/62 to-slate-800/60 border border-white/10 shadow-[0_14px_36px_rgba(0,0,0,0.4)]'
-                    : 'bg-gradient-to-br from-[#fff6fc]/90 via-[#f4e8f7]/82 to-[#e3ecf8]/76 border border-slate-200/80 shadow-[0_16px_36px_rgba(94,76,136,0.2)]'
-                }`}
-              >
-                <div className="absolute -right-2 -top-2 p-4 opacity-25 text-5xl group-hover:scale-110 transition-transform">{item.icon}</div>
-                <h3 className="text-xl font-black uppercase tracking-tight mb-3">{item.title}</h3>
-                <p className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} font-semibold leading-relaxed text-sm`}>{item.text}</p>
-              </article>
-            ))}
-          </div>
-          <article className="relative z-10 rounded-[2rem] border border-slate-200/80 dark:border-slate-800/85 bg-gradient-to-br from-[#f5e9f3]/90 via-[#ece6f2]/86 to-[#e3ebf8]/82 dark:from-[#050f23]/95 dark:via-[#08162f]/93 dark:to-[#0c1f3f]/91 p-6 md:p-7 shadow-[0_16px_38px_rgba(90,72,130,0.18)] dark:shadow-[0_20px_44px_rgba(0,0,0,0.52)]">
-            <p className="text-[10px] font-black uppercase tracking-[0.45em] text-luna-purple mb-3">{innerWeather.title}</p>
-            <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{innerWeather.intro}</p>
-            <ul className="mt-3 space-y-1">
-              <li className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">• {innerWeather.points[0]}</li>
-              <li className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">• {innerWeather.points[1]}</li>
-              <li className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">• {innerWeather.points[2]}</li>
-            </ul>
-            <p className="mt-4 text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">
-              {innerWeather.line1}
-              <br />
-              {innerWeather.line2}
-            </p>
-            <p className="mt-3 text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">
-              {innerWeather.line3}
-            </p>
-          </article>
-          <article className="relative z-10 rounded-[2rem] border border-slate-200/80 dark:border-slate-800/85 bg-gradient-to-br from-[#f3e5f1]/90 via-[#e8e2f2]/84 to-[#dce8f5]/82 dark:from-[#061126]/94 dark:via-[#08162f]/92 dark:to-[#0d1f3c]/90 p-6 shadow-[0_18px_42px_rgba(88,69,126,0.2)] dark:shadow-[0_20px_42px_rgba(0,0,0,0.5)]">
-            <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple mb-3">Applied In Member Zone</p>
-            <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">
-              In the member zone, Luna Balance becomes practical: move through cycle day, see phase shifts, read sensitivity states, and connect markers to daily decisions.
-            </p>
-          </article>
-          </section>
+          <Suspense fallback={lazyFallback}>
+            <PublicMapSection
+              theme={theme}
+              eyebrow={ui.publicHome.map.eyebrow}
+              lunaBalanceVision={lunaBalanceVision}
+              cards={cards}
+              innerWeather={innerWeather}
+              appliedTitle={publicShared.appliedTitle}
+              appliedBody={publicShared.appliedBody}
+              bodyMapBackgroundStyle={bodyMapBackgroundStyle}
+            />
+          </Suspense>
         )}
 
         {activePage === 'ritual' && (
-          <section className="max-w-[1100px] mx-auto animate-in fade-in duration-500">
-            <div className="rounded-[3rem] border border-slate-200/70 dark:border-slate-800/80 bg-gradient-to-br from-[#fbf3f8]/90 via-[#f3eef7]/86 to-[#ecf2fa]/82 dark:from-[#070f23]/92 dark:via-[#0b1733]/90 dark:to-[#122345]/88 p-8 md:p-12 shadow-[0_24px_64px_rgba(88,68,128,0.16)] dark:shadow-[0_24px_64px_rgba(0,0,0,0.5)] space-y-12">
-              <header className="space-y-4 max-w-3xl">
-                <p className="text-[10px] font-black uppercase tracking-[0.48em] text-luna-purple">RITUAL PATH</p>
-                <h1 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-slate-100">A PATH, NOT A CHECKLIST</h1>
-                <p className="text-sm md:text-base font-semibold text-slate-600 dark:text-slate-300 leading-relaxed">A simple daily rhythm that protects attention and preserves signal.</p>
-              </header>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/50 p-6 md:p-7 min-h-[220px] shadow-[0_12px_30px_rgba(88,70,126,0.12)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.34)]">
-                  <h2 className="text-[11px] font-black uppercase tracking-[0.4em] text-luna-purple mb-4">MORNING</h2>
-                  <p className="text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">Name your baseline before the world names your pace.</p>
-                </article>
-                <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/50 p-6 md:p-7 min-h-[220px] shadow-[0_12px_30px_rgba(88,70,126,0.12)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.34)]">
-                  <h2 className="text-[11px] font-black uppercase tracking-[0.4em] text-luna-purple mb-4">MIDDAY</h2>
-                  <p className="text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">Re-check capacity and adjust plans with respect for your energy.</p>
-                </article>
-                <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/50 p-6 md:p-7 min-h-[220px] shadow-[0_12px_30px_rgba(88,70,126,0.12)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.34)]">
-                  <h2 className="text-[11px] font-black uppercase tracking-[0.4em] text-luna-purple mb-4">EVENING</h2>
-                  <p className="text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">Close the day with a short reflection to preserve signal, not noise.</p>
-                </article>
-              </div>
-
-              <article className="rounded-[2.2rem] border border-slate-200/75 dark:border-slate-800/85 bg-gradient-to-br from-[#f4e8f1]/84 via-[#ece6f2]/80 to-[#e5ecf8]/76 dark:from-[#061127]/94 dark:via-[#0a1732]/92 dark:to-[#0f2142]/90 p-6 md:p-8 space-y-3 shadow-[0_16px_38px_rgba(88,70,126,0.14)] dark:shadow-[0_20px_44px_rgba(0,0,0,0.5)]">
-                <p className="text-[10px] font-black uppercase tracking-[0.45em] text-luna-purple dark:text-slate-700">LUNA NOTE</p>
-                <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-800 leading-relaxed">
-                  This Home is public by design. It gives orientation without extracting attention.
-                  <br />
-                  Your private member zone is where personal data, check-ins, and deeper tools live.
-                </p>
-              </article>
-
-              <div className="flex flex-col items-start gap-4">
-                <button
-                  onClick={onSignIn}
-                  className="px-8 py-4 rounded-full bg-gradient-to-r from-luna-purple via-luna-coral to-luna-teal text-white text-[11px] font-black uppercase tracking-[0.22em] shadow-luna-deep hover:brightness-110 hover:scale-[1.03] active:scale-[0.98] transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-luna-purple"
-                >
-                  Enter Member Zone
-                </button>
-                <button
-                  onClick={onSignIn}
-                  className="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-luna-purple transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-luna-purple rounded-md"
-                >
-                  Already a member? Sign in
-                </button>
-              </div>
-            </div>
-          </section>
+          <Suspense fallback={lazyFallback}>
+            <PublicRitualSection
+              onSignIn={onSignIn}
+              noteTitle={publicShared.noteTitle}
+              noteLine1={publicShared.noteLine1}
+              noteLine2={publicShared.noteLine2}
+              enterMember={publicShared.enterMember}
+              memberSignIn={publicShared.memberSignIn}
+            />
+          </Suspense>
         )}
 
         {activePage === 'bridge' && (
-          <section className="max-w-[1100px] mx-auto animate-in fade-in duration-500">
-            <div className="rounded-[3rem] border border-slate-200/70 dark:border-slate-800/85 bg-gradient-to-br from-[#f9eef5]/92 via-[#f0eaf6]/88 to-[#e6eef9]/84 dark:from-[#061125]/95 dark:via-[#0a1731]/93 dark:to-[#0f2242]/91 p-8 md:p-12 shadow-[0_24px_66px_rgba(89,69,128,0.18)] dark:shadow-[0_24px_66px_rgba(0,0,0,0.54)] space-y-10">
-              <header className="space-y-4 max-w-3xl">
-                <p className="text-[10px] font-black uppercase tracking-[0.48em] text-luna-purple">{bridgePublic.eyebrow}</p>
-                <h1 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-slate-100">{bridgePublic.title}</h1>
-              </header>
-
-              <div className="relative rounded-[2.4rem] overflow-hidden border border-slate-200/75 dark:border-slate-800/88 h-64 md:h-80 shadow-[0_18px_44px_rgba(88,70,126,0.16)] dark:shadow-[0_22px_52px_rgba(0,0,0,0.5)]">
-                <img
-                  src="/images/couple_conversation.webp"
-                  alt="Couple conversation"
-                  className="absolute inset-0 w-full h-full object-cover"
-                  style={{ objectPosition: '50% 38%' }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-[rgba(250,244,249,0.35)] via-[rgba(236,231,244,0.25)] to-[rgba(228,236,248,0.42)] dark:from-[rgba(8,14,30,0.48)] dark:via-[rgba(11,19,36,0.5)] dark:to-[rgba(8,14,30,0.58)]" />
-              </div>
-
-              <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-800/88 bg-white/72 dark:bg-[#09152d]/78 p-6 md:p-7 shadow-[0_14px_34px_rgba(88,70,126,0.14)] dark:shadow-[0_18px_42px_rgba(0,0,0,0.44)]">
-                <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple mb-3">{bridgePublic.problemTitle}</p>
-                <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{bridgePublic.problemBody}</p>
-              </article>
-
-              <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-800/88 bg-white/72 dark:bg-[#09152d]/78 p-6 md:p-7 shadow-[0_14px_34px_rgba(88,70,126,0.14)] dark:shadow-[0_18px_42px_rgba(0,0,0,0.44)]">
-                <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple mb-3">{bridgePublic.helpsTitle}</p>
-                <ul className="space-y-2">
-                  <li className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">• {bridgePublic.helps[0]}</li>
-                  <li className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">• {bridgePublic.helps[1]}</li>
-                  <li className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">• {bridgePublic.helps[2]}</li>
-                </ul>
-                <p className="mt-4 text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200">{bridgePublic.unique}</p>
-              </article>
-
-              <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-800/88 bg-gradient-to-br from-[#f2e6f2]/86 via-[#e8e3f1]/82 to-[#e1e9f7]/78 dark:from-[#07132a]/90 dark:via-[#0b1a36]/88 dark:to-[#102546]/86 p-6 md:p-7 shadow-[0_14px_34px_rgba(88,70,126,0.14)] dark:shadow-[0_18px_42px_rgba(0,0,0,0.44)]">
-                <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple mb-3">{bridgePublic.memberLinkTitle}</p>
-                <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{bridgePublic.memberLinkBody}</p>
-              </article>
-
-              <div className="flex flex-col items-start gap-4">
-                <button
-                  onClick={onSignIn}
-                  className="px-8 py-4 rounded-full bg-gradient-to-r from-luna-purple via-luna-coral to-luna-teal text-white text-[11px] font-black uppercase tracking-[0.22em] shadow-luna-deep hover:brightness-110 hover:scale-[1.03] active:scale-[0.98] transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-luna-purple"
-                >
-                  {bridgePublic.cta}
-                </button>
-                <button
-                  onClick={onSignIn}
-                  className="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-luna-purple transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-luna-purple rounded-md"
-                >
-                  {bridgePublic.subCta}
-                </button>
-              </div>
-            </div>
-          </section>
+          <Suspense fallback={lazyFallback}>
+            <PublicBridgeSection
+              onSignIn={onSignIn}
+              bridgePublic={bridgePublic}
+              enterMember={publicShared.enterMember}
+              memberSignIn={publicShared.memberSignIn}
+            />
+          </Suspense>
         )}
 
         {activePage === 'privacy' && (
@@ -1480,115 +1267,31 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
         )}
 
         {activePage === 'pricing' && (
-          <section className="luna-page-shell luna-page-pricing luna-page-focus luna-focus-pricing animate-in fade-in duration-500 p-6 md:p-8">
-            <div className="rounded-[3rem] border border-slate-200/70 dark:border-slate-800 luna-vivid-surface p-8 md:p-10 relative overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_18%,rgba(255,255,255,0.45),transparent_36%),radial-gradient(circle_at_82%_78%,rgba(167,139,250,0.2),transparent_38%),radial-gradient(circle_at_62%_28%,rgba(20,184,166,0.1),transparent_34%)]" />
-              <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-luna-purple/38 blur-[130px]" />
-              <div className="absolute -bottom-24 -left-20 w-80 h-80 rounded-full bg-luna-teal/34 blur-[140px]" />
-              <div className="absolute top-1/3 -right-28 w-72 h-72 rounded-full bg-luna-coral/28 blur-[125px]" />
-              <div className="absolute -top-16 left-1/3 w-72 h-72 rounded-full bg-rose-200/30 blur-[120px]" />
-
-              <header className="relative z-10 space-y-3 text-center max-w-3xl mx-auto">
-                <p className="text-[10px] font-black uppercase tracking-[0.5em] text-luna-purple">{pricingLabelByLang[lang] || 'Pricing'}</p>
-                <h2 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-slate-100">{pricingCopy.title}</h2>
-                <p className="text-base md:text-lg font-semibold text-slate-600 dark:text-slate-300">{pricingCopy.subtitle}</p>
-              </header>
-
-              <div className="relative z-10 mt-8 flex justify-center">
-                <div className="inline-flex rounded-full border border-slate-300 dark:border-slate-700 luna-vivid-chip p-1 shadow-lg">
-                  <button
-                    onClick={() => setBillingPeriod('month')}
-                    className={`min-w-[110px] px-5 py-2.5 rounded-full text-[11px] font-black uppercase tracking-widest transition-all ${billingPeriod === 'month' ? 'bg-luna-purple text-white shadow-luna-rich' : 'text-slate-500 hover:text-luna-purple'}`}
-                  >
-                    {pricingUi.monthToggle}
-                  </button>
-                  <button
-                    onClick={() => setBillingPeriod('year')}
-                    className={`min-w-[110px] px-5 py-2.5 rounded-full text-[11px] font-black uppercase tracking-widest transition-all ${billingPeriod === 'year' ? 'bg-luna-purple text-white shadow-luna-rich' : 'text-slate-500 hover:text-luna-purple'}`}
-                  >
-                    {pricingUi.yearToggle}
-                  </button>
-                </div>
-              </div>
-
-              <div className="relative z-10 mt-8 grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
-                <article className="lg:col-span-3 rounded-[2.5rem] border border-slate-200/80 dark:border-slate-700/80 luna-vivid-card-alt-2 p-8 md:p-10 shadow-[0_18px_56px_rgba(71,48,104,0.18),0_6px_20px_rgba(86,140,155,0.14),inset_0_1px_0_rgba(255,255,255,0.5)]">
-                  <div className="flex items-center justify-between gap-4 flex-wrap">
-                    <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple">{pricingUi.memberAccess}</p>
-                    <span className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border ${trialState?.status === 'active' ? 'bg-emerald-100 border-emerald-300 text-emerald-700 dark:bg-emerald-900/30 dark:border-emerald-600/40 dark:text-emerald-300' : billingPeriod === 'year' ? 'bg-luna-purple/10 border-luna-purple/30 text-luna-purple' : 'bg-slate-100 border-slate-200 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300'}`}>
-                      {trialState?.status === 'active'
-                        ? `${pricingUi.trialBadge} • ${pricingUi.trialDaysLeft.replace('{days}', String(trialDaysLeft))}`
-                        : billingPeriod === 'year'
-                          ? pricingCopy.saveBadge
-                          : pricingUi.flexibleBilling}
-                    </span>
-                  </div>
-                  <div className="mt-5 flex items-end gap-3">
-                    <span className="text-7xl md:text-8xl font-black text-slate-900 dark:text-slate-100 leading-none">
-                      {billingPeriod === 'month' ? pricingCopy.month : pricingCopy.year}
-                    </span>
-                    <span className="text-sm font-black uppercase tracking-[0.2em] text-slate-500 pb-2">
-                      {billingPeriod === 'month' ? pricingCopy.monthNote : pricingCopy.yearNote}
-                    </span>
-                  </div>
-                  <div className="mt-5 h-2 rounded-full bg-slate-200/80 dark:bg-slate-700/60 overflow-hidden">
-                    <div className={`h-full bg-gradient-to-r from-luna-purple via-luna-coral to-luna-teal ${billingPeriod === 'year' ? 'w-full' : 'w-3/4'} transition-all duration-500`} />
-                  </div>
-                  <ul className="mt-6 space-y-3">
-                    <li className="text-sm font-semibold text-slate-600 dark:text-slate-300">{pricingUi.featurePrivate}</li>
-                    <li className="text-sm font-semibold text-slate-600 dark:text-slate-300">{pricingUi.featureBodyMap}</li>
-                    <li className="text-sm font-semibold text-slate-600 dark:text-slate-300">{pricingUi.featureBridge}</li>
-                    <li className="text-sm font-semibold text-slate-600 dark:text-slate-300">{pricingUi.featureAdmin}</li>
-                  </ul>
-                  <div className="mt-8 flex flex-col md:flex-row gap-3 items-center">
-                    <button
-                      onClick={onSignUp}
-                      className="w-full md:w-auto px-8 py-4 rounded-full bg-luna-purple text-white text-[11px] font-black uppercase tracking-[0.2em] shadow-luna-rich hover:shadow-luna-deep hover:scale-[1.03] active:scale-[0.98] transition-all"
-                    >
-                      {pricingCopy.cta}
-                    </button>
-                    <button
-                      onClick={startTrial}
-                      className="w-full md:w-auto px-8 py-4 rounded-full border border-emerald-400/40 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-emerald-100 dark:hover:bg-emerald-900/35 hover:scale-[1.03] active:scale-[0.98] transition-all"
-                    >
-                      {trialState?.status === 'active' ? pricingUi.continueTrial : pricingUi.startTrial}
-                    </button>
-                    <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{pricingCopy.recommended}</p>
-                  </div>
-                  {trialFeedback && (
-                    <p className="mt-3 text-xs font-black uppercase tracking-[0.15em] text-emerald-700 dark:text-emerald-300">{trialFeedback}</p>
-                  )}
-                </article>
-
-                <aside className="lg:col-span-2 rounded-[2.5rem] border border-slate-200/80 dark:border-slate-700/80 luna-vivid-card-alt-4 p-6 md:p-7 shadow-[0_14px_42px_rgba(74,58,116,0.16),0_5px_16px_rgba(71,126,143,0.14),inset_0_1px_0_rgba(255,255,255,0.45)] space-y-4">
-                  <h3 className="text-lg font-black uppercase tracking-[0.16em] text-slate-900 dark:text-slate-100">{pricingUi.planCompare}</h3>
-                  <div className={`rounded-2xl border p-4 transition-all shadow-sm ${billingPeriod === 'month' ? 'border-luna-purple/40 bg-luna-purple/10 shadow-[0_8px_20px_rgba(124,58,237,0.16)]' : 'border-slate-200 dark:border-slate-700 bg-gradient-to-br from-[#f8edf6]/85 via-[#f2effa]/82 to-[#eef1fb]/82 dark:bg-slate-800/50'}`}>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{pricingUi.monthly}</p>
-                    <p className="text-3xl font-black text-slate-900 dark:text-slate-100">$12.99</p>
-                    <p className="text-xs font-semibold text-slate-500">{pricingUi.cancelAnyTime}</p>
-                  </div>
-                  <div className={`rounded-2xl border p-4 transition-all shadow-sm ${billingPeriod === 'year' ? 'border-luna-purple/40 bg-luna-purple/10 shadow-[0_8px_20px_rgba(124,58,237,0.16)]' : 'border-slate-200 dark:border-slate-700 bg-gradient-to-br from-[#f4ebe1]/84 via-[#f1e8ee]/82 to-[#efe9f6]/82 dark:bg-slate-800/50'}`}>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{pricingUi.yearly}</p>
-                    <p className="text-3xl font-black text-slate-900 dark:text-slate-100">$89</p>
-                    <p className="text-xs font-semibold text-slate-500">{pricingUi.bestValue}</p>
-                  </div>
-                  <div className="rounded-2xl bg-slate-100/80 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70 p-4">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple mb-1">{pricingUi.includes}</p>
-                    <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{pricingUi.includesText}</p>
-                  </div>
-                </aside>
-              </div>
-            </div>
-          </section>
+          <Suspense fallback={lazyFallback}>
+            <PublicPricingSection
+              lang={lang}
+              pricingLabel={pricingLabelByLang[lang] || 'Pricing'}
+              billingPeriod={billingPeriod}
+              setBillingPeriod={setBillingPeriod}
+              pricingCopy={pricingCopy}
+              pricingUi={pricingUi}
+              trialState={trialState}
+              trialDaysLeft={trialDaysLeft}
+              onSignUp={onSignUp}
+              onStartTrial={startTrial}
+              trialFeedback={trialFeedback}
+            />
+          </Suspense>
         )}
 
-        {activePage === 'about' && <AboutLunaView lang={lang} mode="public" />}
-
-        {activePage === 'how_it_works' && <HowItWorksView lang={lang} onBack={onSignUp} />}
-        {activePage === 'terms' && <LegalDocumentView lang={lang} doc="terms" mode="public" onBack={() => setActivePage('home')} />}
-        {activePage === 'medical' && <LegalDocumentView lang={lang} doc="medical" mode="public" onBack={() => setActivePage('home')} />}
-        {activePage === 'cookies' && <LegalDocumentView lang={lang} doc="cookies" mode="public" onBack={() => setActivePage('home')} />}
-        {activePage === 'data_rights' && <LegalDocumentView lang={lang} doc="data_rights" mode="public" onBack={() => setActivePage('home')} />}
+        <Suspense fallback={lazyFallback}>
+          {activePage === 'about' && <AboutLunaView lang={lang} mode="public" />}
+          {activePage === 'how_it_works' && <HowItWorksView lang={lang} onBack={onSignUp} />}
+          {activePage === 'terms' && <LegalDocumentView lang={lang} doc="terms" mode="public" onBack={() => setActivePage('home')} />}
+          {activePage === 'medical' && <LegalDocumentView lang={lang} doc="medical" mode="public" onBack={() => setActivePage('home')} />}
+          {activePage === 'cookies' && <LegalDocumentView lang={lang} doc="cookies" mode="public" onBack={() => setActivePage('home')} />}
+          {activePage === 'data_rights' && <LegalDocumentView lang={lang} doc="data_rights" mode="public" onBack={() => setActivePage('home')} />}
+        </Suspense>
       </main>
 
       <footer className="w-full border-t border-slate-300 dark:border-white/10 py-14 px-6 glass mt-auto relative overflow-hidden">
@@ -1599,6 +1302,11 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
                 <img
                   src="/images/Luna%20logo3.png"
                   alt="Luna symbol"
+                  width={64}
+                  height={64}
+                  loading="lazy"
+                  decoding="async"
+                  fetchPriority="low"
                   className="h-16 w-16 object-contain"
                 />
                 <Logo size="sm" className="cursor-default text-5xl leading-none" />

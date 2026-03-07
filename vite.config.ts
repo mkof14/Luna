@@ -7,6 +7,23 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) return 'vendor-react';
+          if (id.includes('node_modules/recharts')) return 'vendor-charts';
+          if (id.includes('node_modules/lucide-react') || id.includes('node_modules/motion')) return 'vendor-ui';
+          if (id.includes('/components/AdminPanelView') || id.includes('/services/adminService')) return 'feature-admin';
+          if (id.includes('/components/AudioReflection') || id.includes('/components/MyVoiceFilesView')) return 'feature-voice';
+          if (id.includes('/components/PublicLandingView')) return 'feature-public-landing';
+          if (id.includes('/components/AboutLunaView')) return 'feature-public-about';
+          if (id.includes('/components/HowItWorksView')) return 'feature-public-how';
+          if (id.includes('/components/LegalDocumentView')) return 'feature-public-legal';
+          if (id.includes('/components/AuthView')) return 'feature-auth';
+          return undefined;
+        },
+      },
+    },
   },
   server: {
     port: 3000,

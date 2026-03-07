@@ -113,8 +113,13 @@ export const buildSidebarGroups = (ui: NavigationUi, includeAdmin = false): NavG
 export const buildBottomNavItems = (ui: NavigationUi): NavItem[] => [
   { id: 'dashboard', label: ui.navigation.home, icon: '🏠' },
   { id: 'cycle', label: ui.navigation.cycle, icon: '🌊' },
-  { id: 'reflections', label: ui.navigation.reflections, icon: '🎙️' },
   { id: 'bridge', label: ui.navigation.bridge || 'Bridge', icon: '🌉' },
+];
+
+export const buildTopNavItems = (ui: NavigationUi): NavItem[] => [
+  { id: 'dashboard', label: ui.navigation.home, icon: '🏠' },
+  { id: 'cycle', label: ui.navigation.cycle, icon: '🌊' },
+  { id: 'bridge', label: ui.navigation.bridge || 'The Bridge', icon: '🌉' },
 ];
 
 export const getCheckinCta = (lang: Language) => (lang === 'ru' ? 'Отметиться' : 'Check-in');

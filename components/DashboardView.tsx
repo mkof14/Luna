@@ -6,6 +6,7 @@ import { DailyStatePanel } from './DailyStatePanel';
 import { FuelCompass } from './FuelCompass';
 import { TabType } from '../utils/navigation';
 import { dataService } from '../services/dataService';
+import { JourneyProgress } from './JourneyProgress';
 
 interface DashboardViewProps {
   lang: Language;
@@ -388,6 +389,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <section className="luna-page-shell luna-page-bodymap luna-page-focus luna-focus-bodymap space-y-24 animate-in fade-in slide-in-from-bottom-8 duration-1000 p-8 md:p-10">
+      <JourneyProgress lang={lang} currentStep={1} />
       <div className="flex flex-col lg:flex-row items-center gap-16">
         <div className="flex-1 space-y-8 text-center lg:text-left">
           <div className="space-y-4">

@@ -21,7 +21,6 @@
     <meta name="twitter:description" content="Private, visual-first cycle and physiology mapping in Luna.">
     <meta name="robots" content="index,follow">
 
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -34,58 +33,6 @@
                 document.documentElement.classList.remove('dark');
             }
         })();
-
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        luna: {
-                            coral: '#c9a393',
-                            purple: '#7f728a',
-                            teal: '#a4a9b8',
-                            soft: '#f4ece8',
-                            surface: '#fcf7f3'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        brand: ['Great Vibes', 'cursive'],
-                    },
-                    boxShadow: {
-                        'luna-rich': '0 14px 42px -20px rgba(107, 93, 121, 0.28), 0 10px 24px -18px rgba(174, 139, 120, 0.22)',
-                        'luna-deep': '0 28px 64px -28px rgba(87, 76, 104, 0.4), 0 12px 26px -18px rgba(138, 110, 124, 0.24)',
-                    },
-                    animation: {
-                        'status-pulse': 'status-pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                        'breath-deep': 'breath-deep 8s ease-in-out infinite',
-                        'soft-spin': 'soft-spin 20s linear infinite',
-                        'oscilloscope-drift': 'oscilloscope-drift 8s linear infinite',
-                        'oscilloscope-glow': 'oscilloscope-glow 2.2s ease-in-out infinite',
-                        'color-shift-luna': 'color-shift-luna 12s ease-in-out infinite',
-                        'bg-flow': 'bg-flow 60s ease infinite',
-                    },
-                    keyframes: {
-                        'status-pulse': { '0%, 100%': { opacity: 1, transform: 'scale(1)' }, '50%': { opacity: 0.8, transform: 'scale(1.05)' } },
-                        'float': { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-20px)' } },
-                        'breath-deep': { '0%, 100%': { transform: 'scale(0.94)', opacity: 0.45 }, '50%': { transform: 'scale(1.04)', opacity: 0.75 } },
-                        'soft-spin': { 'from': { transform: 'rotate(0deg)' }, 'to': { transform: 'rotate(360deg)' } },
-                        'oscilloscope-drift': { 'from': { transform: 'translateX(-50%)' }, 'to': { transform: 'translateX(0)' } },
-                        'oscilloscope-glow': { '0%, 100%': { opacity: 0.55 }, '50%': { opacity: 1 } },
-                        'color-shift-luna': { 
-                            '0%, 100%': { color: '#7f728a' }, 
-                            '33%': { color: '#c9a393' },
-                            '66%': { color: '#a4a9b8' }
-                        },
-                        'bg-flow': {
-                          '0%, 100%': { 'background-position': '0% 50%' },
-                          '50%': { 'background-position': '100% 50%' }
-                        }
-                    }
-                },
-            },
-        }
     </script>
     <style>
         * { transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease; }

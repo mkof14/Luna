@@ -11,7 +11,7 @@ import {
 } from '../services/geminiService';
 import { incrementBridgeUsage, isSupportedLabFile, parseBridgeUsage } from '../utils/runtimeGuards';
 import { getCyclePhaseByDay } from '../utils/cycle';
-import { buildBottomNavItems, buildSidebarGroups } from '../utils/navigation';
+import { buildBottomNavItems, buildSidebarGroups, buildTopNavItems } from '../utils/navigation';
 import { normalizeBridgeReflectionInput, normalizePartnerNoteInput } from '../utils/bridge';
 import { getMedicationValidationError, isMedicationDuplicate, normalizeMedicationInput } from '../utils/medications';
 import { normalizeProfileData } from '../utils/profile';
@@ -223,11 +223,14 @@ const testCoreUtils = () => {
   };
 
   const sidebar = buildSidebarGroups(ui);
+  const top = buildTopNavItems(ui);
   const bottom = buildBottomNavItems(ui);
 
   assert.equal(sidebar.length, 3, 'sidebar should have three groups');
-  assert.equal(bottom.length, 4, 'bottom nav should have four items');
+  assert.equal(top.length, 3, 'top nav should include three quick-start items');
+  assert.equal(bottom.length, 3, 'bottom nav should have three quick-start items');
   assert.equal(sidebar[0].items[0].id, 'dashboard', 'first sidebar item should be dashboard');
+  assert.equal(top[2].id, 'bridge', 'top nav should include bridge as a core flow');
   assert.equal(bottom[0].id, 'dashboard', 'first bottom item should be dashboard');
 };
 

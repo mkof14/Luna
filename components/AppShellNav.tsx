@@ -22,6 +22,7 @@ interface AppShellNavProps {
   setShowSidebar: (next: boolean) => void;
   navigateTo: (tab: TabType) => void;
   sidebarGroups: NavGroup[];
+  topNavItems: NavItem[];
   lang: Language;
   setLang: (lang: Language) => void;
   theme: 'light' | 'dark';
@@ -35,6 +36,7 @@ export const AppShellNav: React.FC<AppShellNavProps> = ({
   setShowSidebar,
   navigateTo,
   sidebarGroups,
+  topNavItems,
   lang,
   setLang,
   theme,
@@ -64,6 +66,76 @@ export const AppShellNav: React.FC<AppShellNavProps> = ({
     pt: 'Sair',
   };
   const copy = { more: moreByLang[lang], logout: logoutByLang[lang] };
+  const quickStartByLang: Record<Language, string> = {
+    en: 'Quick Start',
+    ru: 'Быстрый Старт',
+    uk: 'Швидкий Старт',
+    es: 'Inicio Rapido',
+    fr: 'Demarrage Rapide',
+    de: 'Schnellstart',
+    zh: '快速开始',
+    ja: 'クイックスタート',
+    pt: 'Inicio Rapido',
+  };
+  const quickStartHintByLang: Record<Language, Record<'dashboard' | 'cycle' | 'bridge' | 'other', string>> = {
+    en: {
+      dashboard: 'Step 1: Start with a quick check-in.',
+      cycle: 'Step 2: Review your cycle context.',
+      bridge: 'Step 3: Turn state into clear communication.',
+      other: 'Core flow lives in Dashboard → Cycle → Bridge.',
+    },
+    ru: {
+      dashboard: 'Шаг 1: начните с короткого check-in.',
+      cycle: 'Шаг 2: проверьте контекст цикла.',
+      bridge: 'Шаг 3: переведите состояние в ясное сообщение.',
+      other: 'Базовый маршрут: Dashboard → Cycle → Bridge.',
+    },
+    uk: {
+      dashboard: 'Крок 1: почніть із короткого check-in.',
+      cycle: 'Крок 2: перегляньте контекст циклу.',
+      bridge: 'Крок 3: перетворіть стан на зрозуміле повідомлення.',
+      other: 'Базовий маршрут: Dashboard → Cycle → Bridge.',
+    },
+    es: {
+      dashboard: 'Paso 1: inicia con un check-in rapido.',
+      cycle: 'Paso 2: revisa el contexto del ciclo.',
+      bridge: 'Paso 3: convierte el estado en mensaje claro.',
+      other: 'Ruta base: Dashboard → Cycle → Bridge.',
+    },
+    fr: {
+      dashboard: 'Etape 1: commencez par un check-in rapide.',
+      cycle: 'Etape 2: verifiez le contexte du cycle.',
+      bridge: 'Etape 3: transformez l etat en message clair.',
+      other: 'Parcours de base: Dashboard → Cycle → Bridge.',
+    },
+    de: {
+      dashboard: 'Schritt 1: mit kurzem Check-in starten.',
+      cycle: 'Schritt 2: Zykluskontext ansehen.',
+      bridge: 'Schritt 3: Zustand in klare Botschaft ubersetzen.',
+      other: 'Basispfad: Dashboard → Cycle → Bridge.',
+    },
+    zh: {
+      dashboard: '第1步：先做一次快速 check-in。',
+      cycle: '第2步：查看周期上下文。',
+      bridge: '第3步：把状态转成清晰表达。',
+      other: '核心路径：Dashboard → Cycle → Bridge。',
+    },
+    ja: {
+      dashboard: 'ステップ1: まず短いチェックイン。',
+      cycle: 'ステップ2: サイクル文脈を確認。',
+      bridge: 'ステップ3: 状態を明確な言葉に変換。',
+      other: '基本導線: Dashboard → Cycle → Bridge。',
+    },
+    pt: {
+      dashboard: 'Passo 1: comece com um check-in rapido.',
+      cycle: 'Passo 2: revise o contexto do ciclo.',
+      bridge: 'Passo 3: transforme o estado em mensagem clara.',
+      other: 'Fluxo base: Dashboard → Cycle → Bridge.',
+    },
+  };
+  const quickStartCopy = quickStartHintByLang[lang] || quickStartHintByLang.en;
+  const quickStartKey: 'dashboard' | 'cycle' | 'bridge' | 'other' =
+    activeTab === 'dashboard' || activeTab === 'cycle' || activeTab === 'bridge' ? activeTab : 'other';
 
   return (
     <>
@@ -118,7 +190,7 @@ export const AppShellNav: React.FC<AppShellNavProps> = ({
           </div>
 
           <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar py-2 flex-grow justify-center lg:justify-start px-2">
-            {sidebarGroups[0].items.map((item) => (
+            {topNavItems.map((item) => (
               <button
                 key={item.id}
                 data-testid={`top-nav-${item.id}`}
@@ -151,6 +223,10 @@ export const AppShellNav: React.FC<AppShellNavProps> = ({
               {copy.logout}
             </button>
           </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-6 pb-2 hidden md:flex items-center gap-3">
+          <span className="text-[8px] font-black uppercase tracking-[0.25em] text-luna-purple">{quickStartByLang[lang]}</span>
+          <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">{quickStartCopy[quickStartKey]}</p>
         </div>
       </header>
     </>
