@@ -157,6 +157,16 @@ const testLabMergeResolver = () => {
     true,
     'merge should keep richer TSH entry with reference range'
   );
+
+  const selected = mergeParsedLabValues(
+    [
+      { marker: 'TSH', value: 2.2, unit: 'mIU/L', source: 'manual' },
+      { marker: 'TSH', value: 3.8, unit: 'mIU/L', referenceMin: 0.4, referenceMax: 4.0, source: 'ocr' },
+    ],
+    { tsh: 1 }
+  );
+  assert.equal(selected.length, 1, 'selection merge should still output one row per marker');
+  assert.equal(selected[0].value, 3.8, 'selected conflict option should be respected');
 };
 
 const testAuthSecurityInvariants = () => {

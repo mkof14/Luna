@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { analyzeLabResults } from '../services/geminiService';
 import { dataService } from '../services/dataService';
 import { HealthEvent } from '../types';
@@ -9,8 +9,10 @@ import { copyTextSafely, shareTextSafely } from '../utils/share';
 import { Language } from '../constants';
 import {
   computeHormoneSignals,
+  detectLabValueConflicts,
   extractTextFromLabFile,
   HealthLabRow,
+  LabValueConflict,
   mergeParsedLabValues,
   ParsedLabValue,
   parseLabText,
@@ -563,6 +565,28 @@ const reportActionsByLang: Partial<Record<Language, {
   pt: { copied: 'Copiado', copyFailed: 'Falha ao copiar', shared: 'Compartilhado', shareFailed: 'Falha ao compartilhar', printOpened: 'Janela de impressão aberta', printBlocked: 'Impressão bloqueada', downloaded: 'Baixado', pdfHint: 'Use Salvar como PDF na impressão', pdfBlocked: 'PDF bloqueado', sampleDownloaded: 'Exemplo baixado' },
 };
 
+const reportConflictsByLang: Partial<Record<Language, {
+  title: string;
+  hint: string;
+  choose: string;
+  confidence: string;
+  source: string;
+  manual: string;
+  text: string;
+  ocr: string;
+  pdf: string;
+}>> = {
+  en: { title: 'Data Conflicts', hint: 'Multiple values found for the same marker. Choose which value goes into the final report.', choose: 'Use for report', confidence: 'Confidence', source: 'Source', manual: 'Manual', text: 'Text', ocr: 'OCR scan', pdf: 'PDF scan' },
+  ru: { title: 'Конфликты Данных', hint: 'Для одного маркера найдено несколько значений. Выберите, какое пойдет в итоговый отчет.', choose: 'В отчет', confidence: 'Надежность', source: 'Источник', manual: 'Ручной ввод', text: 'Текст', ocr: 'OCR-скан', pdf: 'PDF-скан' },
+  uk: { title: 'Конфлікти Даних', hint: 'Для одного маркера знайдено кілька значень. Оберіть, яке піде у фінальний звіт.', choose: 'У звіт', confidence: 'Надійність', source: 'Джерело', manual: 'Ручне введення', text: 'Текст', ocr: 'OCR-скан', pdf: 'PDF-скан' },
+  es: { title: 'Conflictos De Datos', hint: 'Se encontraron varios valores para el mismo marcador. Elige cuál usar en el reporte final.', choose: 'Usar en reporte', confidence: 'Confianza', source: 'Fuente', manual: 'Manual', text: 'Texto', ocr: 'Escaneo OCR', pdf: 'Escaneo PDF' },
+  fr: { title: 'Conflits De Données', hint: 'Plusieurs valeurs détectées pour le même marqueur. Choisissez celle à utiliser dans le rapport final.', choose: 'Utiliser', confidence: 'Confiance', source: 'Source', manual: 'Saisie manuelle', text: 'Texte', ocr: 'Scan OCR', pdf: 'Scan PDF' },
+  de: { title: 'Datenkonflikte', hint: 'Mehrere Werte für denselben Marker gefunden. Wählen Sie den Wert für den finalen Bericht.', choose: 'Für Bericht nutzen', confidence: 'Sicherheit', source: 'Quelle', manual: 'Manuell', text: 'Text', ocr: 'OCR-Scan', pdf: 'PDF-Scan' },
+  zh: { title: '数据冲突', hint: '同一指标检测到多个数值。请选择用于最终报告的数值。', choose: '用于报告', confidence: '置信度', source: '来源', manual: '手动输入', text: '文本', ocr: 'OCR 扫描', pdf: 'PDF 扫描' },
+  ja: { title: 'データ競合', hint: '同じマーカーに複数の値があります。最終レポートに使う値を選択してください。', choose: 'レポートに使用', confidence: '信頼度', source: 'ソース', manual: '手入力', text: 'テキスト', ocr: 'OCRスキャン', pdf: 'PDFスキャン' },
+  pt: { title: 'Conflitos De Dados', hint: 'Foram encontrados vários valores para o mesmo marcador. Escolha qual usar no relatório final.', choose: 'Usar no relatório', confidence: 'Confiabilidade', source: 'Fonte', manual: 'Manual', text: 'Texto', ocr: 'Scan OCR', pdf: 'Scan PDF' },
+};
+
 const reportsUiByLang: Partial<Record<Language, {
   badge: string;
   title: string;
@@ -1112,6 +1136,9 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const [manualRows, setManualRows] = useState<HealthLabRow[]>([newRow()]);
   const [parsedRows, setParsedRows] = useState<HealthLabRow[]>([]);
   const [parsedValues, setParsedValues] = useState<ParsedLabValue[]>([]);
+  const [rawParsedValues, setRawParsedValues] = useState<ParsedLabValue[]>([]);
+  const [labConflicts, setLabConflicts] = useState<LabValueConflict[]>([]);
+  const [conflictChoices, setConflictChoices] = useState<Record<string, number>>({});
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [sexualScores, setSexualScores] = useState({
     libido: 3,
@@ -1136,6 +1163,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const reportSourcesUi = reportSourceByLang[reportLang] || reportSourceByLang.en!;
   const reportCategories = markerCategoryByLang[reportLang] || markerCategoryByLang.en!;
   const reportActions = reportActionsByLang[lang] || reportActionsByLang.en!;
+  const conflictsUi = reportConflictsByLang[lang] || reportConflictsByLang.en!;
   const reportsUi = reportsUiByLang[lang] || reportsUiByLang.en!;
   const detailedUi = detailedReportByLang[reportLang] || detailedReportByLang.en!;
   const womenUi = womenReportInsightsByLang[reportLang] || womenReportInsightsByLang.en!;
@@ -1270,10 +1298,18 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
           unit: row.unit.trim() || undefined,
           referenceMin: ref.min,
           referenceMax: ref.max,
+          source: 'manual' as const,
         };
       })
       .filter((item) => Number.isFinite(item.value));
   };
+
+  useEffect(() => {
+    if (!rawParsedValues.length) return;
+    const resolved = mergeParsedLabValues(rawParsedValues, conflictChoices);
+    setParsedValues(resolved);
+    setParsedRows(toLabRows(resolved));
+  }, [rawParsedValues, conflictChoices]);
 
   const reportGeneratedAt = useMemo(() => new Date().toLocaleString(localeByLang[reportLang]), [analysis?.text, parsedValues.length, reportIdentityLine, reportLang]);
   const reportCopyright = useMemo(() => {
@@ -1296,6 +1332,20 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     if (/(glucose|insulin|hba1c)/.test(m)) return reportCategories.metabolic;
     if (/(ferritin|vitamin d|b12|cbc)/.test(m)) return reportCategories.nutrient;
     return reportCategories.other;
+  };
+
+  const sourceLabel = (source?: ParsedLabValue['source']) => {
+    if (source === 'manual') return conflictsUi.manual;
+    if (source === 'pdf') return conflictsUi.pdf;
+    if (source === 'ocr') return conflictsUi.ocr;
+    return conflictsUi.text;
+  };
+
+  const confidenceScore = (item: ParsedLabValue): number => {
+    let score = item.source === 'manual' ? 92 : item.source === 'text' ? 82 : item.source === 'pdf' ? 76 : 68;
+    if (item.unit) score += 3;
+    if (Number.isFinite(item.referenceMin as number) && Number.isFinite(item.referenceMax as number)) score += 5;
+    return Math.min(99, score);
   };
 
   const markerByTokens = (tokens: string[]) =>
@@ -1790,8 +1840,16 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
     setLoading(true);
     try {
-      const parsedFromText = parseLabText([manualText, input].filter(Boolean).join('\n'));
-      const parsedMerged = mergeParsedLabValues([...parseManualRowsToParsed(), ...parsedFromText]);
+      const sourceHint = (uploadFeedback || '').toLowerCase();
+      const parsedInputSource: ParsedLabValue['source'] =
+        sourceHint.includes('pdf') ? 'pdf' : sourceHint.includes('scan') || sourceHint.includes('ocr') || sourceHint.includes('ai') ? 'ocr' : 'text';
+      const parsedFromText = parseLabText([manualText, input].filter(Boolean).join('\n')).map((item) => ({ ...item, source: parsedInputSource }));
+      const rawMerged = [...parseManualRowsToParsed(), ...parsedFromText];
+      const conflicts = detectLabValueConflicts(rawMerged);
+      const parsedMerged = mergeParsedLabValues(rawMerged, {});
+      setRawParsedValues(rawMerged);
+      setLabConflicts(conflicts);
+      setConflictChoices({});
       const nextSignals = computeHormoneSignals(parsedMerged);
       const summary = summarizeHormoneSignals(nextSignals);
       setParsedValues(parsedMerged);
@@ -2141,7 +2199,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
             <div className="flex items-center justify-between gap-4">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{reportsUi.uploadTitle}</p>
               <button onClick={() => fileInputRef.current?.click()} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple bg-white/80 dark:bg-slate-900/70 text-[10px] font-black uppercase tracking-[0.15em]">{reportsUi.uploadFile}</button>
-              <input type="file" ref={fileInputRef} className="hidden" accept=".txt,.csv,.md,.png,.jpg,.jpeg,.webp,text/plain,image/*" onChange={handleFileUpload} />
+              <input type="file" ref={fileInputRef} className="hidden" accept=".txt,.csv,.md,.pdf,.png,.jpg,.jpeg,.webp,text/plain,application/pdf,image/*" onChange={handleFileUpload} />
             </div>
             <textarea
               data-testid="labs-report-input"
@@ -2162,6 +2220,45 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
               </button>
             </div>
           </article>
+
+          {labConflicts.length > 0 && (
+            <article className="rounded-[2rem] border border-amber-300/70 dark:border-amber-700/60 bg-amber-50/70 dark:bg-amber-900/10 p-6 space-y-4 shadow-luna-rich">
+              <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-amber-700 dark:text-amber-300">{conflictsUi.title}</h3>
+              <p className="text-sm font-semibold text-amber-800/90 dark:text-amber-200/90">{conflictsUi.hint}</p>
+              <div className="space-y-3">
+                {labConflicts.map((conflict) => (
+                  <div key={conflict.key} className="rounded-xl border border-amber-200/80 dark:border-amber-700/50 bg-white/70 dark:bg-slate-900/60 p-3 space-y-2">
+                    <p className="text-xs font-black uppercase tracking-[0.12em] text-amber-700 dark:text-amber-300">{conflict.marker}</p>
+                    <div className="space-y-2">
+                      {conflict.options.map((option, idx) => {
+                        const selected = (conflictChoices[conflict.key] ?? 0) === idx;
+                        return (
+                          <label key={`${conflict.key}-${idx}`} className={`flex items-start gap-3 rounded-lg border p-2 cursor-pointer ${selected ? 'border-amber-400 bg-amber-100/70 dark:bg-amber-900/30' : 'border-slate-300/70 dark:border-slate-700/70'}`}>
+                            <input
+                              type="radio"
+                              name={`conflict-${conflict.key}`}
+                              checked={selected}
+                              onChange={() => setConflictChoices((prev) => ({ ...prev, [conflict.key]: idx }))}
+                              className="mt-1 accent-amber-500"
+                            />
+                            <div className="space-y-1">
+                              <p className="text-xs font-black text-slate-800 dark:text-slate-100">
+                                {conflictsUi.choose}: {option.value}{option.unit ? ` ${option.unit}` : ''}
+                                {Number.isFinite(option.referenceMin as number) && Number.isFinite(option.referenceMax as number) ? ` (${option.referenceMin}-${option.referenceMax})` : ''}
+                              </p>
+                              <p className="text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                                {conflictsUi.source}: {sourceLabel(option.source)} • {conflictsUi.confidence}: {confidenceScore(option)}%
+                              </p>
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </article>
+          )}
         </section>
 
         <aside className="xl:col-span-5 space-y-6">

@@ -23,6 +23,13 @@ export interface ParsedLabValue {
   unit?: string;
   referenceMin?: number;
   referenceMax?: number;
+  source?: 'manual' | 'text' | 'ocr' | 'pdf' | 'unknown';
+}
+
+export interface LabValueConflict {
+  key: string;
+  marker: string;
+  options: ParsedLabValue[];
 }
 
 export interface HormoneSignal {
@@ -247,11 +254,73 @@ const qualityScore = (item: ParsedLabValue): number => {
   let score = 0;
   if (item.unit && item.unit.trim().length > 0) score += 1;
   if (Number.isFinite(item.referenceMin as number) && Number.isFinite(item.referenceMax as number)) score += 2;
+  if (item.source === 'manual') score += 3;
+  else if (item.source === 'text') score += 2;
+  else if (item.source === 'pdf') score += 1;
+  else if (item.source === 'ocr') score += 0;
   return score;
 };
 
-export const mergeParsedLabValues = (items: ParsedLabValue[]): ParsedLabValue[] => {
+const dedupeOptions = (items: ParsedLabValue[]): ParsedLabValue[] => {
+  const seen = new Set<string>();
+  const unique: ParsedLabValue[] = [];
+  for (const item of items) {
+    const k = [
+      Number(item.value).toFixed(6),
+      item.unit || '',
+      Number.isFinite(item.referenceMin as number) ? String(item.referenceMin) : '',
+      Number.isFinite(item.referenceMax as number) ? String(item.referenceMax) : '',
+      item.source || '',
+    ].join('|');
+    if (seen.has(k)) continue;
+    seen.add(k);
+    unique.push(item);
+  }
+  return unique;
+};
+
+const enrichFromGroup = (selected: ParsedLabValue, group: ParsedLabValue[]): ParsedLabValue => {
+  const sorted = [...group].sort((a, b) => qualityScore(b) - qualityScore(a));
+  const richest = sorted[0] || selected;
+  return {
+    ...selected,
+    unit: selected.unit || richest.unit,
+    referenceMin: Number.isFinite(selected.referenceMin as number) ? selected.referenceMin : richest.referenceMin,
+    referenceMax: Number.isFinite(selected.referenceMax as number) ? selected.referenceMax : richest.referenceMax,
+  };
+};
+
+export const detectLabValueConflicts = (items: ParsedLabValue[]): LabValueConflict[] => {
+  const groups = new Map<string, ParsedLabValue[]>();
+  for (const raw of items) {
+    if (!raw.marker || !Number.isFinite(raw.value)) continue;
+    const current = {
+      ...raw,
+      marker: canonicalizeMarker(raw.marker),
+    };
+    const key = markerKey(current.marker);
+    const next = groups.get(key) || [];
+    next.push(current);
+    groups.set(key, next);
+  }
+
+  const conflicts: LabValueConflict[] = [];
+  for (const [key, group] of groups.entries()) {
+    const options = dedupeOptions(group).sort((a, b) => qualityScore(b) - qualityScore(a));
+    const distinctValues = new Set(options.map((item) => Number(item.value).toFixed(6)));
+    if (distinctValues.size <= 1) continue;
+    conflicts.push({
+      key,
+      marker: options[0]?.marker || group[0].marker,
+      options,
+    });
+  }
+  return conflicts.sort((a, b) => a.marker.localeCompare(b.marker));
+};
+
+export const mergeParsedLabValues = (items: ParsedLabValue[], selectedByMarkerKey: Record<string, number> = {}): ParsedLabValue[] => {
   const map = new Map<string, ParsedLabValue>();
+  const groups = new Map<string, ParsedLabValue[]>();
   for (const raw of items) {
     if (!raw.marker || !Number.isFinite(raw.value)) continue;
     const current: ParsedLabValue = {
@@ -260,26 +329,20 @@ export const mergeParsedLabValues = (items: ParsedLabValue[]): ParsedLabValue[] 
       unit: raw.unit,
       referenceMin: raw.referenceMin,
       referenceMax: raw.referenceMax,
+      source: raw.source || 'unknown',
     };
     const key = markerKey(current.marker);
-    const existing = map.get(key);
-    if (!existing) {
-      map.set(key, current);
-      continue;
-    }
-    const existingScore = qualityScore(existing);
-    const currentScore = qualityScore(current);
-    if (currentScore > existingScore || (currentScore === existingScore && current.value !== existing.value)) {
-      map.set(key, current);
-      continue;
-    }
-    if (!existing.unit && current.unit) existing.unit = current.unit;
-    if (!Number.isFinite(existing.referenceMin as number) && Number.isFinite(current.referenceMin as number)) {
-      existing.referenceMin = current.referenceMin;
-    }
-    if (!Number.isFinite(existing.referenceMax as number) && Number.isFinite(current.referenceMax as number)) {
-      existing.referenceMax = current.referenceMax;
-    }
+    const next = groups.get(key) || [];
+    next.push(current);
+    groups.set(key, next);
+  }
+
+  for (const [key, groupRaw] of groups.entries()) {
+    const group = dedupeOptions(groupRaw).sort((a, b) => qualityScore(b) - qualityScore(a));
+    const selectedIndex = selectedByMarkerKey[key];
+    const selected = Number.isInteger(selectedIndex) && selectedIndex >= 0 && selectedIndex < group.length ? group[selectedIndex] : group[0];
+    const merged = enrichFromGroup(selected, group);
+    map.set(key, merged);
   }
   return Array.from(map.values());
 };
