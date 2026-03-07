@@ -107,6 +107,7 @@ Lighthouse CI runs in GitHub Actions via:
 
 - `.github/workflows/lighthouse.yml`
 - config: `.lighthouserc.json`
+- gating: `performance`, `accessibility`, `best-practices`, `LCP`, `CLS`, `TBT` are blocking (`error`)
 
 ## Architecture Snapshot
 
