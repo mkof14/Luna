@@ -1161,11 +1161,11 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
             <img
               src="/images/Luna%20logo3.png"
               alt="Luna symbol"
-              width={64}
-              height={64}
+              width={84}
+              height={84}
               decoding="async"
               fetchPriority="high"
-              className="h-16 w-16 object-contain"
+              className="h-[4.8rem] w-[4.8rem] object-contain"
             />
             <Logo size="sm" className="cursor-default text-5xl leading-none" />
           </div>
@@ -1429,12 +1429,12 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
                 <img
                   src="/images/Luna%20logo3.png"
                   alt="Luna symbol"
-                  width={64}
-                  height={64}
+                  width={84}
+                  height={84}
                   loading="lazy"
                   decoding="async"
                   fetchPriority="low"
-                  className="h-16 w-16 object-contain"
+                  className="h-[4.8rem] w-[4.8rem] object-contain"
                 />
                 <Logo size="sm" className="cursor-default text-5xl leading-none" />
               </div>
