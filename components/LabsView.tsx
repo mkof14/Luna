@@ -245,10 +245,10 @@ const reportUiByLang: Partial<Record<Language, {
   en: {
     reportTitle: 'Luna Branded Report',
     reportSubtitle: 'Visual summary designed for your doctor conversation.',
-    copy: 'Copy',
-    print: 'Print',
-    share: 'Share',
-    download: 'Download',
+    copy: 'Копировать',
+    print: 'Печать',
+    share: 'Поделиться',
+    download: 'Скачать',
     pdf: 'PDF',
     sampleTitle: 'Sample Report',
     sampleBody: 'Download an example of the report format you receive as a service.',
@@ -273,10 +273,10 @@ const reportUiByLang: Partial<Record<Language, {
   uk: {
     reportTitle: 'Брендований Звіт Luna',
     reportSubtitle: 'Візуальне summary для розмови з лікарем.',
-    copy: 'Copy',
-    print: 'Print',
-    share: 'Share',
-    download: 'Download',
+    copy: 'Копіювати',
+    print: 'Друк',
+    share: 'Поділитися',
+    download: 'Завантажити',
     pdf: 'PDF',
     sampleTitle: 'Приклад Звіту',
     sampleBody: 'Завантажте приклад формату звіту, який ви отримаєте як сервіс.',
@@ -287,10 +287,10 @@ const reportUiByLang: Partial<Record<Language, {
   es: {
     reportTitle: 'Reporte De Marca Luna',
     reportSubtitle: 'Resumen visual para conversación médica.',
-    copy: 'Copy',
-    print: 'Print',
-    share: 'Share',
-    download: 'Download',
+    copy: 'Copiar',
+    print: 'Imprimir',
+    share: 'Compartir',
+    download: 'Descargar',
     pdf: 'PDF',
     sampleTitle: 'Reporte De Ejemplo',
     sampleBody: 'Descarga un ejemplo del formato de reporte que tendrás como servicio.',
@@ -301,10 +301,10 @@ const reportUiByLang: Partial<Record<Language, {
   fr: {
     reportTitle: 'Rapport De Marque Luna',
     reportSubtitle: 'Résumé visuel pour votre consultation.',
-    copy: 'Copy',
-    print: 'Print',
-    share: 'Share',
-    download: 'Download',
+    copy: 'Copier',
+    print: 'Imprimer',
+    share: 'Partager',
+    download: 'Télécharger',
     pdf: 'PDF',
     sampleTitle: 'Exemple De Rapport',
     sampleBody: 'Téléchargez un exemple du format de rapport proposé en service.',
@@ -315,10 +315,10 @@ const reportUiByLang: Partial<Record<Language, {
   de: {
     reportTitle: 'Luna Markenbericht',
     reportSubtitle: 'Visuelle Zusammenfassung für das Arztgespräch.',
-    copy: 'Copy',
-    print: 'Print',
-    share: 'Share',
-    download: 'Download',
+    copy: 'Kopieren',
+    print: 'Drucken',
+    share: 'Teilen',
+    download: 'Herunterladen',
     pdf: 'PDF',
     sampleTitle: 'Beispielbericht',
     sampleBody: 'Lade ein Beispiel des Report-Formats herunter, das du als Service erhältst.',
@@ -329,10 +329,10 @@ const reportUiByLang: Partial<Record<Language, {
   zh: {
     reportTitle: 'Luna 品牌报告',
     reportSubtitle: '用于就医沟通的可视化总结。',
-    copy: 'Copy',
-    print: 'Print',
-    share: 'Share',
-    download: 'Download',
+    copy: '复制',
+    print: '打印',
+    share: '分享',
+    download: '下载',
     pdf: 'PDF',
     sampleTitle: '示例报告',
     sampleBody: '下载示例，查看你将获得的服务报告格式。',
@@ -343,10 +343,10 @@ const reportUiByLang: Partial<Record<Language, {
   ja: {
     reportTitle: 'Luna ブランドレポート',
     reportSubtitle: '医師との対話に使えるビジュアル要約。',
-    copy: 'Copy',
-    print: 'Print',
-    share: 'Share',
-    download: 'Download',
+    copy: 'コピー',
+    print: '印刷',
+    share: '共有',
+    download: 'ダウンロード',
     pdf: 'PDF',
     sampleTitle: 'サンプルレポート',
     sampleBody: 'サービスで受け取るレポート形式のサンプルをダウンロード。',
@@ -357,10 +357,10 @@ const reportUiByLang: Partial<Record<Language, {
   pt: {
     reportTitle: 'Relatório De Marca Luna',
     reportSubtitle: 'Resumo visual para conversa com seu médico.',
-    copy: 'Copy',
-    print: 'Print',
-    share: 'Share',
-    download: 'Download',
+    copy: 'Copiar',
+    print: 'Imprimir',
+    share: 'Compartilhar',
+    download: 'Baixar',
     pdf: 'PDF',
     sampleTitle: 'Relatório Exemplo',
     sampleBody: 'Baixe um exemplo do formato de relatório que você terá como serviço.',
@@ -560,6 +560,68 @@ const reportActionsByLang: Partial<Record<Language, {
   zh: { copied: '已复制', copyFailed: '复制失败', shared: '已分享', shareFailed: '分享失败', printOpened: '已打开打印窗口', printBlocked: '打印被阻止', downloaded: '已下载', pdfHint: '请在打印窗口中保存为 PDF', pdfBlocked: 'PDF 打印被阻止', sampleDownloaded: '示例已下载' },
   ja: { copied: 'コピーしました', copyFailed: 'コピー失敗', shared: '共有しました', shareFailed: '共有失敗', printOpened: '印刷ダイアログを開きました', printBlocked: '印刷がブロックされました', downloaded: 'ダウンロードしました', pdfHint: '印刷画面で PDF 保存してください', pdfBlocked: 'PDF 印刷がブロックされました', sampleDownloaded: 'サンプルをダウンロードしました' },
   pt: { copied: 'Copiado', copyFailed: 'Falha ao copiar', shared: 'Compartilhado', shareFailed: 'Falha ao compartilhar', printOpened: 'Janela de impressão aberta', printBlocked: 'Impressão bloqueada', downloaded: 'Baixado', pdfHint: 'Use Salvar como PDF na impressão', pdfBlocked: 'PDF bloqueado', sampleDownloaded: 'Exemplo baixado' },
+};
+
+const reportsUiByLang: Partial<Record<Language, {
+  badge: string;
+  title: string;
+  titleAccent: string;
+  workflow: string;
+  identityTitle: string;
+  includeId: string;
+  includeName: string;
+  userIdOverride: string;
+  current: string;
+  privateIdentity: string;
+  profileTitle: string;
+  goals: string;
+  symptomsQuick: string;
+  labTable: string;
+  marker?: string;
+  value?: string;
+  unit?: string;
+  reference?: string;
+  date?: string;
+  note?: string;
+  delete?: string;
+  addRow: string;
+  uploadTitle: string;
+  uploadFile: string;
+  uploadPlaceholder: string;
+  readyExtraction: string;
+  generate: string;
+  reading: string;
+  quickOverview: string;
+  withinRange: string;
+  outOfRange: string;
+  hormoneInfographic: string;
+  unlockInfographic: string;
+  day: string;
+  hormoneSignals: string;
+  questionsDoctor: string;
+  detectedMarkers: string;
+  refShort: string;
+  status: string;
+  na: string;
+  summaryTitle: string;
+  copyDoctor: string;
+  reportReadyTitle: string;
+  reportReadyBody: string;
+  safetyTitle: string;
+  safetyBody: string;
+  unsupportedFormat: string;
+  extractFailed: string;
+  aiScan: string;
+}>> = {
+  en: { badge: 'My Health Reports', title: 'Reports', titleAccent: 'That Explain', workflow: 'Simple workflow: choose report identity, fill your markers, upload image/text, and get a clear hormone-focused summary.', identityTitle: 'Report Identity', includeId: 'Include ID in report', includeName: 'Include Name in report', userIdOverride: 'User ID (optional override)', current: 'Current', privateIdentity: 'Private (no name/ID in summary)', profileTitle: 'Personal Health Profile', goals: 'Goals / Symptoms Priority', symptomsQuick: 'Today symptoms (quick select)', labTable: 'Lab Table', addRow: 'Add Row', uploadTitle: 'Upload scan/text', uploadFile: 'Upload File', uploadPlaceholder: 'Paste report text here or upload an image/text file...', readyExtraction: 'Ready for extraction', generate: 'Generate Report', reading: 'Reading...', quickOverview: 'Quick Overview', withinRange: 'Within range', outOfRange: 'Out of range', hormoneInfographic: 'Hormone Infographic', unlockInfographic: 'Add markers to unlock infographic.', day: 'day', hormoneSignals: 'Hormone Signals', questionsDoctor: 'Questions for Doctor', detectedMarkers: 'Detected Markers', refShort: 'Ref', status: 'Status', na: 'n/a', summaryTitle: 'Clinical-Friendly Summary', copyDoctor: 'Copy for doctor', reportReadyTitle: 'Report ready zone', reportReadyBody: 'Choose identity, fill profile + table, then Generate Report.', safetyTitle: 'Safety note', safetyBody: 'Luna provides educational interpretation only. Final diagnosis and treatment decisions require a licensed clinician.', unsupportedFormat: 'Unsupported format. Use text or image files.', extractFailed: 'Could not extract text from file.', aiScan: 'AI scan' },
+  ru: { badge: 'My Health Reports', title: 'Отчеты', titleAccent: 'С Пояснением', workflow: 'Простой процесс: выберите идентификацию отчета, заполните маркеры, загрузите фото/текст и получите понятное гормональное summary.', identityTitle: 'Идентификация Отчета', includeId: 'Включить ID в отчет', includeName: 'Включить имя в отчет', userIdOverride: 'ID пользователя (опционально)', current: 'Текущее', privateIdentity: 'Приватно (без имени/ID в summary)', profileTitle: 'Персональный Профиль Здоровья', goals: 'Цели / Приоритет симптомов', symptomsQuick: 'Симптомы сегодня (быстрый выбор)', labTable: 'Таблица Анализов', addRow: 'Добавить Строку', uploadTitle: 'Загрузка скана/текста', uploadFile: 'Загрузить Файл', uploadPlaceholder: 'Вставьте текст отчета или загрузите файл изображения/текста...', readyExtraction: 'Готово к распознаванию', generate: 'Сгенерировать Отчет', reading: 'Чтение...', quickOverview: 'Быстрый Обзор', withinRange: 'В норме', outOfRange: 'Вне нормы', hormoneInfographic: 'Гормональная Инфографика', unlockInfographic: 'Добавьте маркеры, чтобы открыть инфографику.', day: 'день', hormoneSignals: 'Гормональные Сигналы', questionsDoctor: 'Вопросы Врачу', detectedMarkers: 'Обнаруженные Маркеры', refShort: 'Реф.', status: 'Статус', na: 'н/д', summaryTitle: 'Клинически Понятное Summary', copyDoctor: 'Скопировать для врача', reportReadyTitle: 'Зона готовности отчета', reportReadyBody: 'Выберите идентификацию, заполните профиль и таблицу, затем сгенерируйте отчет.', safetyTitle: 'Важное примечание', safetyBody: 'Luna дает образовательную интерпретацию. Окончательный диагноз и лечение определяет лицензированный врач.', unsupportedFormat: 'Неподдерживаемый формат. Используйте текст или изображение.', extractFailed: 'Не удалось извлечь текст из файла.', aiScan: 'AI-скан' },
+  uk: { badge: 'My Health Reports', title: 'Звіти', titleAccent: 'З Поясненням', workflow: 'Простий процес: оберіть ідентифікацію звіту, заповніть маркери, завантажте фото/текст і отримайте зрозуміле гормональне summary.', identityTitle: 'Ідентифікація Звіту', includeId: 'Додати ID у звіт', includeName: 'Додати імʼя у звіт', userIdOverride: 'ID користувача (опціонально)', current: 'Поточне', privateIdentity: 'Приватно (без імені/ID у summary)', profileTitle: 'Персональний Профіль Здоровʼя', goals: 'Цілі / Пріоритет симптомів', symptomsQuick: 'Симптоми сьогодні (швидкий вибір)', labTable: 'Таблиця Аналізів', addRow: 'Додати Рядок', uploadTitle: 'Завантаження скану/тексту', uploadFile: 'Завантажити Файл', uploadPlaceholder: 'Вставте текст звіту або завантажте файл зображення/тексту...', readyExtraction: 'Готово до розпізнавання', generate: 'Згенерувати Звіт', reading: 'Зчитування...', quickOverview: 'Швидкий Огляд', withinRange: 'У нормі', outOfRange: 'Поза нормою', hormoneInfographic: 'Гормональна Інфографіка', unlockInfographic: 'Додайте маркери, щоб відкрити інфографіку.', day: 'день', hormoneSignals: 'Гормональні Сигнали', questionsDoctor: 'Питання До Лікаря', detectedMarkers: 'Виявлені Маркери', refShort: 'Реф.', status: 'Статус', na: 'н/д', summaryTitle: 'Клінічно Зрозуміле Summary', copyDoctor: 'Скопіювати для лікаря', reportReadyTitle: 'Зона готовності звіту', reportReadyBody: 'Оберіть ідентифікацію, заповніть профіль і таблицю, потім згенеруйте звіт.', safetyTitle: 'Важлива примітка', safetyBody: 'Luna надає освітню інтерпретацію. Остаточний діагноз і лікування визначає ліцензований лікар.', unsupportedFormat: 'Непідтримуваний формат. Використовуйте текст або зображення.', extractFailed: 'Не вдалося зчитати текст із файлу.', aiScan: 'AI-скан' },
+  es: { badge: 'My Health Reports', title: 'Reportes', titleAccent: 'Que Explican', workflow: 'Flujo simple: elige identidad del reporte, completa marcadores, sube imagen/texto y obtén un resumen hormonal claro.', identityTitle: 'Identidad Del Reporte', includeId: 'Incluir ID en el reporte', includeName: 'Incluir nombre en el reporte', userIdOverride: 'ID de usuario (opcional)', current: 'Actual', privateIdentity: 'Privado (sin nombre/ID en el resumen)', profileTitle: 'Perfil Personal De Salud', goals: 'Objetivos / Prioridad de síntomas', symptomsQuick: 'Síntomas de hoy (selección rápida)', labTable: 'Tabla De Laboratorio', addRow: 'Agregar Fila', uploadTitle: 'Subir escaneo/texto', uploadFile: 'Subir Archivo', uploadPlaceholder: 'Pega texto del reporte o sube un archivo de imagen/texto...', readyExtraction: 'Listo para extracción', generate: 'Generar Reporte', reading: 'Leyendo...', quickOverview: 'Resumen Rápido', withinRange: 'En rango', outOfRange: 'Fuera de rango', hormoneInfographic: 'Infografía Hormonal', unlockInfographic: 'Agrega marcadores para activar la infografía.', day: 'día', hormoneSignals: 'Señales Hormonales', questionsDoctor: 'Preguntas Para El Médico', detectedMarkers: 'Marcadores Detectados', refShort: 'Ref', status: 'Estado', na: 'n/d', summaryTitle: 'Resumen Clínico Claro', copyDoctor: 'Copiar para el médico', reportReadyTitle: 'Zona lista para reporte', reportReadyBody: 'Elige identidad, completa perfil + tabla y luego genera el reporte.', safetyTitle: 'Nota de seguridad', safetyBody: 'Luna ofrece interpretación educativa. El diagnóstico y tratamiento final requiere personal médico licenciado.', unsupportedFormat: 'Formato no compatible. Usa archivos de texto o imagen.', extractFailed: 'No se pudo extraer texto del archivo.', aiScan: 'escaneo AI' },
+  fr: { badge: 'My Health Reports', title: 'Rapports', titleAccent: 'Qui Expliquent', workflow: 'Flux simple: choisissez l identité, remplissez les marqueurs, chargez image/texte et obtenez un résumé hormonal clair.', identityTitle: 'Identité Du Rapport', includeId: 'Inclure ID dans le rapport', includeName: 'Inclure le nom dans le rapport', userIdOverride: 'ID utilisateur (optionnel)', current: 'Actuel', privateIdentity: 'Privé (sans nom/ID dans le résumé)', profileTitle: 'Profil Personnel De Santé', goals: 'Objectifs / Priorité des symptômes', symptomsQuick: 'Symptômes du jour (sélection rapide)', labTable: 'Tableau De Laboratoire', addRow: 'Ajouter Ligne', uploadTitle: 'Téléverser scan/texte', uploadFile: 'Téléverser Fichier', uploadPlaceholder: 'Collez le texte du rapport ou téléversez un fichier image/texte...', readyExtraction: 'Prêt pour extraction', generate: 'Générer Rapport', reading: 'Lecture...', quickOverview: 'Aperçu Rapide', withinRange: 'Dans la norme', outOfRange: 'Hors norme', hormoneInfographic: 'Infographie Hormonale', unlockInfographic: 'Ajoutez des marqueurs pour activer l infographie.', day: 'jour', hormoneSignals: 'Signaux Hormonaux', questionsDoctor: 'Questions Pour Le Médecin', detectedMarkers: 'Marqueurs Détectés', refShort: 'Réf', status: 'Statut', na: 'n/d', summaryTitle: 'Résumé Clinique Lisible', copyDoctor: 'Copier pour le médecin', reportReadyTitle: 'Zone de rapport prête', reportReadyBody: 'Choisissez l identité, complétez profil + tableau, puis générez le rapport.', safetyTitle: 'Note de sécurité', safetyBody: 'Luna fournit une interprétation éducative. Le diagnostic et le traitement final nécessitent un médecin agréé.', unsupportedFormat: 'Format non pris en charge. Utilisez un fichier texte ou image.', extractFailed: 'Impossible d extraire le texte du fichier.', aiScan: 'scan AI' },
+  de: { badge: 'My Health Reports', title: 'Berichte', titleAccent: 'Die Erklären', workflow: 'Einfacher Ablauf: Berichtsidentität wählen, Marker ausfüllen, Bild/Text hochladen und klare hormonfokussierte Zusammenfassung erhalten.', identityTitle: 'Berichtsidentität', includeId: 'ID im Bericht anzeigen', includeName: 'Name im Bericht anzeigen', userIdOverride: 'Benutzer-ID (optional)', current: 'Aktuell', privateIdentity: 'Privat (kein Name/ID in der Zusammenfassung)', profileTitle: 'Persönliches Gesundheitsprofil', goals: 'Ziele / Symptom-Priorität', symptomsQuick: 'Heutige Symptome (Schnellauswahl)', labTable: 'Labortabelle', addRow: 'Zeile Hinzufügen', uploadTitle: 'Scan/Text hochladen', uploadFile: 'Datei Hochladen', uploadPlaceholder: 'Berichtstext einfügen oder Bild/Textdatei hochladen...', readyExtraction: 'Bereit für Extraktion', generate: 'Bericht Erstellen', reading: 'Lese...', quickOverview: 'Schnellübersicht', withinRange: 'Im Bereich', outOfRange: 'Außerhalb', hormoneInfographic: 'Hormon-Infografik', unlockInfographic: 'Marker hinzufügen, um die Infografik freizuschalten.', day: 'Tag', hormoneSignals: 'Hormonsignale', questionsDoctor: 'Fragen Für Den Arzt', detectedMarkers: 'Erkannte Marker', refShort: 'Ref', status: 'Status', na: 'k.A.', summaryTitle: 'Klinisch Verständliche Zusammenfassung', copyDoctor: 'Für Arzt kopieren', reportReadyTitle: 'Bericht bereit', reportReadyBody: 'Identität wählen, Profil + Tabelle ausfüllen und dann Bericht erzeugen.', safetyTitle: 'Sicherheitshinweis', safetyBody: 'Luna bietet eine edukative Interpretation. Endgültige Diagnose und Therapie erfordern medizinisches Fachpersonal.', unsupportedFormat: 'Nicht unterstütztes Format. Bitte Text- oder Bilddatei verwenden.', extractFailed: 'Text konnte aus der Datei nicht extrahiert werden.', aiScan: 'AI-Scan' },
+  zh: { badge: 'My Health Reports', title: '报告', titleAccent: '可解释', workflow: '简单流程：选择报告身份、填写指标、上传图片/文本，获得清晰的激素重点总结。', identityTitle: '报告身份', includeId: '在报告中包含ID', includeName: '在报告中包含姓名', userIdOverride: '用户ID（可选）', current: '当前', privateIdentity: '私密（摘要中不含姓名/ID）', profileTitle: '个人健康档案', goals: '目标 / 症状优先级', symptomsQuick: '今日症状（快速选择）', labTable: '化验表', addRow: '添加行', uploadTitle: '上传扫描/文本', uploadFile: '上传文件', uploadPlaceholder: '粘贴报告文本或上传图片/文本文件...', readyExtraction: '可开始提取', generate: '生成报告', reading: '读取中...', quickOverview: '快速概览', withinRange: '范围内', outOfRange: '超出范围', hormoneInfographic: '激素信息图', unlockInfographic: '添加指标以解锁信息图。', day: '天', hormoneSignals: '激素信号', questionsDoctor: '给医生的问题', detectedMarkers: '已识别指标', refShort: '参考', status: '状态', na: '无', summaryTitle: '临床友好总结', copyDoctor: '复制给医生', reportReadyTitle: '报告准备区', reportReadyBody: '先选择身份，填写档案和表格，再生成报告。', safetyTitle: '安全说明', safetyBody: 'Luna 仅提供教育性解读。最终诊断与治疗需由持证医生完成。', unsupportedFormat: '不支持该格式。请使用文本或图片文件。', extractFailed: '无法从文件中提取文本。', aiScan: 'AI 扫描' },
+  ja: { badge: 'My Health Reports', title: 'レポート', titleAccent: 'を明確化', workflow: 'シンプルな流れ: レポート識別を選択し、マーカーを入力、画像/テキストをアップロードして、ホルモン重視の明確な要約を取得。', identityTitle: 'レポート識別', includeId: 'レポートにIDを含める', includeName: 'レポートに名前を含める', userIdOverride: 'ユーザーID（任意）', current: '現在', privateIdentity: '非公開（要約に名前/IDなし）', profileTitle: '個人健康プロフィール', goals: '目標 / 症状優先度', symptomsQuick: '本日の症状（クイック選択）', labTable: '検査テーブル', addRow: '行を追加', uploadTitle: 'スキャン/テキストをアップロード', uploadFile: 'ファイルをアップロード', uploadPlaceholder: 'レポート本文を貼り付けるか、画像/テキストファイルをアップロードしてください...', readyExtraction: '抽出の準備完了', generate: 'レポート生成', reading: '読み取り中...', quickOverview: 'クイック概要', withinRange: '基準内', outOfRange: '基準外', hormoneInfographic: 'ホルモン・インフォグラフィック', unlockInfographic: 'マーカーを追加してインフォグラフィックを表示。', day: '日', hormoneSignals: 'ホルモンシグナル', questionsDoctor: '医師への質問', detectedMarkers: '検出マーカー', refShort: '基準', status: '状態', na: 'N/A', summaryTitle: '臨床向けサマリー', copyDoctor: '医師向けにコピー', reportReadyTitle: 'レポート準備ゾーン', reportReadyBody: '識別を選び、プロフィールと表を入力後、レポートを生成してください。', safetyTitle: '安全メモ', safetyBody: 'Luna は教育的解釈を提供します。最終診断と治療判断は医師が行ってください。', unsupportedFormat: '未対応形式です。テキストまたは画像ファイルをご利用ください。', extractFailed: 'ファイルからテキストを抽出できませんでした。', aiScan: 'AIスキャン' },
+  pt: { badge: 'My Health Reports', title: 'Relatórios', titleAccent: 'Que Explicam', workflow: 'Fluxo simples: escolha identidade do relatório, preencha marcadores, envie imagem/texto e obtenha um resumo hormonal claro.', identityTitle: 'Identidade Do Relatório', includeId: 'Incluir ID no relatório', includeName: 'Incluir nome no relatório', userIdOverride: 'ID do usuário (opcional)', current: 'Atual', privateIdentity: 'Privado (sem nome/ID no resumo)', profileTitle: 'Perfil Pessoal De Saúde', goals: 'Metas / Prioridade de sintomas', symptomsQuick: 'Sintomas de hoje (seleção rápida)', labTable: 'Tabela Laboratorial', addRow: 'Adicionar Linha', uploadTitle: 'Enviar scan/texto', uploadFile: 'Enviar Arquivo', uploadPlaceholder: 'Cole o texto do relatório ou envie um arquivo de imagem/texto...', readyExtraction: 'Pronto para extração', generate: 'Gerar Relatório', reading: 'Lendo...', quickOverview: 'Visão Rápida', withinRange: 'Na faixa', outOfRange: 'Fora da faixa', hormoneInfographic: 'Infográfico Hormonal', unlockInfographic: 'Adicione marcadores para liberar o infográfico.', day: 'dia', hormoneSignals: 'Sinais Hormonais', questionsDoctor: 'Perguntas Para O Médico', detectedMarkers: 'Marcadores Detectados', refShort: 'Ref', status: 'Status', na: 'n/d', summaryTitle: 'Resumo Clínico Claro', copyDoctor: 'Copiar para o médico', reportReadyTitle: 'Zona pronta para relatório', reportReadyBody: 'Escolha identidade, preencha perfil + tabela e depois gere o relatório.', safetyTitle: 'Nota de segurança', safetyBody: 'A Luna fornece interpretação educacional. Diagnóstico e tratamento finais exigem profissional de saúde licenciado.', unsupportedFormat: 'Formato não suportado. Use arquivos de texto ou imagem.', extractFailed: 'Não foi possível extrair texto do arquivo.', aiScan: 'scan AI' },
 };
 
 const detailedReportByLang: Partial<Record<Language, {
@@ -1073,6 +1135,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const reportSourcesUi = reportSourceByLang[reportLang] || reportSourceByLang.en!;
   const reportCategories = markerCategoryByLang[reportLang] || markerCategoryByLang.en!;
   const reportActions = reportActionsByLang[lang] || reportActionsByLang.en!;
+  const reportsUi = reportsUiByLang[lang] || reportsUiByLang.en!;
   const detailedUi = detailedReportByLang[reportLang] || detailedReportByLang.en!;
   const womenUi = womenReportInsightsByLang[reportLang] || womenReportInsightsByLang.en!;
 
@@ -1759,7 +1822,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const handleCopy = async () => {
     if (!analysis) return;
     const copied = await copyTextSafely(analysis.text);
-    setCopyFeedback(copied ? 'Copied' : 'Copy failed');
+    setCopyFeedback(copied ? reportActions.copied : reportActions.copyFailed);
     setTimeout(() => setCopyFeedback(null), 2000);
   };
 
@@ -1835,7 +1898,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     if (!file) return;
 
     if (!isSupportedLabFile(file)) {
-      setUploadFeedback('Unsupported format. Use text or image files.');
+      setUploadFeedback(reportsUi.unsupportedFormat);
       event.target.value = '';
       return;
     }
@@ -1845,9 +1908,9 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       if (extracted.text.trim()) {
         setInput((prev) => (prev ? `${prev}\n${extracted.text}` : extracted.text));
       }
-      setUploadFeedback(extracted.source + (extracted.usedAi ? ' (AI scan)' : ''));
+      setUploadFeedback(extracted.source + (extracted.usedAi ? ` (${reportsUi.aiScan})` : ''));
     } catch {
-      setUploadFeedback('Could not extract text from file.');
+      setUploadFeedback(reportsUi.extractFailed);
     } finally {
       event.target.value = '';
     }
@@ -1858,13 +1921,13 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       <header className="space-y-6">
         <div className="flex items-center gap-4">
           <Logo size="sm" />
-          <span className="text-[10px] font-black uppercase tracking-[0.45em] text-slate-500 dark:text-slate-200">My Health Reports</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.45em] text-slate-500 dark:text-slate-200">{reportsUi.badge}</span>
         </div>
         <h2 className="text-5xl lg:text-7xl font-black tracking-tighter leading-[0.9] uppercase text-slate-950 dark:text-slate-100">
-          Reports <span className="text-luna-purple">That Explain</span>
+          {reportsUi.title} <span className="text-luna-purple">{reportsUi.titleAccent}</span>
         </h2>
         <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 font-semibold max-w-4xl leading-relaxed">
-          Simple workflow: choose report identity, fill your markers, upload image/text, and get a clear hormone-focused summary.
+          {reportsUi.workflow}
         </p>
       </header>
 
@@ -1885,18 +1948,18 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
         <section className="xl:col-span-7 space-y-8">
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
-            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">Report Identity</h3>
+            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">{reportsUi.identityTitle}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
                 <input type="checkbox" checked={includeIdInReport} onChange={(e) => setIncludeIdInReport(e.target.checked)} />
-                Include ID in report
+                {reportsUi.includeId}
               </label>
               <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
                 <input type="checkbox" checked={includeNameInReport} onChange={(e) => setIncludeNameInReport(e.target.checked)} disabled={!userName} />
-                Include Name in report
+                {reportsUi.includeName}
               </label>
               <label className="md:col-span-2 space-y-1">
-                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">User ID (optional override)</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{reportsUi.userIdOverride}</span>
                 <input value={manualReportId} onChange={(e) => setManualReportId(e.target.value)} placeholder={reportId} className="w-full px-3 py-2 rounded-xl border border-slate-300/70 dark:border-slate-700/70 bg-white dark:bg-slate-900/80 text-sm font-semibold" />
               </label>
               <label className="md:col-span-2 space-y-1">
@@ -1915,11 +1978,11 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                 <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">{reportLangUi.hint}</p>
               </label>
             </div>
-            <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">Current: {reportIdentityLine || 'Private (no name/ID in summary)'}</p>
+            <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{reportsUi.current}: {reportIdentityLine || reportsUi.privateIdentity}</p>
           </article>
 
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
-            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">Personal Health Profile</h3>
+            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">{reportsUi.profileTitle}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[
                 ['birthYear', 'Birth Year'],
@@ -1938,7 +2001,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                 </label>
               ))}
               <label className="md:col-span-2 space-y-1">
-                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Goals / Symptoms Priority</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{reportsUi.goals}</span>
                 <textarea
                   value={profile.goals}
                   onChange={(e) => updateProfile('goals', e.target.value)}
@@ -1947,7 +2010,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
               </label>
             </div>
             <div className="space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Today symptoms (quick select)</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{reportsUi.symptomsQuick}</p>
               <div className="flex flex-wrap gap-2">
                 {quickSymptoms.map((symptom) => {
                   const active = selectedSymptoms.includes(symptom);
@@ -2013,25 +2076,25 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">Lab Table</h3>
+              <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">{reportsUi.labTable}</h3>
               <div className="flex flex-wrap gap-2">
-                <button onClick={() => applyTemplate('hormone_core')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">Hormone Template</button>
-                <button onClick={() => applyTemplate('thyroid')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">Thyroid</button>
-                <button onClick={() => applyTemplate('metabolic')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">Metabolic</button>
+                <button onClick={() => applyTemplate('hormone_core')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">{reportCategories.cycle}</button>
+                <button onClick={() => applyTemplate('thyroid')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">{reportCategories.thyroid}</button>
+                <button onClick={() => applyTemplate('metabolic')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">{reportCategories.metabolic}</button>
                 <button onClick={() => applyTemplate('libido_intimacy')} className="px-3 py-2 rounded-full border border-luna-coral/50 text-luna-coral text-[10px] font-black uppercase tracking-[0.15em]">{sexualUi.libidoTemplate}</button>
-                <button onClick={addRow} className="px-3 py-2 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-[0.15em]">Add Row</button>
+                <button onClick={addRow} className="px-3 py-2 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-[0.15em]">{reportsUi.addRow}</button>
               </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[720px] text-sm">
                 <thead>
                   <tr className="text-left text-[10px] uppercase tracking-[0.15em] text-slate-500">
-                    <th className="py-2 pr-2">Marker</th>
-                    <th className="py-2 pr-2">Value</th>
-                    <th className="py-2 pr-2">Unit</th>
-                    <th className="py-2 pr-2">Reference</th>
-                    <th className="py-2 pr-2">Date</th>
-                    <th className="py-2 pr-2">Note</th>
+                    <th className="py-2 pr-2">{reportsUi.marker}</th>
+                    <th className="py-2 pr-2">{reportsUi.value}</th>
+                    <th className="py-2 pr-2">{reportsUi.unit}</th>
+                    <th className="py-2 pr-2">{reportsUi.reference}</th>
+                    <th className="py-2 pr-2">{reportsUi.date}</th>
+                    <th className="py-2 pr-2">{reportsUi.note}</th>
                     <th className="py-2 pr-2"> </th>
                   </tr>
                 </thead>
@@ -2048,7 +2111,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                         </td>
                       ))}
                       <td className="py-2 pr-2">
-                        <button onClick={() => removeRow(row.id)} className="px-2 py-1 rounded-md border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">Del</button>
+                        <button onClick={() => removeRow(row.id)} className="px-2 py-1 rounded-md border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{reportsUi.delete}</button>
                       </td>
                     </tr>
                   ))}
@@ -2059,26 +2122,26 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
             <div className="flex items-center justify-between gap-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Upload scan/text</p>
-              <button onClick={() => fileInputRef.current?.click()} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple bg-white/80 dark:bg-slate-900/70 text-[10px] font-black uppercase tracking-[0.15em]">Upload File</button>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{reportsUi.uploadTitle}</p>
+              <button onClick={() => fileInputRef.current?.click()} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple bg-white/80 dark:bg-slate-900/70 text-[10px] font-black uppercase tracking-[0.15em]">{reportsUi.uploadFile}</button>
               <input type="file" ref={fileInputRef} className="hidden" accept=".txt,.csv,.md,.png,.jpg,.jpeg,.webp,text/plain,image/*" onChange={handleFileUpload} />
             </div>
             <textarea
               data-testid="labs-report-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Paste report text here or upload an image/text file..."
+              placeholder={reportsUi.uploadPlaceholder}
               className="w-full h-56 p-4 rounded-2xl border border-slate-300/70 dark:border-slate-700/70 bg-slate-50 dark:bg-slate-900/70 text-sm font-semibold leading-relaxed resize-none"
             />
             <div className="flex items-center justify-between gap-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{uploadFeedback || 'Ready for extraction'}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{uploadFeedback || reportsUi.readyExtraction}</p>
               <button
                 data-testid="labs-generate-report"
                 onClick={handleAnalyze}
                 disabled={loading}
                 className="px-6 py-3 rounded-full bg-slate-950 dark:bg-[#17366b] text-white text-[10px] font-black uppercase tracking-[0.2em] disabled:opacity-40"
               >
-                {loading ? 'Reading...' : 'Generate Report'}
+                {loading ? reportsUi.reading : reportsUi.generate}
               </button>
             </div>
           </article>
@@ -2086,14 +2149,14 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
         <aside className="xl:col-span-5 space-y-6">
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#efe1ea]/92 to-[#dce6f4]/90 dark:from-[#08162f]/92 dark:to-[#0b2040]/90 p-6 space-y-3 shadow-luna-rich">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Quick Overview</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportsUi.quickOverview}</p>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl bg-white/70 dark:bg-slate-900/55 p-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">Within range</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{reportsUi.withinRange}</p>
                 <p className="text-2xl font-black text-emerald-600">{markerStatuses.normal}</p>
               </div>
               <div className="rounded-xl bg-white/70 dark:bg-slate-900/55 p-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">Out of range</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{reportsUi.outOfRange}</p>
                 <p className="text-2xl font-black text-rose-600">{markerStatuses.low + markerStatuses.high}</p>
               </div>
             </div>
@@ -2102,7 +2165,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#e8e6f8]/90 via-[#e7f2fb]/88 to-[#e6f7f3]/86 dark:from-[#0d1f3f]/92 dark:via-[#12294b]/90 dark:to-[#133651]/88 p-6 space-y-4 shadow-luna-rich">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Hormone Infographic</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportsUi.hormoneInfographic}</p>
               <img src="/images/moon_phases_arc.webp" alt="Cycle visual" className="h-10 w-24 object-cover rounded-lg border border-white/60 dark:border-slate-700/60" />
             </div>
             <div className="space-y-2">
@@ -2117,7 +2180,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                   </div>
                 </div>
               )) : (
-                <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">Add markers to unlock infographic.</p>
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{reportsUi.unlockInfographic}</p>
               )}
             </div>
           </article>
@@ -2133,7 +2196,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
             <div className="rounded-xl border border-white/65 dark:border-white/10 bg-white/70 dark:bg-slate-900/50 p-4 space-y-2">
               <div className="flex items-center justify-between">
                 <Logo size="sm" className="text-3xl" />
-                <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">{profile.cycleDay || systemState.currentDay} day</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">{profile.cycleDay || systemState.currentDay} {reportsUi.day}</span>
               </div>
               <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">{reportIdentityLine || reportUi.reportSubtitle}</p>
               <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 leading-relaxed line-clamp-4">{analysis?.text || reportUi.sampleBody}</p>
@@ -2162,7 +2225,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           {hormoneSignals.length > 0 && (
             <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/85 dark:bg-[#081a3d]/85 p-6 shadow-luna-rich space-y-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Hormone Signals</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportsUi.hormoneSignals}</p>
               <div className="space-y-3">
                 {hormoneSignals.map((signal, idx) => (
                   <div key={`${signal.marker}-${idx}`} className="rounded-xl border border-slate-200/70 dark:border-slate-700/70 p-3 bg-slate-50/80 dark:bg-slate-900/50 space-y-2">
@@ -2197,7 +2260,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           {doctorQuestions.length > 0 && (
             <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/85 dark:bg-[#081a3d]/85 p-6 shadow-luna-rich space-y-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Questions for Doctor</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportsUi.questionsDoctor}</p>
               <ul className="space-y-2">
                 {doctorQuestions.map((question) => (
                   <li key={question} className="text-xs font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">• {question}</li>
@@ -2208,15 +2271,15 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           {parsedRows.length > 0 && (
             <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/85 dark:bg-[#081a3d]/85 p-6 shadow-luna-rich space-y-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Detected Markers</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportsUi.detectedMarkers}</p>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="text-left uppercase tracking-[0.12em] text-slate-500">
-                      <th className="py-2 pr-2">Marker</th>
-                      <th className="py-2 pr-2">Value</th>
-                      <th className="py-2 pr-2">Ref</th>
-                      <th className="py-2 pr-2">Status</th>
+                      <th className="py-2 pr-2">{reportsUi.marker}</th>
+                      <th className="py-2 pr-2">{reportsUi.value}</th>
+                      <th className="py-2 pr-2">{reportsUi.refShort}</th>
+                      <th className="py-2 pr-2">{reportsUi.status}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -2226,7 +2289,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                         <tr key={`${item.marker}-${idx}`} className="border-t border-slate-200/70 dark:border-slate-700/60">
                           <td className={`py-2 pr-2 font-semibold ${hormoneTopic(item.marker).textClass}`}>{item.marker}</td>
                           <td className="py-2 pr-2">{item.value}{item.unit ? ` ${item.unit}` : ''}</td>
-                          <td className="py-2 pr-2">{Number.isFinite(item.referenceMin as number) && Number.isFinite(item.referenceMax as number) ? `${item.referenceMin}-${item.referenceMax}` : 'n/a'}</td>
+                          <td className="py-2 pr-2">{Number.isFinite(item.referenceMin as number) && Number.isFinite(item.referenceMax as number) ? `${item.referenceMin}-${item.referenceMax}` : reportsUi.na}</td>
                           <td className="py-2 pr-2"><span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.08em] ${statusColor(status)}`}>{status}</span></td>
                         </tr>
                       );
@@ -2239,20 +2302,20 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           {analysis ? (
             <article className="rounded-[2rem] border border-slate-800/70 dark:border-slate-700/70 bg-slate-950 text-white dark:bg-[#08162f] p-6 shadow-luna-deep space-y-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Clinical-Friendly Summary</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{reportsUi.summaryTitle}</p>
               <p className="text-sm font-semibold leading-relaxed whitespace-pre-wrap">{analysis.text}</p>
-              <button onClick={handleCopy} className="text-[10px] font-black uppercase tracking-[0.15em] border-b border-white/60 pb-1">{copyFeedback || 'Copy for doctor'}</button>
+              <button onClick={handleCopy} className="text-[10px] font-black uppercase tracking-[0.15em] border-b border-white/60 pb-1">{copyFeedback || reportsUi.copyDoctor}</button>
             </article>
           ) : (
             <article className="rounded-[2rem] border-2 border-dashed border-slate-300/80 dark:border-slate-700/70 bg-white/60 dark:bg-slate-900/50 p-6 text-center">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Report ready zone</p>
-              <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-2">Choose identity, fill profile + table, then Generate Report.</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{reportsUi.reportReadyTitle}</p>
+              <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-2">{reportsUi.reportReadyBody}</p>
             </article>
           )}
 
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/60 p-6 space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Safety note</p>
-            <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 leading-relaxed">Luna provides educational interpretation only. Final diagnosis and treatment decisions require a licensed clinician.</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportsUi.safetyTitle}</p>
+            <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 leading-relaxed">{reportsUi.safetyBody}</p>
           </article>
         </aside>
       </div>
