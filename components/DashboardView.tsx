@@ -6,6 +6,7 @@ import { DailyStatePanel } from './DailyStatePanel';
 import { FuelCompass } from './FuelCompass';
 import { TabType } from '../utils/navigation';
 import { dataService } from '../services/dataService';
+import { HormoneTestingGuide } from './HormoneTestingGuide';
 
 interface DashboardViewProps {
   lang: Language;
@@ -572,6 +573,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           {hormoneData.map((h) => <HormoneGauge key={h.id} hormone={h} onClick={setSelectedHormone} />)}
         </div>
       </div>
+
+      <HormoneTestingGuide lang={lang} />
     </section>
   );
 };

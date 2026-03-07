@@ -3,8 +3,10 @@ import { analyzeLabResults } from '../services/geminiService';
 import { dataService } from '../services/dataService';
 import { HealthEvent } from '../types';
 import { Logo } from './Logo';
+import { HormoneTestingGuide } from './HormoneTestingGuide';
 import { isSupportedLabFile } from '../utils/runtimeGuards';
 import { copyTextSafely } from '../utils/share';
+import { Language } from '../constants';
 import {
   computeHormoneSignals,
   extractTextFromLabFile,
@@ -97,7 +99,7 @@ const ensureReportId = () => {
   }
 };
 
-export const LabsView: React.FC<{ day: number; age: number; userId?: string; userName?: string; onBack?: () => void }> = ({ day, age, userId, userName }) => {
+export const LabsView: React.FC<{ day: number; age: number; lang: Language; userId?: string; userName?: string; onBack?: () => void }> = ({ day, age, lang, userId, userName }) => {
   const [input, setInput] = useState('');
   const [analysis, setAnalysis] = useState<{ text: string; sources: unknown[] } | null>(null);
   const [loading, setLoading] = useState(false);
@@ -296,6 +298,8 @@ export const LabsView: React.FC<{ day: number; age: number; userId?: string; use
           Simple workflow: choose report identity, fill your markers, upload image/text, and get a clear hormone-focused summary.
         </p>
       </header>
+
+      <HormoneTestingGuide lang={lang} />
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
         <section className="xl:col-span-7 space-y-8">

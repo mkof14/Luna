@@ -192,6 +192,7 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
           <LabsView
             day={systemState.currentDay}
             age={DEFAULT_USER_AGE}
+            lang={lang}
             userId={session?.id}
             userName={session?.name}
             onBack={() => navigateTo('dashboard')}
