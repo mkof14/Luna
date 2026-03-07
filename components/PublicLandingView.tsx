@@ -1272,6 +1272,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
             </div>
             <ThemeToggle theme={theme} toggle={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
             <button
+              data-testid="public-signin"
               onClick={onSignIn}
               className="px-5 py-2.5 rounded-full border border-luna-purple/40 bg-white/80 dark:bg-slate-900/70 text-[10px] font-black uppercase tracking-widest text-luna-purple shadow-luna-rich hover:border-luna-purple/70 hover:bg-luna-purple/10 hover:shadow-luna-deep hover:scale-[1.03] active:scale-[0.98] transition-all"
             >

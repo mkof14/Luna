@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
+import { completeOnboardingIfVisible, signInFromPublicHome } from './helpers/auth';
 
 test('bridge reflection flow renders generated local note', async ({ page }) => {
-  await page.goto('/');
-
-  await page.getByRole('button', { name: /begin journey/i }).click();
+  await signInFromPublicHome(page);
+  await completeOnboardingIfVisible(page);
   await page.getByTestId('top-nav-more').click();
   await page.getByTestId('sidebar-nav-bridge').click();
 

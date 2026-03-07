@@ -2064,6 +2064,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
               <input type="file" ref={fileInputRef} className="hidden" accept=".txt,.csv,.md,.png,.jpg,.jpeg,.webp,text/plain,image/*" onChange={handleFileUpload} />
             </div>
             <textarea
+              data-testid="labs-report-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Paste report text here or upload an image/text file..."
@@ -2072,6 +2073,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
             <div className="flex items-center justify-between gap-4">
               <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{uploadFeedback || 'Ready for extraction'}</p>
               <button
+                data-testid="labs-generate-report"
                 onClick={handleAnalyze}
                 disabled={loading}
                 className="px-6 py-3 rounded-full bg-slate-950 dark:bg-[#17366b] text-white text-[10px] font-black uppercase tracking-[0.2em] disabled:opacity-40"

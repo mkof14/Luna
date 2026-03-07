@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test';
+import { completeOnboardingIfVisible, signInFromPublicHome } from './helpers/auth';
 
 test('profile update and medication events appear in history timeline', async ({ page }) => {
-  await page.goto('/');
-  await page.getByTestId('onboarding-begin').click();
+  await signInFromPublicHome(page);
+  await completeOnboardingIfVisible(page);
 
   await page.getByTestId('top-nav-more').click();
   await page.getByTestId('sidebar-nav-profile').click();

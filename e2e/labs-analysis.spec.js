@@ -1,15 +1,16 @@
 import { expect, test } from '@playwright/test';
+import { completeOnboardingIfVisible, signInFromPublicHome } from './helpers/auth';
 
 test('labs analysis renders local-mode result', async ({ page }) => {
-  await page.goto('/');
+  await signInFromPublicHome(page);
+  await completeOnboardingIfVisible(page);
+  await page.getByTestId('top-nav-more').click();
+  await page.getByTestId('sidebar-nav-labs').click();
 
-  await page.getByRole('button', { name: /begin journey/i }).click();
-  await page.getByTestId('top-nav-labs').click();
-
-  const input = page.getByPlaceholder(/paste marker values here/i);
+  const input = page.getByTestId('labs-report-input');
   await expect(input).toBeVisible();
   await input.fill('TSH 2.4, Ferritin 45, Vitamin D 28');
 
-  await page.getByRole('button', { name: /see results|reading/i }).click();
-  await expect(page.getByText(/local mode without ai/i)).toBeVisible();
+  await page.getByTestId('labs-generate-report').click();
+  await expect(page.getByText(/local mode without ai/i).first()).toBeVisible();
 });

@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
+import { signInFromPublicHome } from './helpers/auth';
 
 test('onboarding and first check-in flow works', async ({ page }) => {
-  await page.goto('/');
+  await signInFromPublicHome(page);
 
   await expect(page.getByTestId('onboarding-begin')).toBeVisible();
   await page.getByTestId('onboarding-begin').click();

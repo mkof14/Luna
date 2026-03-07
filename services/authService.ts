@@ -5,7 +5,13 @@ const LOCAL_SESSION_KEY = 'luna_auth_session_v2';
 const LOCAL_USERS_KEY = 'luna_auth_users_v2';
 
 const SUPER_ADMIN_EMAIL = 'dnainform@gmail.com';
-const SUPER_ADMIN_FALLBACK_PASSWORD = 'LunaAdmin2026!';
+const resolveSuperAdminFallbackPassword = (): string => {
+  if (typeof window === 'undefined') return 'LunaAdmin2026!';
+  const runtime = (window as Window & { __LUNA_SUPER_ADMIN_FALLBACK_PASSWORD?: string }).__LUNA_SUPER_ADMIN_FALLBACK_PASSWORD;
+  if (typeof runtime === 'string' && runtime.trim().length > 0) return runtime.trim();
+  return 'LunaAdmin2026!';
+};
+const SUPER_ADMIN_FALLBACK_PASSWORD = resolveSuperAdminFallbackPassword();
 const isLocalHostRuntime = (() => {
   if (typeof window === 'undefined') return false;
   return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -27,7 +33,6 @@ const ROLE_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
 };
 
 const ADMIN_EMAIL_RULES: Array<{ pattern: RegExp; role: AdminRole }> = [
-  { pattern: /admin|owner|founder/i, role: 'super_admin' },
   { pattern: /ops|support|service/i, role: 'operator' },
   { pattern: /marketing|content|brand/i, role: 'content_manager' },
   { pattern: /finance|billing|accounting/i, role: 'finance_manager' },
@@ -230,8 +235,7 @@ const localAuth = {
       throw new Error('Account not found. Please sign up first.');
     }
 
-    const superAdminBypass = normalizedEmail === SUPER_ADMIN_EMAIL;
-    if (!superAdminBypass && account.password !== password) {
+    if (account.password !== password) {
       throw new Error('Incorrect password. Please try again.');
     }
 

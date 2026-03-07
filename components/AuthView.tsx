@@ -147,6 +147,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">{ui.auth.email}</label>
               <input
+                data-testid="auth-recovery-email"
                 type="email"
                 required
                 value={email}
@@ -156,6 +157,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
               />
             </div>
             <button
+              data-testid="auth-recovery-submit"
               type="submit"
               disabled={isLoading}
               className="w-full py-5 bg-luna-purple text-white font-black uppercase tracking-[0.2em] rounded-full hover:shadow-2xl active:scale-95 transition-all shadow-xl shadow-luna-purple/40"
@@ -212,6 +214,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
 
           <div className="space-y-4">
             <button
+              data-testid="auth-google"
               onClick={handleGoogleAuth}
               className="w-full py-4 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-full flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all group"
             >
@@ -234,6 +237,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">{ui.auth.email}</label>
                 <input
+                  data-testid="auth-email"
                   type="email"
                   required
                   value={email}
@@ -254,6 +258,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
                   </button>
                 </div>
                 <input
+                  data-testid="auth-password"
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
@@ -272,6 +277,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
                 </button>
               </div>
               <button
+                data-testid="auth-submit"
                 type="submit"
                 disabled={isLoading}
                 className="w-full py-5 bg-luna-purple text-white font-black uppercase tracking-[0.2em] rounded-full hover:shadow-2xl active:scale-95 transition-all shadow-xl shadow-luna-purple/40 flex items-center justify-center gap-3"
@@ -289,6 +295,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
 
           <footer className="text-center">
             <button
+              data-testid="auth-mode-toggle"
               onClick={() => {
                 setAuthError(null);
                 setIsLogin(!isLogin);

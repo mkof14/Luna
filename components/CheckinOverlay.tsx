@@ -31,7 +31,7 @@ export const CheckinOverlay: React.FC<CheckinOverlayProps> = ({
       <div className="max-w-4xl mx-auto py-12 space-y-16">
         <header className="flex justify-between items-center">
           <Logo size="sm" />
-          <button onClick={onClose} className="w-14 h-14 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 shadow-luna-rich hover:bg-slate-50 transition-all text-3xl font-light border border-slate-300">×</button>
+          <button data-testid="checkin-close" onClick={onClose} className="w-14 h-14 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 shadow-luna-rich hover:bg-slate-50 transition-all text-3xl font-light border border-slate-300">×</button>
         </header>
         <div className="text-center space-y-4">
           <h2 className="text-5xl font-black uppercase tracking-tight text-slate-950 dark:text-white leading-tight">{ui.checkinOverlay.headline}</h2>

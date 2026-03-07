@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
+import { completeOnboardingIfVisible, signInFromPublicHome } from './helpers/auth';
 
 test('relationships note generation and medications CRUD flow work in local mode', async ({ page }) => {
-  await page.goto('/');
-
-  await page.getByTestId('onboarding-begin').click();
+  await signInFromPublicHome(page);
+  await completeOnboardingIfVisible(page);
 
   await page.getByTestId('top-nav-more').click();
   await page.getByTestId('sidebar-nav-relationships').click();
