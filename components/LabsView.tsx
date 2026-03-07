@@ -370,6 +370,108 @@ const reportUiByLang: Partial<Record<Language, {
   },
 };
 
+const medicalFormByLang: Partial<Record<Language, {
+  generatedAt: string;
+  patientId: string;
+  source: string;
+  panel: string;
+  allMarkers: string;
+  summary: string;
+  disclaimerTitle: string;
+  disclaimerBody: string;
+}>> = {
+  en: {
+    generatedAt: 'Generated At',
+    patientId: 'Patient ID',
+    source: 'Analysis Source',
+    panel: 'Clinical Panel',
+    allMarkers: 'All Lab Indicators',
+    summary: 'Clinical Summary',
+    disclaimerTitle: 'MEDICAL DISCLAIMER',
+    disclaimerBody: 'THIS REPORT IS INFORMATIONAL ONLY AND DOES NOT REPLACE MEDICAL DIAGNOSIS OR TREATMENT. PLEASE CONSULT A LICENSED PHYSICIAN IF SYMPTOMS PERSIST OR WORSEN.',
+  },
+  ru: {
+    generatedAt: 'Дата Генерации',
+    patientId: 'ID Пользователя',
+    source: 'Источник Анализа',
+    panel: 'Клиническая Панель',
+    allMarkers: 'Все Лаб Показатели',
+    summary: 'Клиническое Summary',
+    disclaimerTitle: 'МЕДИЦИНСКИЙ ДИСКЛЕЙМЕР',
+    disclaimerBody: 'ЭТОТ ОТЧЕТ НОСИТ ИНФОРМАЦИОННЫЙ ХАРАКТЕР И НЕ ЗАМЕНЯЕТ МЕДИЦИНСКУЮ ДИАГНОСТИКУ И ЛЕЧЕНИЕ. ПРИ НЕОБХОДИМОСТИ ОБРАТИТЕСЬ К ЛИЦЕНЗИРОВАННОМУ ВРАЧУ.',
+  },
+  uk: {
+    generatedAt: 'Дата Генерації',
+    patientId: 'ID Користувача',
+    source: 'Джерело Аналізу',
+    panel: 'Клінічна Панель',
+    allMarkers: 'Усі Лаб Показники',
+    summary: 'Клінічне Summary',
+    disclaimerTitle: 'МЕДИЧНИЙ ДИСКЛЕЙМЕР',
+    disclaimerBody: 'ЦЕЙ ЗВІТ МАЄ ІНФОРМАЦІЙНИЙ ХАРАКТЕР І НЕ ЗАМІНЮЄ МЕДИЧНУ ДІАГНОСТИКУ ТА ЛІКУВАННЯ. ЗА ПОТРЕБИ ЗВЕРНІТЬСЯ ДО ЛІЦЕНЗОВАНОГО ЛІКАРЯ.',
+  },
+  es: {
+    generatedAt: 'Fecha De Generación',
+    patientId: 'ID De Usuario',
+    source: 'Origen Del Análisis',
+    panel: 'Panel Clínico',
+    allMarkers: 'Todos Los Indicadores',
+    summary: 'Resumen Clínico',
+    disclaimerTitle: 'DESCARGO MÉDICO',
+    disclaimerBody: 'ESTE REPORTE ES SOLO INFORMATIVO Y NO SUSTITUYE DIAGNÓSTICO O TRATAMIENTO MÉDICO. CONSULTE A UN MÉDICO LICENCIADO SI LOS SÍNTOMAS PERSISTEN O EMPEORAN.',
+  },
+  fr: {
+    generatedAt: 'Date De Génération',
+    patientId: 'ID Utilisateur',
+    source: "Source D'analyse",
+    panel: 'Panel Clinique',
+    allMarkers: 'Tous Les Indicateurs',
+    summary: 'Résumé Clinique',
+    disclaimerTitle: 'AVERTISSEMENT MÉDICAL',
+    disclaimerBody: 'CE RAPPORT EST INFORMATIF ET NE REMPLACE PAS UN DIAGNOSTIC OU UN TRAITEMENT MÉDICAL. CONSULTEZ UN MÉDECIN AGRÉÉ SI LES SYMPTÔMES PERSISTENT OU S’AGGRAVENT.',
+  },
+  de: {
+    generatedAt: 'Erstellt Am',
+    patientId: 'Benutzer-ID',
+    source: 'Analysequelle',
+    panel: 'Klinisches Panel',
+    allMarkers: 'Alle Laborwerte',
+    summary: 'Klinische Zusammenfassung',
+    disclaimerTitle: 'MEDIZINISCHER HINWEIS',
+    disclaimerBody: 'DIESER BERICHT DIENT NUR DER INFORMATION UND ERSETZT KEINE MEDIZINISCHE DIAGNOSE ODER THERAPIE. BITTE WENDEN SIE SICH BEI BEDARF AN EINE ZUGELASSENE ÄRZTIN ODER EINEN ZUGELASSENEN ARZT.',
+  },
+  zh: {
+    generatedAt: '生成时间',
+    patientId: '用户ID',
+    source: '分析来源',
+    panel: '临床面板',
+    allMarkers: '全部实验室指标',
+    summary: '临床总结',
+    disclaimerTitle: '医疗免责声明',
+    disclaimerBody: '本报告仅供信息参考，不替代医疗诊断或治疗。如有需要，请咨询持证医生。',
+  },
+  ja: {
+    generatedAt: '生成日時',
+    patientId: 'ユーザーID',
+    source: '解析ソース',
+    panel: '臨床パネル',
+    allMarkers: '全ラボ指標',
+    summary: '臨床サマリー',
+    disclaimerTitle: '医療免責事項',
+    disclaimerBody: '本レポートは情報提供のみを目的とし、医療診断や治療の代替ではありません。必要に応じて医師にご相談ください。',
+  },
+  pt: {
+    generatedAt: 'Data De Geração',
+    patientId: 'ID Do Usuário',
+    source: 'Origem Da Análise',
+    panel: 'Painel Clínico',
+    allMarkers: 'Todos Os Indicadores',
+    summary: 'Resumo Clínico',
+    disclaimerTitle: 'AVISO MÉDICO',
+    disclaimerBody: 'ESTE RELATÓRIO É APENAS INFORMATIVO E NÃO SUBSTITUI DIAGNÓSTICO OU TRATAMENTO MÉDICO. PROCURE UM MÉDICO LICENCIADO SE NECESSÁRIO.',
+  },
+};
+
 const downloadFile = (filename: string, content: string, mimeType: string) => {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
@@ -490,6 +592,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const sexualUi = sexualUiByLang[lang] || sexualUiByLang.en!;
   const visualGuide = visualGuideByLang[lang] || visualGuideByLang.en!;
   const reportUi = reportUiByLang[lang] || reportUiByLang.en!;
+  const medForm = medicalFormByLang[lang] || medicalFormByLang.en!;
 
   const reportId = useMemo(() => manualReportId.trim() || userId || ensureReportId(), [manualReportId, userId]);
   const reportIdentityLine = useMemo(() => {
@@ -610,15 +713,43 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       .filter((item) => Number.isFinite(item.value));
   };
 
+  const reportGeneratedAt = useMemo(() => new Date().toLocaleString(), [analysis?.text, parsedValues.length, reportIdentityLine]);
+  const analysisSource = useMemo(() => {
+    const pieces: string[] = [];
+    if (uploadFeedback) pieces.push(uploadFeedback);
+    if (input.trim()) pieces.push('text input');
+    if (manualRows.some((row) => row.marker.trim() && row.value.trim())) pieces.push('manual table');
+    return pieces.length ? pieces.join(' + ') : 'manual profile only';
+  }, [input, manualRows, uploadFeedback]);
+
+  const markerCategory = (marker: string): string => {
+    const m = marker.toLowerCase();
+    if (/(estradiol|progesterone|lh|fsh|prolactin)/.test(m)) return 'Cycle / Ovarian';
+    if (/(tsh|ft3|ft4|t3|t4|thyroid|anti-tpo|anti-tg)/.test(m)) return 'Thyroid';
+    if (/(testosterone|shbg|dhea|androstenedione|17-oh)/.test(m)) return 'Androgen / Sexual Health';
+    if (/(glucose|insulin|hba1c)/.test(m)) return 'Metabolic';
+    if (/(ferritin|vitamin d|b12|cbc)/.test(m)) return 'Nutrient / Reserve';
+    return 'Other';
+  };
+
   const reportText = useMemo(() => {
     const identity = reportIdentityLine || 'Private';
     const markersPreview = parsedValues
-      .slice(0, 8)
-      .map((item) => `${item.marker}: ${item.value}${item.unit ? ` ${item.unit}` : ''}`)
+      .map((item) => {
+        const status = inferStatus(item.value, item.referenceMin, item.referenceMax);
+        const reference =
+          Number.isFinite(item.referenceMin as number) && Number.isFinite(item.referenceMax as number)
+            ? ` [${item.referenceMin}-${item.referenceMax}]`
+            : '';
+        return `${item.marker}: ${item.value}${item.unit ? ` ${item.unit}` : ''}${reference} (${status})`;
+      })
       .join('\n');
     const summary = analysis?.text || 'Generate report to see personalized interpretation.';
     return [
       'LUNA BALANCE HEALTH REPORT',
+      `${medForm.generatedAt}: ${reportGeneratedAt}`,
+      `${medForm.patientId}: ${identity}`,
+      `${medForm.source}: ${analysisSource}`,
       `Identity: ${identity}`,
       `Cycle day: ${profile.cycleDay || systemState.currentDay}`,
       `Sexual snapshot: ${sexualOverview.avgPositive}/5 | pain ${sexualOverview.pain}/5`,
@@ -628,17 +759,39 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       '',
       'Summary:',
       summary,
+      '',
+      `${medForm.disclaimerTitle}: ${medForm.disclaimerBody}`,
     ].join('\n');
-  }, [analysis?.text, parsedValues, profile.cycleDay, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay]);
+  }, [analysis?.text, analysisSource, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay]);
 
   const reportHtml = useMemo(() => {
     const markerRows = parsedValues
-      .slice(0, 10)
-      .map((item) => `<tr><td style=\"padding:6px 8px;border-bottom:1px solid #e2e8f0;\">${item.marker}</td><td style=\"padding:6px 8px;border-bottom:1px solid #e2e8f0;\">${item.value}${item.unit ? ` ${item.unit}` : ''}</td></tr>`)
+      .map((item) => {
+        const status = inferStatus(item.value, item.referenceMin, item.referenceMax);
+        const reference =
+          Number.isFinite(item.referenceMin as number) && Number.isFinite(item.referenceMax as number)
+            ? `${item.referenceMin}-${item.referenceMax}`
+            : 'n/a';
+        const badge =
+          status === 'normal'
+            ? '#047857'
+            : status === 'low'
+              ? '#b45309'
+              : status === 'high'
+                ? '#be123c'
+                : '#475569';
+        return `<tr>
+          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${item.marker}</td>
+          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${item.value}${item.unit ? ` ${item.unit}` : ''}</td>
+          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${reference}</td>
+          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\"><span style=\"display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid ${badge};color:${badge};font-weight:700;font-size:11px;text-transform:uppercase;\">${status}</span></td>
+          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${markerCategory(item.marker)}</td>
+        </tr>`;
+      })
       .join('');
     const summary = (analysis?.text || 'Generate report to see personalized interpretation.').replace(/</g, '&lt;');
-    return `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f8fafc;color:#0f172a;padding:24px;\"><div style=\"max-width:820px;margin:0 auto;background:white;border:1px solid #e2e8f0;border-radius:24px;overflow:hidden;\"><div style=\"padding:24px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);\"><h1 style=\"margin:0;font-size:34px;letter-spacing:-0.02em;\">Luna</h1><p style=\"margin:6px 0 0;font-weight:700;\">${reportUi.reportTitle}</p><p style=\"margin:4px 0 0;font-size:12px;opacity:0.85;\">${reportUi.reportSubtitle}</p></div><div style=\"padding:24px;\"><p><strong>Identity:</strong> ${reportIdentityLine || 'Private'}</p><p><strong>Cycle day:</strong> ${profile.cycleDay || systemState.currentDay}</p><p><strong>Sexual health snapshot:</strong> ${sexualOverview.avgPositive}/5, pain ${sexualOverview.pain}/5</p><h3 style=\"margin-top:20px;\">Key markers</h3><table style=\"width:100%;border-collapse:collapse;font-size:14px;\">${markerRows || '<tr><td style=\"padding:6px 8px;\">No markers yet.</td></tr>'}</table><h3 style=\"margin-top:20px;\">Summary</h3><p style=\"white-space:pre-wrap;line-height:1.6;\">${summary}</p></div></div></body></html>`;
-  }, [analysis?.text, parsedValues, profile.cycleDay, reportIdentityLine, reportUi.reportSubtitle, reportUi.reportTitle, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay]);
+    return `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f1f5f9;color:#0f172a;padding:24px;\"><div style=\"max-width:920px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;\"><div style=\"padding:22px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\"><div style=\"display:flex;align-items:center;gap:10px;\"><div style=\"width:44px;height:44px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;\">🌙</div><div><h1 style=\"margin:0;font-size:30px;letter-spacing:-0.02em;\">Luna</h1><p style=\"margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">Luna Balance Medical Report</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:11px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:4px 0 0;font-size:11px;\">${medForm.patientId}: ${reportIdentityLine || 'Private'}</p></div></div></div><div style=\"padding:20px 22px;\"><table style=\"width:100%;border-collapse:collapse;font-size:13px;\"><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Cycle day ${profile.cycleDay || systemState.currentDay}</td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Sexual score ${sexualOverview.avgPositive}/5 | pain ${sexualOverview.pain}/5</td></tr><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:8px;border:1px solid #e2e8f0;\">${analysisSource}</td></tr></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Category</th></tr></thead><tbody>${markerRows || '<tr><td colspan=\"5\" style=\"padding:8px;\">No markers yet.</td></tr>'}</tbody></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.summary}</h3><p style=\"white-space:pre-wrap;line-height:1.6;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\">${summary}</p><div style=\"margin-top:18px;border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div></div></body></html>`;
+  }, [analysis?.text, analysisSource, medForm.allMarkers, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.panel, medForm.patientId, medForm.source, medForm.summary, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay]);
 
   const handleAnalyze = async () => {
     const manualText = buildManualRowsText();
