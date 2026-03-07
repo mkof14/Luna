@@ -5,7 +5,7 @@ import { HealthEvent } from '../types';
 import { Logo } from './Logo';
 import { HormoneTestingGuide } from './HormoneTestingGuide';
 import { isSupportedLabFile } from '../utils/runtimeGuards';
-import { copyTextSafely } from '../utils/share';
+import { copyTextSafely, shareTextSafely } from '../utils/share';
 import { Language } from '../constants';
 import {
   computeHormoneSignals,
@@ -228,6 +228,160 @@ const visualGuideByLang: Partial<Record<Language, { title: string; cards: Array<
   },
 };
 
+const reportUiByLang: Partial<Record<Language, {
+  reportTitle: string;
+  reportSubtitle: string;
+  copy: string;
+  print: string;
+  share: string;
+  download: string;
+  pdf: string;
+  sampleTitle: string;
+  sampleBody: string;
+  sampleDownload: string;
+  servicePromise: string;
+  serviceBullets: string[];
+}>> = {
+  en: {
+    reportTitle: 'Luna Branded Report',
+    reportSubtitle: 'Visual summary designed for your doctor conversation.',
+    copy: 'Copy',
+    print: 'Print',
+    share: 'Share',
+    download: 'Download',
+    pdf: 'PDF',
+    sampleTitle: 'Sample Report',
+    sampleBody: 'Download an example of the report format you receive as a service.',
+    sampleDownload: 'Download Sample',
+    servicePromise: 'This is what you will have as a premium report service:',
+    serviceBullets: ['Branded visual report in Luna style.', 'Cycle-aware hormone interpretation.', 'Doctor-ready summary with practical questions.', 'Copy, print, share, download, and PDF-friendly output.'],
+  },
+  ru: {
+    reportTitle: 'Брендированный Отчет Luna',
+    reportSubtitle: 'Визуальное summary для разговора с врачом.',
+    copy: 'Copy',
+    print: 'Print',
+    share: 'Share',
+    download: 'Download',
+    pdf: 'PDF',
+    sampleTitle: 'Пример Отчета',
+    sampleBody: 'Скачайте образец формата отчета, который вы получаете как сервис.',
+    sampleDownload: 'Скачать Образец',
+    servicePromise: 'Это то, что вы будете получать как сервис:',
+    serviceBullets: ['Фирменный визуальный отчет в стиле Luna.', 'Интерпретация гормонов с учетом фазы цикла.', 'Готовое summary и вопросы для врача.', 'Copy, print, share, download и PDF-формат.'],
+  },
+  uk: {
+    reportTitle: 'Брендований Звіт Luna',
+    reportSubtitle: 'Візуальне summary для розмови з лікарем.',
+    copy: 'Copy',
+    print: 'Print',
+    share: 'Share',
+    download: 'Download',
+    pdf: 'PDF',
+    sampleTitle: 'Приклад Звіту',
+    sampleBody: 'Завантажте приклад формату звіту, який ви отримаєте як сервіс.',
+    sampleDownload: 'Завантажити Приклад',
+    servicePromise: 'Це те, що ви матимете як сервіс:',
+    serviceBullets: ['Фірмовий візуальний звіт у стилі Luna.', 'Інтерпретація гормонів з урахуванням фази циклу.', 'Готове summary і питання до лікаря.', 'Copy, print, share, download і PDF-формат.'],
+  },
+  es: {
+    reportTitle: 'Reporte De Marca Luna',
+    reportSubtitle: 'Resumen visual para conversación médica.',
+    copy: 'Copy',
+    print: 'Print',
+    share: 'Share',
+    download: 'Download',
+    pdf: 'PDF',
+    sampleTitle: 'Reporte De Ejemplo',
+    sampleBody: 'Descarga un ejemplo del formato de reporte que tendrás como servicio.',
+    sampleDownload: 'Descargar Ejemplo',
+    servicePromise: 'Esto es lo que tendrás como servicio:',
+    serviceBullets: ['Reporte visual con estilo Luna.', 'Interpretación hormonal con fase del ciclo.', 'Resumen y preguntas listos para tu médico.', 'Copy, print, share, download y salida compatible con PDF.'],
+  },
+  fr: {
+    reportTitle: 'Rapport De Marque Luna',
+    reportSubtitle: 'Résumé visuel pour votre consultation.',
+    copy: 'Copy',
+    print: 'Print',
+    share: 'Share',
+    download: 'Download',
+    pdf: 'PDF',
+    sampleTitle: 'Exemple De Rapport',
+    sampleBody: 'Téléchargez un exemple du format de rapport proposé en service.',
+    sampleDownload: 'Télécharger Exemple',
+    servicePromise: 'Voici ce que vous aurez en service:',
+    serviceBullets: ['Rapport visuel avec identité Luna.', 'Interprétation hormonale selon la phase du cycle.', 'Résumé et questions prêts pour le médecin.', 'Copy, print, share, download et sortie compatible PDF.'],
+  },
+  de: {
+    reportTitle: 'Luna Markenbericht',
+    reportSubtitle: 'Visuelle Zusammenfassung für das Arztgespräch.',
+    copy: 'Copy',
+    print: 'Print',
+    share: 'Share',
+    download: 'Download',
+    pdf: 'PDF',
+    sampleTitle: 'Beispielbericht',
+    sampleBody: 'Lade ein Beispiel des Report-Formats herunter, das du als Service erhältst.',
+    sampleDownload: 'Beispiel Laden',
+    servicePromise: 'Das erhalten Sie als Service:',
+    serviceBullets: ['Visueller Bericht im Luna-Stil.', 'Hormon-Interpretation nach Zyklusphase.', 'Arztfertige Zusammenfassung mit Fragen.', 'Copy, print, share, download und PDF-freundliche Ausgabe.'],
+  },
+  zh: {
+    reportTitle: 'Luna 品牌报告',
+    reportSubtitle: '用于就医沟通的可视化总结。',
+    copy: 'Copy',
+    print: 'Print',
+    share: 'Share',
+    download: 'Download',
+    pdf: 'PDF',
+    sampleTitle: '示例报告',
+    sampleBody: '下载示例，查看你将获得的服务报告格式。',
+    sampleDownload: '下载示例',
+    servicePromise: '你将获得以下服务能力：',
+    serviceBullets: ['Luna 品牌化视觉报告。', '结合周期阶段的激素解读。', '可直接给医生使用的总结与问题。', '支持 Copy、Print、Share、Download 与 PDF。'],
+  },
+  ja: {
+    reportTitle: 'Luna ブランドレポート',
+    reportSubtitle: '医師との対話に使えるビジュアル要約。',
+    copy: 'Copy',
+    print: 'Print',
+    share: 'Share',
+    download: 'Download',
+    pdf: 'PDF',
+    sampleTitle: 'サンプルレポート',
+    sampleBody: 'サービスで受け取るレポート形式のサンプルをダウンロード。',
+    sampleDownload: 'サンプルを取得',
+    servicePromise: 'このサービスで得られる内容:',
+    serviceBullets: ['Lunaスタイルのブランドレポート。', '周期フェーズ連動のホルモン解釈。', '医師向け要約と質問を自動作成。', 'Copy / Print / Share / Download / PDF 対応。'],
+  },
+  pt: {
+    reportTitle: 'Relatório De Marca Luna',
+    reportSubtitle: 'Resumo visual para conversa com seu médico.',
+    copy: 'Copy',
+    print: 'Print',
+    share: 'Share',
+    download: 'Download',
+    pdf: 'PDF',
+    sampleTitle: 'Relatório Exemplo',
+    sampleBody: 'Baixe um exemplo do formato de relatório que você terá como serviço.',
+    sampleDownload: 'Baixar Exemplo',
+    servicePromise: 'Isto é o que você terá como serviço:',
+    serviceBullets: ['Relatório visual com identidade Luna.', 'Interpretação hormonal por fase do ciclo.', 'Resumo e perguntas prontos para consulta.', 'Copy, print, share, download e saída compatível com PDF.'],
+  },
+};
+
+const downloadFile = (filename: string, content: string, mimeType: string) => {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+};
+
 const templateRows: Record<string, Array<Partial<HealthLabRow>>> = {
   hormone_core: [
     { marker: 'Estradiol (E2)', unit: 'pg/mL', reference: '30-400' },
@@ -311,6 +465,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const [input, setInput] = useState('');
   const [analysis, setAnalysis] = useState<{ text: string; sources: unknown[] } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [reportActionFeedback, setReportActionFeedback] = useState<string | null>(null);
   const [log, setLog] = useState<HealthEvent[]>(() => dataService.getLog());
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
   const [uploadFeedback, setUploadFeedback] = useState<string | null>(null);
@@ -334,6 +489,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const systemState = useMemo(() => dataService.projectState(log), [log]);
   const sexualUi = sexualUiByLang[lang] || sexualUiByLang.en!;
   const visualGuide = visualGuideByLang[lang] || visualGuideByLang.en!;
+  const reportUi = reportUiByLang[lang] || reportUiByLang.en!;
 
   const reportId = useMemo(() => manualReportId.trim() || userId || ensureReportId(), [manualReportId, userId]);
   const reportIdentityLine = useMemo(() => {
@@ -454,6 +610,36 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       .filter((item) => Number.isFinite(item.value));
   };
 
+  const reportText = useMemo(() => {
+    const identity = reportIdentityLine || 'Private';
+    const markersPreview = parsedValues
+      .slice(0, 8)
+      .map((item) => `${item.marker}: ${item.value}${item.unit ? ` ${item.unit}` : ''}`)
+      .join('\n');
+    const summary = analysis?.text || 'Generate report to see personalized interpretation.';
+    return [
+      'LUNA BALANCE HEALTH REPORT',
+      `Identity: ${identity}`,
+      `Cycle day: ${profile.cycleDay || systemState.currentDay}`,
+      `Sexual snapshot: ${sexualOverview.avgPositive}/5 | pain ${sexualOverview.pain}/5`,
+      '',
+      'Markers:',
+      markersPreview || 'No markers yet.',
+      '',
+      'Summary:',
+      summary,
+    ].join('\n');
+  }, [analysis?.text, parsedValues, profile.cycleDay, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay]);
+
+  const reportHtml = useMemo(() => {
+    const markerRows = parsedValues
+      .slice(0, 10)
+      .map((item) => `<tr><td style=\"padding:6px 8px;border-bottom:1px solid #e2e8f0;\">${item.marker}</td><td style=\"padding:6px 8px;border-bottom:1px solid #e2e8f0;\">${item.value}${item.unit ? ` ${item.unit}` : ''}</td></tr>`)
+      .join('');
+    const summary = (analysis?.text || 'Generate report to see personalized interpretation.').replace(/</g, '&lt;');
+    return `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f8fafc;color:#0f172a;padding:24px;\"><div style=\"max-width:820px;margin:0 auto;background:white;border:1px solid #e2e8f0;border-radius:24px;overflow:hidden;\"><div style=\"padding:24px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);\"><h1 style=\"margin:0;font-size:34px;letter-spacing:-0.02em;\">Luna</h1><p style=\"margin:6px 0 0;font-weight:700;\">${reportUi.reportTitle}</p><p style=\"margin:4px 0 0;font-size:12px;opacity:0.85;\">${reportUi.reportSubtitle}</p></div><div style=\"padding:24px;\"><p><strong>Identity:</strong> ${reportIdentityLine || 'Private'}</p><p><strong>Cycle day:</strong> ${profile.cycleDay || systemState.currentDay}</p><p><strong>Sexual health snapshot:</strong> ${sexualOverview.avgPositive}/5, pain ${sexualOverview.pain}/5</p><h3 style=\"margin-top:20px;\">Key markers</h3><table style=\"width:100%;border-collapse:collapse;font-size:14px;\">${markerRows || '<tr><td style=\"padding:6px 8px;\">No markers yet.</td></tr>'}</table><h3 style=\"margin-top:20px;\">Summary</h3><p style=\"white-space:pre-wrap;line-height:1.6;\">${summary}</p></div></div></body></html>`;
+  }, [analysis?.text, parsedValues, profile.cycleDay, reportIdentityLine, reportUi.reportSubtitle, reportUi.reportTitle, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay]);
+
   const handleAnalyze = async () => {
     const manualText = buildManualRowsText();
     const combinedInput = [buildProfileText(), manualText, input].filter(Boolean).join('\n\n').trim();
@@ -496,6 +682,56 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     const copied = await copyTextSafely(analysis.text);
     setCopyFeedback(copied ? 'Copied' : 'Copy failed');
     setTimeout(() => setCopyFeedback(null), 2000);
+  };
+
+  const openPrintableWindow = (html: string, autoPrint: boolean) => {
+    const popup = window.open('', '_blank', 'noopener,noreferrer,width=980,height=760');
+    if (!popup) return false;
+    popup.document.open();
+    popup.document.write(html);
+    popup.document.close();
+    if (autoPrint) {
+      popup.focus();
+      popup.print();
+    }
+    return true;
+  };
+
+  const handleReportCopy = async () => {
+    const copied = await copyTextSafely(reportText);
+    setReportActionFeedback(copied ? 'Copied' : 'Copy failed');
+    setTimeout(() => setReportActionFeedback(null), 2000);
+  };
+
+  const handleReportShare = async () => {
+    const result = await shareTextSafely(reportText, reportUi.reportTitle);
+    setReportActionFeedback(result === 'failed' ? 'Share failed' : result === 'shared' ? 'Shared' : 'Copied');
+    setTimeout(() => setReportActionFeedback(null), 2000);
+  };
+
+  const handleReportPrint = () => {
+    const ok = openPrintableWindow(reportHtml, true);
+    setReportActionFeedback(ok ? 'Print dialog opened' : 'Print blocked');
+    setTimeout(() => setReportActionFeedback(null), 2000);
+  };
+
+  const handleReportDownload = () => {
+    downloadFile(`luna-report-${Date.now()}.html`, reportHtml, 'text/html;charset=utf-8');
+    setReportActionFeedback('Downloaded');
+    setTimeout(() => setReportActionFeedback(null), 2000);
+  };
+
+  const handleReportPdf = () => {
+    const ok = openPrintableWindow(reportHtml, true);
+    setReportActionFeedback(ok ? 'Use Save as PDF in print dialog' : 'PDF print blocked');
+    setTimeout(() => setReportActionFeedback(null), 2400);
+  };
+
+  const handleSampleDownload = () => {
+    const sampleHtml = `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Sample Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f8fafc;color:#0f172a;padding:24px;\"><div style=\"max-width:820px;margin:0 auto;background:white;border:1px solid #e2e8f0;border-radius:24px;overflow:hidden;\"><div style=\"padding:24px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);\"><h1 style=\"margin:0;font-size:34px;letter-spacing:-0.02em;\">Luna</h1><p style=\"margin:6px 0 0;font-weight:700;\">${reportUi.sampleTitle}</p><p style=\"margin:4px 0 0;font-size:12px;opacity:0.85;\">${reportUi.reportSubtitle}</p></div><div style=\"padding:24px;\"><p><strong>${reportUi.servicePromise}</strong></p><ul>${reportUi.serviceBullets.map((item) => `<li>${item}</li>`).join('')}</ul><h3>Example Highlights</h3><p>Cycle-aware interpretation, visual hormone blocks, intimacy factors, and doctor-ready guidance.</p></div></div></body></html>`;
+    downloadFile('luna-sample-report.html', sampleHtml, 'text/html;charset=utf-8');
+    setReportActionFeedback('Sample downloaded');
+    setTimeout(() => setReportActionFeedback(null), 2000);
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -749,6 +985,44 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
               </div>
             </div>
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{hormoneSummary}</p>
+          </article>
+
+          <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#f3e5f4]/95 via-[#eee8fb]/92 to-[#e3edf9]/90 dark:from-[#0d1f3f]/95 dark:via-[#132a50]/93 dark:to-[#17345f]/92 p-6 shadow-luna-rich space-y-4">
+            <div className="flex items-center gap-3">
+              <img src="/images/Luna%20logo3.png" alt="Luna symbol" className="h-10 w-10 object-contain" />
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportUi.reportTitle}</p>
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{reportUi.reportSubtitle}</p>
+              </div>
+            </div>
+            <div className="rounded-xl border border-white/65 dark:border-white/10 bg-white/70 dark:bg-slate-900/50 p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <Logo size="sm" className="text-3xl" />
+                <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">{profile.cycleDay || systemState.currentDay} day</span>
+              </div>
+              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">{reportIdentityLine || reportUi.reportSubtitle}</p>
+              <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 leading-relaxed line-clamp-4">{analysis?.text || reportUi.sampleBody}</p>
+            </div>
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+              <button onClick={handleReportCopy} className="px-2 py-2 rounded-lg border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black uppercase tracking-[0.08em] text-slate-700 dark:text-slate-300">{reportUi.copy}</button>
+              <button onClick={handleReportPrint} className="px-2 py-2 rounded-lg border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black uppercase tracking-[0.08em] text-slate-700 dark:text-slate-300">{reportUi.print}</button>
+              <button onClick={handleReportShare} className="px-2 py-2 rounded-lg border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black uppercase tracking-[0.08em] text-slate-700 dark:text-slate-300">{reportUi.share}</button>
+              <button onClick={handleReportDownload} className="px-2 py-2 rounded-lg border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black uppercase tracking-[0.08em] text-slate-700 dark:text-slate-300">{reportUi.download}</button>
+              <button onClick={handleReportPdf} className="px-2 py-2 rounded-lg border border-luna-purple/35 bg-luna-purple/10 text-[10px] font-black uppercase tracking-[0.08em] text-luna-purple">{reportUi.pdf}</button>
+              <button onClick={handleSampleDownload} className="px-2 py-2 rounded-lg border border-luna-coral/40 bg-luna-coral/10 text-[10px] font-black uppercase tracking-[0.08em] text-luna-coral">{reportUi.sampleDownload}</button>
+            </div>
+            {reportActionFeedback && <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">{reportActionFeedback}</p>}
+          </article>
+
+          <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#0f2344]/80 p-6 shadow-luna-rich space-y-3">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportUi.sampleTitle}</p>
+            <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{reportUi.sampleBody}</p>
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">{reportUi.servicePromise}</p>
+            <div className="space-y-1">
+              {reportUi.serviceBullets.map((item) => (
+                <p key={item} className="text-xs font-semibold text-slate-600 dark:text-slate-300">• {item}</p>
+              ))}
+            </div>
           </article>
 
           {hormoneSignals.length > 0 && (
