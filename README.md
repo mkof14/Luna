@@ -88,6 +88,26 @@ Set GitHub repository secrets:
 - `TELEGRAM_BOT_TOKEN` (optional, for alerts)
 - `TELEGRAM_CHAT_ID` (optional, for alerts)
 
+## Performance Budgets
+
+Local bundle budget check after build:
+
+```bash
+npm run build
+npm run perf:bundle
+```
+
+Optional env overrides:
+
+- `MAX_CRITICAL_JS_GZIP` (default `225280` bytes / 220 kB)
+- `MAX_PUBLIC_LANDING_GZIP` (default `30720` bytes / 30 kB)
+- `MAX_INDEX_CSS_GZIP` (default `30720` bytes / 30 kB)
+
+Lighthouse CI runs in GitHub Actions via:
+
+- `.github/workflows/lighthouse.yml`
+- config: `.lighthouserc.json`
+
 ## Architecture Snapshot
 
 - App orchestration: `/Users/mk/Desktop/Luna/App.tsx`
@@ -108,6 +128,7 @@ Set GitHub repository secrets:
 - Full local CI gate: `npm run ci:check`
 - E2E tests (Playwright): `npm run test:e2e`
 - Deploy smoke (against Vercel URL): `npm run smoke:deploy` (with `SMOKE_BASE_URL`)
+- Bundle budget check: `npm run perf:bundle` (after `npm run build`)
 - Beta QA (non-strict): `npm run qa:beta`
 - Beta QA (strict): `npm run qa:beta:strict`
 - Release-ready gate (strict + report): `npm run release:ready`
