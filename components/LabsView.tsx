@@ -153,6 +153,81 @@ const sexualUiByLang: Partial<Record<Language, {
   },
 };
 
+const visualGuideByLang: Partial<Record<Language, { title: string; cards: Array<{ title: string; body: string }> }>> = {
+  en: {
+    title: 'Visual Path',
+    cards: [
+      { title: '1. Collect', body: 'Fill profile + select symptoms + add markers.' },
+      { title: '2. Compare', body: 'Match values with reference ranges and cycle phase.' },
+      { title: '3. Act', body: 'Use doctor questions and summary for next consultation.' },
+    ],
+  },
+  ru: {
+    title: 'Визуальный Путь',
+    cards: [
+      { title: '1. Сбор', body: 'Заполните профиль + симптомы + маркеры.' },
+      { title: '2. Сравнение', body: 'Сопоставьте значения с референсами и фазой цикла.' },
+      { title: '3. Действие', body: 'Используйте вопросы врачу и summary на консультации.' },
+    ],
+  },
+  uk: {
+    title: 'Візуальний Маршрут',
+    cards: [
+      { title: '1. Збір', body: 'Заповніть профіль + симптоми + маркери.' },
+      { title: '2. Порівняння', body: 'Зіставте значення з референсами та фазою циклу.' },
+      { title: '3. Дія', body: 'Використайте питання до лікаря та summary на консультації.' },
+    ],
+  },
+  es: {
+    title: 'Ruta Visual',
+    cards: [
+      { title: '1. Recoger', body: 'Completa perfil + síntomas + marcadores.' },
+      { title: '2. Comparar', body: 'Cruza valores con rangos y fase del ciclo.' },
+      { title: '3. Actuar', body: 'Usa preguntas médicas y resumen en consulta.' },
+    ],
+  },
+  fr: {
+    title: 'Parcours Visuel',
+    cards: [
+      { title: '1. Collecter', body: 'Profil + symptômes + marqueurs.' },
+      { title: '2. Comparer', body: 'Comparer aux références et à la phase du cycle.' },
+      { title: '3. Agir', body: 'Utiliser questions médecin et résumé en consultation.' },
+    ],
+  },
+  de: {
+    title: 'Visueller Pfad',
+    cards: [
+      { title: '1. Sammeln', body: 'Profil + Symptome + Marker ausfüllen.' },
+      { title: '2. Vergleichen', body: 'Werte mit Referenzen und Zyklusphase abgleichen.' },
+      { title: '3. Handeln', body: 'Arztfragen und Summary im Termin nutzen.' },
+    ],
+  },
+  zh: {
+    title: '可视路径',
+    cards: [
+      { title: '1. 收集', body: '填写档案 + 选择症状 + 添加指标。' },
+      { title: '2. 对照', body: '将数值与参考范围及周期阶段对照。' },
+      { title: '3. 行动', body: '带着总结和医生问题去复诊。' },
+    ],
+  },
+  ja: {
+    title: 'ビジュアル手順',
+    cards: [
+      { title: '1. 収集', body: 'プロフィール + 症状 + マーカーを入力。' },
+      { title: '2. 比較', body: '基準値と周期フェーズで比較。' },
+      { title: '3. 実行', body: '医師への質問と要約を診察で活用。' },
+    ],
+  },
+  pt: {
+    title: 'Fluxo Visual',
+    cards: [
+      { title: '1. Coletar', body: 'Preencha perfil + sintomas + marcadores.' },
+      { title: '2. Comparar', body: 'Cruze valores com referências e fase do ciclo.' },
+      { title: '3. Agir', body: 'Leve perguntas médicas e resumo para consulta.' },
+    ],
+  },
+};
+
 const templateRows: Record<string, Array<Partial<HealthLabRow>>> = {
   hormone_core: [
     { marker: 'Estradiol (E2)', unit: 'pg/mL', reference: '30-400' },
@@ -258,6 +333,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const fileInputRef = useRef<HTMLInputElement>(null);
   const systemState = useMemo(() => dataService.projectState(log), [log]);
   const sexualUi = sexualUiByLang[lang] || sexualUiByLang.en!;
+  const visualGuide = visualGuideByLang[lang] || visualGuideByLang.en!;
 
   const reportId = useMemo(() => manualReportId.trim() || userId || ensureReportId(), [manualReportId, userId]);
   const reportIdentityLine = useMemo(() => {
@@ -459,6 +535,18 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
           Simple workflow: choose report identity, fill your markers, upload image/text, and get a clear hormone-focused summary.
         </p>
       </header>
+
+      <section className="rounded-[2.2rem] border border-slate-200/80 dark:border-slate-700/70 bg-[radial-gradient(circle_at_14%_18%,rgba(255,255,255,0.46),transparent_38%),radial-gradient(circle_at_85%_80%,rgba(168,85,247,0.18),transparent_40%),linear-gradient(135deg,rgba(242,230,239,0.95),rgba(223,236,248,0.92))] dark:bg-[radial-gradient(circle_at_14%_18%,rgba(20,184,166,0.14),transparent_40%),radial-gradient(circle_at_84%_80%,rgba(124,58,237,0.2),transparent_40%),linear-gradient(135deg,rgba(8,22,47,0.94),rgba(13,34,68,0.92))] p-5 md:p-6 shadow-luna-rich space-y-3">
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{visualGuide.title}</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {visualGuide.cards.map((card) => (
+            <div key={card.title} className="rounded-xl border border-white/65 dark:border-white/10 bg-white/70 dark:bg-slate-900/45 p-3 space-y-1">
+              <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-700 dark:text-slate-200">{card.title}</p>
+              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 leading-relaxed">{card.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <HormoneTestingGuide lang={lang} />
 
