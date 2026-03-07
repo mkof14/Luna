@@ -1434,9 +1434,17 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
               : status === 'high'
                 ? '#be123c'
                 : '#475569';
+        const valueColor =
+          status === 'normal'
+            ? '#047857'
+            : status === 'low'
+              ? '#b45309'
+              : status === 'high'
+                ? '#be123c'
+                : topic.accent;
         return `<tr>
           <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\"><span style="display:inline-block;width:8px;height:8px;border-radius:999px;background:${topic.accent};margin-right:6px;"></span><strong style="color:${topic.accent};">${escapeHtml(item.marker)}</strong></td>
-          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\">${escapeHtml(`${item.value}${item.unit ? ` ${item.unit}` : ''}`)}</td>
+          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\"><strong style="color:${valueColor};font-size:14px;">${escapeHtml(`${item.value}${item.unit ? ` ${item.unit}` : ''}`)}</strong></td>
           <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\">${escapeHtml(reference)}</td>
           <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\"><span style=\"display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid ${badge};color:${badge};font-weight:700;font-size:11px;text-transform:uppercase;\">${status}</span></td>
           <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;color:${topic.accent};font-weight:700;\">${escapeHtml(markerCategory(item.marker))}</td>
@@ -1481,6 +1489,35 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     const womenEffectsHtml = womenClinicalInsights.effects.map((item) => `<li style="margin:0 0 6px;line-height:1.5;">${escapeHtml(item)}</li>`).join('');
     const womenRisksHtml = womenClinicalInsights.risks.map((item) => `<li style="margin:0 0 6px;line-height:1.5;">${escapeHtml(item)}</li>`).join('');
     const womenRecommendationsHtml = womenClinicalInsights.recommendations.map((item) => `<li style="margin:0 0 6px;line-height:1.5;">${escapeHtml(item)}</li>`).join('');
+    const statusDistributionInfographic = `<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;">
+      <div style="padding:10px;border-radius:10px;background:#ecfdf5;border:1px solid #a7f3d0;"><p style="margin:0;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#047857;">Normal</p><p style="margin:2px 0 0;font-size:22px;font-weight:900;color:#047857;">${totals.normal}</p></div>
+      <div style="padding:10px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;"><p style="margin:0;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#b45309;">Low</p><p style="margin:2px 0 0;font-size:22px;font-weight:900;color:#b45309;">${totals.low}</p></div>
+      <div style="padding:10px;border-radius:10px;background:#fff1f2;border:1px solid #fecdd3;"><p style="margin:0;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#be123c;">High</p><p style="margin:2px 0 0;font-size:22px;font-weight:900;color:#be123c;">${totals.high}</p></div>
+      <div style="padding:10px;border-radius:10px;background:#f1f5f9;border:1px solid #cbd5e1;"><p style="margin:0;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#475569;">Unknown</p><p style="margin:2px 0 0;font-size:22px;font-weight:900;color:#475569;">${totals.unknown}</p></div>
+    </div>`;
+    const topicLegendHtml = hormoneTopicStats.length
+      ? `<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;">${hormoneTopicStats
+          .map((entry) => `<div style="border:1px solid #e2e8f0;border-radius:10px;padding:8px;background:#fff;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="width:10px;height:10px;border-radius:999px;background:${entry.meta.accent};display:inline-block;"></span>
+              <strong style="font-size:11px;color:${entry.meta.accent};">${escapeHtml(entry.meta.label)}</strong>
+            </div>
+            <p style="margin:5px 0 0;font-size:18px;font-weight:900;color:#0f172a;">${entry.count}</p>
+          </div>`)
+          .join('')}</div>`
+      : '';
+    const spotlightRows = parsedValues
+      .slice(0, 6)
+      .map((item) => {
+        const topic = hormoneTopic(item.marker);
+        const status = inferStatus(item.value, item.referenceMin, item.referenceMax);
+        const tone = status === 'high' ? '#fff1f2' : status === 'low' ? '#fffbeb' : status === 'normal' ? '#ecfdf5' : '#f8fafc';
+        return `<div style="border:1px solid #e2e8f0;border-radius:10px;padding:8px;background:${tone};">
+          <p style="margin:0;font-size:11px;font-weight:800;color:${topic.accent};">${escapeHtml(item.marker)}</p>
+          <p style="margin:3px 0 0;font-size:18px;font-weight:900;color:${topic.accent};">${escapeHtml(`${item.value}${item.unit ? ` ${item.unit}` : ''}`)}</p>
+        </div>`;
+      })
+      .join('');
     const hormoneInfographicHtml = hormoneTopicStats.length
       ? hormoneTopicStats
           .map((item) => `<div style="margin-bottom:8px;">
@@ -1569,6 +1606,22 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
         <article style="border:1px solid #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc;">
           <p style="margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#334155;">Cycle Visual</p>
           <img src="${phaseArcImageUrl}" alt="Cycle arc" style="width:100%;height:88px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;"/>
+        </article>
+      </div>
+    </div>
+
+    <div style="padding:12px 24px 0;">
+      <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:10px;">
+        <article style="border:1px solid #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc;">
+          <p style="margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#334155;">Lab Results Infographic</p>
+          ${statusDistributionInfographic}
+          <div style="margin-top:8px;">${topicLegendHtml}</div>
+        </article>
+        <article style="border:1px solid #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc;">
+          <p style="margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#334155;">Hormone Spotlight</p>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;">
+            ${spotlightRows || `<p style="margin:0;font-size:12px;color:#64748b;">${escapeHtml(detailedUi.noMarkers)}</p>`}
+          </div>
         </article>
       </div>
     </div>
