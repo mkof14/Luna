@@ -3,6 +3,7 @@ import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { GoogleGenAI } from '@google/genai';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,6 +24,7 @@ const SUPER_ADMIN_EMAILS = new Set(
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean)
 );
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.API_KEY || '';
 
 const ROLE_PERMISSIONS = {
   viewer: ['view_financials', 'view_technical_metrics'],
@@ -383,6 +385,49 @@ const toCsv = (rows) => {
   return lines.join('\n');
 };
 
+const parseDataUrl = (dataUrl) => {
+  const match = String(dataUrl || '').match(/^data:(.+);base64,(.+)$/);
+  if (!match) return null;
+  return { mimeType: match[1], base64: match[2] };
+};
+
+const extractLabTextFromImage = async ({ dataUrl, mimeType = 'image/png' }) => {
+  const parsed = parseDataUrl(dataUrl);
+  const resolvedMime = parsed?.mimeType || mimeType;
+  const base64 = parsed?.base64;
+
+  if (!base64) {
+    return { text: '', message: 'Invalid image payload.' };
+  }
+
+  if (!GEMINI_API_KEY) {
+    return {
+      text: '',
+      message: 'AI image extraction is disabled. Set GEMINI_API_KEY to enable scan-to-text.',
+    };
+  }
+
+  const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.0-flash',
+    contents: [
+      {
+        role: 'user',
+        parts: [
+          { text: 'Extract medical/lab text exactly from this image. Return plain text only, keep values and units line-by-line.' },
+          { inlineData: { mimeType: resolvedMime, data: base64 } },
+        ],
+      },
+    ],
+  });
+
+  const text = String(response?.text || '').trim();
+  return {
+    text,
+    message: text ? 'Image scan completed.' : 'No readable text detected in image.',
+  };
+};
+
 const sanitizeAdminState = (raw) => {
   const next = { ...DEFAULT_ADMIN_STATE };
   if (!raw || typeof raw !== 'object') return next;
@@ -583,6 +628,23 @@ const start = async () => {
 
     if (method === 'GET' && url.pathname === '/api/health') {
       send(res, 200, { ok: true, service: 'luna-auth-api' }, headers);
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/labs/extract-image') {
+      if (!rateLimit(`labs-scan:${ip}`, 20, 60_000)) {
+        send(res, 429, { error: 'Too many image scan attempts. Try again in a minute.' }, headers);
+        return;
+      }
+      try {
+        const body = await readBody(req);
+        const dataUrl = safeText(body.dataUrl, 5_000_000);
+        const mimeType = safeText(body.mimeType, 120) || 'image/png';
+        const result = await extractLabTextFromImage({ dataUrl, mimeType });
+        send(res, 200, { text: result.text, message: result.message, provider: GEMINI_API_KEY ? 'gemini' : 'fallback' }, headers);
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Could not scan image.' }, headers);
+      }
       return;
     }
 

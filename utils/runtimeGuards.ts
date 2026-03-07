@@ -44,8 +44,13 @@ export const isSupportedLabFile = (file: { name: string; type: string }): boolea
   const name = file.name.toLowerCase();
   return (
     file.type.startsWith('text/') ||
+    file.type.startsWith('image/') ||
     name.endsWith('.txt') ||
     name.endsWith('.csv') ||
-    name.endsWith('.md')
+    name.endsWith('.md') ||
+    name.endsWith('.png') ||
+    name.endsWith('.jpg') ||
+    name.endsWith('.jpeg') ||
+    name.endsWith('.webp')
   );
 };

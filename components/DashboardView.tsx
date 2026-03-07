@@ -6,7 +6,6 @@ import { DailyStatePanel } from './DailyStatePanel';
 import { FuelCompass } from './FuelCompass';
 import { TabType } from '../utils/navigation';
 import { dataService } from '../services/dataService';
-import { JourneyProgress } from './JourneyProgress';
 
 interface DashboardViewProps {
   lang: Language;
@@ -389,7 +388,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <section className="luna-page-shell luna-page-bodymap luna-page-focus luna-focus-bodymap space-y-24 animate-in fade-in slide-in-from-bottom-8 duration-1000 p-8 md:p-10">
-      <JourneyProgress lang={lang} currentStep={1} />
       <div className="flex flex-col lg:flex-row items-center gap-16">
         <div className="flex-1 space-y-8 text-center lg:text-left">
           <div className="space-y-4">
@@ -543,9 +541,32 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       <div className="space-y-12 bg-white/40 dark:bg-[#07152f]/92 p-10 rounded-[4rem] border-2 border-slate-300 dark:border-[#2a4670] shadow-luna-inset">
+        <div className="rounded-[2rem] border border-luna-purple/30 bg-gradient-to-r from-luna-purple/10 via-luna-coral/10 to-luna-teal/10 p-5 md:p-6 mb-2">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="space-y-2">
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-luna-purple">Explore Knowledge</p>
+              <p className="text-sm md:text-base font-bold text-slate-800 dark:text-slate-100">
+                Open the hormone library to understand why this marker matters, what influences it, and what to discuss with your doctor.
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigateTo('library')}
+                className="px-5 py-2.5 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-[0.18em] shadow-luna-rich hover:brightness-110 transition-all"
+              >
+                {ui.dashboard.exploreKnowledge}
+              </button>
+              <button
+                onClick={() => navigateTo('labs')}
+                className="px-5 py-2.5 rounded-full border border-luna-purple/40 text-luna-purple bg-white/80 dark:bg-slate-900/70 text-[10px] font-black uppercase tracking-[0.18em] hover:bg-luna-purple/10 transition-all"
+              >
+                My Health Reports
+              </button>
+            </div>
+          </div>
+        </div>
         <div className="flex justify-between items-end border-b border-slate-300 dark:border-slate-800 pb-8">
           <h3 className="text-[11px] font-black uppercase tracking-[0.6em] text-slate-600 dark:text-slate-500">{ui.dashboard.bodyMap}</h3>
-          <button onClick={() => navigateTo('library')} className="text-[10px] font-black uppercase tracking-widest text-luna-purple hover:underline underline-offset-4">{ui.dashboard.exploreKnowledge}</button>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
           {hormoneData.map((h) => <HormoneGauge key={h.id} hormone={h} onClick={setSelectedHormone} />)}

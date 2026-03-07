@@ -110,7 +110,7 @@ const testRuntimeGuards = () => {
   assert.equal(incremented.weekStart, '2026-03-01T10:00:00.000Z', 'bridge weekStart should stay stable in current week');
 
   assert.equal(isSupportedLabFile({ name: 'labs.txt', type: 'text/plain' }), true, 'text file should be supported');
-  assert.equal(isSupportedLabFile({ name: 'scan.png', type: 'image/png' }), false, 'image file should be rejected in local mode');
+  assert.equal(isSupportedLabFile({ name: 'scan.png', type: 'image/png' }), true, 'image file should be supported for scan flow');
 };
 
 const testGeminiFallbacks = async () => {

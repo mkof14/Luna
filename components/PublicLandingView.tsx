@@ -593,6 +593,29 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
   const homeToggle = homeToggleByLang[lang] || homeToggleByLang.en;
   const visibleExplainParagraphs = isHomeExpanded ? homeStory.explainParagraphs : homeStory.explainParagraphs.slice(0, 2);
   const visibleSections = isHomeExpanded ? homeStory.sections : homeStory.sections.slice(0, 2);
+  const hormoneFocusByLang: Partial<Record<Language, { title: string; subtitle: string; cards: Array<{ hormone: string; why: string }> }>> = {
+    en: {
+      title: 'Hormones Matter',
+      subtitle: 'Your markers are not random numbers. They are signals that shape energy, mood, focus, and recovery.',
+      cards: [
+        { hormone: 'Estrogen / Progesterone', why: 'Cycle rhythm, emotional steadiness, and sleep quality.' },
+        { hormone: 'Cortisol', why: 'Stress load, recovery speed, and nervous system sensitivity.' },
+        { hormone: 'Thyroid Axis (TSH/T3/T4)', why: 'Metabolic pace, cold tolerance, concentration, and fatigue.' },
+        { hormone: 'Insulin / Glucose', why: 'Energy stability, cravings, and inflammation pressure.' },
+      ],
+    },
+    ru: {
+      title: 'Гормоны Важны',
+      subtitle: 'Ваши маркеры — это не случайные цифры. Это сигналы, которые формируют энергию, настроение, фокус и восстановление.',
+      cards: [
+        { hormone: 'Эстроген / Прогестерон', why: 'Ритм цикла, эмоциональная устойчивость и качество сна.' },
+        { hormone: 'Кортизол', why: 'Стресс-нагрузка, скорость восстановления и чувствительность нервной системы.' },
+        { hormone: 'Ось Щитовидки (TSH/T3/T4)', why: 'Метаболический темп, переносимость холода, концентрация и утомляемость.' },
+        { hormone: 'Инсулин / Глюкоза', why: 'Стабильность энергии, тяга к еде и воспалительная нагрузка.' },
+      ],
+    },
+  };
+  const hormoneFocus = hormoneFocusByLang[lang] || hormoneFocusByLang.en!;
   const pricingCopy = pricingCopyByLang[lang] || pricingCopyByLang.en;
   const pricingUi = pricingUiByLang[lang] || pricingUiByLang.en;
 
@@ -1269,6 +1292,21 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
                 <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{publicShared.flowSummary}</p>
               </article>
             </div>
+
+            <article className="rounded-[2.6rem] border border-slate-200/70 dark:border-slate-800 bg-gradient-to-br from-[#f2e2ea]/94 via-[#e6deec]/92 to-[#dbe4f3]/90 dark:from-slate-900/85 dark:to-slate-800/84 p-7 md:p-9 shadow-luna-rich space-y-5">
+              <div className="space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-[0.45em] text-luna-purple">{hormoneFocus.title}</p>
+                <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300">{hormoneFocus.subtitle}</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {hormoneFocus.cards.map((card) => (
+                  <div key={card.hormone} className="rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white/75 dark:bg-slate-900/60 p-4 space-y-2">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{card.hormone}</p>
+                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{card.why}</p>
+                  </div>
+                ))}
+              </div>
+            </article>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {visibleSections.map((section, idx) => (
