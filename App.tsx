@@ -11,6 +11,7 @@ import { MainContentRouter } from './components/MainContentRouter';
 import { OnboardingGate } from './components/OnboardingGate';
 import { useHealthModel } from './hooks/useHealthModel';
 import { authService } from './services/authService';
+import { captureAppError, initMonitoring } from './services/monitoringService';
 
 // SHARED COMPONENTS
 import { LunaLiveButton } from './components/LunaLiveButton';
@@ -39,6 +40,25 @@ const App: React.FC = () => {
   const { lang, setLang, theme, setTheme, ui } = useAppPreferences();
 
   useEffect(() => {
+    initMonitoring().catch(() => undefined);
+  }, []);
+
+  useEffect(() => {
+    const onError = (event: ErrorEvent) => {
+      if (event.error) captureAppError(event.error);
+    };
+    const onUnhandledRejection = (event: PromiseRejectionEvent) => {
+      captureAppError(event.reason || new Error('Unhandled promise rejection.'));
+    };
+    window.addEventListener('error', onError);
+    window.addEventListener('unhandledrejection', onUnhandledRejection);
+    return () => {
+      window.removeEventListener('error', onError);
+      window.removeEventListener('unhandledrejection', onUnhandledRejection);
+    };
+  }, []);
+
+  useEffect(() => {
     let isMounted = true;
     authService
       .getSession()
@@ -46,6 +66,7 @@ const App: React.FC = () => {
         if (isMounted) setSession(nextSession);
       })
       .catch(() => {
+        captureAppError(new Error('Session bootstrap failed.'));
         if (isMounted) setSession(null);
       })
       .finally(() => {

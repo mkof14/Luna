@@ -14,6 +14,7 @@
     "ci:check": "npm run lint && npm run test:smoke && npm run build",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "smoke:deploy": "node scripts/post-deploy-smoke.mjs",
     "qa:beta": "node scripts/qa-beta.mjs",
     "qa:beta:strict": "node scripts/qa-beta.mjs --strict",
     "release:ready": "node scripts/release-ready.mjs"

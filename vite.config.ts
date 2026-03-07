@@ -3,6 +3,11 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  define: {
+    __LUNA_SENTRY_DSN__: JSON.stringify(process.env.VITE_SENTRY_DSN || ''),
+    __LUNA_SENTRY_ENV__: JSON.stringify(process.env.VITE_SENTRY_ENV || ''),
+    __LUNA_APP_RELEASE__: JSON.stringify(process.env.VITE_APP_RELEASE || ''),
+  },
   plugins: [react()],
   build: {
     outDir: 'dist',

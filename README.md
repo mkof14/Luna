@@ -41,6 +41,53 @@ View your app in AI Studio: https://ai.studio/apps/2982aa11-1f40-4a50-bc23-4f3bf
 
 This repo is configured so Vercel serves the SPA from `dist` and handles `/api/*` via `api/index.mjs` (Vercel Function).
 
+## Post-Deploy Smoke (Vercel)
+
+Run locally against your deployed URL:
+
+```bash
+SMOKE_BASE_URL=https://your-project.vercel.app npm run smoke:deploy
+```
+
+Or run in GitHub Actions:
+
+- Workflow: `Post Deploy Smoke`
+- Input: `base_url=https://your-project.vercel.app`
+
+Checks include:
+
+- public routes (`/`, `/pricing`, `/about`, `/how-it-works`)
+- session endpoint (`/api/auth/session`)
+- health endpoint (`/api/health`)
+
+## Monitoring
+
+### Frontend error monitoring (Sentry)
+
+Set Vercel env vars:
+
+- `VITE_SENTRY_DSN`
+- `VITE_SENTRY_ENV=production`
+- `VITE_APP_RELEASE=<commit-sha-or-version>`
+
+Frontend monitoring is initialized in:
+
+- `/Users/mk/Desktop/Luna/services/monitoringService.ts`
+- `/Users/mk/Desktop/Luna/App.tsx`
+
+### API health + alerts
+
+Repository includes uptime workflow:
+
+- `.github/workflows/uptime-monitor.yml`
+
+Set GitHub repository secrets:
+
+- `UPTIME_BASE_URL` (required, e.g. `https://your-project.vercel.app`)
+- `UPTIME_HEALTH_PATH` (optional, defaults to `/api/health`)
+- `TELEGRAM_BOT_TOKEN` (optional, for alerts)
+- `TELEGRAM_CHAT_ID` (optional, for alerts)
+
 ## Architecture Snapshot
 
 - App orchestration: `/Users/mk/Desktop/Luna/App.tsx`
@@ -60,6 +107,7 @@ This repo is configured so Vercel serves the SPA from `dist` and handles `/api/*
 - Smoke tests (rule engine + services + utils): `npm run test:smoke`
 - Full local CI gate: `npm run ci:check`
 - E2E tests (Playwright): `npm run test:e2e`
+- Deploy smoke (against Vercel URL): `npm run smoke:deploy` (with `SMOKE_BASE_URL`)
 - Beta QA (non-strict): `npm run qa:beta`
 - Beta QA (strict): `npm run qa:beta:strict`
 - Release-ready gate (strict + report): `npm run release:ready`
