@@ -954,6 +954,42 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const reportHtml = useMemo(() => {
     const logoUrl = `${window.location.origin}/images/Luna%20logo3.png`;
     const signatureLogoUrl = `${window.location.origin}/images/Luna%20L%2044.png`;
+    const totals = parsedValues.reduce(
+      (acc, item) => {
+        const status = inferStatus(item.value, item.referenceMin, item.referenceMax);
+        if (status === 'normal') acc.normal += 1;
+        else if (status === 'low') acc.low += 1;
+        else if (status === 'high') acc.high += 1;
+        else acc.unknown += 1;
+        return acc;
+      },
+      { normal: 0, low: 0, high: 0, unknown: 0 },
+    );
+    const totalMarkers = parsedValues.length;
+    const outOfRange = totals.low + totals.high;
+    const riskIndex = totalMarkers ? Math.round((outOfRange / totalMarkers) * 100) : 0;
+    const stabilityIndex = totalMarkers ? Math.round((totals.normal / totalMarkers) * 100) : 0;
+    const intimacyIndex = Math.max(0, Math.min(100, Math.round(sexualOverview.avgPositive * 20 - sexualOverview.pain * 8)));
+    const categoryMap = parsedValues.reduce<Record<string, number>>((acc, item) => {
+      const category = markerCategory(item.marker);
+      acc[category] = (acc[category] || 0) + 1;
+      return acc;
+    }, {});
+    const categoryRows = Object.entries(categoryMap)
+      .sort((a, b) => b[1] - a[1])
+      .map(([category, count]) => {
+        const width = totalMarkers ? Math.max(10, Math.round((count / totalMarkers) * 100)) : 10;
+        return `<div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#334155;">
+            <span>${escapeHtml(category)}</span><span>${count}</span>
+          </div>
+          <div style="height:8px;border-radius:999px;background:#e2e8f0;overflow:hidden;margin-top:4px;">
+            <span style="display:block;height:100%;width:${width}%;background:linear-gradient(90deg,#7c3aed,#fb7185,#14b8a6);"></span>
+          </div>
+        </div>`;
+      })
+      .join('');
+
     const markerRows = parsedValues
       .map((item) => {
         const status = inferStatus(item.value, item.referenceMin, item.referenceMax);
@@ -995,8 +1031,123 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     const doctorQuestionsHtml = doctorQuestions.length
       ? doctorQuestions.map((question) => `<li style=\"margin:0 0 6px;line-height:1.5;\">${escapeHtml(question)}</li>`).join('')
       : `<li style=\"margin:0;line-height:1.5;\">${escapeHtml(detailedUi.noQuestions)}</li>`;
-    return `<!doctype html><html><head><meta charset=\"utf-8\"/><title>${escapeHtml(detailedUi.title)}</title></head><body style=\"font-family:Arial,sans-serif;background:#eef2f7;color:#0f172a;padding:24px;\"><div style=\"max-width:980px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:16px;overflow:hidden;box-shadow:0 16px 38px rgba(15,23,42,0.1);\"><div style=\"padding:24px;background:linear-gradient(130deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:flex-start;justify-content:space-between;gap:12px;\"><div style=\"display:flex;align-items:center;gap:12px;\"><img src=\"${logoUrl}\" alt=\"Luna logo\" style=\"width:58px;height:58px;object-fit:contain;border-radius:12px;background:#fff;padding:6px;border:1px solid #e2e8f0;\"/><div><p style=\"margin:0;font-size:38px;line-height:1;font-family:'Brush Script MT','Segoe Script',cursive;\">Luna</p><p style=\"margin:4px 0 0;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">${escapeHtml(detailedUi.subtitle)}</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:12px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:5px 0 0;font-size:12px;\">${medForm.patientId}: ${safeIdentity}</p></div></div></div><div style=\"padding:20px 24px 10px;\"><table style=\"width:100%;border-collapse:collapse;font-size:13px;\"><tr><td style=\"padding:10px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:10px;border:1px solid #e2e8f0;\">Cycle day ${profile.cycleDay || systemState.currentDay}</td><td style=\"padding:10px;border:1px solid #e2e8f0;\">Sexual score ${sexualOverview.avgPositive}/5 | pain ${sexualOverview.pain}/5</td></tr><tr><td style=\"padding:10px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:10px;border:1px solid #e2e8f0;\">${safeAnalysisSource}</td></tr></table></div><div style=\"padding:10px 24px 0;\"><h3 style=\"margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(detailedUi.keyFindings)}</h3><div style=\"border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\"><ul style=\"margin:0;padding-left:18px;font-size:13px;\">${findingsHtml}</ul></div></div><div style=\"padding:18px 24px 0;\"><h3 style=\"margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;\">Category</th><th style=\"text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(detailedUi.explanation)}</th></tr></thead><tbody>${markerRows || `<tr><td colspan=\"6\" style=\"padding:10px;\">${escapeHtml(detailedUi.noMarkers)}</td></tr>`}</tbody></table></div><div style=\"padding:18px 24px 0;\"><h3 style=\"margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(detailedUi.whatHappening)}</h3><p style=\"white-space:pre-wrap;line-height:1.65;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;font-size:13px;\">${summary}</p></div><div style=\"padding:18px 24px 0;\"><h3 style=\"margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(detailedUi.doctorQuestions)}</h3><div style=\"border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\"><ul style=\"margin:0;padding-left:18px;font-size:13px;\">${doctorQuestionsHtml}</ul></div></div><div style=\"padding:18px 24px 20px;\"><div style=\"border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div><div style=\"padding:14px 24px;border-top:1px solid #e2e8f0;background:#f8fafc;display:flex;justify-content:space-between;align-items:center;gap:12px;\"><p style=\"margin:0;font-size:11px;color:#475569;\">${escapeHtml(detailedUi.copyright)}</p><img src=\"${signatureLogoUrl}\" alt=\"Luna mark\" style=\"width:26px;height:26px;object-fit:contain;opacity:0.9;\"/></div></div></body></html>`;
-  }, [analysis?.text, analysisSource, detailedUi.copyright, detailedUi.doctorQuestions, detailedUi.explanation, detailedUi.keyFindings, detailedUi.noMarkers, detailedUi.noQuestions, detailedUi.statusHigh, detailedUi.statusLow, detailedUi.statusNormal, detailedUi.statusUnknown, detailedUi.subtitle, detailedUi.title, detailedUi.whatHappening, doctorQuestions, medForm.allMarkers, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.panel, medForm.patientId, medForm.source, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay]);
+    return `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>${escapeHtml(detailedUi.title)}</title>
+</head>
+<body style="font-family:Arial,sans-serif;background:#eaf0f8;color:#0f172a;padding:24px;">
+  <div style="max-width:1040px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:18px;overflow:hidden;box-shadow:0 20px 54px rgba(15,23,42,0.12);">
+    <div style="padding:26px;background:linear-gradient(120deg,#ede9fe,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <img src="${logoUrl}" alt="Luna logo" style="width:62px;height:62px;object-fit:contain;border-radius:12px;background:#fff;padding:7px;border:1px solid #e2e8f0;"/>
+          <div>
+            <p style="margin:0;font-size:42px;line-height:1;font-family:'Brush Script MT','Segoe Script',cursive;">Luna</p>
+            <p style="margin:4px 0 0;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">${escapeHtml(detailedUi.subtitle)}</p>
+          </div>
+        </div>
+        <div style="text-align:right;min-width:260px;">
+          <p style="margin:0;font-size:12px;font-weight:700;">${medForm.generatedAt}: ${reportGeneratedAt}</p>
+          <p style="margin:5px 0 0;font-size:12px;">${medForm.patientId}: ${safeIdentity}</p>
+          <p style="margin:5px 0 0;font-size:11px;color:#475569;">${medForm.source}: ${safeAnalysisSource}</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px 4px;">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;">
+        <div style="border:1px solid #dbeafe;background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:14px;padding:12px;">
+          <p style="margin:0 0 6px;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#1d4ed8;">Marker Coverage</p>
+          <p style="margin:0;font-size:34px;font-weight:900;color:#1e3a8a;">${totalMarkers}</p>
+        </div>
+        <div style="border:1px solid #dcfce7;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:14px;padding:12px;">
+          <p style="margin:0 0 6px;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#047857;">Stability Index</p>
+          <p style="margin:0;font-size:34px;font-weight:900;color:#047857;">${stabilityIndex}%</p>
+        </div>
+        <div style="border:1px solid #fee2e2;background:linear-gradient(135deg,#fff1f2,#fee2e2);border-radius:14px;padding:12px;">
+          <p style="margin:0 0 6px;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;">Risk Index</p>
+          <p style="margin:0;font-size:34px;font-weight:900;color:#b91c1c;">${riskIndex}%</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px;">
+        <div style="border:1px solid #e2e8f0;border-radius:14px;padding:12px;background:#f8fafc;">
+          <p style="margin:0 0 8px;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#475569;">Lab Status Distribution</p>
+          <div style="display:flex;height:12px;border-radius:999px;overflow:hidden;background:#e2e8f0;">
+            <span style="width:${totalMarkers ? Math.round((totals.normal / totalMarkers) * 100) : 0}%;background:#10b981;"></span>
+            <span style="width:${totalMarkers ? Math.round((totals.low / totalMarkers) * 100) : 0}%;background:#f59e0b;"></span>
+            <span style="width:${totalMarkers ? Math.round((totals.high / totalMarkers) * 100) : 0}%;background:#f43f5e;"></span>
+            <span style="width:${totalMarkers ? Math.round((totals.unknown / totalMarkers) * 100) : 0}%;background:#64748b;"></span>
+          </div>
+          <p style="margin:8px 0 0;font-size:11px;color:#475569;">Normal ${totals.normal} • Low ${totals.low} • High ${totals.high} • Unknown ${totals.unknown}</p>
+        </div>
+        <div style="border:1px solid #e2e8f0;border-radius:14px;padding:12px;background:#f8fafc;">
+          <p style="margin:0 0 6px;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#475569;">Intimacy Wellbeing Index</p>
+          <p style="margin:0;font-size:30px;font-weight:900;color:#7c3aed;">${intimacyIndex}%</p>
+          <p style="margin:2px 0 0;font-size:11px;color:#475569;">${sexualUi.summaryLabel}: ${sexualOverview.avgPositive}/5 • pain ${sexualOverview.pain}/5</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:10px 24px 0;">
+      <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">Category Map</h3>
+      <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;">
+        ${categoryRows || `<p style="margin:0;font-size:12px;color:#64748b;">${escapeHtml(detailedUi.noMarkers)}</p>`}
+      </div>
+    </div>
+
+    <div style="padding:14px 24px 0;">
+      <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${escapeHtml(detailedUi.keyFindings)}</h3>
+      <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;">
+        <ul style="margin:0;padding-left:18px;font-size:13px;">${findingsHtml}</ul>
+      </div>
+    </div>
+
+    <div style="padding:14px 24px 0;">
+      <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${medForm.allMarkers}</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;">
+        <thead>
+          <tr style="background:#f8fafc;text-transform:uppercase;font-size:11px;">
+            <th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;">Marker</th>
+            <th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;">Value</th>
+            <th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;">Reference</th>
+            <th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;">Status</th>
+            <th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;">Category</th>
+            <th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;">${escapeHtml(detailedUi.explanation)}</th>
+          </tr>
+        </thead>
+        <tbody>${markerRows || `<tr><td colspan="6" style="padding:10px;">${escapeHtml(detailedUi.noMarkers)}</td></tr>`}</tbody>
+      </table>
+    </div>
+
+    <div style="padding:16px 24px 0;">
+      <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${escapeHtml(detailedUi.whatHappening)}</h3>
+      <p style="white-space:pre-wrap;line-height:1.68;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;font-size:13px;">${summary}</p>
+    </div>
+
+    <div style="padding:16px 24px 0;">
+      <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${escapeHtml(detailedUi.doctorQuestions)}</h3>
+      <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;">
+        <ul style="margin:0;padding-left:18px;font-size:13px;">${doctorQuestionsHtml}</ul>
+      </div>
+    </div>
+
+    <div style="padding:16px 24px 20px;">
+      <div style="border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;">
+        <p style="margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;">${medForm.disclaimerTitle}</p>
+        <p style="margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;">${medForm.disclaimerBody}</p>
+      </div>
+    </div>
+
+    <div style="padding:14px 24px;border-top:1px solid #e2e8f0;background:#f8fafc;display:flex;justify-content:space-between;align-items:center;gap:12px;">
+      <p style="margin:0;font-size:11px;color:#475569;">${escapeHtml(detailedUi.copyright)}</p>
+      <img src="${signatureLogoUrl}" alt="Luna mark" style="width:26px;height:26px;object-fit:contain;opacity:0.9;"/>
+    </div>
+  </div>
+</body>
+</html>`;
+  }, [analysis?.text, analysisSource, detailedUi.copyright, detailedUi.doctorQuestions, detailedUi.explanation, detailedUi.keyFindings, detailedUi.noMarkers, detailedUi.noQuestions, doctorQuestions, medForm.allMarkers, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, sexualUi.summaryLabel]);
 
   const handleAnalyze = async () => {
     const manualText = buildManualRowsText();
