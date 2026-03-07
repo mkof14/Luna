@@ -616,6 +616,54 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     },
   };
   const hormoneFocus = hormoneFocusByLang[lang] || hormoneFocusByLang.en!;
+  const reportsOverviewByLang: Record<Language, { title: string; subtitle: string; points: [string, string, string, string] }> = {
+    en: {
+      title: 'My Health Reports',
+      subtitle: 'A clear, doctor-ready page that turns labs and symptoms into one structured report.',
+      points: ['Upload scan/photo or paste text', 'Track lab markers by categories', 'Generate branded report with ID and date', 'Copy, Print, Share, Download, PDF in selected language'],
+    },
+    ru: {
+      title: 'My Health Reports',
+      subtitle: 'Понятная страница для врача: анализы и симптомы в одном структурированном отчете.',
+      points: ['Загрузка скана/фото или вставка текста', 'Отслеживание показателей по категориям', 'Фирменный отчет с ID и датой генерации', 'Copy, Print, Share, Download, PDF на выбранном языке'],
+    },
+    uk: {
+      title: 'My Health Reports',
+      subtitle: 'Зрозуміла сторінка для лікаря: аналізи та симптоми в одному структурованому звіті.',
+      points: ['Завантаження скану/фото або вставка тексту', 'Відстеження показників за категоріями', 'Фірмовий звіт з ID і датою генерації', 'Copy, Print, Share, Download, PDF обраною мовою'],
+    },
+    es: {
+      title: 'My Health Reports',
+      subtitle: 'Página clara para consulta médica: análisis y síntomas en un reporte estructurado.',
+      points: ['Sube escaneo/foto o pega texto', 'Seguimiento de marcadores por categorías', 'Reporte de marca con ID y fecha', 'Copy, Print, Share, Download, PDF en idioma elegido'],
+    },
+    fr: {
+      title: 'My Health Reports',
+      subtitle: 'Une page claire pour la consultation: analyses et symptômes dans un rapport structuré.',
+      points: ['Téléverser scan/photo ou coller du texte', 'Suivi des marqueurs par catégories', 'Rapport de marque avec ID et date', 'Copy, Print, Share, Download, PDF dans la langue choisie'],
+    },
+    de: {
+      title: 'My Health Reports',
+      subtitle: 'Klare Seite für den Arzttermin: Laborwerte und Symptome in einem strukturierten Bericht.',
+      points: ['Scan/Foto hochladen oder Text einfügen', 'Marker nach Kategorien verfolgen', 'Markenbericht mit ID und Erstellungsdatum', 'Copy, Print, Share, Download, PDF in gewählter Sprache'],
+    },
+    zh: {
+      title: 'My Health Reports',
+      subtitle: '清晰的报告页面：将化验与症状整合为结构化医生沟通报告。',
+      points: ['上传扫描/照片或粘贴文本', '按类别追踪实验室指标', '生成带品牌、用户ID和日期的报告', '支持 Copy、Print、Share、Download、PDF 和语言选择'],
+    },
+    ja: {
+      title: 'My Health Reports',
+      subtitle: '検査値と症状を医師向けに整理する、わかりやすいレポートページ。',
+      points: ['スキャン/写真アップロードまたはテキスト貼り付け', 'カテゴリ別に検査マーカーを管理', 'ID・生成日付きのブランドレポート作成', '選択言語で Copy / Print / Share / Download / PDF'],
+    },
+    pt: {
+      title: 'My Health Reports',
+      subtitle: 'Página clara para consulta médica: exames e sintomas em um relatório estruturado.',
+      points: ['Envie scan/foto ou cole texto', 'Acompanhe marcadores por categorias', 'Relatório de marca com ID e data', 'Copy, Print, Share, Download, PDF no idioma escolhido'],
+    },
+  };
+  const reportsOverview = reportsOverviewByLang[lang] || reportsOverviewByLang.en;
   const pricingCopy = pricingCopyByLang[lang] || pricingCopyByLang.en;
   const pricingUi = pricingUiByLang[lang] || pricingUiByLang.en;
 
@@ -1303,6 +1351,20 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
                   <div key={card.hormone} className="rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white/75 dark:bg-slate-900/60 p-4 space-y-2">
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{card.hormone}</p>
                     <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{card.why}</p>
+                  </div>
+                ))}
+              </div>
+            </article>
+
+            <article className="rounded-[2.6rem] border border-slate-200/70 dark:border-slate-800 bg-gradient-to-br from-[#e9e0f4]/94 via-[#e5edf8]/92 to-[#d7e9f3]/90 dark:from-[#0f1e3f]/90 dark:to-[#112747]/88 p-7 md:p-9 shadow-luna-rich space-y-5">
+              <div className="space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-[0.45em] text-luna-purple">{reportsOverview.title}</p>
+                <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300">{reportsOverview.subtitle}</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {reportsOverview.points.map((point) => (
+                  <div key={point} className="rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white/75 dark:bg-slate-900/60 p-4">
+                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{point}</p>
                   </div>
                 ))}
               </div>

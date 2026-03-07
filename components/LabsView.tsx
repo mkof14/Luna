@@ -472,6 +472,104 @@ const medicalFormByLang: Partial<Record<Language, {
   },
 };
 
+const reportLanguageUiByLang: Partial<Record<Language, { label: string; hint: string }>> = {
+  en: { label: 'Report Language', hint: 'Generated files use this language.' },
+  ru: { label: 'Язык Отчета', hint: 'Сгенерированные файлы будут на этом языке.' },
+  uk: { label: 'Мова Звіту', hint: 'Згенеровані файли будуть цією мовою.' },
+  es: { label: 'Idioma Del Reporte', hint: 'Los archivos se generan en este idioma.' },
+  fr: { label: 'Langue Du Rapport', hint: 'Les fichiers seront générés dans cette langue.' },
+  de: { label: 'Berichtssprache', hint: 'Exportdateien werden in dieser Sprache erstellt.' },
+  zh: { label: '报告语言', hint: '导出文件将使用该语言。' },
+  ja: { label: 'レポート言語', hint: '生成ファイルはこの言語で作成されます。' },
+  pt: { label: 'Idioma Do Relatório', hint: 'Os arquivos serão gerados neste idioma.' },
+};
+
+const reportLanguageNames: Record<Language, string> = {
+  en: 'English',
+  ru: 'Русский',
+  uk: 'Українська',
+  es: 'Español',
+  fr: 'Français',
+  de: 'Deutsch',
+  zh: '中文',
+  ja: '日本語',
+  pt: 'Português',
+};
+
+const localeByLang: Record<Language, string> = {
+  en: 'en-US',
+  ru: 'ru-RU',
+  uk: 'uk-UA',
+  es: 'es-ES',
+  fr: 'fr-FR',
+  de: 'de-DE',
+  zh: 'zh-CN',
+  ja: 'ja-JP',
+  pt: 'pt-PT',
+};
+
+const reportSourceByLang: Partial<Record<Language, { textInput: string; manualTable: string; profileOnly: string }>> = {
+  en: { textInput: 'text input', manualTable: 'manual table', profileOnly: 'manual profile only' },
+  ru: { textInput: 'текстовый ввод', manualTable: 'ручная таблица', profileOnly: 'только профиль' },
+  uk: { textInput: 'текстове введення', manualTable: 'ручна таблиця', profileOnly: 'лише профіль' },
+  es: { textInput: 'entrada de texto', manualTable: 'tabla manual', profileOnly: 'solo perfil manual' },
+  fr: { textInput: 'saisie texte', manualTable: 'tableau manuel', profileOnly: 'profil uniquement' },
+  de: { textInput: 'Texteingabe', manualTable: 'manuelle Tabelle', profileOnly: 'nur Profil' },
+  zh: { textInput: '文本输入', manualTable: '手动表格', profileOnly: '仅个人资料' },
+  ja: { textInput: 'テキスト入力', manualTable: '手動テーブル', profileOnly: 'プロフィールのみ' },
+  pt: { textInput: 'entrada de texto', manualTable: 'tabela manual', profileOnly: 'somente perfil' },
+};
+
+const markerCategoryByLang: Partial<Record<Language, {
+  cycle: string;
+  thyroid: string;
+  sexual: string;
+  metabolic: string;
+  nutrient: string;
+  other: string;
+}>> = {
+  en: { cycle: 'Cycle / Ovarian', thyroid: 'Thyroid', sexual: 'Androgen / Sexual Health', metabolic: 'Metabolic', nutrient: 'Nutrient / Reserve', other: 'Other' },
+  ru: { cycle: 'Цикл / Яичники', thyroid: 'Щитовидка', sexual: 'Андрогены / Сексуальное здоровье', metabolic: 'Метаболизм', nutrient: 'Дефициты / Резерв', other: 'Другое' },
+  uk: { cycle: 'Цикл / Яєчники', thyroid: 'Щитоподібна', sexual: 'Андрогени / Сексуальне здоровʼя', metabolic: 'Метаболізм', nutrient: 'Дефіцити / Резерв', other: 'Інше' },
+  es: { cycle: 'Ciclo / Ovario', thyroid: 'Tiroides', sexual: 'Andrógenos / Salud Sexual', metabolic: 'Metabólico', nutrient: 'Nutrientes / Reserva', other: 'Otro' },
+  fr: { cycle: 'Cycle / Ovarien', thyroid: 'Thyroïde', sexual: 'Androgènes / Santé Sexuelle', metabolic: 'Métabolique', nutrient: 'Nutriments / Réserve', other: 'Autre' },
+  de: { cycle: 'Zyklus / Ovar', thyroid: 'Schilddrüse', sexual: 'Androgen / Sexualgesundheit', metabolic: 'Metabolisch', nutrient: 'Nährstoff / Reserve', other: 'Sonstiges' },
+  zh: { cycle: '周期 / 卵巢', thyroid: '甲状腺', sexual: '雄激素 / 性健康', metabolic: '代谢', nutrient: '营养 / 储备', other: '其他' },
+  ja: { cycle: '周期 / 卵巣', thyroid: '甲状腺', sexual: 'アンドロゲン / 性健康', metabolic: '代謝', nutrient: '栄養 / 予備', other: 'その他' },
+  pt: { cycle: 'Ciclo / Ovário', thyroid: 'Tireoide', sexual: 'Andrógenos / Saúde Sexual', metabolic: 'Metabólico', nutrient: 'Nutrientes / Reserva', other: 'Outro' },
+};
+
+const reportActionsByLang: Partial<Record<Language, {
+  copied: string;
+  copyFailed: string;
+  shared: string;
+  shareFailed: string;
+  printOpened: string;
+  printBlocked: string;
+  downloaded: string;
+  pdfHint: string;
+  pdfBlocked: string;
+  sampleDownloaded: string;
+}>> = {
+  en: { copied: 'Copied', copyFailed: 'Copy failed', shared: 'Shared', shareFailed: 'Share failed', printOpened: 'Print dialog opened', printBlocked: 'Print blocked', downloaded: 'Downloaded', pdfHint: 'Use Save as PDF in print dialog', pdfBlocked: 'PDF print blocked', sampleDownloaded: 'Sample downloaded' },
+  ru: { copied: 'Скопировано', copyFailed: 'Не удалось скопировать', shared: 'Отправлено', shareFailed: 'Ошибка отправки', printOpened: 'Окно печати открыто', printBlocked: 'Печать заблокирована', downloaded: 'Скачано', pdfHint: 'Сохраните как PDF в окне печати', pdfBlocked: 'PDF-печать заблокирована', sampleDownloaded: 'Образец скачан' },
+  uk: { copied: 'Скопійовано', copyFailed: 'Не вдалося скопіювати', shared: 'Надіслано', shareFailed: 'Помилка надсилання', printOpened: 'Відкрито вікно друку', printBlocked: 'Друк заблоковано', downloaded: 'Завантажено', pdfHint: 'Збережіть як PDF у вікні друку', pdfBlocked: 'PDF-друк заблоковано', sampleDownloaded: 'Приклад завантажено' },
+  es: { copied: 'Copiado', copyFailed: 'Error al copiar', shared: 'Compartido', shareFailed: 'Error al compartir', printOpened: 'Diálogo de impresión abierto', printBlocked: 'Impresión bloqueada', downloaded: 'Descargado', pdfHint: 'Usa Guardar como PDF en impresión', pdfBlocked: 'PDF bloqueado', sampleDownloaded: 'Ejemplo descargado' },
+  fr: { copied: 'Copié', copyFailed: 'Échec de copie', shared: 'Partagé', shareFailed: 'Échec du partage', printOpened: 'Fenêtre d’impression ouverte', printBlocked: 'Impression bloquée', downloaded: 'Téléchargé', pdfHint: 'Utilisez Enregistrer en PDF', pdfBlocked: 'PDF bloqué', sampleDownloaded: 'Exemple téléchargé' },
+  de: { copied: 'Kopiert', copyFailed: 'Kopieren fehlgeschlagen', shared: 'Geteilt', shareFailed: 'Teilen fehlgeschlagen', printOpened: 'Druckdialog geöffnet', printBlocked: 'Drucken blockiert', downloaded: 'Heruntergeladen', pdfHint: 'Im Druckdialog als PDF speichern', pdfBlocked: 'PDF blockiert', sampleDownloaded: 'Beispiel heruntergeladen' },
+  zh: { copied: '已复制', copyFailed: '复制失败', shared: '已分享', shareFailed: '分享失败', printOpened: '已打开打印窗口', printBlocked: '打印被阻止', downloaded: '已下载', pdfHint: '请在打印窗口中保存为 PDF', pdfBlocked: 'PDF 打印被阻止', sampleDownloaded: '示例已下载' },
+  ja: { copied: 'コピーしました', copyFailed: 'コピー失敗', shared: '共有しました', shareFailed: '共有失敗', printOpened: '印刷ダイアログを開きました', printBlocked: '印刷がブロックされました', downloaded: 'ダウンロードしました', pdfHint: '印刷画面で PDF 保存してください', pdfBlocked: 'PDF 印刷がブロックされました', sampleDownloaded: 'サンプルをダウンロードしました' },
+  pt: { copied: 'Copiado', copyFailed: 'Falha ao copiar', shared: 'Compartilhado', shareFailed: 'Falha ao compartilhar', printOpened: 'Janela de impressão aberta', printBlocked: 'Impressão bloqueada', downloaded: 'Baixado', pdfHint: 'Use Salvar como PDF na impressão', pdfBlocked: 'PDF bloqueado', sampleDownloaded: 'Exemplo baixado' },
+};
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 const downloadFile = (filename: string, content: string, mimeType: string) => {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
@@ -585,14 +683,19 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const [includeNameInReport, setIncludeNameInReport] = useState(false);
   const [includeIdInReport, setIncludeIdInReport] = useState(true);
   const [manualReportId, setManualReportId] = useState('');
+  const [reportLang, setReportLang] = useState<Language>(lang);
   const [profile, setProfile] = useState<PersonalHealthProfile>(() => ({ ...emptyProfile, birthYear: String(new Date().getFullYear() - age), cycleDay: String(day) }));
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const systemState = useMemo(() => dataService.projectState(log), [log]);
   const sexualUi = sexualUiByLang[lang] || sexualUiByLang.en!;
   const visualGuide = visualGuideByLang[lang] || visualGuideByLang.en!;
-  const reportUi = reportUiByLang[lang] || reportUiByLang.en!;
-  const medForm = medicalFormByLang[lang] || medicalFormByLang.en!;
+  const reportUi = reportUiByLang[reportLang] || reportUiByLang.en!;
+  const medForm = medicalFormByLang[reportLang] || medicalFormByLang.en!;
+  const reportLangUi = reportLanguageUiByLang[lang] || reportLanguageUiByLang.en!;
+  const reportSourcesUi = reportSourceByLang[reportLang] || reportSourceByLang.en!;
+  const reportCategories = markerCategoryByLang[reportLang] || markerCategoryByLang.en!;
+  const reportActions = reportActionsByLang[lang] || reportActionsByLang.en!;
 
   const reportId = useMemo(() => manualReportId.trim() || userId || ensureReportId(), [manualReportId, userId]);
   const reportIdentityLine = useMemo(() => {
@@ -713,23 +816,23 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       .filter((item) => Number.isFinite(item.value));
   };
 
-  const reportGeneratedAt = useMemo(() => new Date().toLocaleString(), [analysis?.text, parsedValues.length, reportIdentityLine]);
+  const reportGeneratedAt = useMemo(() => new Date().toLocaleString(localeByLang[reportLang]), [analysis?.text, parsedValues.length, reportIdentityLine, reportLang]);
   const analysisSource = useMemo(() => {
     const pieces: string[] = [];
     if (uploadFeedback) pieces.push(uploadFeedback);
-    if (input.trim()) pieces.push('text input');
-    if (manualRows.some((row) => row.marker.trim() && row.value.trim())) pieces.push('manual table');
-    return pieces.length ? pieces.join(' + ') : 'manual profile only';
-  }, [input, manualRows, uploadFeedback]);
+    if (input.trim()) pieces.push(reportSourcesUi.textInput);
+    if (manualRows.some((row) => row.marker.trim() && row.value.trim())) pieces.push(reportSourcesUi.manualTable);
+    return pieces.length ? pieces.join(' + ') : reportSourcesUi.profileOnly;
+  }, [input, manualRows, reportSourcesUi.manualTable, reportSourcesUi.profileOnly, reportSourcesUi.textInput, uploadFeedback]);
 
   const markerCategory = (marker: string): string => {
     const m = marker.toLowerCase();
-    if (/(estradiol|progesterone|lh|fsh|prolactin)/.test(m)) return 'Cycle / Ovarian';
-    if (/(tsh|ft3|ft4|t3|t4|thyroid|anti-tpo|anti-tg)/.test(m)) return 'Thyroid';
-    if (/(testosterone|shbg|dhea|androstenedione|17-oh)/.test(m)) return 'Androgen / Sexual Health';
-    if (/(glucose|insulin|hba1c)/.test(m)) return 'Metabolic';
-    if (/(ferritin|vitamin d|b12|cbc)/.test(m)) return 'Nutrient / Reserve';
-    return 'Other';
+    if (/(estradiol|progesterone|lh|fsh|prolactin)/.test(m)) return reportCategories.cycle;
+    if (/(tsh|ft3|ft4|t3|t4|thyroid|anti-tpo|anti-tg)/.test(m)) return reportCategories.thyroid;
+    if (/(testosterone|shbg|dhea|androstenedione|17-oh)/.test(m)) return reportCategories.sexual;
+    if (/(glucose|insulin|hba1c)/.test(m)) return reportCategories.metabolic;
+    if (/(ferritin|vitamin d|b12|cbc)/.test(m)) return reportCategories.nutrient;
+    return reportCategories.other;
   };
 
   const reportText = useMemo(() => {
@@ -750,7 +853,6 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       `${medForm.generatedAt}: ${reportGeneratedAt}`,
       `${medForm.patientId}: ${identity}`,
       `${medForm.source}: ${analysisSource}`,
-      `Identity: ${identity}`,
       `Cycle day: ${profile.cycleDay || systemState.currentDay}`,
       `Sexual snapshot: ${sexualOverview.avgPositive}/5 | pain ${sexualOverview.pain}/5`,
       '',
@@ -781,16 +883,18 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                 ? '#be123c'
                 : '#475569';
         return `<tr>
-          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${item.marker}</td>
-          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${item.value}${item.unit ? ` ${item.unit}` : ''}</td>
-          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${reference}</td>
+          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(item.marker)}</td>
+          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(`${item.value}${item.unit ? ` ${item.unit}` : ''}`)}</td>
+          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(reference)}</td>
           <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\"><span style=\"display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid ${badge};color:${badge};font-weight:700;font-size:11px;text-transform:uppercase;\">${status}</span></td>
-          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${markerCategory(item.marker)}</td>
+          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(markerCategory(item.marker))}</td>
         </tr>`;
       })
       .join('');
-    const summary = (analysis?.text || 'Generate report to see personalized interpretation.').replace(/</g, '&lt;');
-    return `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f1f5f9;color:#0f172a;padding:24px;\"><div style=\"max-width:920px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;\"><div style=\"padding:22px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\"><div style=\"display:flex;align-items:center;gap:10px;\"><div style=\"width:44px;height:44px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;\">🌙</div><div><h1 style=\"margin:0;font-size:30px;letter-spacing:-0.02em;\">Luna</h1><p style=\"margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">Luna Balance Medical Report</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:11px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:4px 0 0;font-size:11px;\">${medForm.patientId}: ${reportIdentityLine || 'Private'}</p></div></div></div><div style=\"padding:20px 22px;\"><table style=\"width:100%;border-collapse:collapse;font-size:13px;\"><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Cycle day ${profile.cycleDay || systemState.currentDay}</td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Sexual score ${sexualOverview.avgPositive}/5 | pain ${sexualOverview.pain}/5</td></tr><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:8px;border:1px solid #e2e8f0;\">${analysisSource}</td></tr></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Category</th></tr></thead><tbody>${markerRows || '<tr><td colspan=\"5\" style=\"padding:8px;\">No markers yet.</td></tr>'}</tbody></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.summary}</h3><p style=\"white-space:pre-wrap;line-height:1.6;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\">${summary}</p><div style=\"margin-top:18px;border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div></div></body></html>`;
+    const summary = escapeHtml(analysis?.text || 'Generate report to see personalized interpretation.');
+    const safeIdentity = escapeHtml(reportIdentityLine || 'Private');
+    const safeAnalysisSource = escapeHtml(analysisSource);
+    return `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f1f5f9;color:#0f172a;padding:24px;\"><div style=\"max-width:920px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;\"><div style=\"padding:22px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\"><div style=\"display:flex;align-items:center;gap:10px;\"><div style=\"width:44px;height:44px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;\">🌙</div><div><h1 style=\"margin:0;font-size:30px;letter-spacing:-0.02em;\">Luna</h1><p style=\"margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">Luna Balance Medical Report</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:11px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:4px 0 0;font-size:11px;\">${medForm.patientId}: ${safeIdentity}</p></div></div></div><div style=\"padding:20px 22px;\"><table style=\"width:100%;border-collapse:collapse;font-size:13px;\"><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Cycle day ${profile.cycleDay || systemState.currentDay}</td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Sexual score ${sexualOverview.avgPositive}/5 | pain ${sexualOverview.pain}/5</td></tr><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:8px;border:1px solid #e2e8f0;\">${safeAnalysisSource}</td></tr></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Category</th></tr></thead><tbody>${markerRows || '<tr><td colspan=\"5\" style=\"padding:8px;\">No markers yet.</td></tr>'}</tbody></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.summary}</h3><p style=\"white-space:pre-wrap;line-height:1.6;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\">${summary}</p><div style=\"margin-top:18px;border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div></div></body></html>`;
   }, [analysis?.text, analysisSource, medForm.allMarkers, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.panel, medForm.patientId, medForm.source, medForm.summary, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay]);
 
   const handleAnalyze = async () => {
@@ -852,38 +956,44 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
   const handleReportCopy = async () => {
     const copied = await copyTextSafely(reportText);
-    setReportActionFeedback(copied ? 'Copied' : 'Copy failed');
+    setReportActionFeedback(copied ? reportActions.copied : reportActions.copyFailed);
     setTimeout(() => setReportActionFeedback(null), 2000);
   };
 
   const handleReportShare = async () => {
     const result = await shareTextSafely(reportText, reportUi.reportTitle);
-    setReportActionFeedback(result === 'failed' ? 'Share failed' : result === 'shared' ? 'Shared' : 'Copied');
+    setReportActionFeedback(result === 'failed' ? reportActions.shareFailed : result === 'shared' ? reportActions.shared : reportActions.copied);
     setTimeout(() => setReportActionFeedback(null), 2000);
   };
 
   const handleReportPrint = () => {
     const ok = openPrintableWindow(reportHtml, true);
-    setReportActionFeedback(ok ? 'Print dialog opened' : 'Print blocked');
+    setReportActionFeedback(ok ? reportActions.printOpened : reportActions.printBlocked);
     setTimeout(() => setReportActionFeedback(null), 2000);
   };
 
   const handleReportDownload = () => {
-    downloadFile(`luna-report-${Date.now()}.html`, reportHtml, 'text/html;charset=utf-8');
-    setReportActionFeedback('Downloaded');
+    downloadFile(`luna-report-${reportLang}-${Date.now()}.html`, reportHtml, 'text/html;charset=utf-8');
+    setReportActionFeedback(reportActions.downloaded);
     setTimeout(() => setReportActionFeedback(null), 2000);
   };
 
   const handleReportPdf = () => {
     const ok = openPrintableWindow(reportHtml, true);
-    setReportActionFeedback(ok ? 'Use Save as PDF in print dialog' : 'PDF print blocked');
+    setReportActionFeedback(ok ? reportActions.pdfHint : reportActions.pdfBlocked);
     setTimeout(() => setReportActionFeedback(null), 2400);
   };
 
   const handleSampleDownload = () => {
-    const sampleHtml = `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Sample Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f8fafc;color:#0f172a;padding:24px;\"><div style=\"max-width:820px;margin:0 auto;background:white;border:1px solid #e2e8f0;border-radius:24px;overflow:hidden;\"><div style=\"padding:24px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);\"><h1 style=\"margin:0;font-size:34px;letter-spacing:-0.02em;\">Luna</h1><p style=\"margin:6px 0 0;font-weight:700;\">${reportUi.sampleTitle}</p><p style=\"margin:4px 0 0;font-size:12px;opacity:0.85;\">${reportUi.reportSubtitle}</p></div><div style=\"padding:24px;\"><p><strong>${reportUi.servicePromise}</strong></p><ul>${reportUi.serviceBullets.map((item) => `<li>${item}</li>`).join('')}</ul><h3>Example Highlights</h3><p>Cycle-aware interpretation, visual hormone blocks, intimacy factors, and doctor-ready guidance.</p></div></div></body></html>`;
-    downloadFile('luna-sample-report.html', sampleHtml, 'text/html;charset=utf-8');
-    setReportActionFeedback('Sample downloaded');
+    const sampleRows = [
+      ['Estradiol (E2)', '148 pg/mL', '30-400', 'normal', markerCategory('Estradiol (E2)')],
+      ['Progesterone', '8.1 ng/mL', '0.2-25', 'normal', markerCategory('Progesterone')],
+      ['TSH', '4.8 mIU/L', '0.4-4.0', 'high', markerCategory('TSH')],
+      ['Ferritin', '18 ng/mL', '15-150', 'low-normal', markerCategory('Ferritin')],
+    ];
+    const sampleHtml = `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Sample Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f1f5f9;color:#0f172a;padding:24px;\"><div style=\"max-width:920px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;\"><div style=\"padding:22px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\"><div style=\"display:flex;align-items:center;gap:10px;\"><div style=\"width:44px;height:44px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;\">🌙</div><div><h1 style=\"margin:0;font-size:30px;letter-spacing:-0.02em;\">Luna</h1><p style=\"margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">Luna Balance Medical Report - Sample</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:11px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:4px 0 0;font-size:11px;\">${medForm.patientId}: SAMPLE-001</p></div></div></div><div style=\"padding:20px 22px;\"><table style=\"width:100%;border-collapse:collapse;font-size:13px;\"><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Cycle day 21</td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Sexual score 3.5/5 | pain 2/5</td></tr><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:8px;border:1px solid #e2e8f0;\">Lab PDF scan + manual profile</td></tr></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Category</th></tr></thead><tbody>${sampleRows.map((row) => `<tr><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${row[0]}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${row[1]}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${row[2]}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${row[3]}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${row[4]}</td></tr>`).join('')}</tbody></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.summary}</h3><p style=\"white-space:pre-wrap;line-height:1.6;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\">${escapeHtml(reportUi.servicePromise)}\n• ${reportUi.serviceBullets.map(escapeHtml).join('\n• ')}</p><div style=\"margin-top:18px;border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div></div></body></html>`;
+    downloadFile(`luna-sample-report-${reportLang}.html`, sampleHtml, 'text/html;charset=utf-8');
+    setReportActionFeedback(reportActions.sampleDownloaded);
     setTimeout(() => setReportActionFeedback(null), 2000);
   };
 
@@ -955,6 +1065,21 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
               <label className="md:col-span-2 space-y-1">
                 <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">User ID (optional override)</span>
                 <input value={manualReportId} onChange={(e) => setManualReportId(e.target.value)} placeholder={reportId} className="w-full px-3 py-2 rounded-xl border border-slate-300/70 dark:border-slate-700/70 bg-white dark:bg-slate-900/80 text-sm font-semibold" />
+              </label>
+              <label className="md:col-span-2 space-y-1">
+                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{reportLangUi.label}</span>
+                <select
+                  value={reportLang}
+                  onChange={(e) => setReportLang(e.target.value as Language)}
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300/70 dark:border-slate-700/70 bg-white dark:bg-slate-900/80 text-sm font-semibold text-slate-800 dark:text-slate-100"
+                >
+                  {(Object.keys(reportLanguageNames) as Language[]).map((languageCode) => (
+                    <option key={languageCode} value={languageCode}>
+                      {reportLanguageNames[languageCode]}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">{reportLangUi.hint}</p>
               </label>
             </div>
             <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">Current: {reportIdentityLine || 'Private (no name/ID in summary)'}</p>
@@ -1156,13 +1281,13 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
               <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">{reportIdentityLine || reportUi.reportSubtitle}</p>
               <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 leading-relaxed line-clamp-4">{analysis?.text || reportUi.sampleBody}</p>
             </div>
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-              <button onClick={handleReportCopy} className="px-2 py-2 rounded-lg border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black uppercase tracking-[0.08em] text-slate-700 dark:text-slate-300">{reportUi.copy}</button>
-              <button onClick={handleReportPrint} className="px-2 py-2 rounded-lg border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black uppercase tracking-[0.08em] text-slate-700 dark:text-slate-300">{reportUi.print}</button>
-              <button onClick={handleReportShare} className="px-2 py-2 rounded-lg border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black uppercase tracking-[0.08em] text-slate-700 dark:text-slate-300">{reportUi.share}</button>
-              <button onClick={handleReportDownload} className="px-2 py-2 rounded-lg border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black uppercase tracking-[0.08em] text-slate-700 dark:text-slate-300">{reportUi.download}</button>
-              <button onClick={handleReportPdf} className="px-2 py-2 rounded-lg border border-luna-purple/35 bg-luna-purple/10 text-[10px] font-black uppercase tracking-[0.08em] text-luna-purple">{reportUi.pdf}</button>
-              <button onClick={handleSampleDownload} className="px-2 py-2 rounded-lg border border-luna-coral/40 bg-luna-coral/10 text-[10px] font-black uppercase tracking-[0.08em] text-luna-coral">{reportUi.sampleDownload}</button>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              <button onClick={handleReportCopy} className="px-2.5 py-2.5 min-h-[44px] rounded-lg border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black tracking-[0.05em] text-slate-700 dark:text-slate-300 whitespace-normal break-words leading-tight text-center">{reportUi.copy}</button>
+              <button onClick={handleReportPrint} className="px-2.5 py-2.5 min-h-[44px] rounded-lg border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black tracking-[0.05em] text-slate-700 dark:text-slate-300 whitespace-normal break-words leading-tight text-center">{reportUi.print}</button>
+              <button onClick={handleReportShare} className="px-2.5 py-2.5 min-h-[44px] rounded-lg border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black tracking-[0.05em] text-slate-700 dark:text-slate-300 whitespace-normal break-words leading-tight text-center">{reportUi.share}</button>
+              <button onClick={handleReportDownload} className="px-2.5 py-2.5 min-h-[44px] rounded-lg border border-slate-300/70 dark:border-slate-700/70 text-[10px] font-black tracking-[0.05em] text-slate-700 dark:text-slate-300 whitespace-normal break-words leading-tight text-center">{reportUi.download}</button>
+              <button onClick={handleReportPdf} className="px-2.5 py-2.5 min-h-[44px] rounded-lg border border-luna-purple/35 bg-luna-purple/10 text-[10px] font-black tracking-[0.05em] text-luna-purple whitespace-normal break-words leading-tight text-center">{reportUi.pdf}</button>
+              <button onClick={handleSampleDownload} className="px-2.5 py-2.5 min-h-[44px] rounded-lg border border-luna-coral/40 bg-luna-coral/10 text-[10px] font-black tracking-[0.05em] text-luna-coral whitespace-normal break-words leading-tight text-center">{reportUi.sampleDownload}</button>
             </div>
             {reportActionFeedback && <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">{reportActionFeedback}</p>}
           </article>
