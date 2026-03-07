@@ -12,6 +12,8 @@ export const HormoneTestingGuide: React.FC<HormoneTestingGuideProps> = ({ lang }
       {
         title: string;
         subtitle: string;
+        focusTitle: string;
+        focusItems: string[];
         columns: { hormone: string; tests: string; timing: string; why: string };
         rows: Array<{ hormone: string; tests: string; timing: string; why: string }>;
       }
@@ -20,6 +22,13 @@ export const HormoneTestingGuide: React.FC<HormoneTestingGuideProps> = ({ lang }
     en: {
       title: 'Hormones + Required Tests',
       subtitle: 'Clear test map for more accurate women health analysis.',
+      focusTitle: 'Sexual Health Focus',
+      focusItems: [
+        'Libido and arousal: Estradiol, free testosterone, SHBG.',
+        'Comfort and lubrication: Estradiol + thyroid + stress axis.',
+        'Closeness and emotional receptivity: Progesterone + cortisol balance.',
+        'Desire suppression signals: high prolactin, high stress load, low ferritin.',
+      ],
       columns: { hormone: 'Hormone Axis', tests: 'Key Tests', timing: 'Best Timing', why: 'Why It Matters' },
       rows: [
         {
@@ -58,11 +67,24 @@ export const HormoneTestingGuide: React.FC<HormoneTestingGuideProps> = ({ lang }
           timing: 'Any morning; re-check after treatment',
           why: 'Fatigue, recovery speed, immune and cognitive support.',
         },
+        {
+          hormone: 'Libido / Intimacy Panel',
+          tests: 'Total Testosterone, Free Testosterone, SHBG, Estradiol, Prolactin, DHEA-S',
+          timing: 'Day 2-5 baseline; repeat in symptomatic phase',
+          why: 'Desire, arousal, lubrication, orgasm responsiveness, relational closeness capacity.',
+        },
       ],
     },
     ru: {
       title: 'Гормоны И Нужные Анализы',
       subtitle: 'Наглядная карта анализов для более точного женского здоровья.',
+      focusTitle: 'Фокус Сексуального Здоровья',
+      focusItems: [
+        'Либидо и возбуждение: эстрадиол, свободный тестостерон, SHBG.',
+        'Комфорт и увлажнение: эстрадиол + щитовидка + стресс-ось.',
+        'Близость и эмоциональная открытость: баланс прогестерона и кортизола.',
+        'Сигналы снижения желания: высокий пролактин, стресс, низкий ферритин.',
+      ],
       columns: { hormone: 'Гормональная Ось', tests: 'Ключевые Анализы', timing: 'Когда Сдавать', why: 'Почему Важно' },
       rows: [
         {
@@ -101,6 +123,12 @@ export const HormoneTestingGuide: React.FC<HormoneTestingGuideProps> = ({ lang }
           timing: 'Любое утро; пересмотр после терапии',
           why: 'Утомляемость, восстановление, иммунная и когнитивная поддержка.',
         },
+        {
+          hormone: 'Панель Либидо/Близости',
+          tests: 'Общий и свободный тестостерон, SHBG, эстрадиол, пролактин, DHEA-S',
+          timing: 'База на 2-5 день цикла; повтор в симптомной фазе',
+          why: 'Желание, возбуждение, увлажнение, оргастичность, ресурс близости.',
+        },
       ],
     },
   };
@@ -134,6 +162,14 @@ export const HormoneTestingGuide: React.FC<HormoneTestingGuideProps> = ({ lang }
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/55 p-4 space-y-2">
+        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-luna-purple">{copy.focusTitle}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          {copy.focusItems.map((item) => (
+            <p key={item} className="text-xs font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">• {item}</p>
+          ))}
+        </div>
       </div>
     </section>
   );

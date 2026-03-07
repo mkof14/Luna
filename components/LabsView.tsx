@@ -30,6 +30,7 @@ const emptyProfile: PersonalHealthProfile = {
 };
 
 const quickSymptoms = ['Fatigue', 'Anxiety', 'PMS', 'Sleep issues', 'Headache', 'Low mood', 'Bloating', 'Cravings'];
+const intimacySymptoms = ['Low libido', 'Low arousal', 'Dryness', 'Pain during intimacy', 'Low orgasm quality', 'Low closeness'];
 
 const templateRows: Record<string, Array<Partial<HealthLabRow>>> = {
   hormone_core: [
@@ -50,6 +51,17 @@ const templateRows: Record<string, Array<Partial<HealthLabRow>>> = {
     { marker: 'HbA1c', unit: '%', reference: '4.0-5.6' },
     { marker: 'Ferritin', unit: 'ng/mL', reference: '15-150' },
     { marker: 'Vitamin D (25-OH)', unit: 'ng/mL', reference: '30-100' },
+  ],
+  libido_intimacy: [
+    { marker: 'Estradiol (E2)', unit: 'pg/mL', reference: '30-400' },
+    { marker: 'Progesterone', unit: 'ng/mL', reference: '0.2-25' },
+    { marker: 'Total Testosterone', unit: 'ng/dL', reference: '15-70' },
+    { marker: 'Free Testosterone', unit: 'pg/mL', reference: '0.3-3.5' },
+    { marker: 'SHBG', unit: 'nmol/L', reference: '18-114' },
+    { marker: 'Prolactin', unit: 'ng/mL', reference: '4.8-23.3' },
+    { marker: 'DHEA-S', unit: 'ug/dL', reference: '35-430' },
+    { marker: 'TSH', unit: 'mIU/L', reference: '0.4-4.0' },
+    { marker: 'Ferritin', unit: 'ng/mL', reference: '15-150' },
   ],
 };
 
@@ -110,6 +122,13 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const [parsedRows, setParsedRows] = useState<HealthLabRow[]>([]);
   const [parsedValues, setParsedValues] = useState<ParsedLabValue[]>([]);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [sexualScores, setSexualScores] = useState({
+    libido: 3,
+    arousal: 3,
+    comfort: 3,
+    closeness: 3,
+    pain: 1,
+  });
   const [includeNameInReport, setIncludeNameInReport] = useState(false);
   const [includeIdInReport, setIncludeIdInReport] = useState(true);
   const [manualReportId, setManualReportId] = useState('');
@@ -153,8 +172,27 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     });
   }, [hormoneSignals]);
 
+  const sexualOverview = useMemo(() => {
+    const sumPositive = sexualScores.libido + sexualScores.arousal + sexualScores.comfort + sexualScores.closeness;
+    const avgPositive = Number((sumPositive / 4).toFixed(1));
+    const pain = sexualScores.pain;
+    let state = 'Stable sexual-health baseline.';
+    if (avgPositive <= 2.2 || pain >= 4) state = 'High priority: libido/intimacy strain needs structured review.';
+    else if (avgPositive <= 3 || pain >= 3) state = 'Moderate strain: useful to review hormonal and stress factors.';
+    return { avgPositive, pain, state };
+  }, [sexualScores]);
+
+  const libidoHormoneSignals = useMemo(() => {
+    const keys = ['estrogen', 'estradiol', 'progesterone', 'testosterone', 'shbg', 'prolactin', 'dhea', 'thyroid', 'tsh', 'ferritin'];
+    return hormoneSignals.filter((signal) => keys.some((key) => signal.marker.toLowerCase().includes(key) || signal.hormone.toLowerCase().includes(key)));
+  }, [hormoneSignals]);
+
   const toggleSymptom = (symptom: string) => {
     setSelectedSymptoms((prev) => (prev.includes(symptom) ? prev.filter((item) => item !== symptom) : [...prev, symptom]));
+  };
+
+  const updateSexualScore = (key: keyof typeof sexualScores, value: number) => {
+    setSexualScores((prev) => ({ ...prev, [key]: value }));
   };
 
   const updateProfile = (key: keyof PersonalHealthProfile, value: string) => {
@@ -195,6 +233,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       `Known conditions: ${profile.knownConditions || 'N/A'}`,
       `Goals: ${profile.goals || 'N/A'}`,
       `Symptoms today: ${selectedSymptoms.length ? selectedSymptoms.join(', ') : 'N/A'}`,
+      `Sexual health scores (1-5): libido=${sexualScores.libido}, arousal=${sexualScores.arousal}, comfort=${sexualScores.comfort}, closeness=${sexualScores.closeness}, pain=${sexualScores.pain}`,
     ];
     if (reportIdentityLine) lines.unshift(reportIdentityLine);
     return lines.join('\n');
@@ -233,7 +272,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
       const aiResult = await analyzeLabResults(combinedInput, systemState);
       const extraLine = reportIdentityLine ? `Identity: ${reportIdentityLine}` : 'Identity: private';
-      const fullText = `${extraLine}\n${summary}\n\n${aiResult.text || 'The system could not generate a clear interpretation at this time.'}`;
+      const fullText = `${extraLine}\n${summary}\nSexual health snapshot: desire/connection score ${sexualOverview.avgPositive}/5, pain ${sexualOverview.pain}/5. ${sexualOverview.state}\n\n${aiResult.text || 'The system could not generate a clear interpretation at this time.'}`;
 
       const formattedResult = {
         text: fullText,
@@ -366,6 +405,52 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                   );
                 })}
               </div>
+              <p className="pt-2 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Intimacy & libido symptoms</p>
+              <div className="flex flex-wrap gap-2">
+                {intimacySymptoms.map((symptom) => {
+                  const active = selectedSymptoms.includes(symptom);
+                  return (
+                    <button
+                      key={symptom}
+                      onClick={() => toggleSymptom(symptom)}
+                      className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.1em] border transition-colors ${active ? 'bg-luna-coral text-white border-luna-coral' : 'bg-white dark:bg-slate-900/70 text-slate-600 dark:text-slate-300 border-slate-300/70 dark:border-slate-700/70'}`}
+                    >
+                      {symptom}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </article>
+
+          <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
+            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">Sexual Wellbeing Snapshot</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { key: 'libido', label: 'Libido' },
+                { key: 'arousal', label: 'Arousal' },
+                { key: 'comfort', label: 'Comfort' },
+                { key: 'closeness', label: 'Emotional Closeness' },
+                { key: 'pain', label: 'Pain During Intimacy' },
+              ].map((item) => (
+                <label key={item.key} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">{item.label}</span>
+                    <span className="text-xs font-black text-slate-700 dark:text-slate-300">{sexualScores[item.key as keyof typeof sexualScores]}/5</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={1}
+                    max={5}
+                    value={sexualScores[item.key as keyof typeof sexualScores]}
+                    onChange={(e) => updateSexualScore(item.key as keyof typeof sexualScores, Number(e.target.value))}
+                    className="w-full accent-luna-purple"
+                  />
+                </label>
+              ))}
+            </div>
+            <div className="rounded-xl border border-slate-200/70 dark:border-slate-700/70 p-3 bg-slate-50/70 dark:bg-slate-900/55">
+              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">Current: {sexualOverview.state}</p>
             </div>
           </article>
 
@@ -376,6 +461,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                 <button onClick={() => applyTemplate('hormone_core')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">Hormone Template</button>
                 <button onClick={() => applyTemplate('thyroid')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">Thyroid</button>
                 <button onClick={() => applyTemplate('metabolic')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">Metabolic</button>
+                <button onClick={() => applyTemplate('libido_intimacy')} className="px-3 py-2 rounded-full border border-luna-coral/50 text-luna-coral text-[10px] font-black uppercase tracking-[0.15em]">Libido & Intimacy</button>
                 <button onClick={addRow} className="px-3 py-2 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-[0.15em]">Add Row</button>
               </div>
             </div>
@@ -467,6 +553,20 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                     </div>
                     <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{signal.marker}: {signal.value}</p>
                     <p className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-relaxed">{signal.importance}</p>
+                  </div>
+                ))}
+              </div>
+            </article>
+          )}
+
+          {libidoHormoneSignals.length > 0 && (
+            <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/85 dark:bg-[#081a3d]/85 p-6 shadow-luna-rich space-y-4">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Libido & Intimacy Factors</p>
+              <div className="space-y-2">
+                {libidoHormoneSignals.slice(0, 6).map((signal, idx) => (
+                  <div key={`${signal.marker}-${idx}`} className="flex items-center justify-between rounded-lg border border-slate-200/70 dark:border-slate-700/70 px-3 py-2 bg-slate-50/70 dark:bg-slate-900/45">
+                    <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">{signal.marker}</p>
+                    <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.08em] ${statusColor(signal.status)}`}>{signal.status}</span>
                   </div>
                 ))}
               </div>
