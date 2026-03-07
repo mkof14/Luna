@@ -2174,11 +2174,12 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                   </tr>
                 </thead>
                 <tbody>
-                  {manualRows.map((row) => (
+                  {manualRows.map((row, rowIndex) => (
                     <tr key={row.id} className="border-t border-slate-200/70 dark:border-slate-700/60">
                       {(['marker', 'value', 'unit', 'reference', 'date', 'note'] as Array<keyof HealthLabRow>).map((field) => (
                         <td key={field} className="py-2 pr-2">
                           <input
+                            data-testid={`labs-manual-${field}-${rowIndex}`}
                             value={row[field]}
                             onChange={(e) => updateRow(row.id, field, e.target.value)}
                             className="w-full px-2 py-1.5 rounded-lg border border-slate-300/70 dark:border-slate-700/70 bg-white dark:bg-slate-900/80 text-xs font-semibold"
@@ -2222,18 +2223,18 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
           </article>
 
           {labConflicts.length > 0 && (
-            <article className="rounded-[2rem] border border-amber-300/70 dark:border-amber-700/60 bg-amber-50/70 dark:bg-amber-900/10 p-6 space-y-4 shadow-luna-rich">
+            <article data-testid="labs-conflicts-card" className="rounded-[2rem] border border-amber-300/70 dark:border-amber-700/60 bg-amber-50/70 dark:bg-amber-900/10 p-6 space-y-4 shadow-luna-rich">
               <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-amber-700 dark:text-amber-300">{conflictsUi.title}</h3>
               <p className="text-sm font-semibold text-amber-800/90 dark:text-amber-200/90">{conflictsUi.hint}</p>
               <div className="space-y-3">
-                {labConflicts.map((conflict) => (
-                  <div key={conflict.key} className="rounded-xl border border-amber-200/80 dark:border-amber-700/50 bg-white/70 dark:bg-slate-900/60 p-3 space-y-2">
+                {labConflicts.map((conflict, conflictIndex) => (
+                  <div data-testid={`labs-conflict-${conflictIndex}`} key={conflict.key} className="rounded-xl border border-amber-200/80 dark:border-amber-700/50 bg-white/70 dark:bg-slate-900/60 p-3 space-y-2">
                     <p className="text-xs font-black uppercase tracking-[0.12em] text-amber-700 dark:text-amber-300">{conflict.marker}</p>
                     <div className="space-y-2">
                       {conflict.options.map((option, idx) => {
                         const selected = (conflictChoices[conflict.key] ?? 0) === idx;
                         return (
-                          <label key={`${conflict.key}-${idx}`} className={`flex items-start gap-3 rounded-lg border p-2 cursor-pointer ${selected ? 'border-amber-400 bg-amber-100/70 dark:bg-amber-900/30' : 'border-slate-300/70 dark:border-slate-700/70'}`}>
+                          <label data-testid={`labs-conflict-option-${conflictIndex}-${idx}`} key={`${conflict.key}-${idx}`} className={`flex items-start gap-3 rounded-lg border p-2 cursor-pointer ${selected ? 'border-amber-400 bg-amber-100/70 dark:bg-amber-900/30' : 'border-slate-300/70 dark:border-slate-700/70'}`}>
                             <input
                               type="radio"
                               name={`conflict-${conflict.key}`}
@@ -2267,11 +2268,11 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl bg-white/70 dark:bg-slate-900/55 p-3">
                 <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{reportsUi.withinRange}</p>
-                <p className="text-2xl font-black text-emerald-600">{markerStatuses.normal}</p>
+                <p data-testid="labs-within-count" className="text-2xl font-black text-emerald-600">{markerStatuses.normal}</p>
               </div>
               <div className="rounded-xl bg-white/70 dark:bg-slate-900/55 p-3">
                 <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{reportsUi.outOfRange}</p>
-                <p className="text-2xl font-black text-rose-600">{markerStatuses.low + markerStatuses.high}</p>
+                <p data-testid="labs-outofrange-count" className="text-2xl font-black text-rose-600">{markerStatuses.low + markerStatuses.high}</p>
               </div>
             </div>
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{hormoneSummary}</p>
