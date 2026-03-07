@@ -33,6 +33,8 @@ type ExtraHowCopy = {
   onboardingBody: string;
   localModeTitle: string;
   localModeBody: string;
+  reportsTitle: string;
+  reportsBody: string;
 };
 
 const EXTRA_HOW_COPY: Record<Language, ExtraHowCopy> = {
@@ -47,6 +49,8 @@ const EXTRA_HOW_COPY: Record<Language, ExtraHowCopy> = {
     onboardingBody: 'Day 1-2 capture baseline, day 3-5 detect pattern shifts, day 6-7 create your first Inner Weather summary and personal rhythm rules.',
     localModeTitle: 'Development Mode (Local-First)',
     localModeBody: 'Current setup runs locally. Data remains on this device unless manually exported.',
+    reportsTitle: 'My Health Reports',
+    reportsBody: 'Generates a doctor-ready women-focused report with hormone combinations, potential effects, risk areas, and practical recommendations.',
   },
   ru: {
     dailyTitle: 'Ежедневный Формат (90 Секунд)',
@@ -59,6 +63,8 @@ const EXTRA_HOW_COPY: Record<Language, ExtraHowCopy> = {
     onboardingBody: 'Дни 1-2 фиксируют базу, дни 3-5 показывают сдвиги паттернов, дни 6-7 формируют первый отчет Inner Weather и личные правила ритма.',
     localModeTitle: 'Режим Разработки (Local-First)',
     localModeBody: 'Сейчас система работает локально. Данные остаются на этом устройстве, пока вы сами их не экспортируете.',
+    reportsTitle: 'My Health Reports',
+    reportsBody: 'Формирует отчет для врача с женским клиническим фокусом: сочетания гормонов, эффекты, риски и практические рекомендации.',
   },
   uk: {
     dailyTitle: 'Щоденний Формат (90 Секунд)',
@@ -71,6 +77,8 @@ const EXTRA_HOW_COPY: Record<Language, ExtraHowCopy> = {
     onboardingBody: 'Дні 1-2 формують базу, дні 3-5 показують зсуви патернів, дні 6-7 дають перший звіт Inner Weather і власні правила ритму.',
     localModeTitle: 'Режим Розробки (Local-First)',
     localModeBody: 'Поточне налаштування працює локально. Дані залишаються на пристрої, доки ви їх не експортуєте.',
+    reportsTitle: 'My Health Reports',
+    reportsBody: 'Формує звіт для лікаря з жіночим клінічним фокусом: гормональні поєднання, ефекти, ризики та практичні дії.',
   },
   es: {
     dailyTitle: 'Uso Diario (90 Segundos)',
@@ -83,6 +91,8 @@ const EXTRA_HOW_COPY: Record<Language, ExtraHowCopy> = {
     onboardingBody: 'Días 1-2 establecen base, 3-5 detectan cambios de patrón, 6-7 generan tu primer resumen Inner Weather y reglas personales.',
     localModeTitle: 'Modo Desarrollo (Local-First)',
     localModeBody: 'La configuración actual corre en local. Tus datos quedan en este dispositivo salvo exportación manual.',
+    reportsTitle: 'My Health Reports',
+    reportsBody: 'Genera reporte clínico enfocado en salud femenina: combinaciones hormonales, efectos potenciales, riesgos y acciones sugeridas.',
   },
   fr: {
     dailyTitle: 'Usage Quotidien (90 Secondes)',
@@ -95,6 +105,8 @@ const EXTRA_HOW_COPY: Record<Language, ExtraHowCopy> = {
     onboardingBody: 'Jours 1-2 base initiale, 3-5 détection de variations, 6-7 premier résumé Inner Weather et règles personnelles.',
     localModeTitle: 'Mode Développement (Local-First)',
     localModeBody: 'La configuration actuelle est locale. Les données restent sur cet appareil sauf export manuel.',
+    reportsTitle: 'My Health Reports',
+    reportsBody: 'Génère un rapport clinique orienté santé féminine: combinaisons hormonales, effets possibles, risques et actions recommandées.',
   },
   de: {
     dailyTitle: 'Tägliche Nutzung (90 Sekunden)',
@@ -107,6 +119,8 @@ const EXTRA_HOW_COPY: Record<Language, ExtraHowCopy> = {
     onboardingBody: 'Tag 1-2 Basis erfassen, 3-5 Musteränderungen erkennen, 6-7 erste Inner-Weather-Zusammenfassung und persönliche Regeln erstellen.',
     localModeTitle: 'Entwicklungsmodus (Local-First)',
     localModeBody: 'Das System läuft aktuell lokal. Daten bleiben auf diesem Gerät bis zum manuellen Export.',
+    reportsTitle: 'My Health Reports',
+    reportsBody: 'Erstellt einen frauenfokussierten klinischen Bericht mit Hormonkombinationen, möglichen Effekten, Risiken und Handlungsempfehlungen.',
   },
   zh: {
     dailyTitle: '每日使用结构（90 秒）',
@@ -119,6 +133,8 @@ const EXTRA_HOW_COPY: Record<Language, ExtraHowCopy> = {
     onboardingBody: '第 1-2 天建立基线，第 3-5 天识别模式变化，第 6-7 天生成首个 Inner Weather 总结与个人节律规则。',
     localModeTitle: '开发模式（Local-First）',
     localModeBody: '当前为本地运行。除非你手动导出，数据将保存在本机。',
+    reportsTitle: 'My Health Reports',
+    reportsBody: '生成女性健康临床报告：激素组合、潜在影响、风险区域和可执行建议。',
   },
   ja: {
     dailyTitle: '毎日の利用構造（90秒）',
@@ -131,6 +147,8 @@ const EXTRA_HOW_COPY: Record<Language, ExtraHowCopy> = {
     onboardingBody: '1-2日目で基準を作り、3-5日目で変化を把握、6-7日目で最初のInner Weather要約と個人ルールを作成します。',
     localModeTitle: '開発モード（Local-First）',
     localModeBody: '現在はローカル実行です。手動エクスポートしない限りデータは端末内に保存されます。',
+    reportsTitle: 'My Health Reports',
+    reportsBody: '女性向けの臨床レポートを生成し、ホルモン組み合わせ、想定影響、リスク、行動提案を提示します。',
   },
   pt: {
     dailyTitle: 'Uso Diario (90 Segundos)',
@@ -143,6 +161,8 @@ const EXTRA_HOW_COPY: Record<Language, ExtraHowCopy> = {
     onboardingBody: 'Dias 1-2 criam base, 3-5 mostram mudanças de padrão, 6-7 geram o primeiro resumo Inner Weather e regras pessoais.',
     localModeTitle: 'Modo De Desenvolvimento (Local-First)',
     localModeBody: 'A configuração atual roda localmente. Os dados ficam neste dispositivo, salvo exportação manual.',
+    reportsTitle: 'My Health Reports',
+    reportsBody: 'Gera relatório clínico focado na mulher com combinações hormonais, efeitos potenciais, riscos e recomendações práticas.',
   },
 };
 
@@ -652,7 +672,7 @@ export const HowItWorksView: React.FC<HowItWorksViewProps> = ({ lang, onBack }) 
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <article className="rounded-[2.5rem] border border-slate-200/70 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70 p-7 md:p-8 shadow-luna-rich space-y-4">
           <h3 className="text-xl font-black tracking-tight">{extra.dailyTitle}</h3>
           <ul className="space-y-2">
@@ -668,6 +688,10 @@ export const HowItWorksView: React.FC<HowItWorksViewProps> = ({ lang, onBack }) 
         <article className="rounded-[2.5rem] border border-slate-200/70 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70 p-7 md:p-8 shadow-luna-rich space-y-4">
           <h3 className="text-xl font-black tracking-tight">{extra.localModeTitle}</h3>
           <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 leading-relaxed">{extra.localModeBody}</p>
+        </article>
+        <article className="rounded-[2.5rem] border border-slate-200/70 dark:border-slate-800 bg-gradient-to-br from-[#e9eefb]/90 to-[#dff6f3]/90 dark:from-slate-900/80 dark:to-slate-800/70 p-7 md:p-8 shadow-luna-rich space-y-4">
+          <h3 className="text-xl font-black tracking-tight">{extra.reportsTitle}</h3>
+          <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{extra.reportsBody}</p>
         </article>
       </div>
 

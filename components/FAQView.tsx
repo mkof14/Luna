@@ -476,17 +476,106 @@ const CORE_TITLE_BY_LANG: Record<Language, string> = {
   pt: 'FAQ Principal',
 };
 
+const REPORT_FAQ_BY_LANG: Record<Language, FAQCategory> = {
+  en: {
+    title: 'Health Reports & Women Clinical Insights',
+    items: [
+      { q: 'What makes My Health Reports useful for women?', a: 'The report interprets female-specific hormone patterns (cycle, thyroid, metabolic, androgen, libido-related) and explains how they may connect with symptoms, not just raw numbers.' },
+      { q: 'Does it analyze combinations, risks, and side effects?', a: 'Yes. The report highlights hormone combinations, potential effects on mood/sleep/libido/energy, potential risks, and practical next-step recommendations for discussion with your clinician.' },
+      { q: 'Can I use the report in a doctor appointment?', a: 'Yes. The layout is doctor-ready: clear sections, marker table, status indicators, trend logic, and questions to discuss. It is designed to save consultation time.' },
+      { q: 'Is this a diagnosis?', a: 'No. Luna provides educational pattern interpretation and preparation support. Diagnosis and treatment decisions must be made by licensed medical professionals.' },
+    ],
+  },
+  ru: {
+    title: 'Health Reports И Клинические Инсайты Для Женщин',
+    items: [
+      { q: 'Что делает My Health Reports полезным для женщин?', a: 'Отчет интерпретирует женские гормональные паттерны (цикл, щитовидка, метаболизм, андрогены, либидо) и связывает их с симптомами, а не просто показывает цифры.' },
+      { q: 'Анализируются ли сочетания, риски и побочные эффекты?', a: 'Да. Отчет выделяет сочетания гормонов, возможные эффекты на настроение/сон/либидо/энергию, потенциальные риски и практические шаги для обсуждения с врачом.' },
+      { q: 'Можно ли использовать отчет на приеме у врача?', a: 'Да. Формат подготовлен для консультации: понятные разделы, таблица маркеров, статусы, логика тенденций и вопросы к врачу.' },
+      { q: 'Это диагноз?', a: 'Нет. Luna дает образовательную интерпретацию паттернов и поддержку подготовки. Диагноз и лечение определяет лицензированный врач.' },
+    ],
+  },
+  uk: {
+    title: 'Health Reports І Клінічні Інсайти Для Жінок',
+    items: [
+      { q: 'Що робить My Health Reports корисним для жінок?', a: 'Звіт інтерпретує жіночі гормональні патерни (цикл, щитоподібна, метаболізм, андрогени, лібідо) і пов’язує їх із симптомами, а не лише з числами.' },
+      { q: 'Чи аналізуються поєднання, ризики та побічні ефекти?', a: 'Так. Звіт показує гормональні поєднання, можливі ефекти на настрій/сон/лібідо/енергію, потенційні ризики та практичні кроки для лікаря.' },
+      { q: 'Чи можна використовувати звіт на прийомі?', a: 'Так. Формат підготовлено для консультації: чіткі розділи, таблиця маркерів, статуси, логіка тренду і питання до лікаря.' },
+      { q: 'Це діагноз?', a: 'Ні. Luna дає освітню інтерпретацію патернів і підтримку підготовки. Діагноз і лікування визначає ліцензований лікар.' },
+    ],
+  },
+  es: {
+    title: 'Health Reports E Insights Clínicos Femeninos',
+    items: [
+      { q: '¿Qué hace útil My Health Reports para mujeres?', a: 'Interpreta patrones hormonales femeninos y los relaciona con síntomas (energía, ánimo, sueño, libido), no solo con valores sueltos.' },
+      { q: '¿Analiza combinaciones, riesgos y efectos?', a: 'Sí. Destaca combinaciones hormonales, posibles efectos, riesgos potenciales y recomendaciones prácticas para comentar con tu médica/o.' },
+      { q: '¿Puedo usar el reporte en consulta?', a: 'Sí. El formato está listo para consulta médica: secciones claras, tabla de marcadores, estados y preguntas clínicas.' },
+      { q: '¿Es un diagnóstico?', a: 'No. Luna ofrece interpretación educativa y apoyo de preparación. El diagnóstico y tratamiento los define un profesional de salud.' },
+    ],
+  },
+  fr: {
+    title: 'Health Reports Et Insights Cliniques Féminins',
+    items: [
+      { q: 'Pourquoi My Health Reports est utile pour les femmes ?', a: 'Le rapport interprète les profils hormonaux féminins et les relie aux symptômes, au-delà des valeurs isolées.' },
+      { q: 'Analyse-t-il combinaisons, risques et effets ?', a: 'Oui. Il met en évidence les combinaisons hormonales, effets possibles, risques potentiels et recommandations à discuter en consultation.' },
+      { q: 'Puis-je utiliser ce rapport avec mon médecin ?', a: 'Oui. Le format est prêt pour la consultation: sections claires, tableau des marqueurs, statuts et questions cliniques.' },
+      { q: 'Est-ce un diagnostic ?', a: 'Non. Luna fournit une interprétation éducative et un support de préparation. Le diagnostic et le traitement relèvent d’un professionnel de santé.' },
+    ],
+  },
+  de: {
+    title: 'Health Reports Und Klinische Frauen-Insights',
+    items: [
+      { q: 'Was macht My Health Reports für Frauen nützlich?', a: 'Der Bericht interpretiert frauenspezifische Hormonmuster und verknüpft sie mit Symptomen statt nur Einzelwerten.' },
+      { q: 'Werden Kombinationen, Risiken und Effekte analysiert?', a: 'Ja. Der Bericht zeigt Hormon-Kombinationen, potenzielle Effekte, Risiken und praktische Empfehlungen für das Arztgespräch.' },
+      { q: 'Kann ich den Bericht im Arzttermin nutzen?', a: 'Ja. Das Format ist arztfertig: klare Abschnitte, Markertabelle, Statusindikatoren und Gesprächsfragen.' },
+      { q: 'Ist das eine Diagnose?', a: 'Nein. Luna bietet edukative Musterinterpretation und Vorbereitung. Diagnose und Therapie erfolgen durch medizinisches Fachpersonal.' },
+    ],
+  },
+  zh: {
+    title: 'Health Reports 与女性临床洞察',
+    items: [
+      { q: '为什么 My Health Reports 对女性有价值？', a: '报告会解读女性激素模式（周期、甲状腺、代谢、雄激素、性健康）并关联症状，而不是只给数值。' },
+      { q: '会分析组合、风险和潜在影响吗？', a: '会。报告会标出激素组合、潜在影响、潜在风险，并给出可与医生讨论的下一步建议。' },
+      { q: '报告可以直接用于就诊吗？', a: '可以。结构是就诊友好的：分区清晰、指标表、状态标签、趋势逻辑和医生沟通问题。' },
+      { q: '这算医疗诊断吗？', a: '不算。Luna 提供教育性解读与就诊准备支持，诊断和治疗必须由持证医生决定。' },
+    ],
+  },
+  ja: {
+    title: 'Health Reports と女性向け臨床インサイト',
+    items: [
+      { q: 'My Health Reports が女性に有用な理由は？', a: '女性特有のホルモンパターンを症状と関連づけて解釈し、単なる数値表示で終わらせません。' },
+      { q: '組み合わせ・リスク・影響も分析しますか？', a: 'はい。ホルモンの組み合わせ、想定影響、潜在リスク、医師相談用の実行提案を示します。' },
+      { q: '診察で使えますか？', a: 'はい。医師向けに使える形式です。セクション整理、マーカー表、ステータス、確認質問を含みます。' },
+      { q: '診断になりますか？', a: 'いいえ。Luna は教育的解釈と準備支援です。診断・治療は医療資格者が行います。' },
+    ],
+  },
+  pt: {
+    title: 'Health Reports E Insights Clínicos Femininos',
+    items: [
+      { q: 'O que torna My Health Reports útil para mulheres?', a: 'O relatório interpreta padrões hormonais femininos e conecta os achados aos sintomas, não apenas a números isolados.' },
+      { q: 'Ele analisa combinações, riscos e efeitos?', a: 'Sim. Mostra combinações hormonais, efeitos potenciais, riscos e recomendações práticas para discutir com a médica/o.' },
+      { q: 'Posso usar o relatório na consulta?', a: 'Sim. O formato é clínico: seções claras, tabela de marcadores, status e perguntas para consulta.' },
+      { q: 'Isso é diagnóstico?', a: 'Não. Luna oferece interpretação educativa e apoio de preparo. Diagnóstico e tratamento são definidos por profissional de saúde.' },
+    ],
+  },
+};
+
 export const FAQView: React.FC<{ lang?: Language; onBack?: () => void }> = ({ lang = 'en', onBack }) => {
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
   const data = useMemo(() => {
     const base = FAQ_DATA[lang] || FAQ_DATA.en;
     const core = CORE_FAQ_BY_LANG[lang] || CORE_FAQ_BY_LANG.en;
+    const reportFaq = REPORT_FAQ_BY_LANG[lang] || REPORT_FAQ_BY_LANG.en;
     const existing = new Set(
       base.flatMap((cat) => cat.items.map((item) => item.q.trim().toLowerCase()))
     );
     const missingCore = core.filter((item) => !existing.has(item.q.trim().toLowerCase()));
-    if (!missingCore.length) return base;
-    return [{ title: CORE_TITLE_BY_LANG[lang] || CORE_TITLE_BY_LANG.en, items: missingCore }, ...base];
+    const result = missingCore.length
+      ? [{ title: CORE_TITLE_BY_LANG[lang] || CORE_TITLE_BY_LANG.en, items: missingCore }, ...base]
+      : [...base];
+    const reportCategoryExists = result.some((cat) => cat.title.trim().toLowerCase() === reportFaq.title.trim().toLowerCase());
+    if (!reportCategoryExists) result.push(reportFaq);
+    return result;
   }, [lang]);
   const copyByLang: Record<Language, { back: string; titleA: string; titleB: string; subtitle: string; promiseTitle: string; promiseQuote: string; commentsTitle: string; comments: Array<{ quote: string; author: string }> }> = {
     en: {

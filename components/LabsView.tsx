@@ -634,6 +634,288 @@ const detailedReportByLang: Partial<Record<Language, {
   pt: { title: 'Relatório Clínico Luna', subtitle: 'Interpretação fisiológica detalhada para consulta médica', keyFindings: 'Achados-Chave', detailedInterpretation: 'Interpretação Detalhada', explanation: 'Explicação', whatHappening: 'O Que Está Acontecendo No Seu Corpo', doctorQuestions: 'Perguntas Para Discutir Com Seu Médico', noQuestions: 'Ainda sem perguntas prioritárias. Adicione mais marcadores.', noMarkers: 'Nenhum marcador adicionado.', statusLow: 'Abaixo da referência: possível reserva reduzida ou baixa atividade.', statusNormal: 'Dentro da referência: alinhado ao corredor fisiológico esperado.', statusHigh: 'Acima da referência: possível sobrecarga, compensação ou pico temporal.', statusUnknown: 'Referência incompleta: requer contexto clínico manual.', copyright: 'Copyright © Luna Balance. Todos os direitos reservados.' },
 };
 
+const womenReportInsightsByLang: Partial<Record<Language, {
+  clinicalFocusTitle: string;
+  clinicalFocusLead: string;
+  combinationsTitle: string;
+  effectsTitle: string;
+  risksTitle: string;
+  recommendationsTitle: string;
+  noData: string;
+  highPriority: string;
+  watch: string;
+  stable: string;
+  estProgTitle: string;
+  estProgBody: string;
+  thyroidTitle: string;
+  thyroidBody: string;
+  insulinAndrogenTitle: string;
+  insulinAndrogenBody: string;
+  prolactinTitle: string;
+  prolactinBody: string;
+  ferritinTitle: string;
+  ferritinBody: string;
+  cortisolTitle: string;
+  cortisolBody: string;
+  recCycle: string;
+  recRepeat: string;
+  recDoctor: string;
+  recLifestyle: string;
+}>> = {
+  en: {
+    clinicalFocusTitle: 'Women-Specific Clinical Focus',
+    clinicalFocusLead: 'This section explains hormone combinations, expected effects, potential risks, and practical next steps.',
+    combinationsTitle: 'Hormone Combinations',
+    effectsTitle: 'Potential Effects',
+    risksTitle: 'Potential Risks',
+    recommendationsTitle: 'Actionable Recommendations',
+    noData: 'Not enough markers yet for advanced pattern interpretation.',
+    highPriority: 'High Priority',
+    watch: 'Watch',
+    stable: 'Stable',
+    estProgTitle: 'Estrogen-Progesterone Balance Pattern',
+    estProgBody: 'Possible luteal imbalance pattern that may correlate with PMS intensity, breast tenderness, mood instability, and sleep disruption.',
+    thyroidTitle: 'Thyroid Slowdown Pattern',
+    thyroidBody: 'Thyroid axis pattern can be linked to fatigue, low motivation, cold sensitivity, dry skin, and cycle changes.',
+    insulinAndrogenTitle: 'Metabolic-Androgen Pattern',
+    insulinAndrogenBody: 'Combined insulin/glucose and androgen strain may influence acne, weight changes, cycle irregularity, and libido fluctuation.',
+    prolactinTitle: 'Prolactin-Libido Pattern',
+    prolactinBody: 'Elevated prolactin may suppress sexual desire, reduce arousal quality, and impact ovulatory rhythm.',
+    ferritinTitle: 'Iron Reserve Pattern',
+    ferritinBody: 'Lower ferritin may reduce cellular resilience and contribute to fatigue, low focus, and poor recovery.',
+    cortisolTitle: 'Stress-Cortisol Pattern',
+    cortisolBody: 'Stress-axis elevation may amplify anxiety, sleep fragmentation, cravings, and hormone instability.',
+    recCycle: 'Repeat key cycle hormones in phase-specific windows (follicular and luteal) for clearer trend interpretation.',
+    recRepeat: 'Retest out-of-range markers in 6-10 weeks with the same lab method for reliable comparison.',
+    recDoctor: 'Bring this report to your clinician and review pattern-level findings, not isolated values only.',
+    recLifestyle: 'Prioritize sleep regularity, protein-first meals, gentle movement, and stress recovery habits to stabilize endocrine load.',
+  },
+  ru: {
+    clinicalFocusTitle: 'Клинический Фокус Для Женщины',
+    clinicalFocusLead: 'Раздел объясняет сочетания гормонов, вероятные эффекты, потенциальные риски и практические шаги.',
+    combinationsTitle: 'Гормональные Сочетания',
+    effectsTitle: 'Потенциальные Эффекты',
+    risksTitle: 'Потенциальные Риски',
+    recommendationsTitle: 'Практические Рекомендации',
+    noData: 'Пока недостаточно маркеров для расширенной интерпретации паттернов.',
+    highPriority: 'Высокий Приоритет',
+    watch: 'Наблюдать',
+    stable: 'Стабильно',
+    estProgTitle: 'Паттерн Баланса Эстроген-Прогестерон',
+    estProgBody: 'Возможен лютеиновый дисбаланс, связанный с выраженным ПМС, болезненностью груди, нестабильностью настроения и ухудшением сна.',
+    thyroidTitle: 'Паттерн Замедления Щитовидной Оси',
+    thyroidBody: 'Паттерн щитовидной оси может быть связан с усталостью, снижением мотивации, зябкостью, сухостью кожи и изменениями цикла.',
+    insulinAndrogenTitle: 'Метаболико-Андрогенный Паттерн',
+    insulinAndrogenBody: 'Сочетание метаболической и андрогенной нагрузки может усиливать акне, колебания веса, нерегулярность цикла и колебания либидо.',
+    prolactinTitle: 'Паттерн Пролактин-Либидо',
+    prolactinBody: 'Повышенный пролактин может снижать сексуальное желание, качество возбуждения и влиять на овуляторный ритм.',
+    ferritinTitle: 'Паттерн Железного Резерва',
+    ferritinBody: 'Снижение ферритина может уменьшать клеточный ресурс и усиливать усталость, снижение концентрации и медленное восстановление.',
+    cortisolTitle: 'Стресс-Кортизоловый Паттерн',
+    cortisolBody: 'Повышение стресс-оси может усиливать тревожность, фрагментацию сна, тягу к еде и гормональную нестабильность.',
+    recCycle: 'Пересдавайте ключевые половые гормоны в фазовых окнах цикла (фолликулярная и лютеиновая фазы).',
+    recRepeat: 'Перепроверьте маркеры вне референса через 6-10 недель тем же лабораторным методом.',
+    recDoctor: 'Покажите этот отчет врачу и обсудите паттерны, а не только отдельные цифры.',
+    recLifestyle: 'Приоритет: стабильный сон, белок в начале приема пищи, мягкая физическая активность и восстановление после стресса.',
+  },
+  uk: {
+    clinicalFocusTitle: 'Клінічний Фокус Для Жінки',
+    clinicalFocusLead: 'Розділ пояснює гормональні поєднання, можливі ефекти, ризики та практичні кроки.',
+    combinationsTitle: 'Гормональні Поєднання',
+    effectsTitle: 'Потенційні Ефекти',
+    risksTitle: 'Потенційні Ризики',
+    recommendationsTitle: 'Практичні Рекомендації',
+    noData: 'Поки недостатньо маркерів для розширеної інтерпретації патернів.',
+    highPriority: 'Високий Пріоритет',
+    watch: 'Спостерігати',
+    stable: 'Стабільно',
+    estProgTitle: 'Патерн Балансу Естроген-Прогестерон',
+    estProgBody: 'Можливий лютеїновий дисбаланс, повʼязаний із ПМС, чутливістю грудей, коливаннями настрою та сном.',
+    thyroidTitle: 'Патерн Сповільнення Щитоподібної Осі',
+    thyroidBody: 'Такий патерн може бути повʼязаний із втомою, холодовою чутливістю, сухістю шкіри та змінами циклу.',
+    insulinAndrogenTitle: 'Метаболічно-Андрогенний Патерн',
+    insulinAndrogenBody: 'Поєднання метаболічного й андрогенного навантаження може впливати на акне, вагу, цикл і лібідо.',
+    prolactinTitle: 'Патерн Пролактин-Лібідо',
+    prolactinBody: 'Підвищений пролактин може знижувати сексуальне бажання, якість збудження й овуляторний ритм.',
+    ferritinTitle: 'Патерн Залізного Резерву',
+    ferritinBody: 'Низький феритин може погіршувати витривалість, фокус і відновлення.',
+    cortisolTitle: 'Стрес-Кортизоловий Патерн',
+    cortisolBody: 'Підвищена стрес-вісь може посилювати тривожність, порушення сну, тягу до їжі та гормональну нестабільність.',
+    recCycle: 'Перевіряйте ключові статеві гормони у фазових вікнах циклу (фолікулярна/лютеїнова фази).',
+    recRepeat: 'Повторюйте маркери поза референсом через 6-10 тижнів тим самим методом лабораторії.',
+    recDoctor: 'Покажіть звіт лікарю і обговорюйте патерни, а не лише окремі числа.',
+    recLifestyle: 'Пріоритет: стабільний сон, білок на початку прийому їжі, мʼякий рух і відновлення після стресу.',
+  },
+  es: {
+    clinicalFocusTitle: 'Enfoque Clínico Femenino',
+    clinicalFocusLead: 'Esta sección explica combinaciones hormonales, efectos, riesgos y pasos prácticos.',
+    combinationsTitle: 'Combinaciones Hormonales',
+    effectsTitle: 'Efectos Potenciales',
+    risksTitle: 'Riesgos Potenciales',
+    recommendationsTitle: 'Recomendaciones Prácticas',
+    noData: 'Aún faltan marcadores para una interpretación avanzada.',
+    highPriority: 'Alta Prioridad',
+    watch: 'Vigilar',
+    stable: 'Estable',
+    estProgTitle: 'Patrón Estrógeno-Progesterona',
+    estProgBody: 'Posible desequilibrio lúteo relacionado con SPM, sensibilidad mamaria, cambios de ánimo y sueño.',
+    thyroidTitle: 'Patrón Tiroideo Lento',
+    thyroidBody: 'Puede asociarse con fatiga, baja motivación, sensibilidad al frío, piel seca y cambios del ciclo.',
+    insulinAndrogenTitle: 'Patrón Metabólico-Androgénico',
+    insulinAndrogenBody: 'La carga combinada puede influir en acné, peso, irregularidad menstrual y libido.',
+    prolactinTitle: 'Patrón Prolactina-Libido',
+    prolactinBody: 'Prolactina elevada puede reducir deseo sexual, excitación y ritmo ovulatorio.',
+    ferritinTitle: 'Patrón De Reserva De Hierro',
+    ferritinBody: 'Ferritina baja puede contribuir a fatiga, baja concentración y recuperación lenta.',
+    cortisolTitle: 'Patrón Estrés-Cortisol',
+    cortisolBody: 'Estrés elevado puede aumentar ansiedad, sueño fragmentado, antojos e inestabilidad hormonal.',
+    recCycle: 'Repite hormonas clave en ventanas de fase del ciclo para interpretar tendencias.',
+    recRepeat: 'Recontrola marcadores fuera de rango en 6-10 semanas con el mismo método.',
+    recDoctor: 'Lleva este reporte a tu médica/o y revisen patrones, no solo números aislados.',
+    recLifestyle: 'Prioriza sueño estable, comidas con proteína, movimiento suave y recuperación del estrés.',
+  },
+  fr: {
+    clinicalFocusTitle: 'Focus Clinique Féminin',
+    clinicalFocusLead: 'Cette section explique les combinaisons hormonales, effets, risques et actions utiles.',
+    combinationsTitle: 'Combinaisons Hormonales',
+    effectsTitle: 'Effets Potentiels',
+    risksTitle: 'Risques Potentiels',
+    recommendationsTitle: 'Recommandations Pratiques',
+    noData: 'Pas assez de marqueurs pour une interprétation avancée.',
+    highPriority: 'Haute Priorité',
+    watch: 'À Surveiller',
+    stable: 'Stable',
+    estProgTitle: 'Profil Œstrogène-Progestérone',
+    estProgBody: 'Possible déséquilibre lutéal lié au SPM, sensibilité mammaire, variabilité émotionnelle et sommeil.',
+    thyroidTitle: 'Profil Thyroïdien Ralenti',
+    thyroidBody: 'Peut être associé à fatigue, baisse d’élan, sensibilité au froid, peau sèche et cycle modifié.',
+    insulinAndrogenTitle: 'Profil Métabolique-Androgénique',
+    insulinAndrogenBody: 'Cette combinaison peut influencer acné, poids, irrégularité du cycle et libido.',
+    prolactinTitle: 'Profil Prolactine-Libido',
+    prolactinBody: 'Une prolactine élevée peut réduire désir sexuel, qualité d’excitation et rythme ovulatoire.',
+    ferritinTitle: 'Profil Réserve En Fer',
+    ferritinBody: 'Une ferritine basse peut réduire la résilience, la concentration et la récupération.',
+    cortisolTitle: 'Profil Stress-Cortisol',
+    cortisolBody: 'Un axe stress élevé peut majorer anxiété, fragmentation du sommeil, envies sucrées et instabilité hormonale.',
+    recCycle: 'Répétez les hormones clés selon les fenêtres de phase du cycle pour lire la tendance.',
+    recRepeat: 'Recontrôlez les marqueurs hors norme à 6-10 semaines avec la même méthode.',
+    recDoctor: 'Apportez ce rapport au médecin et discutez les profils, pas seulement des valeurs isolées.',
+    recLifestyle: 'Priorité au sommeil régulier, protéines, mouvement doux et récupération du stress.',
+  },
+  de: {
+    clinicalFocusTitle: 'Klinischer Fokus Für Frauen',
+    clinicalFocusLead: 'Dieser Abschnitt erklärt Hormonkombinationen, mögliche Effekte, Risiken und nächste Schritte.',
+    combinationsTitle: 'Hormon-Kombinationen',
+    effectsTitle: 'Mögliche Effekte',
+    risksTitle: 'Mögliche Risiken',
+    recommendationsTitle: 'Konkrete Empfehlungen',
+    noData: 'Noch zu wenige Marker für eine erweiterte Musteranalyse.',
+    highPriority: 'Hohe Priorität',
+    watch: 'Beobachten',
+    stable: 'Stabil',
+    estProgTitle: 'Östrogen-Progesteron-Muster',
+    estProgBody: 'Mögliches luteales Ungleichgewicht mit PMS-Intensität, Brustspannen, Stimmungsschwankungen und Schlafproblemen.',
+    thyroidTitle: 'Schilddrüsen-Verlangsamungsmuster',
+    thyroidBody: 'Kann mit Müdigkeit, Kälteempfindlichkeit, trockener Haut und Zyklusveränderungen verbunden sein.',
+    insulinAndrogenTitle: 'Metabolisch-Androgenes Muster',
+    insulinAndrogenBody: 'Kombinierte Belastung kann Akne, Gewichtsschwankungen, Zyklusunregelmäßigkeit und Libido beeinflussen.',
+    prolactinTitle: 'Prolaktin-Libido-Muster',
+    prolactinBody: 'Erhöhtes Prolaktin kann sexuelles Verlangen und Erregungsqualität reduzieren.',
+    ferritinTitle: 'Eisenreserve-Muster',
+    ferritinBody: 'Niedriges Ferritin kann Erschöpfung, geringe Konzentration und langsamere Erholung fördern.',
+    cortisolTitle: 'Stress-Cortisol-Muster',
+    cortisolBody: 'Erhöhter Stress kann Angst, Schlafunterbrechungen, Heißhunger und Hormoninstabilität verstärken.',
+    recCycle: 'Wichtige Zyklushormone in phasenspezifischen Zeitfenstern kontrollieren.',
+    recRepeat: 'Auffällige Marker in 6-10 Wochen mit derselben Labormethode erneut prüfen.',
+    recDoctor: 'Bericht zur Ärztin/zum Arzt mitnehmen und Muster statt Einzelwerte besprechen.',
+    recLifestyle: 'Schlafrhythmus, proteinreiche Mahlzeiten, sanfte Bewegung und Stress-Erholung priorisieren.',
+  },
+  zh: {
+    clinicalFocusTitle: '女性临床重点',
+    clinicalFocusLead: '本节解释激素组合、潜在影响、风险与可执行建议。',
+    combinationsTitle: '激素组合模式',
+    effectsTitle: '潜在影响',
+    risksTitle: '潜在风险',
+    recommendationsTitle: '可执行建议',
+    noData: '当前指标不足，暂无法做高级模式解读。',
+    highPriority: '高优先级',
+    watch: '需观察',
+    stable: '稳定',
+    estProgTitle: '雌激素-孕激素平衡模式',
+    estProgBody: '可能与经前症状加重、乳房不适、情绪波动和睡眠问题相关。',
+    thyroidTitle: '甲状腺减速模式',
+    thyroidBody: '可能关联疲劳、畏寒、皮肤干燥、动力下降及周期变化。',
+    insulinAndrogenTitle: '代谢-雄激素模式',
+    insulinAndrogenBody: '组合负担可能影响痤疮、体重、周期规律和性欲波动。',
+    prolactinTitle: '泌乳素-性欲模式',
+    prolactinBody: '泌乳素偏高可能降低性欲、唤起质量并影响排卵节律。',
+    ferritinTitle: '铁储备模式',
+    ferritinBody: '铁蛋白偏低可能导致疲劳、专注下降和恢复变慢。',
+    cortisolTitle: '压力-皮质醇模式',
+    cortisolBody: '压力轴偏高可能加重焦虑、睡眠碎片化、食欲波动和激素不稳。',
+    recCycle: '在周期不同阶段复查关键激素，便于判断趋势。',
+    recRepeat: '超出参考范围的指标建议 6-10 周后同方法复测。',
+    recDoctor: '就诊时携带报告，重点讨论“模式变化”而非单点数值。',
+    recLifestyle: '优先保证睡眠规律、蛋白质摄入、温和运动与压力恢复。',
+  },
+  ja: {
+    clinicalFocusTitle: '女性向け臨床フォーカス',
+    clinicalFocusLead: 'このセクションではホルモンの組み合わせ、影響、リスク、実行可能な対策を示します。',
+    combinationsTitle: 'ホルモン組み合わせパターン',
+    effectsTitle: '想定される影響',
+    risksTitle: '想定リスク',
+    recommendationsTitle: '実行可能な提案',
+    noData: '高度なパターン解釈に十分なマーカーがまだありません。',
+    highPriority: '高優先',
+    watch: '要観察',
+    stable: '安定',
+    estProgTitle: 'エストロゲン-プロゲステロンパターン',
+    estProgBody: 'PMS増悪、乳房不快、気分変動、睡眠質低下に関連する可能性があります。',
+    thyroidTitle: '甲状腺低下パターン',
+    thyroidBody: '疲労、冷え、乾燥肌、意欲低下、周期変化との関連が考えられます。',
+    insulinAndrogenTitle: '代謝-アンドロゲンパターン',
+    insulinAndrogenBody: 'この組み合わせはニキビ、体重変動、周期不整、性欲変動に影響する可能性があります。',
+    prolactinTitle: 'プロラクチン-リビドーパターン',
+    prolactinBody: '高プロラクチンは性欲・覚醒の質低下、排卵リズムへの影響につながる可能性があります。',
+    ferritinTitle: '鉄貯蔵パターン',
+    ferritinBody: '低フェリチンは疲労、集中力低下、回復遅延を招きやすくなります。',
+    cortisolTitle: 'ストレス-コルチゾールパターン',
+    cortisolBody: 'ストレス軸上昇は不安、睡眠分断、食欲変動、ホルモン不安定を強める可能性があります。',
+    recCycle: '周期フェーズ別に主要ホルモンを再検して傾向を確認してください。',
+    recRepeat: '基準外マーカーは6-10週間後に同一法で再検を推奨します。',
+    recDoctor: '受診時は単一値ではなく、パターン全体を医師と確認してください。',
+    recLifestyle: '睡眠の規則性、タンパク質中心の食事、軽い運動、ストレス回復を優先してください。',
+  },
+  pt: {
+    clinicalFocusTitle: 'Foco Clínico Feminino',
+    clinicalFocusLead: 'Esta seção explica combinações hormonais, efeitos, riscos e próximos passos práticos.',
+    combinationsTitle: 'Combinações Hormonais',
+    effectsTitle: 'Efeitos Potenciais',
+    risksTitle: 'Riscos Potenciais',
+    recommendationsTitle: 'Recomendações Práticas',
+    noData: 'Ainda há poucos marcadores para interpretação avançada de padrões.',
+    highPriority: 'Alta Prioridade',
+    watch: 'Monitorar',
+    stable: 'Estável',
+    estProgTitle: 'Padrão Estrogênio-Progesterona',
+    estProgBody: 'Possível desequilíbrio lúteo associado a TPM, sensibilidade mamária, oscilação de humor e sono.',
+    thyroidTitle: 'Padrão De Lentidão Tireoidiana',
+    thyroidBody: 'Pode estar relacionado a fadiga, baixa motivação, sensibilidade ao frio, pele seca e mudanças no ciclo.',
+    insulinAndrogenTitle: 'Padrão Metabólico-Androgênico',
+    insulinAndrogenBody: 'A combinação pode influenciar acne, peso, irregularidade menstrual e variação de libido.',
+    prolactinTitle: 'Padrão Prolactina-Libido',
+    prolactinBody: 'Prolactina alta pode reduzir desejo sexual, qualidade de excitação e ritmo ovulatório.',
+    ferritinTitle: 'Padrão De Reserva De Ferro',
+    ferritinBody: 'Ferritina baixa pode aumentar fadiga, reduzir foco e atrasar recuperação.',
+    cortisolTitle: 'Padrão Estresse-Cortisol',
+    cortisolBody: 'Estresse elevado pode aumentar ansiedade, fragmentar o sono, elevar cravings e instabilidade hormonal.',
+    recCycle: 'Repita hormônios-chave em janelas de fase do ciclo para melhor leitura de tendência.',
+    recRepeat: 'Reavalie marcadores fora da faixa em 6-10 semanas usando o mesmo método.',
+    recDoctor: 'Leve este relatório para consulta e discuta padrões, não apenas valores isolados.',
+    recLifestyle: 'Priorize sono regular, refeições com proteína, movimento suave e recuperação do estresse.',
+  },
+};
+
 const escapeHtml = (value: string) =>
   value
     .replace(/&/g, '&amp;')
@@ -769,6 +1051,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const reportCategories = markerCategoryByLang[reportLang] || markerCategoryByLang.en!;
   const reportActions = reportActionsByLang[lang] || reportActionsByLang.en!;
   const detailedUi = detailedReportByLang[reportLang] || detailedReportByLang.en!;
+  const womenUi = womenReportInsightsByLang[reportLang] || womenReportInsightsByLang.en!;
 
   const reportId = useMemo(() => manualReportId.trim() || userId || ensureReportId(), [manualReportId, userId]);
   const reportIdentityLine = useMemo(() => {
@@ -908,6 +1191,98 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     return reportCategories.other;
   };
 
+  const markerByTokens = (tokens: string[]) =>
+    parsedValues.find((item) => tokens.some((token) => item.marker.toLowerCase().includes(token)));
+
+  const womenClinicalInsights = useMemo(() => {
+    type Insight = { level: 'high' | 'watch' | 'stable'; title: string; body: string };
+    const combinations: Insight[] = [];
+    const effects: string[] = [];
+    const risks: string[] = [];
+    const recommendations: string[] = [];
+
+    const estradiol = markerByTokens(['estradiol', 'estrogen', 'e2']);
+    const progesterone = markerByTokens(['progesterone']);
+    const tsh = markerByTokens(['tsh']);
+    const ft4 = markerByTokens(['ft4', 't4']);
+    const insulin = markerByTokens(['insulin']);
+    const glucose = markerByTokens(['glucose']);
+    const testosterone = markerByTokens(['testosterone']);
+    const dhea = markerByTokens(['dhea']);
+    const prolactin = markerByTokens(['prolactin']);
+    const ferritin = markerByTokens(['ferritin']);
+    const cortisol = markerByTokens(['cortisol']);
+
+    const stateOf = (item?: ParsedLabValue) => (item ? inferStatus(item.value, item.referenceMin, item.referenceMax) : 'unknown');
+    const hasSymptom = (...keys: string[]) => selectedSymptoms.some((sym) => keys.some((key) => sym.toLowerCase().includes(key)));
+
+    const estrState = stateOf(estradiol);
+    const progState = stateOf(progesterone);
+    if ((estrState === 'high' && (progState === 'low' || progState === 'unknown')) || (estrState === 'normal' && progState === 'low')) {
+      combinations.push({ level: 'high', title: womenUi.estProgTitle, body: womenUi.estProgBody });
+      effects.push(womenUi.estProgBody);
+      risks.push(womenUi.estProgBody);
+      recommendations.push(womenUi.recDoctor);
+    }
+
+    const tshState = stateOf(tsh);
+    const ft4State = stateOf(ft4);
+    if (tshState === 'high' || ft4State === 'low') {
+      combinations.push({ level: 'high', title: womenUi.thyroidTitle, body: womenUi.thyroidBody });
+      effects.push(womenUi.thyroidBody);
+      risks.push(womenUi.thyroidBody);
+      recommendations.push(womenUi.recDoctor);
+    }
+
+    const insulinState = stateOf(insulin);
+    const glucoseState = stateOf(glucose);
+    const testState = stateOf(testosterone);
+    const dheaState = stateOf(dhea);
+    if ((insulinState === 'high' || glucoseState === 'high') && (testState === 'high' || dheaState === 'high')) {
+      combinations.push({ level: 'high', title: womenUi.insulinAndrogenTitle, body: womenUi.insulinAndrogenBody });
+      effects.push(womenUi.insulinAndrogenBody);
+      risks.push(womenUi.insulinAndrogenBody);
+      recommendations.push(womenUi.recDoctor);
+    }
+
+    if (stateOf(prolactin) === 'high' && (sexualOverview.avgPositive <= 3 || hasSymptom('low libido', 'low arousal'))) {
+      combinations.push({ level: 'watch', title: womenUi.prolactinTitle, body: womenUi.prolactinBody });
+      effects.push(womenUi.prolactinBody);
+      risks.push(womenUi.prolactinBody);
+      recommendations.push(womenUi.recDoctor);
+    }
+
+    if (stateOf(ferritin) === 'low' || hasSymptom('fatigue', 'low mood', 'headache')) {
+      combinations.push({ level: 'watch', title: womenUi.ferritinTitle, body: womenUi.ferritinBody });
+      effects.push(womenUi.ferritinBody);
+      risks.push(womenUi.ferritinBody);
+      recommendations.push(womenUi.recDoctor);
+    }
+
+    if (stateOf(cortisol) === 'high' || hasSymptom('anxiety', 'sleep issues')) {
+      combinations.push({ level: 'watch', title: womenUi.cortisolTitle, body: womenUi.cortisolBody });
+      effects.push(womenUi.cortisolBody);
+      risks.push(womenUi.cortisolBody);
+      recommendations.push(womenUi.recDoctor);
+    }
+
+    if (!combinations.length && parsedValues.length) {
+      combinations.push({ level: 'stable', title: womenUi.stable, body: womenUi.noData });
+    }
+    if (!recommendations.length && parsedValues.length) {
+      recommendations.push(womenUi.recDoctor);
+    }
+
+    recommendations.push(womenUi.recCycle, womenUi.recRepeat, womenUi.recLifestyle);
+
+    return {
+      combinations,
+      effects: effects.length ? effects : [womenUi.noData],
+      risks: risks.length ? risks : [womenUi.noData],
+      recommendations: Array.from(new Set(recommendations)),
+    };
+  }, [parsedValues, selectedSymptoms, sexualOverview.avgPositive, womenUi]);
+
   const markerStatusExplanation = (status: 'low' | 'normal' | 'high' | 'unknown') => {
     if (status === 'low') return detailedUi.statusLow;
     if (status === 'high') return detailedUi.statusHigh;
@@ -943,13 +1318,25 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       `${medForm.summary}:`,
       summary,
       '',
+      `${womenUi.combinationsTitle}:`,
+      womenClinicalInsights.combinations.map((item) => `${item.title}: ${item.body}`).join('\n'),
+      '',
+      `${womenUi.effectsTitle}:`,
+      womenClinicalInsights.effects.map((item) => `- ${item}`).join('\n'),
+      '',
+      `${womenUi.risksTitle}:`,
+      womenClinicalInsights.risks.map((item) => `- ${item}`).join('\n'),
+      '',
+      `${womenUi.recommendationsTitle}:`,
+      womenClinicalInsights.recommendations.map((item) => `- ${item}`).join('\n'),
+      '',
       `${detailedUi.doctorQuestions}:`,
       doctorQuestions.length ? doctorQuestions.join('\n') : detailedUi.noQuestions,
       '',
       `${medForm.disclaimerTitle}: ${medForm.disclaimerBody}`,
       detailedUi.copyright,
     ].join('\n');
-  }, [analysis?.text, analysisSource, detailedUi.copyright, detailedUi.detailedInterpretation, detailedUi.doctorQuestions, detailedUi.noMarkers, detailedUi.noQuestions, detailedUi.statusHigh, detailedUi.statusLow, detailedUi.statusNormal, detailedUi.statusUnknown, detailedUi.subtitle, detailedUi.title, doctorQuestions, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, medForm.summary, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay]);
+  }, [analysis?.text, analysisSource, detailedUi.copyright, detailedUi.detailedInterpretation, detailedUi.doctorQuestions, detailedUi.noMarkers, detailedUi.noQuestions, detailedUi.statusHigh, detailedUi.statusLow, detailedUi.statusNormal, detailedUi.statusUnknown, detailedUi.subtitle, detailedUi.title, doctorQuestions, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, medForm.summary, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay, womenClinicalInsights.combinations, womenClinicalInsights.effects, womenClinicalInsights.recommendations, womenClinicalInsights.risks, womenUi.combinationsTitle, womenUi.effectsTitle, womenUi.recommendationsTitle, womenUi.risksTitle]);
 
   const reportHtml = useMemo(() => {
     const logoUrl = `${window.location.origin}/images/Luna%20logo3.png`;
@@ -1031,6 +1418,28 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     const doctorQuestionsHtml = doctorQuestions.length
       ? doctorQuestions.map((question) => `<li style=\"margin:0 0 6px;line-height:1.5;\">${escapeHtml(question)}</li>`).join('')
       : `<li style=\"margin:0;line-height:1.5;\">${escapeHtml(detailedUi.noQuestions)}</li>`;
+    const combinationCardsHtml = womenClinicalInsights.combinations.length
+      ? womenClinicalInsights.combinations
+          .map((item) => {
+            const palette =
+              item.level === 'high'
+                ? { bg: '#fff1f2', border: '#fecdd3', text: '#be123c', label: womenUi.highPriority }
+                : item.level === 'watch'
+                  ? { bg: '#fffbeb', border: '#fde68a', text: '#b45309', label: womenUi.watch }
+                  : { bg: '#ecfdf5', border: '#a7f3d0', text: '#047857', label: womenUi.stable };
+            return `<article style="border:1px solid ${palette.border};background:${palette.bg};border-radius:12px;padding:12px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
+                <h4 style="margin:0;font-size:13px;font-weight:800;color:#0f172a;">${escapeHtml(item.title)}</h4>
+                <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:${palette.text};">${escapeHtml(palette.label)}</span>
+              </div>
+              <p style="margin:0;font-size:12px;line-height:1.55;color:#334155;">${escapeHtml(item.body)}</p>
+            </article>`;
+          })
+          .join('')
+      : `<p style="margin:0;font-size:12px;color:#64748b;">${escapeHtml(womenUi.noData)}</p>`;
+    const womenEffectsHtml = womenClinicalInsights.effects.map((item) => `<li style="margin:0 0 6px;line-height:1.5;">${escapeHtml(item)}</li>`).join('');
+    const womenRisksHtml = womenClinicalInsights.risks.map((item) => `<li style="margin:0 0 6px;line-height:1.5;">${escapeHtml(item)}</li>`).join('');
+    const womenRecommendationsHtml = womenClinicalInsights.recommendations.map((item) => `<li style="margin:0 0 6px;line-height:1.5;">${escapeHtml(item)}</li>`).join('');
     return `<!doctype html>
 <html>
 <head>
@@ -1105,6 +1514,31 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     </div>
 
     <div style="padding:14px 24px 0;">
+      <h3 style="margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${escapeHtml(womenUi.clinicalFocusTitle)}</h3>
+      <p style="margin:0 0 10px;font-size:12px;color:#475569;">${escapeHtml(womenUi.clinicalFocusLead)}</p>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
+        ${combinationCardsHtml}
+      </div>
+    </div>
+
+    <div style="padding:14px 24px 0;">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;">
+        <article style="border:1px solid #cbd5e1;border-radius:12px;padding:12px;background:#eff6ff;">
+          <h4 style="margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:#1d4ed8;">${escapeHtml(womenUi.effectsTitle)}</h4>
+          <ul style="margin:0;padding-left:16px;font-size:12px;color:#1e293b;">${womenEffectsHtml}</ul>
+        </article>
+        <article style="border:1px solid #cbd5e1;border-radius:12px;padding:12px;background:#fff1f2;">
+          <h4 style="margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:#be123c;">${escapeHtml(womenUi.risksTitle)}</h4>
+          <ul style="margin:0;padding-left:16px;font-size:12px;color:#1e293b;">${womenRisksHtml}</ul>
+        </article>
+        <article style="border:1px solid #cbd5e1;border-radius:12px;padding:12px;background:#ecfeff;">
+          <h4 style="margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:#0f766e;">${escapeHtml(womenUi.recommendationsTitle)}</h4>
+          <ul style="margin:0;padding-left:16px;font-size:12px;color:#1e293b;">${womenRecommendationsHtml}</ul>
+        </article>
+      </div>
+    </div>
+
+    <div style="padding:14px 24px 0;">
       <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${medForm.allMarkers}</h3>
       <table style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;">
         <thead>
@@ -1147,7 +1581,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   </div>
 </body>
 </html>`;
-  }, [analysis?.text, analysisSource, detailedUi.copyright, detailedUi.doctorQuestions, detailedUi.explanation, detailedUi.keyFindings, detailedUi.noMarkers, detailedUi.noQuestions, doctorQuestions, medForm.allMarkers, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, sexualUi.summaryLabel]);
+  }, [analysis?.text, analysisSource, detailedUi.copyright, detailedUi.doctorQuestions, detailedUi.explanation, detailedUi.keyFindings, detailedUi.noMarkers, detailedUi.noQuestions, doctorQuestions, medForm.allMarkers, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, sexualUi.summaryLabel, womenClinicalInsights.combinations, womenClinicalInsights.effects, womenClinicalInsights.recommendations, womenClinicalInsights.risks, womenUi.clinicalFocusLead, womenUi.clinicalFocusTitle, womenUi.effectsTitle, womenUi.highPriority, womenUi.noData, womenUi.recommendationsTitle, womenUi.risksTitle, womenUi.stable, womenUi.watch]);
 
   const handleAnalyze = async () => {
     const manualText = buildManualRowsText();
@@ -1244,7 +1678,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       ['TSH', '4.8 mIU/L', '0.4-4.0', 'high', markerCategory('TSH'), detailedUi.statusHigh],
       ['Ferritin', '18 ng/mL', '15-150', 'low-normal', markerCategory('Ferritin'), detailedUi.statusLow],
     ];
-    const sampleHtml = `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Sample Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f1f5f9;color:#0f172a;padding:24px;\"><div style=\"max-width:920px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;\"><div style=\"padding:22px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\"><div style=\"display:flex;align-items:center;gap:10px;\"><img src=\"${logoUrl}\" alt=\"Luna logo\" style=\"width:52px;height:52px;object-fit:contain;border-radius:10px;background:#fff;padding:6px;border:1px solid #e2e8f0;\"/><div><p style=\"margin:0;font-size:34px;line-height:1;font-family:'Brush Script MT','Segoe Script',cursive;\">Luna</p><p style=\"margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">${escapeHtml(detailedUi.subtitle)} - SAMPLE</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:11px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:4px 0 0;font-size:11px;\">${medForm.patientId}: SAMPLE-001</p></div></div></div><div style=\"padding:20px 22px;\"><table style=\"width:100%;border-collapse:collapse;font-size:13px;\"><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Cycle day 21</td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Sexual score 3.5/5 | pain 2/5</td></tr><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:8px;border:1px solid #e2e8f0;\">Lab PDF scan + manual profile</td></tr></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Category</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(detailedUi.explanation)}</th></tr></thead><tbody>${sampleRows.map((row) => `<tr><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[0]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[1]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[2]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[3]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[4]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[5]))}</td></tr>`).join('')}</tbody></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.summary}</h3><p style=\"white-space:pre-wrap;line-height:1.6;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\">${escapeHtml(reportUi.servicePromise)}\n• ${reportUi.serviceBullets.map(escapeHtml).join('\n• ')}</p><div style=\"margin-top:18px;border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div><div style=\"padding:12px 22px;border-top:1px solid #e2e8f0;background:#f8fafc;\"><p style=\"margin:0;font-size:11px;color:#475569;\">${escapeHtml(detailedUi.copyright)}</p></div></div></body></html>`;
+    const sampleHtml = `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Sample Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f1f5f9;color:#0f172a;padding:24px;\"><div style=\"max-width:920px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;\"><div style=\"padding:22px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\"><div style=\"display:flex;align-items:center;gap:10px;\"><img src=\"${logoUrl}\" alt=\"Luna logo\" style=\"width:52px;height:52px;object-fit:contain;border-radius:10px;background:#fff;padding:6px;border:1px solid #e2e8f0;\"/><div><p style=\"margin:0;font-size:34px;line-height:1;font-family:'Brush Script MT','Segoe Script',cursive;\">Luna</p><p style=\"margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">${escapeHtml(detailedUi.subtitle)} - SAMPLE</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:11px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:4px 0 0;font-size:11px;\">${medForm.patientId}: SAMPLE-001</p></div></div></div><div style=\"padding:20px 22px;\"><table style=\"width:100%;border-collapse:collapse;font-size:13px;\"><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Cycle day 21</td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Sexual score 3.5/5 | pain 2/5</td></tr><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:8px;border:1px solid #e2e8f0;\">Lab PDF scan + manual profile</td></tr></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Category</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(detailedUi.explanation)}</th></tr></thead><tbody>${sampleRows.map((row) => `<tr><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[0]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[1]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[2]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[3]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[4]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[5]))}</td></tr>`).join('')}</tbody></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(womenUi.clinicalFocusTitle)}</h3><div style=\"border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\"><p style=\"margin:0 0 8px;font-size:12px;font-weight:800;\">${escapeHtml(womenUi.estProgTitle)}</p><p style=\"margin:0 0 10px;font-size:12px;line-height:1.55;\">${escapeHtml(womenUi.estProgBody)}</p><p style=\"margin:0 0 8px;font-size:12px;font-weight:800;\">${escapeHtml(womenUi.insulinAndrogenTitle)}</p><p style=\"margin:0;font-size:12px;line-height:1.55;\">${escapeHtml(womenUi.insulinAndrogenBody)}</p></div><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(womenUi.recommendationsTitle)}</h3><ul style=\"margin:0;padding-left:18px;font-size:12px;line-height:1.55;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#ecfeff;\"><li>${escapeHtml(womenUi.recCycle)}</li><li>${escapeHtml(womenUi.recRepeat)}</li><li>${escapeHtml(womenUi.recDoctor)}</li><li>${escapeHtml(womenUi.recLifestyle)}</li></ul><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.summary}</h3><p style=\"white-space:pre-wrap;line-height:1.6;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\">${escapeHtml(reportUi.servicePromise)}\n• ${reportUi.serviceBullets.map(escapeHtml).join('\n• ')}</p><div style=\"margin-top:18px;border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div><div style=\"padding:12px 22px;border-top:1px solid #e2e8f0;background:#f8fafc;\"><p style=\"margin:0;font-size:11px;color:#475569;\">${escapeHtml(detailedUi.copyright)}</p></div></div></body></html>`;
     downloadFile(`luna-sample-report-${reportLang}.html`, sampleHtml, 'text/html;charset=utf-8');
     setReportActionFeedback(reportActions.sampleDownloaded);
     setTimeout(() => setReportActionFeedback(null), 2000);
