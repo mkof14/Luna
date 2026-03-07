@@ -16,8 +16,9 @@ import {
   toLabRows,
 } from '../services/healthReportService';
 
+const REPORT_ID_STORAGE_KEY = 'luna_report_user_id_v1';
+
 const emptyProfile: PersonalHealthProfile = {
-  fullName: '',
   birthYear: '',
   cycleLength: '28',
   cycleDay: '',
@@ -26,14 +27,38 @@ const emptyProfile: PersonalHealthProfile = {
   goals: '',
 };
 
-const newRow = (): HealthLabRow => ({
+const quickSymptoms = ['Fatigue', 'Anxiety', 'PMS', 'Sleep issues', 'Headache', 'Low mood', 'Bloating', 'Cravings'];
+
+const templateRows: Record<string, Array<Partial<HealthLabRow>>> = {
+  hormone_core: [
+    { marker: 'Estradiol (E2)', unit: 'pg/mL', reference: '30-400' },
+    { marker: 'Progesterone', unit: 'ng/mL', reference: '0.2-25' },
+    { marker: 'LH', unit: 'IU/L', reference: '1.9-12.5' },
+    { marker: 'FSH', unit: 'IU/L', reference: '2.5-10.2' },
+    { marker: 'Prolactin', unit: 'ng/mL', reference: '4.8-23.3' },
+  ],
+  thyroid: [
+    { marker: 'TSH', unit: 'mIU/L', reference: '0.4-4.0' },
+    { marker: 'FT4', unit: 'pmol/L', reference: '10-22' },
+    { marker: 'FT3', unit: 'pmol/L', reference: '3.1-6.8' },
+  ],
+  metabolic: [
+    { marker: 'Glucose (fasting)', unit: 'mg/dL', reference: '70-99' },
+    { marker: 'Insulin (fasting)', unit: 'uIU/mL', reference: '2-25' },
+    { marker: 'HbA1c', unit: '%', reference: '4.0-5.6' },
+    { marker: 'Ferritin', unit: 'ng/mL', reference: '15-150' },
+    { marker: 'Vitamin D (25-OH)', unit: 'ng/mL', reference: '30-100' },
+  ],
+};
+
+const newRow = (seed?: Partial<HealthLabRow>): HealthLabRow => ({
   id: `row-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-  marker: '',
-  value: '',
-  unit: '',
-  reference: '',
-  date: '',
-  note: '',
+  marker: seed?.marker || '',
+  value: seed?.value || '',
+  unit: seed?.unit || '',
+  reference: seed?.reference || '',
+  date: seed?.date || '',
+  note: seed?.note || '',
 });
 
 const statusColor = (status: 'low' | 'normal' | 'high' | 'unknown') => {
@@ -51,7 +76,28 @@ const inferStatus = (value: number, referenceMin?: number, referenceMax?: number
   return 'normal';
 };
 
-export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void }> = ({ day, age, onBack }) => {
+const parseReference = (reference: string): { min?: number; max?: number } => {
+  const match = reference.match(/(-?\d+(?:[.,]\d+)?)\s*[-–]\s*(-?\d+(?:[.,]\d+)?)/);
+  if (!match) return {};
+  const min = Number(match[1].replace(',', '.'));
+  const max = Number(match[2].replace(',', '.'));
+  if (!Number.isFinite(min) || !Number.isFinite(max)) return {};
+  return { min, max };
+};
+
+const ensureReportId = () => {
+  try {
+    const current = localStorage.getItem(REPORT_ID_STORAGE_KEY);
+    if (current) return current;
+    const created = `LUNA-${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
+    localStorage.setItem(REPORT_ID_STORAGE_KEY, created);
+    return created;
+  } catch {
+    return `LUNA-${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
+  }
+};
+
+export const LabsView: React.FC<{ day: number; age: number; userId?: string; userName?: string; onBack?: () => void }> = ({ day, age, userId, userName }) => {
   const [input, setInput] = useState('');
   const [analysis, setAnalysis] = useState<{ text: string; sources: unknown[] } | null>(null);
   const [loading, setLoading] = useState(false);
@@ -61,13 +107,53 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
   const [manualRows, setManualRows] = useState<HealthLabRow[]>([newRow()]);
   const [parsedRows, setParsedRows] = useState<HealthLabRow[]>([]);
   const [parsedValues, setParsedValues] = useState<ParsedLabValue[]>([]);
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [includeNameInReport, setIncludeNameInReport] = useState(false);
+  const [includeIdInReport, setIncludeIdInReport] = useState(true);
+  const [manualReportId, setManualReportId] = useState('');
   const [profile, setProfile] = useState<PersonalHealthProfile>(() => ({ ...emptyProfile, birthYear: String(new Date().getFullYear() - age), cycleDay: String(day) }));
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const systemState = useMemo(() => dataService.projectState(log), [log]);
 
+  const reportId = useMemo(() => manualReportId.trim() || userId || ensureReportId(), [manualReportId, userId]);
+  const reportIdentityLine = useMemo(() => {
+    const identity: string[] = [];
+    if (includeNameInReport && userName) identity.push(`Name: ${userName}`);
+    if (includeIdInReport) identity.push(`Report ID: ${reportId}`);
+    return identity.join(' | ');
+  }, [includeNameInReport, includeIdInReport, userName, reportId]);
+
   const hormoneSignals = useMemo(() => computeHormoneSignals(parsedValues), [parsedValues]);
   const hormoneSummary = useMemo(() => summarizeHormoneSignals(hormoneSignals), [hormoneSignals]);
+
+  const markerStatuses = useMemo(() => {
+    let low = 0;
+    let high = 0;
+    let normal = 0;
+    let unknown = 0;
+    for (const item of parsedValues) {
+      const status = inferStatus(item.value, item.referenceMin, item.referenceMax);
+      if (status === 'low') low += 1;
+      if (status === 'high') high += 1;
+      if (status === 'normal') normal += 1;
+      if (status === 'unknown') unknown += 1;
+    }
+    return { low, high, normal, unknown };
+  }, [parsedValues]);
+
+  const doctorQuestions = useMemo(() => {
+    const risky = hormoneSignals.filter((s) => s.status === 'low' || s.status === 'high').slice(0, 4);
+    if (risky.length === 0) return [];
+    return risky.map((signal) => {
+      const direction = signal.status === 'high' ? 'elevated' : 'reduced';
+      return `Could ${signal.marker} (${direction}) explain my symptoms and cycle changes, and what follow-up test timing is best?`;
+    });
+  }, [hormoneSignals]);
+
+  const toggleSymptom = (symptom: string) => {
+    setSelectedSymptoms((prev) => (prev.includes(symptom) ? prev.filter((item) => item !== symptom) : [...prev, symptom]));
+  };
 
   const updateProfile = (key: keyof PersonalHealthProfile, value: string) => {
     setProfile((prev) => ({ ...prev, [key]: value }));
@@ -79,6 +165,11 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
 
   const addRow = () => setManualRows((prev) => [...prev, newRow()]);
   const removeRow = (id: string) => setManualRows((prev) => prev.filter((row) => row.id !== id));
+
+  const applyTemplate = (templateKey: keyof typeof templateRows) => {
+    const rows = templateRows[templateKey].map((seed) => newRow(seed));
+    setManualRows(rows);
+  };
 
   const buildManualRowsText = () => {
     return manualRows
@@ -95,15 +186,33 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
 
   const buildProfileText = () => {
     const lines = [
-      `Name: ${profile.fullName || 'N/A'}`,
       `Birth year: ${profile.birthYear || 'N/A'}`,
       `Cycle length: ${profile.cycleLength || 'N/A'}`,
       `Cycle day: ${profile.cycleDay || systemState.currentDay}`,
       `Medications: ${profile.medications || 'N/A'}`,
       `Known conditions: ${profile.knownConditions || 'N/A'}`,
       `Goals: ${profile.goals || 'N/A'}`,
+      `Symptoms today: ${selectedSymptoms.length ? selectedSymptoms.join(', ') : 'N/A'}`,
     ];
+    if (reportIdentityLine) lines.unshift(reportIdentityLine);
     return lines.join('\n');
+  };
+
+  const parseManualRowsToParsed = (): ParsedLabValue[] => {
+    return manualRows
+      .filter((row) => row.marker.trim() && row.value.trim())
+      .map((row) => {
+        const value = Number(row.value.replace(',', '.'));
+        const ref = parseReference(row.reference);
+        return {
+          marker: row.marker.trim(),
+          value,
+          unit: row.unit.trim() || undefined,
+          referenceMin: ref.min,
+          referenceMax: ref.max,
+        };
+      })
+      .filter((item) => Number.isFinite(item.value));
   };
 
   const handleAnalyze = async () => {
@@ -113,14 +222,16 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
 
     setLoading(true);
     try {
-      const parsed = parseLabText([manualText, input].filter(Boolean).join('\n'));
-      const nextSignals = computeHormoneSignals(parsed);
+      const parsedFromText = parseLabText([manualText, input].filter(Boolean).join('\n'));
+      const parsedMerged = [...parseManualRowsToParsed(), ...parsedFromText];
+      const nextSignals = computeHormoneSignals(parsedMerged);
       const summary = summarizeHormoneSignals(nextSignals);
-      setParsedValues(parsed);
-      setParsedRows(toLabRows(parsed));
+      setParsedValues(parsedMerged);
+      setParsedRows(toLabRows(parsedMerged));
 
       const aiResult = await analyzeLabResults(combinedInput, systemState);
-      const fullText = `${summary}\n\n${aiResult.text || 'The system could not generate a clear interpretation at this time.'}`;
+      const extraLine = reportIdentityLine ? `Identity: ${reportIdentityLine}` : 'Identity: private';
+      const fullText = `${extraLine}\n${summary}\n\n${aiResult.text || 'The system could not generate a clear interpretation at this time.'}`;
 
       const formattedResult = {
         text: fullText,
@@ -182,17 +293,35 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
           Reports <span className="text-luna-purple">That Explain</span>
         </h2>
         <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 font-semibold max-w-4xl leading-relaxed">
-          Add your personal profile, blood tests, and report text/images. Luna extracts markers, highlights hormone importance, and prepares a structured summary for you and your doctor.
+          Simple workflow: choose report identity, fill your markers, upload image/text, and get a clear hormone-focused summary.
         </p>
       </header>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
         <section className="xl:col-span-7 space-y-8">
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
+            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">Report Identity</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <input type="checkbox" checked={includeIdInReport} onChange={(e) => setIncludeIdInReport(e.target.checked)} />
+                Include ID in report
+              </label>
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <input type="checkbox" checked={includeNameInReport} onChange={(e) => setIncludeNameInReport(e.target.checked)} disabled={!userName} />
+                Include Name in report
+              </label>
+              <label className="md:col-span-2 space-y-1">
+                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">User ID (optional override)</span>
+                <input value={manualReportId} onChange={(e) => setManualReportId(e.target.value)} placeholder={reportId} className="w-full px-3 py-2 rounded-xl border border-slate-300/70 dark:border-slate-700/70 bg-white dark:bg-slate-900/80 text-sm font-semibold" />
+              </label>
+            </div>
+            <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">Current: {reportIdentityLine || 'Private (no name/ID in summary)'}</p>
+          </article>
+
+          <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
             <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">Personal Health Profile</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[
-                ['fullName', 'Full Name'],
                 ['birthYear', 'Birth Year'],
                 ['cycleLength', 'Cycle Length'],
                 ['cycleDay', 'Cycle Day'],
@@ -217,12 +346,34 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
                 />
               </label>
             </div>
+            <div className="space-y-2">
+              <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Today symptoms (quick select)</p>
+              <div className="flex flex-wrap gap-2">
+                {quickSymptoms.map((symptom) => {
+                  const active = selectedSymptoms.includes(symptom);
+                  return (
+                    <button
+                      key={symptom}
+                      onClick={() => toggleSymptom(symptom)}
+                      className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.1em] border transition-colors ${active ? 'bg-luna-purple text-white border-luna-purple' : 'bg-white dark:bg-slate-900/70 text-slate-600 dark:text-slate-300 border-slate-300/70 dark:border-slate-700/70'}`}
+                    >
+                      {symptom}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </article>
 
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">Lab Table</h3>
-              <button onClick={addRow} className="px-3 py-2 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-[0.15em]">Add Row</button>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => applyTemplate('hormone_core')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">Hormone Template</button>
+                <button onClick={() => applyTemplate('thyroid')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">Thyroid</button>
+                <button onClick={() => applyTemplate('metabolic')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">Metabolic</button>
+                <button onClick={addRow} className="px-3 py-2 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-[0.15em]">Add Row</button>
+              </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[720px] text-sm">
@@ -286,7 +437,17 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
 
         <aside className="xl:col-span-5 space-y-6">
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#efe1ea]/92 to-[#dce6f4]/90 dark:from-[#08162f]/92 dark:to-[#0b2040]/90 p-6 space-y-3 shadow-luna-rich">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Hormone Importance</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Quick Overview</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl bg-white/70 dark:bg-slate-900/55 p-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">Within range</p>
+                <p className="text-2xl font-black text-emerald-600">{markerStatuses.normal}</p>
+              </div>
+              <div className="rounded-xl bg-white/70 dark:bg-slate-900/55 p-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">Out of range</p>
+                <p className="text-2xl font-black text-rose-600">{markerStatuses.low + markerStatuses.high}</p>
+              </div>
+            </div>
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{hormoneSummary}</p>
           </article>
 
@@ -305,6 +466,17 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
                   </div>
                 ))}
               </div>
+            </article>
+          )}
+
+          {doctorQuestions.length > 0 && (
+            <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/85 dark:bg-[#081a3d]/85 p-6 shadow-luna-rich space-y-4">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Questions for Doctor</p>
+              <ul className="space-y-2">
+                {doctorQuestions.map((question) => (
+                  <li key={question} className="text-xs font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">• {question}</li>
+                ))}
+              </ul>
             </article>
           )}
 
@@ -348,7 +520,7 @@ export const LabsView: React.FC<{ day: number; age: number; onBack?: () => void 
           ) : (
             <article className="rounded-[2rem] border-2 border-dashed border-slate-300/80 dark:border-slate-700/70 bg-white/60 dark:bg-slate-900/50 p-6 text-center">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Report ready zone</p>
-              <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-2">Fill profile + table and press Generate Report.</p>
+              <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-2">Choose identity, fill profile + table, then Generate Report.</p>
             </article>
           )}
 

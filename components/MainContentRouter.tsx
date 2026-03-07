@@ -188,7 +188,15 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
         {activeTab === 'reflections' && <AudioReflection onBack={() => navigateTo('dashboard')} lang={lang} />}
         {activeTab === 'voice_files' && <MyVoiceFilesView onBack={() => navigateTo('dashboard')} lang={lang} />}
         {activeTab === 'creative' && <CreativeStudio />}
-        {activeTab === 'labs' && <LabsView day={systemState.currentDay} age={DEFAULT_USER_AGE} onBack={() => navigateTo('dashboard')} />}
+        {activeTab === 'labs' && (
+          <LabsView
+            day={systemState.currentDay}
+            age={DEFAULT_USER_AGE}
+            userId={session?.id}
+            userName={session?.name}
+            onBack={() => navigateTo('dashboard')}
+          />
+        )}
         {activeTab === 'meds' && <MedicationsView medications={systemState.medications} lang={lang} onBack={() => navigateTo('dashboard')} />}
         {activeTab === 'history' && <HistoryView log={dataService.getLog()} lang={lang} onBack={() => navigateTo('dashboard')} />}
         {activeTab === 'privacy' && <PrivacyPolicyView lang={lang} onBack={() => navigateTo('dashboard')} />}

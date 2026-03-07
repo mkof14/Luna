@@ -1,5 +1,4 @@
 export interface PersonalHealthProfile {
-  fullName: string;
   birthYear: string;
   cycleLength: string;
   cycleDay: string;
