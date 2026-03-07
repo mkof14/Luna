@@ -562,6 +562,78 @@ const reportActionsByLang: Partial<Record<Language, {
   pt: { copied: 'Copiado', copyFailed: 'Falha ao copiar', shared: 'Compartilhado', shareFailed: 'Falha ao compartilhar', printOpened: 'Janela de impressão aberta', printBlocked: 'Impressão bloqueada', downloaded: 'Baixado', pdfHint: 'Use Salvar como PDF na impressão', pdfBlocked: 'PDF bloqueado', sampleDownloaded: 'Exemplo baixado' },
 };
 
+const detailedReportByLang: Partial<Record<Language, {
+  title: string;
+  subtitle: string;
+  keyFindings: string;
+  detailedInterpretation: string;
+  explanation: string;
+  whatHappening: string;
+  doctorQuestions: string;
+  noQuestions: string;
+  noMarkers: string;
+  statusLow: string;
+  statusNormal: string;
+  statusHigh: string;
+  statusUnknown: string;
+  copyright: string;
+}>> = {
+  en: {
+    title: 'Luna Clinical Report',
+    subtitle: 'Detailed physiological interpretation for care discussion',
+    keyFindings: 'Key Findings',
+    detailedInterpretation: 'Detailed Interpretation',
+    explanation: 'Explanation',
+    whatHappening: 'What Is Happening In Your Body',
+    doctorQuestions: 'Questions To Discuss With Your Doctor',
+    noQuestions: 'No priority questions generated yet. Add more markers for deeper interpretation.',
+    noMarkers: 'No markers added yet.',
+    statusLow: 'Below reference range: possible reduced reserve or low pathway activity.',
+    statusNormal: 'Within reference range: currently aligned with expected physiological corridor.',
+    statusHigh: 'Above reference range: possible overstimulation, compensation, or timing-related peak.',
+    statusUnknown: 'Reference is incomplete: marker requires manual clinical context.',
+    copyright: 'Copyright © Luna Balance. All rights reserved.',
+  },
+  ru: {
+    title: 'Клинический Отчет Luna',
+    subtitle: 'Детальная физиологическая интерпретация для обсуждения с врачом',
+    keyFindings: 'Ключевые Наблюдения',
+    detailedInterpretation: 'Детальная Интерпретация',
+    explanation: 'Пояснение',
+    whatHappening: 'Что Сейчас Происходит В Организме',
+    doctorQuestions: 'Вопросы Для Обсуждения С Врачом',
+    noQuestions: 'Пока нет приоритетных вопросов. Добавьте больше маркеров для глубокой интерпретации.',
+    noMarkers: 'Пока нет добавленных маркеров.',
+    statusLow: 'Ниже референса: возможно снижение резерва или активности соответствующего пути.',
+    statusNormal: 'В пределах референса: показатель находится в ожидаемом физиологическом диапазоне.',
+    statusHigh: 'Выше референса: возможно перенапряжение оси, компенсация или пик по таймингу.',
+    statusUnknown: 'Референс неполный: требуется ручная клиническая интерпретация.',
+    copyright: 'Copyright © Luna Balance. Все права защищены.',
+  },
+  uk: {
+    title: 'Клінічний Звіт Luna',
+    subtitle: 'Детальна фізіологічна інтерпретація для обговорення з лікарем',
+    keyFindings: 'Ключові Спостереження',
+    detailedInterpretation: 'Детальна Інтерпретація',
+    explanation: 'Пояснення',
+    whatHappening: 'Що Зараз Відбувається В Організмі',
+    doctorQuestions: 'Питання Для Обговорення З Лікарем',
+    noQuestions: 'Поки немає пріоритетних питань. Додайте більше маркерів для глибшої інтерпретації.',
+    noMarkers: 'Поки немає доданих маркерів.',
+    statusLow: 'Нижче референсу: можливе зниження резерву або активності шляху.',
+    statusNormal: 'У межах референсу: показник у очікуваному фізіологічному коридорі.',
+    statusHigh: 'Вище референсу: можливе перенапруження осі, компенсація або піковий момент.',
+    statusUnknown: 'Референс неповний: потрібна ручна клінічна інтерпретація.',
+    copyright: 'Copyright © Luna Balance. Усі права захищені.',
+  },
+  es: { title: 'Informe Clínico Luna', subtitle: 'Interpretación fisiológica detallada para consulta médica', keyFindings: 'Hallazgos Clave', detailedInterpretation: 'Interpretación Detallada', explanation: 'Explicación', whatHappening: 'Qué Está Pasando En Tu Cuerpo', doctorQuestions: 'Preguntas Para Tu Médica/o', noQuestions: 'Aún no hay preguntas prioritarias. Agrega más marcadores.', noMarkers: 'No hay marcadores aún.', statusLow: 'Bajo rango: posible baja reserva o actividad reducida.', statusNormal: 'En rango: alineado con el corredor fisiológico esperado.', statusHigh: 'Sobre rango: posible sobreestimulación, compensación o pico temporal.', statusUnknown: 'Referencia incompleta: requiere contexto clínico manual.', copyright: 'Copyright © Luna Balance. Todos los derechos reservados.' },
+  fr: { title: 'Rapport Clinique Luna', subtitle: 'Interprétation physiologique détaillée pour la consultation', keyFindings: 'Constats Clés', detailedInterpretation: 'Interprétation Détaillée', explanation: 'Explication', whatHappening: 'Ce Qui Se Passe Dans Votre Corps', doctorQuestions: 'Questions À Discuter Avec Le Médecin', noQuestions: 'Aucune question prioritaire pour le moment. Ajoutez plus de marqueurs.', noMarkers: 'Aucun marqueur ajouté.', statusLow: 'Sous la référence : réserve ou activité possiblement réduite.', statusNormal: 'Dans la référence : couloir physiologique attendu.', statusHigh: 'Au-dessus de la référence : possible surstimulation, compensation ou pic temporel.', statusUnknown: 'Référence incomplète : contexte clinique requis.', copyright: 'Copyright © Luna Balance. Tous droits réservés.' },
+  de: { title: 'Luna Klinischer Bericht', subtitle: 'Detaillierte physiologische Interpretation für das Arztgespräch', keyFindings: 'Kernaussagen', detailedInterpretation: 'Detaillierte Interpretation', explanation: 'Erklärung', whatHappening: 'Was In Ihrem Körper Passiert', doctorQuestions: 'Fragen Für Das Arztgespräch', noQuestions: 'Noch keine Prioritätsfragen. Fügen Sie mehr Marker hinzu.', noMarkers: 'Noch keine Marker vorhanden.', statusLow: 'Unter Referenz: mögliche reduzierte Reserve oder Aktivität.', statusNormal: 'Im Referenzbereich: im erwarteten physiologischen Korridor.', statusHigh: 'Über Referenz: mögliche Überstimulation, Kompensation oder Zeitfenster-Peak.', statusUnknown: 'Referenz unvollständig: klinischer Kontext erforderlich.', copyright: 'Copyright © Luna Balance. Alle Rechte vorbehalten.' },
+  zh: { title: 'Luna 临床报告', subtitle: '用于医疗沟通的详细生理解读', keyFindings: '关键发现', detailedInterpretation: '详细解读', explanation: '解释', whatHappening: '你体内正在发生什么', doctorQuestions: '建议与医生讨论的问题', noQuestions: '暂未生成重点问题。请添加更多指标。', noMarkers: '尚未添加指标。', statusLow: '低于参考范围：可能提示储备不足或通路活性降低。', statusNormal: '在参考范围内：当前符合预期生理区间。', statusHigh: '高于参考范围：可能存在代偿、过度激活或时间窗峰值。', statusUnknown: '参考区间不完整：需结合临床手动判断。', copyright: 'Copyright © Luna Balance. 保留所有权利。' },
+  ja: { title: 'Luna 臨床レポート', subtitle: '医師相談のための詳細な生理学的解釈', keyFindings: '主要所見', detailedInterpretation: '詳細解釈', explanation: '解説', whatHappening: '体内で起きていること', doctorQuestions: '医師に確認する質問', noQuestions: '優先質問はまだありません。マーカーを追加してください。', noMarkers: 'マーカーはまだありません。', statusLow: '基準値未満: 予備力低下または経路活性低下の可能性。', statusNormal: '基準範囲内: 想定される生理学的レンジ内。', statusHigh: '基準値超え: 過活動、代償、タイミング要因の可能性。', statusUnknown: '基準が不十分: 臨床文脈での手動評価が必要。', copyright: 'Copyright © Luna Balance. All rights reserved.' },
+  pt: { title: 'Relatório Clínico Luna', subtitle: 'Interpretação fisiológica detalhada para consulta médica', keyFindings: 'Achados-Chave', detailedInterpretation: 'Interpretação Detalhada', explanation: 'Explicação', whatHappening: 'O Que Está Acontecendo No Seu Corpo', doctorQuestions: 'Perguntas Para Discutir Com Seu Médico', noQuestions: 'Ainda sem perguntas prioritárias. Adicione mais marcadores.', noMarkers: 'Nenhum marcador adicionado.', statusLow: 'Abaixo da referência: possível reserva reduzida ou baixa atividade.', statusNormal: 'Dentro da referência: alinhado ao corredor fisiológico esperado.', statusHigh: 'Acima da referência: possível sobrecarga, compensação ou pico temporal.', statusUnknown: 'Referência incompleta: requer contexto clínico manual.', copyright: 'Copyright © Luna Balance. Todos os direitos reservados.' },
+};
+
 const escapeHtml = (value: string) =>
   value
     .replace(/&/g, '&amp;')
@@ -696,6 +768,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const reportSourcesUi = reportSourceByLang[reportLang] || reportSourceByLang.en!;
   const reportCategories = markerCategoryByLang[reportLang] || markerCategoryByLang.en!;
   const reportActions = reportActionsByLang[lang] || reportActionsByLang.en!;
+  const detailedUi = detailedReportByLang[reportLang] || detailedReportByLang.en!;
 
   const reportId = useMemo(() => manualReportId.trim() || userId || ensureReportId(), [manualReportId, userId]);
   const reportIdentityLine = useMemo(() => {
@@ -835,6 +908,13 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     return reportCategories.other;
   };
 
+  const markerStatusExplanation = (status: 'low' | 'normal' | 'high' | 'unknown') => {
+    if (status === 'low') return detailedUi.statusLow;
+    if (status === 'high') return detailedUi.statusHigh;
+    if (status === 'normal') return detailedUi.statusNormal;
+    return detailedUi.statusUnknown;
+  };
+
   const reportText = useMemo(() => {
     const identity = reportIdentityLine || 'Private';
     const markersPreview = parsedValues
@@ -844,29 +924,36 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
           Number.isFinite(item.referenceMin as number) && Number.isFinite(item.referenceMax as number)
             ? ` [${item.referenceMin}-${item.referenceMax}]`
             : '';
-        return `${item.marker}: ${item.value}${item.unit ? ` ${item.unit}` : ''}${reference} (${status})`;
+        return `${item.marker}: ${item.value}${item.unit ? ` ${item.unit}` : ''}${reference} (${status})\n  ${markerStatusExplanation(status)}`;
       })
       .join('\n');
     const summary = analysis?.text || 'Generate report to see personalized interpretation.';
     return [
-      'LUNA BALANCE HEALTH REPORT',
+      detailedUi.title,
+      detailedUi.subtitle,
       `${medForm.generatedAt}: ${reportGeneratedAt}`,
       `${medForm.patientId}: ${identity}`,
       `${medForm.source}: ${analysisSource}`,
       `Cycle day: ${profile.cycleDay || systemState.currentDay}`,
       `Sexual snapshot: ${sexualOverview.avgPositive}/5 | pain ${sexualOverview.pain}/5`,
       '',
-      'Markers:',
-      markersPreview || 'No markers yet.',
+      `${detailedUi.detailedInterpretation}:`,
+      markersPreview || detailedUi.noMarkers,
       '',
-      'Summary:',
+      `${medForm.summary}:`,
       summary,
       '',
+      `${detailedUi.doctorQuestions}:`,
+      doctorQuestions.length ? doctorQuestions.join('\n') : detailedUi.noQuestions,
+      '',
       `${medForm.disclaimerTitle}: ${medForm.disclaimerBody}`,
+      detailedUi.copyright,
     ].join('\n');
-  }, [analysis?.text, analysisSource, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay]);
+  }, [analysis?.text, analysisSource, detailedUi.copyright, detailedUi.detailedInterpretation, detailedUi.doctorQuestions, detailedUi.noMarkers, detailedUi.noQuestions, detailedUi.statusHigh, detailedUi.statusLow, detailedUi.statusNormal, detailedUi.statusUnknown, detailedUi.subtitle, detailedUi.title, doctorQuestions, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, medForm.summary, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay]);
 
   const reportHtml = useMemo(() => {
+    const logoUrl = `${window.location.origin}/images/Luna%20logo3.png`;
+    const signatureLogoUrl = `${window.location.origin}/images/Luna%20L%2044.png`;
     const markerRows = parsedValues
       .map((item) => {
         const status = inferStatus(item.value, item.referenceMin, item.referenceMax);
@@ -874,6 +961,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
           Number.isFinite(item.referenceMin as number) && Number.isFinite(item.referenceMax as number)
             ? `${item.referenceMin}-${item.referenceMax}`
             : 'n/a';
+        const explanation = markerStatusExplanation(status);
         const badge =
           status === 'normal'
             ? '#047857'
@@ -883,19 +971,32 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                 ? '#be123c'
                 : '#475569';
         return `<tr>
-          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(item.marker)}</td>
-          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(`${item.value}${item.unit ? ` ${item.unit}` : ''}`)}</td>
-          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(reference)}</td>
-          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\"><span style=\"display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid ${badge};color:${badge};font-weight:700;font-size:11px;text-transform:uppercase;\">${status}</span></td>
-          <td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(markerCategory(item.marker))}</td>
+          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\">${escapeHtml(item.marker)}</td>
+          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\">${escapeHtml(`${item.value}${item.unit ? ` ${item.unit}` : ''}`)}</td>
+          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\">${escapeHtml(reference)}</td>
+          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\"><span style=\"display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid ${badge};color:${badge};font-weight:700;font-size:11px;text-transform:uppercase;\">${status}</span></td>
+          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\">${escapeHtml(markerCategory(item.marker))}</td>
+          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.5;\">${escapeHtml(explanation)}</td>
         </tr>`;
       })
       .join('');
+    const keyFindings = parsedValues
+      .map((item) => ({ item, status: inferStatus(item.value, item.referenceMin, item.referenceMax) }))
+      .filter((row) => row.status === 'low' || row.status === 'high')
+      .slice(0, 6);
     const summary = escapeHtml(analysis?.text || 'Generate report to see personalized interpretation.');
     const safeIdentity = escapeHtml(reportIdentityLine || 'Private');
     const safeAnalysisSource = escapeHtml(analysisSource);
-    return `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f1f5f9;color:#0f172a;padding:24px;\"><div style=\"max-width:920px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;\"><div style=\"padding:22px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\"><div style=\"display:flex;align-items:center;gap:10px;\"><div style=\"width:44px;height:44px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;\">🌙</div><div><h1 style=\"margin:0;font-size:30px;letter-spacing:-0.02em;\">Luna</h1><p style=\"margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">Luna Balance Medical Report</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:11px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:4px 0 0;font-size:11px;\">${medForm.patientId}: ${safeIdentity}</p></div></div></div><div style=\"padding:20px 22px;\"><table style=\"width:100%;border-collapse:collapse;font-size:13px;\"><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Cycle day ${profile.cycleDay || systemState.currentDay}</td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Sexual score ${sexualOverview.avgPositive}/5 | pain ${sexualOverview.pain}/5</td></tr><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:8px;border:1px solid #e2e8f0;\">${safeAnalysisSource}</td></tr></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Category</th></tr></thead><tbody>${markerRows || '<tr><td colspan=\"5\" style=\"padding:8px;\">No markers yet.</td></tr>'}</tbody></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.summary}</h3><p style=\"white-space:pre-wrap;line-height:1.6;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\">${summary}</p><div style=\"margin-top:18px;border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div></div></body></html>`;
-  }, [analysis?.text, analysisSource, medForm.allMarkers, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.panel, medForm.patientId, medForm.source, medForm.summary, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay]);
+    const findingsHtml = keyFindings.length
+      ? keyFindings
+          .map(({ item, status }) => `<li style=\"margin:0 0 6px;line-height:1.5;\"><strong>${escapeHtml(item.marker)}</strong>: ${escapeHtml(markerStatusExplanation(status))}</li>`)
+          .join('')
+      : `<li style=\"margin:0;line-height:1.5;\">${escapeHtml(detailedUi.noMarkers)}</li>`;
+    const doctorQuestionsHtml = doctorQuestions.length
+      ? doctorQuestions.map((question) => `<li style=\"margin:0 0 6px;line-height:1.5;\">${escapeHtml(question)}</li>`).join('')
+      : `<li style=\"margin:0;line-height:1.5;\">${escapeHtml(detailedUi.noQuestions)}</li>`;
+    return `<!doctype html><html><head><meta charset=\"utf-8\"/><title>${escapeHtml(detailedUi.title)}</title></head><body style=\"font-family:Arial,sans-serif;background:#eef2f7;color:#0f172a;padding:24px;\"><div style=\"max-width:980px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:16px;overflow:hidden;box-shadow:0 16px 38px rgba(15,23,42,0.1);\"><div style=\"padding:24px;background:linear-gradient(130deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:flex-start;justify-content:space-between;gap:12px;\"><div style=\"display:flex;align-items:center;gap:12px;\"><img src=\"${logoUrl}\" alt=\"Luna logo\" style=\"width:58px;height:58px;object-fit:contain;border-radius:12px;background:#fff;padding:6px;border:1px solid #e2e8f0;\"/><div><p style=\"margin:0;font-size:38px;line-height:1;font-family:'Brush Script MT','Segoe Script',cursive;\">Luna</p><p style=\"margin:4px 0 0;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">${escapeHtml(detailedUi.subtitle)}</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:12px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:5px 0 0;font-size:12px;\">${medForm.patientId}: ${safeIdentity}</p></div></div></div><div style=\"padding:20px 24px 10px;\"><table style=\"width:100%;border-collapse:collapse;font-size:13px;\"><tr><td style=\"padding:10px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:10px;border:1px solid #e2e8f0;\">Cycle day ${profile.cycleDay || systemState.currentDay}</td><td style=\"padding:10px;border:1px solid #e2e8f0;\">Sexual score ${sexualOverview.avgPositive}/5 | pain ${sexualOverview.pain}/5</td></tr><tr><td style=\"padding:10px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:10px;border:1px solid #e2e8f0;\">${safeAnalysisSource}</td></tr></table></div><div style=\"padding:10px 24px 0;\"><h3 style=\"margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(detailedUi.keyFindings)}</h3><div style=\"border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\"><ul style=\"margin:0;padding-left:18px;font-size:13px;\">${findingsHtml}</ul></div></div><div style=\"padding:18px 24px 0;\"><h3 style=\"margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;\">Category</th><th style=\"text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(detailedUi.explanation)}</th></tr></thead><tbody>${markerRows || `<tr><td colspan=\"6\" style=\"padding:10px;\">${escapeHtml(detailedUi.noMarkers)}</td></tr>`}</tbody></table></div><div style=\"padding:18px 24px 0;\"><h3 style=\"margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(detailedUi.whatHappening)}</h3><p style=\"white-space:pre-wrap;line-height:1.65;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;font-size:13px;\">${summary}</p></div><div style=\"padding:18px 24px 0;\"><h3 style=\"margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(detailedUi.doctorQuestions)}</h3><div style=\"border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\"><ul style=\"margin:0;padding-left:18px;font-size:13px;\">${doctorQuestionsHtml}</ul></div></div><div style=\"padding:18px 24px 20px;\"><div style=\"border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div><div style=\"padding:14px 24px;border-top:1px solid #e2e8f0;background:#f8fafc;display:flex;justify-content:space-between;align-items:center;gap:12px;\"><p style=\"margin:0;font-size:11px;color:#475569;\">${escapeHtml(detailedUi.copyright)}</p><img src=\"${signatureLogoUrl}\" alt=\"Luna mark\" style=\"width:26px;height:26px;object-fit:contain;opacity:0.9;\"/></div></div></body></html>`;
+  }, [analysis?.text, analysisSource, detailedUi.copyright, detailedUi.doctorQuestions, detailedUi.explanation, detailedUi.keyFindings, detailedUi.noMarkers, detailedUi.noQuestions, detailedUi.statusHigh, detailedUi.statusLow, detailedUi.statusNormal, detailedUi.statusUnknown, detailedUi.subtitle, detailedUi.title, detailedUi.whatHappening, doctorQuestions, medForm.allMarkers, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.panel, medForm.patientId, medForm.source, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, systemState.currentDay]);
 
   const handleAnalyze = async () => {
     const manualText = buildManualRowsText();
@@ -985,13 +1086,14 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   };
 
   const handleSampleDownload = () => {
+    const logoUrl = `${window.location.origin}/images/Luna%20logo3.png`;
     const sampleRows = [
-      ['Estradiol (E2)', '148 pg/mL', '30-400', 'normal', markerCategory('Estradiol (E2)')],
-      ['Progesterone', '8.1 ng/mL', '0.2-25', 'normal', markerCategory('Progesterone')],
-      ['TSH', '4.8 mIU/L', '0.4-4.0', 'high', markerCategory('TSH')],
-      ['Ferritin', '18 ng/mL', '15-150', 'low-normal', markerCategory('Ferritin')],
+      ['Estradiol (E2)', '148 pg/mL', '30-400', 'normal', markerCategory('Estradiol (E2)'), detailedUi.statusNormal],
+      ['Progesterone', '8.1 ng/mL', '0.2-25', 'normal', markerCategory('Progesterone'), detailedUi.statusNormal],
+      ['TSH', '4.8 mIU/L', '0.4-4.0', 'high', markerCategory('TSH'), detailedUi.statusHigh],
+      ['Ferritin', '18 ng/mL', '15-150', 'low-normal', markerCategory('Ferritin'), detailedUi.statusLow],
     ];
-    const sampleHtml = `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Sample Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f1f5f9;color:#0f172a;padding:24px;\"><div style=\"max-width:920px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;\"><div style=\"padding:22px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\"><div style=\"display:flex;align-items:center;gap:10px;\"><div style=\"width:44px;height:44px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;\">🌙</div><div><h1 style=\"margin:0;font-size:30px;letter-spacing:-0.02em;\">Luna</h1><p style=\"margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">Luna Balance Medical Report - Sample</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:11px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:4px 0 0;font-size:11px;\">${medForm.patientId}: SAMPLE-001</p></div></div></div><div style=\"padding:20px 22px;\"><table style=\"width:100%;border-collapse:collapse;font-size:13px;\"><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Cycle day 21</td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Sexual score 3.5/5 | pain 2/5</td></tr><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:8px;border:1px solid #e2e8f0;\">Lab PDF scan + manual profile</td></tr></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Category</th></tr></thead><tbody>${sampleRows.map((row) => `<tr><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${row[0]}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${row[1]}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${row[2]}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${row[3]}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${row[4]}</td></tr>`).join('')}</tbody></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.summary}</h3><p style=\"white-space:pre-wrap;line-height:1.6;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\">${escapeHtml(reportUi.servicePromise)}\n• ${reportUi.serviceBullets.map(escapeHtml).join('\n• ')}</p><div style=\"margin-top:18px;border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div></div></body></html>`;
+    const sampleHtml = `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Sample Report</title></head><body style=\"font-family:Arial,sans-serif;background:#f1f5f9;color:#0f172a;padding:24px;\"><div style=\"max-width:920px;margin:0 auto;background:white;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;\"><div style=\"padding:22px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\"><div style=\"display:flex;align-items:center;gap:10px;\"><img src=\"${logoUrl}\" alt=\"Luna logo\" style=\"width:52px;height:52px;object-fit:contain;border-radius:10px;background:#fff;padding:6px;border:1px solid #e2e8f0;\"/><div><p style=\"margin:0;font-size:34px;line-height:1;font-family:'Brush Script MT','Segoe Script',cursive;\">Luna</p><p style=\"margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">${escapeHtml(detailedUi.subtitle)} - SAMPLE</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:11px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:4px 0 0;font-size:11px;\">${medForm.patientId}: SAMPLE-001</p></div></div></div><div style=\"padding:20px 22px;\"><table style=\"width:100%;border-collapse:collapse;font-size:13px;\"><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Cycle day 21</td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Sexual score 3.5/5 | pain 2/5</td></tr><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:8px;border:1px solid #e2e8f0;\">Lab PDF scan + manual profile</td></tr></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Category</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(detailedUi.explanation)}</th></tr></thead><tbody>${sampleRows.map((row) => `<tr><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[0]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[1]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[2]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[3]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[4]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[5]))}</td></tr>`).join('')}</tbody></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.summary}</h3><p style=\"white-space:pre-wrap;line-height:1.6;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\">${escapeHtml(reportUi.servicePromise)}\n• ${reportUi.serviceBullets.map(escapeHtml).join('\n• ')}</p><div style=\"margin-top:18px;border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div><div style=\"padding:12px 22px;border-top:1px solid #e2e8f0;background:#f8fafc;\"><p style=\"margin:0;font-size:11px;color:#475569;\">${escapeHtml(detailedUi.copyright)}</p></div></div></body></html>`;
     downloadFile(`luna-sample-report-${reportLang}.html`, sampleHtml, 'text/html;charset=utf-8');
     setReportActionFeedback(reportActions.sampleDownloaded);
     setTimeout(() => setReportActionFeedback(null), 2000);
