@@ -902,6 +902,131 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     },
   };
   const publicShared = publicSharedByLang[lang] || publicSharedByLang.en!;
+  const mapCoreLabelByLang: Record<Language, string> = {
+    en: 'Luna Balance Core',
+    ru: 'Ядро Luna Balance',
+    uk: 'Ядро Luna Balance',
+    es: 'Nucleo De Luna Balance',
+    fr: 'Noyau Luna Balance',
+    de: 'Luna Balance Kern',
+    zh: 'Luna Balance 核心',
+    ja: 'Luna Balance コア',
+    pt: 'Nucleo Luna Balance',
+  };
+  const ritualCopyByLang: Record<
+    Language,
+    {
+      eyebrow: string;
+      title: string;
+      subtitle: string;
+      morningTitle: string;
+      morningBody: string;
+      middayTitle: string;
+      middayBody: string;
+      eveningTitle: string;
+      eveningBody: string;
+    }
+  > = {
+    en: {
+      eyebrow: 'RITUAL PATH',
+      title: 'A PATH, NOT A CHECKLIST',
+      subtitle: 'A simple daily rhythm that protects attention and preserves signal.',
+      morningTitle: 'MORNING',
+      morningBody: 'Name your baseline before the world names your pace.',
+      middayTitle: 'MIDDAY',
+      middayBody: 'Re-check capacity and adjust plans with respect for your energy.',
+      eveningTitle: 'EVENING',
+      eveningBody: 'Close the day with a short reflection to preserve signal, not noise.',
+    },
+    ru: {
+      eyebrow: 'РИТУАЛЬНЫЙ ПУТЬ',
+      title: 'ПУТЬ, А НЕ ЧЕК-ЛИСТ',
+      subtitle: 'Простой ежедневный ритм, который бережет внимание и сохраняет сигнал состояния.',
+      morningTitle: 'УТРО',
+      morningBody: 'Назовите свой базовый фон до того, как мир задаст вам темп.',
+      middayTitle: 'ДЕНЬ',
+      middayBody: 'Переоцените ресурс и скорректируйте планы с уважением к энергии.',
+      eveningTitle: 'ВЕЧЕР',
+      eveningBody: 'Завершите день короткой рефлексией, чтобы сохранить сигнал, а не шум.',
+    },
+    uk: {
+      eyebrow: 'РИТУАЛЬНИЙ ШЛЯХ',
+      title: 'ШЛЯХ, А НЕ ЧЕК-ЛИСТ',
+      subtitle: 'Простий щоденний ритм, що береже увагу і зберігає сигнал стану.',
+      morningTitle: 'РАНОК',
+      morningBody: 'Назвіть свій базовий стан до того, як світ задасть темп.',
+      middayTitle: 'ДЕНЬ',
+      middayBody: 'Перевірте ресурс і скоригуйте плани з повагою до енергії.',
+      eveningTitle: 'ВЕЧІР',
+      eveningBody: 'Завершіть день короткою рефлексією, щоб зберегти сигнал, а не шум.',
+    },
+    es: {
+      eyebrow: 'RUTA RITUAL',
+      title: 'UN CAMINO, NO UNA LISTA',
+      subtitle: 'Un ritmo diario simple que protege la atencion y conserva la señal.',
+      morningTitle: 'MANANA',
+      morningBody: 'Nombra tu estado base antes de que el mundo marque tu ritmo.',
+      middayTitle: 'MEDIODIA',
+      middayBody: 'Revisa tu capacidad y ajusta planes con respeto por tu energia.',
+      eveningTitle: 'NOCHE',
+      eveningBody: 'Cierra el dia con una breve reflexion para preservar señal, no ruido.',
+    },
+    fr: {
+      eyebrow: 'PARCOURS RITUEL',
+      title: 'UN PARCOURS, PAS UNE CHECK-LIST',
+      subtitle: 'Un rythme quotidien simple qui protege l attention et preserve le signal.',
+      morningTitle: 'MATIN',
+      morningBody: 'Nommez votre base avant que le monde impose son rythme.',
+      middayTitle: 'MIDI',
+      middayBody: 'Reevaluez votre capacite et ajustez vos plans selon votre energie.',
+      eveningTitle: 'SOIR',
+      eveningBody: 'Terminez la journee par une courte reflexion pour garder le signal.',
+    },
+    de: {
+      eyebrow: 'RITUALPFAD',
+      title: 'EIN PFAD, KEINE CHECKLISTE',
+      subtitle: 'Ein einfacher Tagesrhythmus, der Aufmerksamkeit schützt und Signal erhalt.',
+      morningTitle: 'MORGEN',
+      morningBody: 'Benenne deinen Grundzustand, bevor die Welt dein Tempo bestimmt.',
+      middayTitle: 'MITTAG',
+      middayBody: 'Prufe deine Kapazitat und passe Plane deiner Energie entsprechend an.',
+      eveningTitle: 'ABEND',
+      eveningBody: 'Beende den Tag mit einer kurzen Reflexion, um Signal statt Rauschen zu behalten.',
+    },
+    zh: {
+      eyebrow: '节律路径',
+      title: '这是路径，不是清单',
+      subtitle: '一个简单的日常节律，保护注意力并保留真实信号。',
+      morningTitle: '早晨',
+      morningBody: '先命名你的基础状态，再进入外部节奏。',
+      middayTitle: '中午',
+      middayBody: '重新评估容量，并根据能量调整计划。',
+      eveningTitle: '夜晚',
+      eveningBody: '用简短反思结束一天，保留信号而不是噪音。',
+    },
+    ja: {
+      eyebrow: 'リチュアルパス',
+      title: 'チェックリストではなく、道',
+      subtitle: '注意力を守り、状態のシグナルを残すシンプルな日次リズム。',
+      morningTitle: '朝',
+      morningBody: '世界にペースを決められる前に、自分の基準状態を言語化する。',
+      middayTitle: '昼',
+      middayBody: '容量を再確認し、エネルギーに合わせて予定を調整する。',
+      eveningTitle: '夜',
+      eveningBody: '短い振り返りで一日を閉じ、ノイズではなくシグナルを残す。',
+    },
+    pt: {
+      eyebrow: 'CAMINHO RITUAL',
+      title: 'UM CAMINHO, NAO UMA LISTA',
+      subtitle: 'Um ritmo diario simples que protege atencao e preserva sinal.',
+      morningTitle: 'MANHA',
+      morningBody: 'Nomeie sua base antes que o mundo imponha o ritmo.',
+      middayTitle: 'MEIO-DIA',
+      middayBody: 'Reavalie capacidade e ajuste planos com respeito a sua energia.',
+      eveningTitle: 'NOITE',
+      eveningBody: 'Feche o dia com uma reflexao curta para preservar sinal, nao ruido.',
+    },
+  };
 
   const cards = [
     {
@@ -1212,6 +1337,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
             <PublicMapSection
               theme={theme}
               eyebrow={ui.publicHome.map.eyebrow}
+              coreLabel={mapCoreLabelByLang[lang] || mapCoreLabelByLang.en}
               lunaBalanceVision={lunaBalanceVision}
               cards={cards}
               innerWeather={innerWeather}
@@ -1226,6 +1352,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
           <Suspense fallback={lazyFallback}>
             <PublicRitualSection
               onSignIn={onSignIn}
+              copy={ritualCopyByLang[lang] || ritualCopyByLang.en}
               noteTitle={publicShared.noteTitle}
               noteLine1={publicShared.noteLine1}
               noteLine2={publicShared.noteLine2}

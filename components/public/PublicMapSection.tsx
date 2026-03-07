@@ -3,6 +3,7 @@ import React from 'react';
 interface PublicMapSectionProps {
   theme: 'light' | 'dark';
   eyebrow: string;
+  coreLabel: string;
   lunaBalanceVision: {
     title: string;
     subtitle: string;
@@ -26,6 +27,7 @@ interface PublicMapSectionProps {
 export const PublicMapSection: React.FC<PublicMapSectionProps> = ({
   theme,
   eyebrow,
+  coreLabel,
   lunaBalanceVision,
   cards,
   innerWeather,
@@ -56,7 +58,7 @@ export const PublicMapSection: React.FC<PublicMapSectionProps> = ({
         </p>
       </header>
       <div className="relative z-10 rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#fff4fb]/90 via-[#f5e8f8]/84 to-[#e5eef9]/78 dark:from-slate-900/72 dark:via-slate-900/65 dark:to-slate-800/62 p-6 md:p-7 shadow-[0_22px_54px_rgba(86,66,128,0.24)] dark:shadow-[0_18px_46px_rgba(0,0,0,0.45)]">
-        <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple mb-3">Luna Balance Core</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple mb-3">{coreLabel}</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {lunaBalanceVision.points.map((point) => (
             <div key={point} className="rounded-2xl border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#fff8fd]/92 via-[#f3e9f8]/84 to-[#e4ecf9]/78 dark:from-slate-900/72 dark:to-slate-900/58 p-4 text-center shadow-[0_12px_28px_rgba(91,76,131,0.2)] dark:shadow-[0_10px_24px_rgba(0,0,0,0.35)]">
@@ -108,4 +110,3 @@ export const PublicMapSection: React.FC<PublicMapSectionProps> = ({
     </section>
   );
 };
-
