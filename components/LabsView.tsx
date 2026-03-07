@@ -11,6 +11,7 @@ import {
   computeHormoneSignals,
   extractTextFromLabFile,
   HealthLabRow,
+  mergeParsedLabValues,
   ParsedLabValue,
   parseLabText,
   PersonalHealthProfile,
@@ -1790,7 +1791,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     setLoading(true);
     try {
       const parsedFromText = parseLabText([manualText, input].filter(Boolean).join('\n'));
-      const parsedMerged = [...parseManualRowsToParsed(), ...parsedFromText];
+      const parsedMerged = mergeParsedLabValues([...parseManualRowsToParsed(), ...parsedFromText]);
       const nextSignals = computeHormoneSignals(parsedMerged);
       const summary = summarizeHormoneSignals(nextSignals);
       setParsedValues(parsedMerged);

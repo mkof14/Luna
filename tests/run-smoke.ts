@@ -11,7 +11,7 @@ import {
   generatePsychologistResponse,
   generateStateNarrative
 } from '../services/geminiService';
-import { parseLabText } from '../services/healthReportService';
+import { mergeParsedLabValues, parseLabText } from '../services/healthReportService';
 import { incrementBridgeUsage, isSupportedLabFile, parseBridgeUsage } from '../utils/runtimeGuards';
 import { getCyclePhaseByDay } from '../utils/cycle';
 import { buildBottomNavItems, buildSidebarGroups, buildTopNavItems } from '../utils/navigation';
@@ -136,6 +136,27 @@ const testLabTextParsing = () => {
   assert.equal(parsed.some((item) => item.marker === 'Prolactin' && item.value === 19), true, 'PRL alias should normalize to Prolactin');
   assert.equal(parsed.some((item) => item.marker.toLowerCase().includes('estradiol') && item.referenceMin === 30 && item.referenceMax === 400), true, 'semicolon-delimited estradiol row should parse with reference');
   assert.equal(parsed.some((item) => item.marker.toLowerCase().includes('cycle day')), false, 'non-lab helper lines should be ignored');
+};
+
+const testLabMergeResolver = () => {
+  const merged = mergeParsedLabValues([
+    { marker: 'E2', value: 120, unit: 'pg/mL' },
+    { marker: 'Estradiol', value: 132, unit: 'pg/mL', referenceMin: 30, referenceMax: 400 },
+    { marker: 'ТТГ', value: 2.8, unit: 'mIU/L' },
+    { marker: 'TSH', value: 3.1, unit: 'mIU/L', referenceMin: 0.4, referenceMax: 4.0 },
+  ]);
+
+  assert.equal(merged.length, 2, 'duplicate markers should be merged by canonical marker key');
+  assert.equal(
+    merged.some((item) => item.marker === 'Estradiol (E2)' && item.value === 132 && item.referenceMin === 30 && item.referenceMax === 400),
+    true,
+    'merge should keep richer estradiol entry with reference range'
+  );
+  assert.equal(
+    merged.some((item) => item.marker === 'TSH' && item.value === 3.1 && item.referenceMin === 0.4 && item.referenceMax === 4),
+    true,
+    'merge should keep richer TSH entry with reference range'
+  );
 };
 
 const testAuthSecurityInvariants = () => {
@@ -453,6 +474,7 @@ const run = async () => {
   testDataService();
   testRuntimeGuards();
   testLabTextParsing();
+  testLabMergeResolver();
   testAuthSecurityInvariants();
   testCoreUtils();
   testMedicationUtils();
@@ -461,7 +483,7 @@ const run = async () => {
   testBridgeUtils();
   await testShareUtils();
   await testGeminiFallbacks();
-  console.log('Smoke tests passed: ruleEngine + dataService + runtimeGuards + labParser + authSecurity + coreUtils + medicationsUtils + textUtils + profileUtils + bridgeUtils + shareUtils + geminiFallbacks');
+  console.log('Smoke tests passed: ruleEngine + dataService + runtimeGuards + labParser + labMerge + authSecurity + coreUtils + medicationsUtils + textUtils + profileUtils + bridgeUtils + shareUtils + geminiFallbacks');
 };
 
 run().catch((error) => {

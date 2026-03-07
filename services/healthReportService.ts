@@ -238,6 +238,52 @@ export const parseLabText = (raw: string): ParsedLabValue[] => {
     .filter((item): item is ParsedLabValue => Boolean(item));
 };
 
+const markerKey = (marker: string): string =>
+  canonicalizeMarker(marker)
+    .toLowerCase()
+    .replace(/[^a-zа-яё0-9\u00C0-\u024F\u3040-\u30FF\u4E00-\u9FFF]+/gi, '');
+
+const qualityScore = (item: ParsedLabValue): number => {
+  let score = 0;
+  if (item.unit && item.unit.trim().length > 0) score += 1;
+  if (Number.isFinite(item.referenceMin as number) && Number.isFinite(item.referenceMax as number)) score += 2;
+  return score;
+};
+
+export const mergeParsedLabValues = (items: ParsedLabValue[]): ParsedLabValue[] => {
+  const map = new Map<string, ParsedLabValue>();
+  for (const raw of items) {
+    if (!raw.marker || !Number.isFinite(raw.value)) continue;
+    const current: ParsedLabValue = {
+      marker: canonicalizeMarker(raw.marker),
+      value: raw.value,
+      unit: raw.unit,
+      referenceMin: raw.referenceMin,
+      referenceMax: raw.referenceMax,
+    };
+    const key = markerKey(current.marker);
+    const existing = map.get(key);
+    if (!existing) {
+      map.set(key, current);
+      continue;
+    }
+    const existingScore = qualityScore(existing);
+    const currentScore = qualityScore(current);
+    if (currentScore > existingScore || (currentScore === existingScore && current.value !== existing.value)) {
+      map.set(key, current);
+      continue;
+    }
+    if (!existing.unit && current.unit) existing.unit = current.unit;
+    if (!Number.isFinite(existing.referenceMin as number) && Number.isFinite(current.referenceMin as number)) {
+      existing.referenceMin = current.referenceMin;
+    }
+    if (!Number.isFinite(existing.referenceMax as number) && Number.isFinite(current.referenceMax as number)) {
+      existing.referenceMax = current.referenceMax;
+    }
+  }
+  return Array.from(map.values());
+};
+
 export const toLabRows = (items: ParsedLabValue[]): HealthLabRow[] => {
   return items.map((item, index) => ({
     id: `parsed-${index}-${item.marker.toLowerCase().replace(/\s+/g, '-')}`,
