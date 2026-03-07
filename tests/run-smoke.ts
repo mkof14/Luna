@@ -113,6 +113,7 @@ const testRuntimeGuards = () => {
 
   assert.equal(isSupportedLabFile({ name: 'labs.txt', type: 'text/plain' }), true, 'text file should be supported');
   assert.equal(isSupportedLabFile({ name: 'scan.png', type: 'image/png' }), true, 'image file should be supported for scan flow');
+  assert.equal(isSupportedLabFile({ name: 'report.pdf', type: 'application/pdf' }), true, 'pdf file should be supported for scan flow');
 };
 
 const testAuthSecurityInvariants = () => {

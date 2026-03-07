@@ -45,9 +45,11 @@ export const isSupportedLabFile = (file: { name: string; type: string }): boolea
   return (
     file.type.startsWith('text/') ||
     file.type.startsWith('image/') ||
+    file.type === 'application/pdf' ||
     name.endsWith('.txt') ||
     name.endsWith('.csv') ||
     name.endsWith('.md') ||
+    name.endsWith('.pdf') ||
     name.endsWith('.png') ||
     name.endsWith('.jpg') ||
     name.endsWith('.jpeg') ||

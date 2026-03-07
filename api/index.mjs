@@ -469,6 +469,43 @@ const extractLabTextFromImage = async ({ dataUrl, mimeType = 'image/png' }) => {
   };
 };
 
+const extractLabTextFromPdf = async ({ dataUrl, mimeType = 'application/pdf' }) => {
+  const parsed = parseDataUrl(dataUrl);
+  const resolvedMime = parsed?.mimeType || mimeType;
+  const base64 = parsed?.base64;
+
+  if (!base64) {
+    return { text: '', message: 'Invalid PDF payload.' };
+  }
+
+  if (!GEMINI_API_KEY) {
+    return {
+      text: '',
+      message: 'AI PDF extraction is disabled. Set GEMINI_API_KEY to enable PDF scan-to-text.',
+    };
+  }
+
+  const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.0-flash',
+    contents: [
+      {
+        role: 'user',
+        parts: [
+          { text: 'Extract medical/lab text exactly from this PDF. Return plain text only, preserve markers, values, units, and reference ranges line-by-line.' },
+          { inlineData: { mimeType: resolvedMime, data: base64 } },
+        ],
+      },
+    ],
+  });
+
+  const text = String(response?.text || '').trim();
+  return {
+    text,
+    message: text ? 'PDF scan completed.' : 'No readable text detected in PDF.',
+  };
+};
+
 const sanitizeAdminState = (raw) => {
   const next = { ...DEFAULT_ADMIN_STATE };
   if (!raw || typeof raw !== 'object') return next;
@@ -685,6 +722,23 @@ const start = async () => {
         send(res, 200, { text: result.text, message: result.message, provider: GEMINI_API_KEY ? 'gemini' : 'fallback' }, headers);
       } catch (error) {
         send(res, 400, { error: error instanceof Error ? error.message : 'Could not scan image.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/labs/extract-pdf') {
+      if (!rateLimit(`labs-pdf:${ip}`, 12, 60_000)) {
+        send(res, 429, { error: 'Too many PDF scan attempts. Try again in a minute.' }, headers);
+        return;
+      }
+      try {
+        const body = await readBody(req);
+        const dataUrl = safeText(body.dataUrl, 15_000_000);
+        const mimeType = safeText(body.mimeType, 120) || 'application/pdf';
+        const result = await extractLabTextFromPdf({ dataUrl, mimeType });
+        send(res, 200, { text: result.text, message: result.message, provider: GEMINI_API_KEY ? 'gemini' : 'fallback' }, headers);
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Could not scan PDF.' }, headers);
       }
       return;
     }

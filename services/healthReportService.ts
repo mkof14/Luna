@@ -202,5 +202,28 @@ export const extractTextFromLabFile = async (file: File): Promise<LabExtractionR
     };
   }
 
+  if (file.type === 'application/pdf' || /\.pdf$/i.test(file.name)) {
+    const dataUrl = await fileToDataUrl(file);
+    const response = await fetch('/api/labs/extract-pdf', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fileName: file.name,
+        mimeType: file.type || 'application/pdf',
+        dataUrl,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error('PDF extraction request failed');
+    }
+    const payload = (await response.json()) as { text?: string; message?: string; provider?: string };
+    return {
+      text: payload.text || '',
+      source: payload.message || `Scanned ${file.name}`,
+      usedAi: payload.provider === 'gemini',
+    };
+  }
+
   throw new Error('Unsupported file type');
 };
