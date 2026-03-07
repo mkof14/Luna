@@ -1003,6 +1003,29 @@ const parseReference = (reference: string): { min?: number; max?: number } => {
   return { min, max };
 };
 
+const hormoneTopic = (text: string): { key: 'cycle' | 'thyroid' | 'androgen' | 'metabolic' | 'stress' | 'reserve' | 'other'; label: string; accent: string; chipClass: string; textClass: string } => {
+  const raw = text.toLowerCase();
+  if (/(estradiol|estrogen|progesterone|lh|fsh|prolactin)/.test(raw)) {
+    return { key: 'cycle', label: 'Cycle', accent: '#7c3aed', chipClass: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300', textClass: 'text-violet-700 dark:text-violet-300' };
+  }
+  if (/(tsh|ft3|ft4|t3|t4|thyroid|anti-tpo|anti-tg)/.test(raw)) {
+    return { key: 'thyroid', label: 'Thyroid', accent: '#0ea5e9', chipClass: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300', textClass: 'text-sky-700 dark:text-sky-300' };
+  }
+  if (/(testosterone|shbg|dhea|androstenedione|17-oh)/.test(raw)) {
+    return { key: 'androgen', label: 'Androgen', accent: '#ec4899', chipClass: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300', textClass: 'text-pink-700 dark:text-pink-300' };
+  }
+  if (/(glucose|insulin|hba1c)/.test(raw)) {
+    return { key: 'metabolic', label: 'Metabolic', accent: '#f59e0b', chipClass: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300', textClass: 'text-amber-700 dark:text-amber-300' };
+  }
+  if (/(cortisol)/.test(raw)) {
+    return { key: 'stress', label: 'Stress', accent: '#f43f5e', chipClass: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300', textClass: 'text-rose-700 dark:text-rose-300' };
+  }
+  if (/(ferritin|vitamin d|b12|cbc)/.test(raw)) {
+    return { key: 'reserve', label: 'Reserve', accent: '#14b8a6', chipClass: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300', textClass: 'text-teal-700 dark:text-teal-300' };
+  }
+  return { key: 'other', label: 'Other', accent: '#64748b', chipClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800/60 dark:text-slate-300', textClass: 'text-slate-700 dark:text-slate-300' };
+};
+
 const ensureReportId = () => {
   try {
     const current = localStorage.getItem(REPORT_ID_STORAGE_KEY);
@@ -1077,6 +1100,22 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       if (status === 'unknown') unknown += 1;
     }
     return { low, high, normal, unknown };
+  }, [parsedValues]);
+
+  const hormoneTopicStats = useMemo(() => {
+    const totals: Record<string, number> = {};
+    for (const item of parsedValues) {
+      const topic = hormoneTopic(item.marker).key;
+      totals[topic] = (totals[topic] || 0) + 1;
+    }
+    const total = Object.values(totals).reduce((sum, value) => sum + value, 0);
+    return Object.entries(totals)
+      .map(([topicKey, count]) => {
+        const sample = parsedValues.find((item) => hormoneTopic(item.marker).key === topicKey)?.marker || topicKey;
+        const meta = hormoneTopic(sample);
+        return { topicKey, count, ratio: total ? Math.round((count / total) * 100) : 0, meta };
+      })
+      .sort((a, b) => b.count - a.count);
   }, [parsedValues]);
 
   const doctorQuestions = useMemo(() => {
@@ -1341,6 +1380,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const reportHtml = useMemo(() => {
     const logoUrl = `${window.location.origin}/images/Luna%20logo3.png`;
     const signatureLogoUrl = `${window.location.origin}/images/Luna%20L%2044.png`;
+    const phaseArcImageUrl = `${window.location.origin}/images/moon_phases_arc.webp`;
     const totals = parsedValues.reduce(
       (acc, item) => {
         const status = inferStatus(item.value, item.referenceMin, item.referenceMax);
@@ -1380,6 +1420,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     const markerRows = parsedValues
       .map((item) => {
         const status = inferStatus(item.value, item.referenceMin, item.referenceMax);
+        const topic = hormoneTopic(item.marker);
         const reference =
           Number.isFinite(item.referenceMin as number) && Number.isFinite(item.referenceMax as number)
             ? `${item.referenceMin}-${item.referenceMax}`
@@ -1394,11 +1435,11 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                 ? '#be123c'
                 : '#475569';
         return `<tr>
-          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\">${escapeHtml(item.marker)}</td>
+          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\"><span style="display:inline-block;width:8px;height:8px;border-radius:999px;background:${topic.accent};margin-right:6px;"></span><strong style="color:${topic.accent};">${escapeHtml(item.marker)}</strong></td>
           <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\">${escapeHtml(`${item.value}${item.unit ? ` ${item.unit}` : ''}`)}</td>
           <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\">${escapeHtml(reference)}</td>
           <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\"><span style=\"display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid ${badge};color:${badge};font-weight:700;font-size:11px;text-transform:uppercase;\">${status}</span></td>
-          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\">${escapeHtml(markerCategory(item.marker))}</td>
+          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;color:${topic.accent};font-weight:700;\">${escapeHtml(markerCategory(item.marker))}</td>
           <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.5;\">${escapeHtml(explanation)}</td>
         </tr>`;
       })
@@ -1440,6 +1481,19 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     const womenEffectsHtml = womenClinicalInsights.effects.map((item) => `<li style="margin:0 0 6px;line-height:1.5;">${escapeHtml(item)}</li>`).join('');
     const womenRisksHtml = womenClinicalInsights.risks.map((item) => `<li style="margin:0 0 6px;line-height:1.5;">${escapeHtml(item)}</li>`).join('');
     const womenRecommendationsHtml = womenClinicalInsights.recommendations.map((item) => `<li style="margin:0 0 6px;line-height:1.5;">${escapeHtml(item)}</li>`).join('');
+    const hormoneInfographicHtml = hormoneTopicStats.length
+      ? hormoneTopicStats
+          .map((item) => `<div style="margin-bottom:8px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:800;">
+              <span style="color:${item.meta.accent};">${escapeHtml(item.meta.label)}</span>
+              <span style="color:#475569;">${item.count}</span>
+            </div>
+            <div style="height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:4px;">
+              <span style="display:block;height:100%;width:${Math.max(item.ratio, 10)}%;background:${item.meta.accent};"></span>
+            </div>
+          </div>`)
+          .join('')
+      : `<p style="margin:0;font-size:12px;color:#64748b;">${escapeHtml(detailedUi.noMarkers)}</p>`;
     return `<!doctype html>
 <html>
 <head>
@@ -1503,6 +1557,19 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">Category Map</h3>
       <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;">
         ${categoryRows || `<p style="margin:0;font-size:12px;color:#64748b;">${escapeHtml(detailedUi.noMarkers)}</p>`}
+      </div>
+    </div>
+
+    <div style="padding:12px 24px 0;">
+      <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:10px;">
+        <article style="border:1px solid #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc;">
+          <p style="margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#334155;">Hormone Infographic</p>
+          ${hormoneInfographicHtml}
+        </article>
+        <article style="border:1px solid #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc;">
+          <p style="margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#334155;">Cycle Visual</p>
+          <img src="${phaseArcImageUrl}" alt="Cycle arc" style="width:100%;height:88px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;"/>
+        </article>
       </div>
     </div>
 
@@ -1581,7 +1648,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   </div>
 </body>
 </html>`;
-  }, [analysis?.text, analysisSource, detailedUi.copyright, detailedUi.doctorQuestions, detailedUi.explanation, detailedUi.keyFindings, detailedUi.noMarkers, detailedUi.noQuestions, doctorQuestions, medForm.allMarkers, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, sexualUi.summaryLabel, womenClinicalInsights.combinations, womenClinicalInsights.effects, womenClinicalInsights.recommendations, womenClinicalInsights.risks, womenUi.clinicalFocusLead, womenUi.clinicalFocusTitle, womenUi.effectsTitle, womenUi.highPriority, womenUi.noData, womenUi.recommendationsTitle, womenUi.risksTitle, womenUi.stable, womenUi.watch]);
+  }, [analysis?.text, analysisSource, detailedUi.copyright, detailedUi.doctorQuestions, detailedUi.explanation, detailedUi.keyFindings, detailedUi.noMarkers, detailedUi.noQuestions, doctorQuestions, hormoneTopicStats, medForm.allMarkers, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, parsedValues, profile.cycleDay, reportGeneratedAt, reportIdentityLine, sexualOverview.avgPositive, sexualOverview.pain, sexualUi.summaryLabel, womenClinicalInsights.combinations, womenClinicalInsights.effects, womenClinicalInsights.recommendations, womenClinicalInsights.risks, womenUi.clinicalFocusLead, womenUi.clinicalFocusTitle, womenUi.effectsTitle, womenUi.highPriority, womenUi.noData, womenUi.recommendationsTitle, womenUi.risksTitle, womenUi.stable, womenUi.watch]);
 
   const handleAnalyze = async () => {
     const manualText = buildManualRowsText();
@@ -1952,6 +2019,28 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{hormoneSummary}</p>
           </article>
 
+          <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#e8e6f8]/90 via-[#e7f2fb]/88 to-[#e6f7f3]/86 dark:from-[#0d1f3f]/92 dark:via-[#12294b]/90 dark:to-[#133651]/88 p-6 space-y-4 shadow-luna-rich">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Hormone Infographic</p>
+              <img src="/images/moon_phases_arc.webp" alt="Cycle visual" className="h-10 w-24 object-cover rounded-lg border border-white/60 dark:border-slate-700/60" />
+            </div>
+            <div className="space-y-2">
+              {hormoneTopicStats.length > 0 ? hormoneTopicStats.map((entry) => (
+                <div key={entry.topicKey} className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <p className={`text-xs font-black uppercase tracking-[0.08em] ${entry.meta.textClass}`}>{entry.meta.label}</p>
+                    <p className="text-xs font-black text-slate-600 dark:text-slate-300">{entry.count}</p>
+                  </div>
+                  <div className="h-2 rounded-full bg-white/70 dark:bg-slate-900/70 overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: `${Math.max(10, entry.ratio)}%`, background: entry.meta.accent }} />
+                  </div>
+                </div>
+              )) : (
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">Add markers to unlock infographic.</p>
+              )}
+            </div>
+          </article>
+
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#f3e5f4]/95 via-[#eee8fb]/92 to-[#e3edf9]/90 dark:from-[#0d1f3f]/95 dark:via-[#132a50]/93 dark:to-[#17345f]/92 p-6 shadow-luna-rich space-y-4">
             <div className="flex items-center gap-3">
               <img src="/images/Luna%20logo3.png" alt="Luna symbol" className="h-10 w-10 object-contain" />
@@ -1997,10 +2086,13 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                 {hormoneSignals.map((signal, idx) => (
                   <div key={`${signal.marker}-${idx}`} className="rounded-xl border border-slate-200/70 dark:border-slate-700/70 p-3 bg-slate-50/80 dark:bg-slate-900/50 space-y-2">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-xs font-black uppercase tracking-[0.1em] text-slate-700 dark:text-slate-200">{signal.hormone}</p>
+                      <p className={`text-xs font-black uppercase tracking-[0.1em] ${hormoneTopic(signal.marker).textClass}`}>{signal.hormone}</p>
                       <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.1em] ${statusColor(signal.status)}`}>{signal.status}</span>
                     </div>
-                    <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{signal.marker}: {signal.value}</p>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.08em] ${hormoneTopic(signal.marker).chipClass}`}>{hormoneTopic(signal.marker).label}</span>
+                      <p className={`text-xs font-semibold ${hormoneTopic(signal.marker).textClass}`}>{signal.marker}: {signal.value}</p>
+                    </div>
                     <p className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-relaxed">{signal.importance}</p>
                   </div>
                 ))}
@@ -2014,7 +2106,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
               <div className="space-y-2">
                 {libidoHormoneSignals.slice(0, 6).map((signal, idx) => (
                   <div key={`${signal.marker}-${idx}`} className="flex items-center justify-between rounded-lg border border-slate-200/70 dark:border-slate-700/70 px-3 py-2 bg-slate-50/70 dark:bg-slate-900/45">
-                    <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">{signal.marker}</p>
+                    <p className={`text-xs font-semibold ${hormoneTopic(signal.marker).textClass}`}>{signal.marker}</p>
                     <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.08em] ${statusColor(signal.status)}`}>{signal.status}</span>
                   </div>
                 ))}
@@ -2051,7 +2143,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                       const status = inferStatus(item.value, item.referenceMin, item.referenceMax);
                       return (
                         <tr key={`${item.marker}-${idx}`} className="border-t border-slate-200/70 dark:border-slate-700/60">
-                          <td className="py-2 pr-2 font-semibold">{item.marker}</td>
+                          <td className={`py-2 pr-2 font-semibold ${hormoneTopic(item.marker).textClass}`}>{item.marker}</td>
                           <td className="py-2 pr-2">{item.value}{item.unit ? ` ${item.unit}` : ''}</td>
                           <td className="py-2 pr-2">{Number.isFinite(item.referenceMin as number) && Number.isFinite(item.referenceMax as number) ? `${item.referenceMin}-${item.referenceMax}` : 'n/a'}</td>
                           <td className="py-2 pr-2"><span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.08em] ${statusColor(status)}`}>{status}</span></td>
