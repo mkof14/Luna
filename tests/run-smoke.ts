@@ -11,6 +11,7 @@ import {
   generatePsychologistResponse,
   generateStateNarrative
 } from '../services/geminiService';
+import { parseLabText } from '../services/healthReportService';
 import { incrementBridgeUsage, isSupportedLabFile, parseBridgeUsage } from '../utils/runtimeGuards';
 import { getCyclePhaseByDay } from '../utils/cycle';
 import { buildBottomNavItems, buildSidebarGroups, buildTopNavItems } from '../utils/navigation';
@@ -114,6 +115,23 @@ const testRuntimeGuards = () => {
   assert.equal(isSupportedLabFile({ name: 'labs.txt', type: 'text/plain' }), true, 'text file should be supported');
   assert.equal(isSupportedLabFile({ name: 'scan.png', type: 'image/png' }), true, 'image file should be supported for scan flow');
   assert.equal(isSupportedLabFile({ name: 'report.pdf', type: 'application/pdf' }), true, 'pdf file should be supported for scan flow');
+};
+
+const testLabTextParsing = () => {
+  const parsed = parseLabText(
+    [
+      'TSH\t4.8\tmIU/L\t0.4-4.0',
+      'Estradiol (E2); 148; pg/mL; 30-400',
+      'プロラクチン 26 ng/mL 4.8-23.3',
+      'Ferritin 18 ng/mL',
+      'Cycle day 21',
+    ].join('\n')
+  );
+
+  assert.equal(parsed.length >= 4, true, 'parser should extract at least 4 valid lab rows');
+  assert.equal(parsed.some((item) => item.marker.toLowerCase().includes('tsh') && item.value === 4.8), true, 'tab-delimited tsh row should parse');
+  assert.equal(parsed.some((item) => item.marker.toLowerCase().includes('estradiol') && item.referenceMin === 30 && item.referenceMax === 400), true, 'semicolon-delimited estradiol row should parse with reference');
+  assert.equal(parsed.some((item) => item.marker.toLowerCase().includes('cycle day')), false, 'non-lab helper lines should be ignored');
 };
 
 const testAuthSecurityInvariants = () => {
@@ -430,6 +448,7 @@ const run = async () => {
   testRuleEngine();
   testDataService();
   testRuntimeGuards();
+  testLabTextParsing();
   testAuthSecurityInvariants();
   testCoreUtils();
   testMedicationUtils();
@@ -438,7 +457,7 @@ const run = async () => {
   testBridgeUtils();
   await testShareUtils();
   await testGeminiFallbacks();
-  console.log('Smoke tests passed: ruleEngine + dataService + runtimeGuards + authSecurity + coreUtils + medicationsUtils + textUtils + profileUtils + bridgeUtils + shareUtils + geminiFallbacks');
+  console.log('Smoke tests passed: ruleEngine + dataService + runtimeGuards + labParser + authSecurity + coreUtils + medicationsUtils + textUtils + profileUtils + bridgeUtils + shareUtils + geminiFallbacks');
 };
 
 run().catch((error) => {

@@ -68,6 +68,8 @@ const markerMap: Array<{ key: string; hormone: string; importance: string }> = [
 
 const normalize = (value: string) => value.trim().toLowerCase();
 const asNumber = (value: string) => Number(value.replace(',', '.'));
+const looksLikeNumericToken = (value: string) => /^-?\d+(?:[.,]\d+)?$/.test(value.trim());
+const hasLetter = (value: string) => /[A-Za-zА-Яа-я\u00C0-\u024F\u3040-\u30FF\u4E00-\u9FFF]/.test(value);
 
 const parseReferenceRange = (reference: string): { min?: number; max?: number } => {
   const match = reference.match(/(-?\d+(?:[.,]\d+)?)\s*[-–]\s*(-?\d+(?:[.,]\d+)?)/);
@@ -89,7 +91,7 @@ const inferStatus = (value: number, min?: number, max?: number): HormoneSignal['
 const parseLineValue = (line: string): ParsedLabValue | null => {
   const clean = line.replace(/\s+/g, ' ').trim();
   if (!clean) return null;
-  const match = clean.match(/^([A-Za-zА-Яа-я0-9_()+/%\-\s]{2,50})[:\s-]+(-?\d+(?:[.,]\d+)?)(?:\s*([A-Za-zА-Яа-я/%µμ0-9]+))?(?:\s*(?:\(|\[)?\s*(-?\d+(?:[.,]\d+)?)\s*[-–]\s*(-?\d+(?:[.,]\d+)?)(?:\)|\])?)?/);
+  const match = clean.match(/^([A-Za-zА-Яа-я0-9\u00C0-\u024F\u3040-\u30FF\u4E00-\u9FFF_()+/%\-\s]{2,80})[:\s-]+(-?\d+(?:[.,]\d+)?)(?:\s*([A-Za-zА-Яа-я\u00C0-\u024F\u3040-\u30FF\u4E00-\u9FFF/%µμ0-9]+))?(?:\s*(?:\(|\[)?\s*(-?\d+(?:[.,]\d+)?)\s*[-–~]\s*(-?\d+(?:[.,]\d+)?)(?:\)|\])?)?/);
   if (!match) return null;
 
   const marker = match[1]?.trim();
@@ -99,6 +101,9 @@ const parseLineValue = (line: string): ParsedLabValue | null => {
   const unit = match[3]?.trim();
   const min = match[4] ? asNumber(match[4]) : undefined;
   const max = match[5] ? asNumber(match[5]) : undefined;
+  if (!unit && (!Number.isFinite(min as number) || !Number.isFinite(max as number))) {
+    return null;
+  }
 
   return {
     marker,
@@ -109,10 +114,95 @@ const parseLineValue = (line: string): ParsedLabValue | null => {
   };
 };
 
+const parseTokenizedLine = (line: string): ParsedLabValue | null => {
+  const clean = line.replace(/\s+/g, ' ').trim();
+  if (!clean) return null;
+
+  const tokens = clean.split(' ').filter(Boolean);
+  const valueIndex = tokens.findIndex((token) => looksLikeNumericToken(token));
+  if (valueIndex <= 0) return null;
+
+  const marker = tokens.slice(0, valueIndex).join(' ').trim();
+  if (!marker || !hasLetter(marker)) return null;
+
+  const value = asNumber(tokens[valueIndex]);
+  if (!Number.isFinite(value)) return null;
+
+  const unitCandidate = tokens[valueIndex + 1] || '';
+  const unit = /[A-Za-zА-Яа-я\u00C0-\u024F\u3040-\u30FF\u4E00-\u9FFF/%µμ]/.test(unitCandidate) ? unitCandidate : undefined;
+  const range = clean.match(/(-?\d+(?:[.,]\d+)?)\s*[-–~]\s*(-?\d+(?:[.,]\d+)?)/);
+  const referenceMin = range ? asNumber(range[1]) : undefined;
+  const referenceMax = range ? asNumber(range[2]) : undefined;
+
+  if (!unit && (!Number.isFinite(referenceMin as number) || !Number.isFinite(referenceMax as number))) {
+    return null;
+  }
+
+  return {
+    marker,
+    value,
+    unit,
+    referenceMin: Number.isFinite(referenceMin as number) ? referenceMin : undefined,
+    referenceMax: Number.isFinite(referenceMax as number) ? referenceMax : undefined,
+  };
+};
+
+const parseDelimitedLine = (line: string): ParsedLabValue | null => {
+  const normalized = line.replace(/\s+/g, ' ').trim();
+  if (!normalized) return null;
+  const parts = normalized.split(/\t|[;|]/).map((part) => part.trim()).filter(Boolean);
+  if (parts.length < 2) return null;
+
+  const marker = parts[0];
+  if (!hasLetter(marker)) return null;
+
+  let value: number | null = null;
+  let unit: string | undefined;
+  let referenceMin: number | undefined;
+  let referenceMax: number | undefined;
+
+  for (let i = 1; i < parts.length; i += 1) {
+    const part = parts[i];
+    if (value === null && looksLikeNumericToken(part)) {
+      const parsed = asNumber(part);
+      if (Number.isFinite(parsed)) {
+        value = parsed;
+        continue;
+      }
+    }
+
+    if (!unit && /[A-Za-zА-Яа-я\u00C0-\u024F\u3040-\u30FF\u4E00-\u9FFF/%µμ]/.test(part) && !/[-–~]/.test(part)) {
+      unit = part;
+      continue;
+    }
+
+    const range = part.match(/(-?\d+(?:[.,]\d+)?)\s*[-–~]\s*(-?\d+(?:[.,]\d+)?)/);
+    if (range) {
+      const min = asNumber(range[1]);
+      const max = asNumber(range[2]);
+      if (Number.isFinite(min) && Number.isFinite(max)) {
+        referenceMin = min;
+        referenceMax = max;
+      }
+    }
+  }
+
+  if (value === null || !Number.isFinite(value)) return null;
+  if (!unit && (!Number.isFinite(referenceMin as number) || !Number.isFinite(referenceMax as number))) return null;
+
+  return {
+    marker,
+    value,
+    unit,
+    referenceMin: Number.isFinite(referenceMin as number) ? referenceMin : undefined,
+    referenceMax: Number.isFinite(referenceMax as number) ? referenceMax : undefined,
+  };
+};
+
 export const parseLabText = (raw: string): ParsedLabValue[] => {
   return raw
     .split(/\r?\n/)
-    .map((line) => parseLineValue(line))
+    .map((line) => parseLineValue(line) || parseDelimitedLine(line) || parseTokenizedLine(line))
     .filter((item): item is ParsedLabValue => Boolean(item));
 };
 
