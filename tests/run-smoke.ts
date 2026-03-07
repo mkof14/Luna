@@ -122,6 +122,8 @@ const testLabTextParsing = () => {
     [
       'TSH\t4.8\tmIU/L\t0.4-4.0',
       'Estradiol (E2); 148; pg/mL; 30-400',
+      'ТТГ 3.1 мМЕ/л 0.4-4.0',
+      'PRL 19 ng/mL 4.8-23.3',
       'プロラクチン 26 ng/mL 4.8-23.3',
       'Ferritin 18 ng/mL',
       'Cycle day 21',
@@ -130,6 +132,8 @@ const testLabTextParsing = () => {
 
   assert.equal(parsed.length >= 4, true, 'parser should extract at least 4 valid lab rows');
   assert.equal(parsed.some((item) => item.marker.toLowerCase().includes('tsh') && item.value === 4.8), true, 'tab-delimited tsh row should parse');
+  assert.equal(parsed.some((item) => item.marker === 'TSH' && item.value === 3.1), true, 'localized tsh alias should normalize to TSH');
+  assert.equal(parsed.some((item) => item.marker === 'Prolactin' && item.value === 19), true, 'PRL alias should normalize to Prolactin');
   assert.equal(parsed.some((item) => item.marker.toLowerCase().includes('estradiol') && item.referenceMin === 30 && item.referenceMax === 400), true, 'semicolon-delimited estradiol row should parse with reference');
   assert.equal(parsed.some((item) => item.marker.toLowerCase().includes('cycle day')), false, 'non-lab helper lines should be ignored');
 };

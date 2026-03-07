@@ -70,6 +70,38 @@ const normalize = (value: string) => value.trim().toLowerCase();
 const asNumber = (value: string) => Number(value.replace(',', '.'));
 const looksLikeNumericToken = (value: string) => /^-?\d+(?:[.,]\d+)?$/.test(value.trim());
 const hasLetter = (value: string) => /[A-Za-zА-Яа-я\u00C0-\u024F\u3040-\u30FF\u4E00-\u9FFF]/.test(value);
+const markerAliases: Array<{ pattern: RegExp; canonical: string }> = [
+  { pattern: /^(e2|estradiol|эстрадиол|естрадиол|естрадіол)$/i, canonical: 'Estradiol (E2)' },
+  { pattern: /^(progesterone|прогестерон|прогестерон)$/i, canonical: 'Progesterone' },
+  { pattern: /^(prl|prolactin|пролактин|пролактин)$/i, canonical: 'Prolactin' },
+  { pattern: /^(lh|лг)$/i, canonical: 'LH' },
+  { pattern: /^(fsh|фсг)$/i, canonical: 'FSH' },
+  { pattern: /^(tsh|ттг)$/i, canonical: 'TSH' },
+  { pattern: /^(ft4|freet4|свободный t4|вільний t4)$/i, canonical: 'FT4' },
+  { pattern: /^(ft3|freet3|свободный t3|вільний t3)$/i, canonical: 'FT3' },
+  { pattern: /^(tt|total testosterone|общий тестостерон|загальний тестостерон)$/i, canonical: 'Total Testosterone' },
+  { pattern: /^(free testosterone|свободный тестостерон|вільний тестостерон)$/i, canonical: 'Free Testosterone' },
+  { pattern: /^(dhea-s|dheas|дгээ-с|дгеа-с)$/i, canonical: 'DHEA-S' },
+  { pattern: /^(shbg|гспг)$/i, canonical: 'SHBG' },
+  { pattern: /^(hba1c|гликированный гемоглобин|глікований гемоглобін)$/i, canonical: 'HbA1c' },
+  { pattern: /^(ferritin|ферритин|феритин)$/i, canonical: 'Ferritin' },
+  { pattern: /^(vitamin d|25-oh vitamin d|витамин d|вітамін d)$/i, canonical: 'Vitamin D (25-OH)' },
+  { pattern: /^(insulin|инсулин|інсулін)$/i, canonical: 'Insulin (fasting)' },
+  { pattern: /^(glucose|glucose fasting|глюкоза|глюкоза натощак|глюкоза натще)$/i, canonical: 'Glucose (fasting)' },
+];
+
+const canonicalizeMarker = (raw: string): string => {
+  const trimmed = raw.trim().replace(/\s+/g, ' ');
+  const simplified = trimmed
+    .toLowerCase()
+    .replace(/\(.*?\)/g, '')
+    .replace(/\./g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const direct = markerAliases.find((entry) => entry.pattern.test(simplified));
+  if (direct) return direct.canonical;
+  return trimmed;
+};
 
 const parseReferenceRange = (reference: string): { min?: number; max?: number } => {
   const match = reference.match(/(-?\d+(?:[.,]\d+)?)\s*[-–]\s*(-?\d+(?:[.,]\d+)?)/);
@@ -94,7 +126,7 @@ const parseLineValue = (line: string): ParsedLabValue | null => {
   const match = clean.match(/^([A-Za-zА-Яа-я0-9\u00C0-\u024F\u3040-\u30FF\u4E00-\u9FFF_()+/%\-\s]{2,80})[:\s-]+(-?\d+(?:[.,]\d+)?)(?:\s*([A-Za-zА-Яа-я\u00C0-\u024F\u3040-\u30FF\u4E00-\u9FFF/%µμ0-9]+))?(?:\s*(?:\(|\[)?\s*(-?\d+(?:[.,]\d+)?)\s*[-–~]\s*(-?\d+(?:[.,]\d+)?)(?:\)|\])?)?/);
   if (!match) return null;
 
-  const marker = match[1]?.trim();
+  const marker = canonicalizeMarker(match[1] || '');
   const value = asNumber(match[2] || '');
   if (!marker || !Number.isFinite(value)) return null;
 
@@ -122,7 +154,7 @@ const parseTokenizedLine = (line: string): ParsedLabValue | null => {
   const valueIndex = tokens.findIndex((token) => looksLikeNumericToken(token));
   if (valueIndex <= 0) return null;
 
-  const marker = tokens.slice(0, valueIndex).join(' ').trim();
+  const marker = canonicalizeMarker(tokens.slice(0, valueIndex).join(' '));
   if (!marker || !hasLetter(marker)) return null;
 
   const value = asNumber(tokens[valueIndex]);
@@ -153,7 +185,7 @@ const parseDelimitedLine = (line: string): ParsedLabValue | null => {
   const parts = normalized.split(/\t|[;|]/).map((part) => part.trim()).filter(Boolean);
   if (parts.length < 2) return null;
 
-  const marker = parts[0];
+  const marker = canonicalizeMarker(parts[0]);
   if (!hasLetter(marker)) return null;
 
   let value: number | null = null;
