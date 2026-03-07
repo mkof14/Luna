@@ -6,10 +6,10 @@ const LOCAL_USERS_KEY = 'luna_auth_users_v2';
 
 const SUPER_ADMIN_EMAIL = 'dnainform@gmail.com';
 const resolveSuperAdminFallbackPassword = (): string => {
-  if (typeof window === 'undefined') return 'LunaAdmin2026!';
+  if (typeof window === 'undefined') return '';
   const runtime = (window as Window & { __LUNA_SUPER_ADMIN_FALLBACK_PASSWORD?: string }).__LUNA_SUPER_ADMIN_FALLBACK_PASSWORD;
   if (typeof runtime === 'string' && runtime.trim().length > 0) return runtime.trim();
-  return 'LunaAdmin2026!';
+  return '';
 };
 const SUPER_ADMIN_FALLBACK_PASSWORD = resolveSuperAdminFallbackPassword();
 const isLocalHostRuntime = (() => {
@@ -108,6 +108,7 @@ const saveLocalUsers = (users: StoredUser[]) => {
 };
 
 const ensureLocalSuperAdmin = () => {
+  if (!isLocalHostRuntime || !SUPER_ADMIN_FALLBACK_PASSWORD) return;
   const users = getLocalUsers();
   const exists = users.some((item) => normalizeEmail(item.email) === SUPER_ADMIN_EMAIL);
   if (exists) return;
@@ -160,16 +161,15 @@ const isNetworkError = (error: unknown): boolean => {
   return msg.includes('failed to fetch') || msg.includes('networkerror') || msg.includes('load failed');
 };
 
-const shouldUseOwnerFallback = (email: string): boolean => normalizeEmail(email) === SUPER_ADMIN_EMAIL;
 const localFallbackOverrideEnabled = (): boolean => {
+  if (!isLocalHostRuntime) return false;
   try {
     return localStorage.getItem('luna_allow_local_auth_fallback') === 'true';
   } catch {
     return false;
   }
 };
-const canUseLocalFallback = (email?: string): boolean =>
-  isLocalHostRuntime || localFallbackOverrideEnabled() || (typeof email === 'string' && shouldUseOwnerFallback(email));
+const canUseLocalFallback = (): boolean => isLocalHostRuntime || localFallbackOverrideEnabled();
 
 const requestJson = async <T>(path: string, init?: RequestInit): Promise<T> => {
   const response = await fetch(apiUrl(path), {
@@ -222,14 +222,6 @@ const localAuth = {
 
     const users = getLocalUsers();
     const account = users.find((item) => normalizeEmail(item.email) === normalizedEmail);
-
-    // Ensure owner can always recover access in local mode.
-    if (normalizedEmail === SUPER_ADMIN_EMAIL && !account) {
-      const fallbackSession = buildSession({ email: normalizedEmail, name: 'Luna Super Admin', provider: 'password' });
-      saveLocalSession(fallbackSession);
-      sessionCache = fallbackSession;
-      return fallbackSession;
-    }
 
     if (!account) {
       throw new Error('Account not found. Please sign up first.');
@@ -353,7 +345,7 @@ export const authService = {
       sessionCache = normalizeSession(payload.session);
       return sessionCache;
     } catch (error) {
-      if (isNetworkError(error) && canUseLocalFallback(email)) {
+      if (isNetworkError(error) && canUseLocalFallback()) {
         return localAuth.loginWithPassword(email, password);
       }
       throw error;

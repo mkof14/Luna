@@ -1,4 +1,6 @@
 import * as assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import * as path from 'node:path';
 import { runRuleEngine } from '../services/ruleEngine';
 import { dataService } from '../services/dataService';
 import { HormoneStatus, PartnerNoteBoundary, PartnerNoteIntent, PartnerNoteTone } from '../types';
@@ -111,6 +113,27 @@ const testRuntimeGuards = () => {
 
   assert.equal(isSupportedLabFile({ name: 'labs.txt', type: 'text/plain' }), true, 'text file should be supported');
   assert.equal(isSupportedLabFile({ name: 'scan.png', type: 'image/png' }), true, 'image file should be supported for scan flow');
+};
+
+const testAuthSecurityInvariants = () => {
+  const apiCode = readFileSync(path.join(process.cwd(), 'api/index.mjs'), 'utf8');
+  const authCode = readFileSync(path.join(process.cwd(), 'services/authService.ts'), 'utf8');
+
+  assert.equal(
+    apiCode.includes("pattern: /admin|owner|founder/i, role: 'super_admin'"),
+    false,
+    'super_admin must not be auto-assigned from generic email patterns'
+  );
+  assert.equal(
+    apiCode.includes("|| 'LunaAdmin2026!'"),
+    false,
+    'server must not include hardcoded super admin default password fallback'
+  );
+  assert.equal(
+    authCode.includes("return 'LunaAdmin2026!'"),
+    false,
+    'client local auth must not include hardcoded super admin fallback password'
+  );
 };
 
 const testGeminiFallbacks = async () => {
@@ -406,6 +429,7 @@ const run = async () => {
   testRuleEngine();
   testDataService();
   testRuntimeGuards();
+  testAuthSecurityInvariants();
   testCoreUtils();
   testMedicationUtils();
   testTextUtils();
@@ -413,7 +437,7 @@ const run = async () => {
   testBridgeUtils();
   await testShareUtils();
   await testGeminiFallbacks();
-  console.log('Smoke tests passed: ruleEngine + dataService + runtimeGuards + coreUtils + medicationsUtils + textUtils + profileUtils + bridgeUtils + shareUtils + geminiFallbacks');
+  console.log('Smoke tests passed: ruleEngine + dataService + runtimeGuards + authSecurity + coreUtils + medicationsUtils + textUtils + profileUtils + bridgeUtils + shareUtils + geminiFallbacks');
 };
 
 run().catch((error) => {

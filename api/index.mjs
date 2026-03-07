@@ -15,7 +15,7 @@ const SESSIONS_FILE = path.join(DATA_DIR, 'sessions.json');
 
 const SESSION_COOKIE = 'luna_sid';
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
-const SUPER_ADMIN_BOOTSTRAP_PASSWORD = process.env.SUPER_ADMIN_BOOTSTRAP_PASSWORD || 'LunaAdmin2026!';
+const SUPER_ADMIN_BOOTSTRAP_PASSWORD = String(process.env.SUPER_ADMIN_BOOTSTRAP_PASSWORD || '').trim();
 
 const SUPER_ADMIN_EMAILS = new Set(
   (process.env.SUPER_ADMIN_EMAILS || 'dnainform@gmail.com')
@@ -49,7 +49,6 @@ const ROLE_PERMISSIONS = {
 };
 
 const ADMIN_EMAIL_RULES = [
-  { pattern: /admin|owner|founder/i, role: 'super_admin' },
   { pattern: /ops|support|service/i, role: 'operator' },
   { pattern: /marketing|content|brand/i, role: 'content_manager' },
   { pattern: /finance|billing|accounting/i, role: 'finance_manager' },
@@ -609,10 +608,10 @@ const start = async () => {
         id: randomBytes(12).toString('hex'),
         email,
         name: 'Luna Super Admin',
-        passwordHash: hashPassword(SUPER_ADMIN_BOOTSTRAP_PASSWORD),
+        passwordHash: SUPER_ADMIN_BOOTSTRAP_PASSWORD ? hashPassword(SUPER_ADMIN_BOOTSTRAP_PASSWORD) : null,
         createdAt: new Date().toISOString(),
         roleOverride: 'super_admin',
-        lastProvider: 'password',
+        lastProvider: SUPER_ADMIN_BOOTSTRAP_PASSWORD ? 'password' : 'google',
         avatarUrl: undefined,
       };
       users = [account, ...users];
@@ -625,7 +624,7 @@ const start = async () => {
       didBootstrapSuperAdmin = true;
     }
 
-    if (!account.passwordHash) {
+    if (!account.passwordHash && SUPER_ADMIN_BOOTSTRAP_PASSWORD) {
       account.passwordHash = hashPassword(SUPER_ADMIN_BOOTSTRAP_PASSWORD);
       account.lastProvider = 'password';
       didBootstrapSuperAdmin = true;
