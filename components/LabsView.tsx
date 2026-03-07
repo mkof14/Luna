@@ -31,6 +31,127 @@ const emptyProfile: PersonalHealthProfile = {
 
 const quickSymptoms = ['Fatigue', 'Anxiety', 'PMS', 'Sleep issues', 'Headache', 'Low mood', 'Bloating', 'Cravings'];
 const intimacySymptoms = ['Low libido', 'Low arousal', 'Dryness', 'Pain during intimacy', 'Low orgasm quality', 'Low closeness'];
+const sexualUiByLang: Partial<Record<Language, {
+  intimacySymptomsTitle: string;
+  sexualSnapshotTitle: string;
+  libidoTemplate: string;
+  intimacyFactors: string;
+  sexualSnapshotLabel: string;
+  summaryLabel: string;
+  stateStable: string;
+  stateModerate: string;
+  stateHigh: string;
+  scoreLabels: { libido: string; arousal: string; comfort: string; closeness: string; pain: string };
+}>> = {
+  en: {
+    intimacySymptomsTitle: 'Intimacy & libido symptoms',
+    sexualSnapshotTitle: 'Sexual Wellbeing Snapshot',
+    libidoTemplate: 'Libido & Intimacy',
+    intimacyFactors: 'Libido & Intimacy Factors',
+    sexualSnapshotLabel: 'Current',
+    summaryLabel: 'Sexual health snapshot',
+    stateStable: 'Stable sexual-health baseline.',
+    stateModerate: 'Moderate strain: useful to review hormonal and stress factors.',
+    stateHigh: 'High priority: libido/intimacy strain needs structured review.',
+    scoreLabels: { libido: 'Libido', arousal: 'Arousal', comfort: 'Comfort', closeness: 'Emotional Closeness', pain: 'Pain During Intimacy' },
+  },
+  ru: {
+    intimacySymptomsTitle: 'Симптомы близости и либидо',
+    sexualSnapshotTitle: 'Снимок Сексуального Самочувствия',
+    libidoTemplate: 'Либидо И Близость',
+    intimacyFactors: 'Факторы Либидо И Близости',
+    sexualSnapshotLabel: 'Текущее',
+    summaryLabel: 'Снимок сексуального здоровья',
+    stateStable: 'Базовое состояние сексуального здоровья стабильное.',
+    stateModerate: 'Умеренное напряжение: стоит проверить гормональные и стресс-факторы.',
+    stateHigh: 'Высокий приоритет: выраженное напряжение либидо/близости требует структурного разбора.',
+    scoreLabels: { libido: 'Либидо', arousal: 'Возбуждение', comfort: 'Комфорт', closeness: 'Эмоциональная Близость', pain: 'Боль При Близости' },
+  },
+  uk: {
+    intimacySymptomsTitle: 'Симптоми близькості та лібідо',
+    sexualSnapshotTitle: 'Зріз Сексуального Самопочуття',
+    libidoTemplate: 'Лібідо Та Близькість',
+    intimacyFactors: 'Фактори Лібідо Та Близькості',
+    sexualSnapshotLabel: 'Поточний стан',
+    summaryLabel: 'Зріз сексуального здоровʼя',
+    stateStable: 'Базовий стан сексуального здоровʼя стабільний.',
+    stateModerate: 'Помірне напруження: варто перевірити гормональні та стрес-фактори.',
+    stateHigh: 'Високий пріоритет: виражене напруження лібідо/близькості потребує структурного аналізу.',
+    scoreLabels: { libido: 'Лібідо', arousal: 'Збудження', comfort: 'Комфорт', closeness: 'Емоційна Близькість', pain: 'Біль Під Час Близькості' },
+  },
+  es: {
+    intimacySymptomsTitle: 'Síntomas de intimidad y libido',
+    sexualSnapshotTitle: 'Resumen De Bienestar Sexual',
+    libidoTemplate: 'Libido E Intimidad',
+    intimacyFactors: 'Factores De Libido E Intimidad',
+    sexualSnapshotLabel: 'Actual',
+    summaryLabel: 'Resumen de salud sexual',
+    stateStable: 'Línea base sexual estable.',
+    stateModerate: 'Tensión moderada: conviene revisar factores hormonales y de estrés.',
+    stateHigh: 'Alta prioridad: la tensión de libido/intimidad requiere revisión estructurada.',
+    scoreLabels: { libido: 'Libido', arousal: 'Excitación', comfort: 'Confort', closeness: 'Cercanía Emocional', pain: 'Dolor En La Intimidad' },
+  },
+  fr: {
+    intimacySymptomsTitle: 'Symptômes d’intimité et de libido',
+    sexualSnapshotTitle: 'Aperçu Du Bien-Être Sexuel',
+    libidoTemplate: 'Libido Et Intimité',
+    intimacyFactors: 'Facteurs Libido Et Intimité',
+    sexualSnapshotLabel: 'Actuel',
+    summaryLabel: 'Aperçu santé sexuelle',
+    stateStable: 'Base de santé sexuelle stable.',
+    stateModerate: 'Tension modérée: utile de revoir facteurs hormonaux et stress.',
+    stateHigh: 'Priorité élevée: tension libido/intimité à analyser de façon structurée.',
+    scoreLabels: { libido: 'Libido', arousal: 'Excitation', comfort: 'Confort', closeness: 'Proximité Émotionnelle', pain: 'Douleur Pendant L’intimité' },
+  },
+  de: {
+    intimacySymptomsTitle: 'Intimitäts- und Libido-Symptome',
+    sexualSnapshotTitle: 'Sexuelles Wohlbefinden',
+    libidoTemplate: 'Libido & Intimität',
+    intimacyFactors: 'Libido- & Intimitätsfaktoren',
+    sexualSnapshotLabel: 'Aktuell',
+    summaryLabel: 'Sexualgesundheit Snapshot',
+    stateStable: 'Stabile sexuelle Ausgangslage.',
+    stateModerate: 'Moderate Belastung: hormonelle und Stressfaktoren prüfen.',
+    stateHigh: 'Hohe Priorität: Libido/Intimitätsbelastung braucht strukturierte Abklärung.',
+    scoreLabels: { libido: 'Libido', arousal: 'Erregung', comfort: 'Komfort', closeness: 'Emotionale Nähe', pain: 'Schmerz Bei Intimität' },
+  },
+  zh: {
+    intimacySymptomsTitle: '亲密与性欲症状',
+    sexualSnapshotTitle: '性健康快照',
+    libidoTemplate: '性欲与亲密',
+    intimacyFactors: '性欲与亲密因素',
+    sexualSnapshotLabel: '当前',
+    summaryLabel: '性健康快照',
+    stateStable: '性健康基线较稳定。',
+    stateModerate: '中度压力：建议复查激素与压力因素。',
+    stateHigh: '高优先级：性欲/亲密压力明显，需要结构化评估。',
+    scoreLabels: { libido: '性欲', arousal: '唤起', comfort: '舒适度', closeness: '情感亲密', pain: '亲密时疼痛' },
+  },
+  ja: {
+    intimacySymptomsTitle: '親密さ・リビドー症状',
+    sexualSnapshotTitle: 'セクシャルウェルビーイング',
+    libidoTemplate: 'リビドー・親密さ',
+    intimacyFactors: 'リビドーと親密さの要因',
+    sexualSnapshotLabel: '現在',
+    summaryLabel: '性健康スナップショット',
+    stateStable: '性健康のベースラインは安定しています。',
+    stateModerate: '中等度の負荷: ホルモンとストレス要因の確認が有効です。',
+    stateHigh: '高優先度: リビドー/親密さの負荷は構造的な見直しが必要です。',
+    scoreLabels: { libido: 'リビドー', arousal: '覚醒', comfort: '快適さ', closeness: '情緒的な近さ', pain: '親密時の痛み' },
+  },
+  pt: {
+    intimacySymptomsTitle: 'Sintomas de intimidade e libido',
+    sexualSnapshotTitle: 'Resumo De Bem-Estar Sexual',
+    libidoTemplate: 'Libido E Intimidade',
+    intimacyFactors: 'Fatores De Libido E Intimidade',
+    sexualSnapshotLabel: 'Atual',
+    summaryLabel: 'Resumo de saúde sexual',
+    stateStable: 'Linha de base sexual estável.',
+    stateModerate: 'Tensão moderada: vale revisar fatores hormonais e de estresse.',
+    stateHigh: 'Alta prioridade: tensão de libido/intimidade exige revisão estruturada.',
+    scoreLabels: { libido: 'Libido', arousal: 'Excitação', comfort: 'Conforto', closeness: 'Proximidade Emocional', pain: 'Dor Na Intimidade' },
+  },
+};
 
 const templateRows: Record<string, Array<Partial<HealthLabRow>>> = {
   hormone_core: [
@@ -136,6 +257,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const systemState = useMemo(() => dataService.projectState(log), [log]);
+  const sexualUi = sexualUiByLang[lang] || sexualUiByLang.en!;
 
   const reportId = useMemo(() => manualReportId.trim() || userId || ensureReportId(), [manualReportId, userId]);
   const reportIdentityLine = useMemo(() => {
@@ -176,11 +298,11 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     const sumPositive = sexualScores.libido + sexualScores.arousal + sexualScores.comfort + sexualScores.closeness;
     const avgPositive = Number((sumPositive / 4).toFixed(1));
     const pain = sexualScores.pain;
-    let state = 'Stable sexual-health baseline.';
-    if (avgPositive <= 2.2 || pain >= 4) state = 'High priority: libido/intimacy strain needs structured review.';
-    else if (avgPositive <= 3 || pain >= 3) state = 'Moderate strain: useful to review hormonal and stress factors.';
+    let state = sexualUi.stateStable;
+    if (avgPositive <= 2.2 || pain >= 4) state = sexualUi.stateHigh;
+    else if (avgPositive <= 3 || pain >= 3) state = sexualUi.stateModerate;
     return { avgPositive, pain, state };
-  }, [sexualScores]);
+  }, [sexualScores, sexualUi.stateStable, sexualUi.stateHigh, sexualUi.stateModerate]);
 
   const libidoHormoneSignals = useMemo(() => {
     const keys = ['estrogen', 'estradiol', 'progesterone', 'testosterone', 'shbg', 'prolactin', 'dhea', 'thyroid', 'tsh', 'ferritin'];
@@ -272,7 +394,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
       const aiResult = await analyzeLabResults(combinedInput, systemState);
       const extraLine = reportIdentityLine ? `Identity: ${reportIdentityLine}` : 'Identity: private';
-      const fullText = `${extraLine}\n${summary}\nSexual health snapshot: desire/connection score ${sexualOverview.avgPositive}/5, pain ${sexualOverview.pain}/5. ${sexualOverview.state}\n\n${aiResult.text || 'The system could not generate a clear interpretation at this time.'}`;
+      const fullText = `${extraLine}\n${summary}\n${sexualUi.summaryLabel}: desire/connection score ${sexualOverview.avgPositive}/5, pain ${sexualOverview.pain}/5. ${sexualOverview.state}\n\n${aiResult.text || 'The system could not generate a clear interpretation at this time.'}`;
 
       const formattedResult = {
         text: fullText,
@@ -405,7 +527,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                   );
                 })}
               </div>
-              <p className="pt-2 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Intimacy & libido symptoms</p>
+              <p className="pt-2 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{sexualUi.intimacySymptomsTitle}</p>
               <div className="flex flex-wrap gap-2">
                 {intimacySymptoms.map((symptom) => {
                   const active = selectedSymptoms.includes(symptom);
@@ -423,15 +545,15 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
             </div>
           </article>
 
-          <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
-            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">Sexual Wellbeing Snapshot</h3>
+          <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#f9e5ee]/88 via-[#f0e8f7]/84 to-[#e3edf9]/82 dark:from-[#0a1b38]/95 dark:via-[#102448]/94 dark:to-[#142d56]/93 p-6 space-y-4 shadow-luna-rich">
+            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">{sexualUi.sexualSnapshotTitle}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[
-                { key: 'libido', label: 'Libido' },
-                { key: 'arousal', label: 'Arousal' },
-                { key: 'comfort', label: 'Comfort' },
-                { key: 'closeness', label: 'Emotional Closeness' },
-                { key: 'pain', label: 'Pain During Intimacy' },
+                {[
+                { key: 'libido', label: sexualUi.scoreLabels.libido },
+                { key: 'arousal', label: sexualUi.scoreLabels.arousal },
+                { key: 'comfort', label: sexualUi.scoreLabels.comfort },
+                { key: 'closeness', label: sexualUi.scoreLabels.closeness },
+                { key: 'pain', label: sexualUi.scoreLabels.pain },
               ].map((item) => (
                 <label key={item.key} className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -450,7 +572,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
               ))}
             </div>
             <div className="rounded-xl border border-slate-200/70 dark:border-slate-700/70 p-3 bg-slate-50/70 dark:bg-slate-900/55">
-              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">Current: {sexualOverview.state}</p>
+              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">{sexualUi.sexualSnapshotLabel}: {sexualOverview.state}</p>
             </div>
           </article>
 
@@ -461,7 +583,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                 <button onClick={() => applyTemplate('hormone_core')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">Hormone Template</button>
                 <button onClick={() => applyTemplate('thyroid')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">Thyroid</button>
                 <button onClick={() => applyTemplate('metabolic')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">Metabolic</button>
-                <button onClick={() => applyTemplate('libido_intimacy')} className="px-3 py-2 rounded-full border border-luna-coral/50 text-luna-coral text-[10px] font-black uppercase tracking-[0.15em]">Libido & Intimacy</button>
+                <button onClick={() => applyTemplate('libido_intimacy')} className="px-3 py-2 rounded-full border border-luna-coral/50 text-luna-coral text-[10px] font-black uppercase tracking-[0.15em]">{sexualUi.libidoTemplate}</button>
                 <button onClick={addRow} className="px-3 py-2 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-[0.15em]">Add Row</button>
               </div>
             </div>
@@ -560,8 +682,8 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
           )}
 
           {libidoHormoneSignals.length > 0 && (
-            <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/85 dark:bg-[#081a3d]/85 p-6 shadow-luna-rich space-y-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Libido & Intimacy Factors</p>
+            <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#fde9ef]/90 via-[#f4e8f7]/86 to-[#e8f0fb]/84 dark:from-[#10243f]/94 dark:via-[#173053]/93 dark:to-[#1a3b60]/92 p-6 shadow-luna-rich space-y-4">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{sexualUi.intimacyFactors}</p>
               <div className="space-y-2">
                 {libidoHormoneSignals.slice(0, 6).map((signal, idx) => (
                   <div key={`${signal.marker}-${idx}`} className="flex items-center justify-between rounded-lg border border-slate-200/70 dark:border-slate-700/70 px-3 py-2 bg-slate-50/70 dark:bg-slate-900/45">
