@@ -10,6 +10,7 @@ const assetsDir = path.join(root, 'dist', 'assets');
 const MAX_CRITICAL_JS_GZIP = Number(process.env.MAX_CRITICAL_JS_GZIP || 220 * 1024);
 const MAX_PUBLIC_LANDING_GZIP = Number(process.env.MAX_PUBLIC_LANDING_GZIP || 30 * 1024);
 const MAX_INDEX_CSS_GZIP = Number(process.env.MAX_INDEX_CSS_GZIP || 30 * 1024);
+const MAX_LABS_VIEW_GZIP = Number(process.env.MAX_LABS_VIEW_GZIP || 42 * 1024);
 
 const formatKb = (bytes) => `${(bytes / 1024).toFixed(2)} kB`;
 
@@ -42,6 +43,7 @@ const run = async () => {
 
   const criticalJsGzip = criticalFiles.reduce((sum, item) => sum + item.gzip, 0);
   const publicLanding = find(/^feature-public-landing-.*\.js$/);
+  const labsView = find(/^LabsView-.*\.js$/);
   const indexCss = find(/^index-.*\.css$/);
 
   const failures = [];
@@ -51,6 +53,9 @@ const run = async () => {
   if (publicLanding && publicLanding.gzip > MAX_PUBLIC_LANDING_GZIP) {
     failures.push(`Public landing gzip ${formatKb(publicLanding.gzip)} exceeds ${formatKb(MAX_PUBLIC_LANDING_GZIP)}`);
   }
+  if (labsView && labsView.gzip > MAX_LABS_VIEW_GZIP) {
+    failures.push(`LabsView gzip ${formatKb(labsView.gzip)} exceeds ${formatKb(MAX_LABS_VIEW_GZIP)}`);
+  }
   if (indexCss && indexCss.gzip > MAX_INDEX_CSS_GZIP) {
     failures.push(`index.css gzip ${formatKb(indexCss.gzip)} exceeds ${formatKb(MAX_INDEX_CSS_GZIP)}`);
   }
@@ -59,6 +64,9 @@ const run = async () => {
   console.log(`- Critical JS gzip: ${formatKb(criticalJsGzip)} (limit ${formatKb(MAX_CRITICAL_JS_GZIP)})`);
   if (publicLanding) {
     console.log(`- Public landing gzip: ${formatKb(publicLanding.gzip)} (limit ${formatKb(MAX_PUBLIC_LANDING_GZIP)})`);
+  }
+  if (labsView) {
+    console.log(`- LabsView gzip: ${formatKb(labsView.gzip)} (limit ${formatKb(MAX_LABS_VIEW_GZIP)})`);
   }
   if (indexCss) {
     console.log(`- index.css gzip: ${formatKb(indexCss.gzip)} (limit ${formatKb(MAX_INDEX_CSS_GZIP)})`);
@@ -79,4 +87,3 @@ run().catch((error) => {
   console.error(error);
   process.exit(1);
 });
-

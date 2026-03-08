@@ -16,7 +16,23 @@ test('onboarding and first check-in flow works', async ({ page }) => {
 
   await checkinSave.waitFor({ state: 'visible', timeout: 20000 });
   await expect(checkinSave).toBeVisible();
-  await checkinSave.click({ force: true, timeout: 1500 });
+  await expect(checkinSave).toBeEnabled();
+  await checkinSave.click({ timeout: 6000 });
+
+  await expect
+    .poll(
+      async () => page.evaluate(() => {
+        const raw = window.localStorage.getItem('luna_event_log_v3');
+        if (!raw) return [];
+        try {
+          return JSON.parse(raw).map((event) => event.type);
+        } catch {
+          return [];
+        }
+      }),
+      { timeout: 12000, intervals: [250, 500, 1000] },
+    )
+    .toContain('DAILY_CHECKIN');
 
   const eventTypes = await page.evaluate(() => {
     const raw = window.localStorage.getItem('luna_event_log_v3');
