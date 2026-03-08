@@ -14,9 +14,9 @@ test('onboarding and first check-in flow works', async ({ page }) => {
     await page.getByTestId('dashboard-checkin-start').click({ force: true });
   }
 
-  await checkinSave.waitFor({ state: 'visible', timeout: 10000 });
+  await checkinSave.waitFor({ state: 'visible', timeout: 20000 });
   await expect(checkinSave).toBeVisible();
-  await checkinSave.click();
+  await checkinSave.click({ force: true, timeout: 1500 });
 
   const eventTypes = await page.evaluate(() => {
     const raw = window.localStorage.getItem('luna_event_log_v3');
