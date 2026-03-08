@@ -35,13 +35,6 @@ const emptyProfile: PersonalHealthProfile = {
 
 const quickSymptoms = ['Fatigue', 'Anxiety', 'PMS', 'Sleep issues', 'Headache', 'Low mood', 'Bloating', 'Cravings'];
 const intimacySymptoms = ['Low libido', 'Low arousal', 'Dryness', 'Pain during intimacy', 'Low orgasm quality', 'Low closeness'];
-const escapeHtml = (value: string) =>
-  value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 
 const downloadFile = (filename: string, content: string, mimeType: string) => {
   const blob = new Blob([content], { type: mimeType });
@@ -517,237 +510,34 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     ].join('\n');
   }, [analysis?.text, analysisSource, detailedUi.detailedInterpretation, detailedUi.doctorQuestions, detailedUi.noMarkers, detailedUi.noQuestions, detailedUi.statusHigh, detailedUi.statusLow, detailedUi.statusNormal, detailedUi.statusUnknown, detailedUi.subtitle, detailedUi.title, doctorQuestions, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, medForm.summary, parsedValues, profile.cycleDay, reportCopyright, reportGeneratedAt, reportIdentityLine, reportsUi.day, reportsUi.privateIdentity, reportsUi.reportReadyBody, sexualOverview.avgPositive, sexualOverview.pain, sexualUi.scoreLabels.pain, sexualUi.summaryLabel, systemState.currentDay, womenClinicalInsights.combinations, womenClinicalInsights.effects, womenClinicalInsights.recommendations, womenClinicalInsights.risks, womenUi.combinationsTitle, womenUi.effectsTitle, womenUi.recommendationsTitle, womenUi.risksTitle]);
 
-  const reportHtmlPayload = useMemo(() => {
-    const logoUrl = `${window.location.origin}/images/Luna%20logo3.png`;
-    const signatureLogoUrl = `${window.location.origin}/images/Luna%20L%2044.png`;
-    const phaseArcImageUrl = `${window.location.origin}/images/moon_phases_arc.webp`;
-    const totals = parsedValues.reduce(
-      (acc, item) => {
-        const status = inferStatus(item.value, item.referenceMin, item.referenceMax);
-        if (status === 'normal') acc.normal += 1;
-        else if (status === 'low') acc.low += 1;
-        else if (status === 'high') acc.high += 1;
-        else acc.unknown += 1;
-        return acc;
-      },
-      { normal: 0, low: 0, high: 0, unknown: 0 },
-    );
-    const totalMarkers = parsedValues.length;
-    const outOfRange = totals.low + totals.high;
-    const riskIndex = totalMarkers ? Math.round((outOfRange / totalMarkers) * 100) : 0;
-    const stabilityIndex = totalMarkers ? Math.round((totals.normal / totalMarkers) * 100) : 0;
-    const intimacyIndex = Math.max(0, Math.min(100, Math.round(sexualOverview.avgPositive * 20 - sexualOverview.pain * 8)));
-    const categoryMap = parsedValues.reduce<Record<string, number>>((acc, item) => {
-      const category = markerCategory(item.marker);
-      acc[category] = (acc[category] || 0) + 1;
-      return acc;
-    }, {});
-    const categoryRows = Object.entries(categoryMap)
-      .sort((a, b) => b[1] - a[1])
-      .map(([category, count]) => {
-        const width = totalMarkers ? Math.max(10, Math.round((count / totalMarkers) * 100)) : 10;
-        return `<div style="margin-bottom:10px;">
-          <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#334155;">
-            <span>${escapeHtml(category)}</span><span>${count}</span>
-          </div>
-          <div style="height:8px;border-radius:999px;background:#e2e8f0;overflow:hidden;margin-top:4px;">
-            <span style="display:block;height:100%;width:${width}%;background:linear-gradient(90deg,#7c3aed,#fb7185,#14b8a6);"></span>
-          </div>
-        </div>`;
-      })
-      .join('');
-
-    const markerRows = parsedValues
-      .map((item) => {
-        const status = inferStatus(item.value, item.referenceMin, item.referenceMax);
-        const topic = hormoneTopic(item.marker);
-        const reference =
-          Number.isFinite(item.referenceMin as number) && Number.isFinite(item.referenceMax as number)
-            ? `${item.referenceMin}-${item.referenceMax}`
-            : (reportsUi.na || 'n/a');
-        const explanation = markerStatusExplanation(status);
-        const badge =
-          status === 'normal'
-            ? '#047857'
-            : status === 'low'
-              ? '#b45309'
-              : status === 'high'
-                ? '#be123c'
-                : '#475569';
-        const valueColor =
-          status === 'normal'
-            ? '#047857'
-            : status === 'low'
-              ? '#b45309'
-              : status === 'high'
-                ? '#be123c'
-                : topic.accent;
-        return `<tr>
-          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\"><span style="display:inline-block;width:8px;height:8px;border-radius:999px;background:${topic.accent};margin-right:6px;"></span><strong style="color:${topic.accent};">${escapeHtml(item.marker)}</strong></td>
-          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\"><strong style="color:${valueColor};font-size:14px;">${escapeHtml(`${item.value}${item.unit ? ` ${item.unit}` : ''}`)}</strong></td>
-          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\">${escapeHtml(reference)}</td>
-          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;\"><span style=\"display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid ${badge};color:${badge};font-weight:700;font-size:11px;text-transform:uppercase;\">${status}</span></td>
-          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;color:${topic.accent};font-weight:700;\">${escapeHtml(markerCategory(item.marker))}</td>
-          <td style=\"padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.5;\">${escapeHtml(explanation)}</td>
-        </tr>`;
-      })
-      .join('');
-    const keyFindings = parsedValues
-      .map((item) => ({ item, status: inferStatus(item.value, item.referenceMin, item.referenceMax) }))
-      .filter((row) => row.status === 'low' || row.status === 'high')
-      .slice(0, 6);
-    const summary = escapeHtml(analysis?.text || reportsUi.reportReadyBody);
-    const safeIdentity = escapeHtml(reportIdentityLine || reportsUi.privateIdentity);
-    const safeAnalysisSource = escapeHtml(analysisSource);
-    const findingsHtml = keyFindings.length
-      ? keyFindings
-          .map(({ item, status }) => `<li style=\"margin:0 0 6px;line-height:1.5;\"><strong>${escapeHtml(item.marker)}</strong>: ${escapeHtml(markerStatusExplanation(status))}</li>`)
-          .join('')
-      : `<li style=\"margin:0;line-height:1.5;\">${escapeHtml(detailedUi.noMarkers)}</li>`;
-    const doctorQuestionsHtml = doctorQuestions.length
-      ? doctorQuestions.map((question) => `<li style=\"margin:0 0 6px;line-height:1.5;\">${escapeHtml(question)}</li>`).join('')
-      : `<li style=\"margin:0;line-height:1.5;\">${escapeHtml(detailedUi.noQuestions)}</li>`;
-    const combinationCardsHtml = womenClinicalInsights.combinations.length
-      ? womenClinicalInsights.combinations
-          .map((item) => {
-            const palette =
-              item.level === 'high'
-                ? { bg: '#fff1f2', border: '#fecdd3', text: '#be123c', label: womenUi.highPriority }
-                : item.level === 'watch'
-                  ? { bg: '#fffbeb', border: '#fde68a', text: '#b45309', label: womenUi.watch }
-                  : { bg: '#ecfdf5', border: '#a7f3d0', text: '#047857', label: womenUi.stable };
-            return `<article style="border:1px solid ${palette.border};background:${palette.bg};border-radius:12px;padding:12px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
-                <h4 style="margin:0;font-size:13px;font-weight:800;color:#0f172a;">${escapeHtml(item.title)}</h4>
-                <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:${palette.text};">${escapeHtml(palette.label)}</span>
-              </div>
-              <p style="margin:0;font-size:12px;line-height:1.55;color:#334155;">${escapeHtml(item.body)}</p>
-            </article>`;
-          })
-          .join('')
-      : `<p style="margin:0;font-size:12px;color:#64748b;">${escapeHtml(womenUi.noData)}</p>`;
-    const womenEffectsHtml = womenClinicalInsights.effects.map((item) => `<li style="margin:0 0 6px;line-height:1.5;">${escapeHtml(item)}</li>`).join('');
-    const womenRisksHtml = womenClinicalInsights.risks.map((item) => `<li style="margin:0 0 6px;line-height:1.5;">${escapeHtml(item)}</li>`).join('');
-    const womenRecommendationsHtml = womenClinicalInsights.recommendations.map((item) => `<li style="margin:0 0 6px;line-height:1.5;">${escapeHtml(item)}</li>`).join('');
-    const statusDistributionInfographic = `<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;">
-      <div style="padding:10px;border-radius:10px;background:#ecfdf5;border:1px solid #a7f3d0;"><p style="margin:0;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#047857;">${escapeHtml(womenUi.stable)}</p><p style="margin:2px 0 0;font-size:22px;font-weight:900;color:#047857;">${totals.normal}</p></div>
-      <div style="padding:10px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;"><p style="margin:0;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#b45309;">${escapeHtml(womenUi.watch)}</p><p style="margin:2px 0 0;font-size:22px;font-weight:900;color:#b45309;">${totals.low}</p></div>
-      <div style="padding:10px;border-radius:10px;background:#fff1f2;border:1px solid #fecdd3;"><p style="margin:0;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#be123c;">${escapeHtml(womenUi.highPriority)}</p><p style="margin:2px 0 0;font-size:22px;font-weight:900;color:#be123c;">${totals.high}</p></div>
-      <div style="padding:10px;border-radius:10px;background:#f1f5f9;border:1px solid #cbd5e1;"><p style="margin:0;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#475569;">${escapeHtml(reportsUi.na || 'n/a')}</p><p style="margin:2px 0 0;font-size:22px;font-weight:900;color:#475569;">${totals.unknown}</p></div>
-    </div>`;
-    const topicLegendHtml = hormoneTopicStats.length
-      ? `<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;">${hormoneTopicStats
-          .map((entry) => `<div style="border:1px solid #e2e8f0;border-radius:10px;padding:8px;background:#fff;">
-            <div style="display:flex;align-items:center;gap:6px;">
-              <span style="width:10px;height:10px;border-radius:999px;background:${entry.meta.accent};display:inline-block;"></span>
-              <strong style="font-size:11px;color:${entry.meta.accent};">${escapeHtml(entry.meta.label)}</strong>
-            </div>
-            <p style="margin:5px 0 0;font-size:18px;font-weight:900;color:#0f172a;">${entry.count}</p>
-          </div>`)
-          .join('')}</div>`
-      : '';
-    const spotlightRows = parsedValues
-      .slice(0, 6)
-      .map((item) => {
-        const topic = hormoneTopic(item.marker);
-        const status = inferStatus(item.value, item.referenceMin, item.referenceMax);
-        const tone = status === 'high' ? '#fff1f2' : status === 'low' ? '#fffbeb' : status === 'normal' ? '#ecfdf5' : '#f8fafc';
-        return `<div style="border:1px solid #e2e8f0;border-radius:10px;padding:8px;background:${tone};">
-          <p style="margin:0;font-size:11px;font-weight:800;color:${topic.accent};">${escapeHtml(item.marker)}</p>
-          <p style="margin:3px 0 0;font-size:18px;font-weight:900;color:${topic.accent};">${escapeHtml(`${item.value}${item.unit ? ` ${item.unit}` : ''}`)}</p>
-        </div>`;
-      })
-      .join('');
-    const hormoneInfographicHtml = hormoneTopicStats.length
-      ? hormoneTopicStats
-          .map((item) => `<div style="margin-bottom:8px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:800;">
-              <span style="color:${item.meta.accent};">${escapeHtml(item.meta.label)}</span>
-              <span style="color:#475569;">${item.count}</span>
-            </div>
-            <div style="height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:4px;">
-              <span style="display:block;height:100%;width:${Math.max(item.ratio, 10)}%;background:${item.meta.accent};"></span>
-            </div>
-          </div>`)
-          .join('')
-      : `<p style="margin:0;font-size:12px;color:#64748b;">${escapeHtml(detailedUi.noMarkers)}</p>`;
-    return {
-      logoUrl,
-      signatureLogoUrl,
-      phaseArcImageUrl,
-      detailedTitle: detailedUi.title,
-      detailedSubtitle: detailedUi.subtitle,
-      generatedAtLabel: medForm.generatedAt,
-      generatedAtValue: reportGeneratedAt,
-      patientIdLabel: medForm.patientId,
-      patientIdValue: safeIdentity,
-      sourceLabel: medForm.source,
-      sourceValue: safeAnalysisSource,
-      allMarkersLabel: medForm.allMarkers,
-      withinRangeLabel: reportsUi.withinRange,
-      outOfRangeLabel: reportsUi.outOfRange,
-      quickOverviewLabel: reportsUi.quickOverview,
-      naLabel: reportsUi.na || 'n/a',
-      stableLabel: womenUi.stable,
-      watchLabel: womenUi.watch,
-      highPriorityLabel: womenUi.highPriority,
-      sexualSnapshotTitle: sexualUi.sexualSnapshotTitle,
-      sexualSummaryLabel: sexualUi.summaryLabel,
-      sexualPainLabel: sexualUi.scoreLabels.pain,
-      sexualAvgPositive: sexualOverview.avgPositive,
-      sexualPain: sexualOverview.pain,
-      dayLabel: reportsUi.day,
-      dayValue: profile.cycleDay || systemState.currentDay,
-      hormoneInfographicLabel: reportsUi.hormoneInfographic,
-      detectedMarkersLabel: reportsUi.detectedMarkers,
-      hormoneSignalsLabel: reportsUi.hormoneSignals,
-      keyFindingsLabel: detailedUi.keyFindings,
-      clinicalFocusTitle: womenUi.clinicalFocusTitle,
-      clinicalFocusLead: womenUi.clinicalFocusLead,
-      effectsTitle: womenUi.effectsTitle,
-      risksTitle: womenUi.risksTitle,
-      recommendationsTitle: womenUi.recommendationsTitle,
-      markerLabel: reportsUi.marker || 'Marker',
-      valueLabel: reportsUi.value || 'Value',
-      referenceLabel: reportsUi.reference || 'Reference',
-      statusLabel: reportsUi.status,
-      categoryLabel: womenUi.combinationsTitle,
-      explanationLabel: detailedUi.explanation,
-      whatHappeningLabel: detailedUi.whatHappening,
-      doctorQuestionsLabel: detailedUi.doctorQuestions,
-      noMarkersLabel: detailedUi.noMarkers,
-      disclaimerTitle: medForm.disclaimerTitle,
-      disclaimerBody: medForm.disclaimerBody,
-      reportCopyright,
-      totalMarkers,
-      stabilityIndex,
-      riskIndex,
-      totalsNormal: totals.normal,
-      totalsLow: totals.low,
-      totalsHigh: totals.high,
-      totalsUnknown: totals.unknown,
-      normalPct: totalMarkers ? Math.round((totals.normal / totalMarkers) * 100) : 0,
-      lowPct: totalMarkers ? Math.round((totals.low / totalMarkers) * 100) : 0,
-      highPct: totalMarkers ? Math.round((totals.high / totalMarkers) * 100) : 0,
-      unknownPct: totalMarkers ? Math.round((totals.unknown / totalMarkers) * 100) : 0,
-      categoryRows,
-      hormoneInfographicHtml,
-      statusDistributionInfographic,
-      topicLegendHtml,
-      spotlightRows,
-      findingsHtml,
-      combinationCardsHtml,
-      womenEffectsHtml,
-      womenRisksHtml,
-      womenRecommendationsHtml,
-      markerRows,
-      summaryHtml: summary,
-      doctorQuestionsHtml,
-    };
-  }, [analysis?.text, analysisSource, detailedUi.doctorQuestions, detailedUi.explanation, detailedUi.keyFindings, detailedUi.noMarkers, detailedUi.noQuestions, doctorQuestions, hormoneTopicStats, medForm.allMarkers, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, parsedValues, profile.cycleDay, reportCopyright, reportGeneratedAt, reportIdentityLine, reportsUi.day, reportsUi.detectedMarkers, reportsUi.hormoneInfographic, reportsUi.hormoneSignals, reportsUi.marker, reportsUi.na, reportsUi.outOfRange, reportsUi.privateIdentity, reportsUi.quickOverview, reportsUi.reference, reportsUi.reportReadyBody, reportsUi.status, reportsUi.value, reportsUi.withinRange, sexualOverview.avgPositive, sexualOverview.pain, sexualUi.scoreLabels.pain, sexualUi.sexualSnapshotTitle, sexualUi.summaryLabel, systemState.currentDay, womenClinicalInsights.combinations, womenClinicalInsights.effects, womenClinicalInsights.recommendations, womenClinicalInsights.risks, womenUi.clinicalFocusLead, womenUi.clinicalFocusTitle, womenUi.combinationsTitle, womenUi.effectsTitle, womenUi.highPriority, womenUi.noData, womenUi.recommendationsTitle, womenUi.risksTitle, womenUi.stable, womenUi.watch]);
-
   const getReportHtml = async () => {
-    const { buildDetailedReportHtml } = await import('../utils/reportHtmlTemplate');
+    const [{ buildDetailedReportHtml }, { buildDetailedReportPayload }] = await Promise.all([
+      import('../utils/reportHtmlTemplate'),
+      import('../utils/labsReportPayload'),
+    ]);
+
+    const reportHtmlPayload = buildDetailedReportPayload({
+      analysisText: analysis?.text,
+      analysisSource,
+      parsedValues,
+      doctorQuestions,
+      hormoneTopicStats,
+      womenClinicalInsights,
+      sexualOverview,
+      profileCycleDay: profile.cycleDay,
+      currentDay: systemState.currentDay,
+      reportIdentityLine,
+      reportGeneratedAt,
+      reportCopyright,
+      detailedUi,
+      medForm,
+      reportsUi,
+      sexualUi,
+      womenUi,
+      markerCategory,
+      markerStatusExplanation,
+      hormoneTopic,
+    });
     return buildDetailedReportHtml(reportHtmlPayload);
   };
 

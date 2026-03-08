@@ -1,4 +1,4 @@
-type DetailedReportTemplateInput = {
+export type DetailedReportTemplateInput = {
   logoUrl: string;
   signatureLogoUrl: string;
   phaseArcImageUrl: string;
