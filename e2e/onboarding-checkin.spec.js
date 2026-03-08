@@ -8,10 +8,14 @@ test('onboarding and first check-in flow works', async ({ page }) => {
   await page.getByTestId('onboarding-begin').click();
 
   await expect(page.getByTestId('dashboard-checkin-start')).toBeVisible();
-  await page.getByTestId('dashboard-checkin-start').click();
+  const checkinSave = page.getByTestId('checkin-save');
+  const alreadyOpen = await checkinSave.isVisible().catch(() => false);
+  if (!alreadyOpen) {
+    await page.getByTestId('dashboard-checkin-start').click();
+  }
 
-  await expect(page.getByTestId('checkin-save')).toBeVisible();
-  await page.getByTestId('checkin-save').click();
+  await expect(checkinSave).toBeVisible();
+  await checkinSave.click();
 
   const eventTypes = await page.evaluate(() => {
     const raw = window.localStorage.getItem('luna_event_log_v3');

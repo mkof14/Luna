@@ -1928,41 +1928,64 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     setTimeout(() => setReportActionFeedback(null), 2400);
   };
 
-  const handleSampleDownload = () => {
+  const handleSampleDownload = async () => {
+    const { buildLocalizedSampleReportHtml } = await import('../utils/reportSampleTemplate');
     const logoUrl = `${window.location.origin}/images/Luna%20logo3.png`;
     const phaseArcImageUrl = `${window.location.origin}/images/moon_phases_arc.webp`;
     const sampleRows = [
-      ['Estradiol (E2)', '148 pg/mL', '30-400', 'normal', markerCategory('Estradiol (E2)'), detailedUi.statusNormal],
-      ['Progesterone', '8.1 ng/mL', '0.2-25', 'normal', markerCategory('Progesterone'), detailedUi.statusNormal],
-      ['TSH', '4.8 mIU/L', '0.4-4.0', 'high', markerCategory('TSH'), detailedUi.statusHigh],
-      ['Ferritin', '18 ng/mL', '15-150', 'low-normal', markerCategory('Ferritin'), detailedUi.statusLow],
+      { marker: 'Estradiol (E2)', value: '148 pg/mL', reference: '30-400', status: 'normal', category: markerCategory('Estradiol (E2)'), explanation: detailedUi.statusNormal, accent: hormoneTopic('Estradiol (E2)').accent },
+      { marker: 'Progesterone', value: '8.1 ng/mL', reference: '0.2-25', status: 'normal', category: markerCategory('Progesterone'), explanation: detailedUi.statusNormal, accent: hormoneTopic('Progesterone').accent },
+      { marker: 'TSH', value: '4.8 mIU/L', reference: '0.4-4.0', status: 'high', category: markerCategory('TSH'), explanation: detailedUi.statusHigh, accent: hormoneTopic('TSH').accent },
+      { marker: 'Ferritin', value: '18 ng/mL', reference: '15-150', status: 'low-normal', category: markerCategory('Ferritin'), explanation: detailedUi.statusLow, accent: hormoneTopic('Ferritin').accent },
     ];
-    const sampleSpotlight = sampleRows
-      .map((row) => {
-        const topic = hormoneTopic(String(row[0]));
-        return `<div style="border:1px solid #e2e8f0;border-radius:10px;padding:8px;background:#f8fafc;">
-          <p style="margin:0;font-size:11px;font-weight:800;color:${topic.accent};">${escapeHtml(String(row[0]))}</p>
-          <p style="margin:4px 0 0;font-size:18px;font-weight:900;color:${topic.accent};">${escapeHtml(String(row[1]))}</p>
-        </div>`;
-      })
-      .join('');
-    const sampleHtml = `<!doctype html><html><head><meta charset=\"utf-8\"/><title>Luna Sample Report</title><style>@page{size:A4;margin:11mm;}*{box-sizing:border-box;}body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#0f172a;padding:24px;} .sample-root{max-width:960px;margin:0 auto;background:#fff;border:1px solid #cbd5e1;border-radius:16px;overflow:hidden;} @media print{body{background:#fff;padding:0;}.sample-root{max-width:100%;border:none;border-radius:0;}}</style></head><body><div class=\"sample-root\"><div style=\"padding:22px;background:linear-gradient(135deg,#f3e8ff,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;\"><div style=\"display:flex;align-items:center;justify-content:space-between;gap:10px;\"><div style=\"display:flex;align-items:center;gap:10px;\"><img src=\"${logoUrl}\" alt=\"Luna logo\" style=\"width:52px;height:52px;object-fit:contain;border-radius:10px;background:#fff;padding:6px;border:1px solid #e2e8f0;\"/><div><p style=\"margin:0;font-size:34px;line-height:1;font-family:'Brush Script MT','Segoe Script',cursive;\">Luna</p><p style=\"margin:2px 0 0;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;\">${escapeHtml(detailedUi.subtitle)} - SAMPLE</p></div></div><div style=\"text-align:right;\"><p style=\"margin:0;font-size:11px;font-weight:700;\">${medForm.generatedAt}: ${reportGeneratedAt}</p><p style=\"margin:4px 0 0;font-size:11px;\">${medForm.patientId}: SAMPLE-001</p></div></div></div><div style=\"padding:20px 22px;\"><div style=\"display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;\"><div style=\"padding:10px;border-radius:10px;background:#ecfdf5;border:1px solid #a7f3d0;\"><p style=\"margin:0;font-size:10px;font-weight:800;text-transform:uppercase;color:#047857;\">Normal</p><p style=\"margin:2px 0 0;font-size:22px;font-weight:900;color:#047857;\">2</p></div><div style=\"padding:10px;border-radius:10px;background:#fff1f2;border:1px solid #fecdd3;\"><p style=\"margin:0;font-size:10px;font-weight:800;text-transform:uppercase;color:#be123c;\">High</p><p style=\"margin:2px 0 0;font-size:22px;font-weight:900;color:#be123c;\">1</p></div><div style=\"padding:10px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;\"><p style=\"margin:0;font-size:10px;font-weight:800;text-transform:uppercase;color:#b45309;\">Low / Watch</p><p style=\"margin:2px 0 0;font-size:22px;font-weight:900;color:#b45309;\">1</p></div></div><div style=\"display:grid;grid-template-columns:1.2fr 1fr;gap:8px;margin-top:10px;\"><article style=\"border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc;\"><p style=\"margin:0 0 8px;font-size:11px;font-weight:800;text-transform:uppercase;color:#334155;\">Hormone Spotlight</p><div style=\"display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;\">${sampleSpotlight}</div></article><article style=\"border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc;\"><p style=\"margin:0 0 8px;font-size:11px;font-weight:800;text-transform:uppercase;color:#334155;\">Cycle Visual</p><img src=\"${phaseArcImageUrl}\" alt=\"Cycle visual\" style=\"width:100%;height:90px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;\"/></article></div><table style=\"width:100%;border-collapse:collapse;font-size:13px;margin-top:12px;\"><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.panel}</strong></td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Cycle day 21</td><td style=\"padding:8px;border:1px solid #e2e8f0;\">Sexual score 3.5/5 | pain 2/5</td></tr><tr><td style=\"padding:8px;border:1px solid #e2e8f0;\"><strong>${medForm.source}</strong></td><td colspan=\"2\" style=\"padding:8px;border:1px solid #e2e8f0;\">Lab PDF scan + manual profile</td></tr></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.allMarkers}</h3><table style=\"width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;\"><thead><tr style=\"background:#f8fafc;text-transform:uppercase;font-size:11px;\"><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Marker</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Value</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Reference</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Status</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">Category</th><th style=\"text-align:left;padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(detailedUi.explanation)}</th></tr></thead><tbody>${sampleRows.map((row) => { const topic = hormoneTopic(String(row[0])); return `<tr><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\"><strong style=\"color:${topic.accent};\">${escapeHtml(String(row[0]))}</strong></td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\"><strong style=\"color:${topic.accent};font-size:14px;\">${escapeHtml(String(row[1]))}</strong></td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[2]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[3]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;color:${topic.accent};font-weight:700;\">${escapeHtml(String(row[4]))}</td><td style=\"padding:8px;border-bottom:1px solid #e2e8f0;\">${escapeHtml(String(row[5]))}</td></tr>`; }).join('')}</tbody></table><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(womenUi.clinicalFocusTitle)}</h3><div style=\"border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\"><p style=\"margin:0 0 8px;font-size:12px;font-weight:800;\">${escapeHtml(womenUi.estProgTitle)}</p><p style=\"margin:0 0 10px;font-size:12px;line-height:1.55;\">${escapeHtml(womenUi.estProgBody)}</p><p style=\"margin:0 0 8px;font-size:12px;font-weight:800;\">${escapeHtml(womenUi.insulinAndrogenTitle)}</p><p style=\"margin:0;font-size:12px;line-height:1.55;\">${escapeHtml(womenUi.insulinAndrogenBody)}</p></div><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${escapeHtml(womenUi.recommendationsTitle)}</h3><ul style=\"margin:0;padding-left:18px;font-size:12px;line-height:1.55;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#ecfeff;\"><li>${escapeHtml(womenUi.recCycle)}</li><li>${escapeHtml(womenUi.recRepeat)}</li><li>${escapeHtml(womenUi.recDoctor)}</li><li>${escapeHtml(womenUi.recLifestyle)}</li></ul><h3 style=\"margin:18px 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;\">${medForm.summary}</h3><p style=\"white-space:pre-wrap;line-height:1.6;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;\">${escapeHtml(reportUi.servicePromise)}\n• ${reportUi.serviceBullets.map(escapeHtml).join('\n• ')}</p><div style=\"margin-top:18px;border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;\"><p style=\"margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;\">${medForm.disclaimerTitle}</p><p style=\"margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;\">${medForm.disclaimerBody}</p></div></div><div style=\"padding:12px 22px;border-top:1px solid #e2e8f0;background:#f8fafc;\"><p style=\"margin:0;font-size:11px;color:#475569;\">${escapeHtml(reportCopyright)}</p></div></div></body></html>`;
-    const localizedSampleHtml = sampleHtml
-      .replaceAll('Luna Sample Report', `${reportUi.reportTitle} - ${reportUi.sampleTitle}`)
-      .replaceAll(' - SAMPLE', ` - ${reportUi.sampleTitle}`)
-      .replaceAll('>Normal<', `>${escapeHtml(womenUi.stable)}<`)
-      .replaceAll('>High<', `>${escapeHtml(womenUi.highPriority)}<`)
-      .replaceAll('>Low / Watch<', `>${escapeHtml(womenUi.watch)}<`)
-      .replaceAll('>Hormone Spotlight<', `>${escapeHtml(reportsUi.hormoneSignals)}<`)
-      .replaceAll('>Cycle Visual<', `>${escapeHtml(reportsUi.day)} ${profile.cycleDay || systemState.currentDay || 21}<`)
-      .replaceAll('>Cycle day 21<', `>${escapeHtml(reportsUi.day)} 21<`)
-      .replaceAll('>Sexual score 3.5/5 | pain 2/5<', `>${escapeHtml(sexualUi.summaryLabel)} 3.5/5 | ${escapeHtml(sexualUi.scoreLabels.pain)} 2/5<`)
-      .replaceAll('>Lab PDF scan + manual profile<', `>${escapeHtml(reportSourcesUi.textInput)} + ${escapeHtml(reportSourcesUi.manualTable)}<`)
-      .replaceAll('>Marker<', `>${escapeHtml(reportsUi.marker || 'Marker')}<`)
-      .replaceAll('>Value<', `>${escapeHtml(reportsUi.value || 'Value')}<`)
-      .replaceAll('>Reference<', `>${escapeHtml(reportsUi.reference || 'Reference')}<`)
-      .replaceAll('>Status<', `>${escapeHtml(reportsUi.status)}<`)
-      .replaceAll('>Category<', `>${escapeHtml(womenUi.combinationsTitle)}<`);
+    const sampleCycleDayRaw = Number(profile.cycleDay || systemState.currentDay || 21);
+    const sampleCycleDay = Number.isFinite(sampleCycleDayRaw) ? sampleCycleDayRaw : 21;
+    const localizedSampleHtml = buildLocalizedSampleReportHtml({
+      logoUrl,
+      phaseArcImageUrl,
+      reportTitle: reportUi.reportTitle,
+      sampleTitle: reportUi.sampleTitle,
+      subtitle: detailedUi.subtitle,
+      generatedAtLabel: medForm.generatedAt,
+      generatedAtValue: reportGeneratedAt,
+      patientIdLabel: medForm.patientId,
+      panelLabel: medForm.panel,
+      sourceLabel: medForm.source,
+      allMarkersLabel: medForm.allMarkers,
+      summaryLabel: medForm.summary,
+      disclaimerTitle: medForm.disclaimerTitle,
+      disclaimerBody: medForm.disclaimerBody,
+      reportCopyright,
+      servicePromise: reportUi.servicePromise,
+      serviceBullets: reportUi.serviceBullets,
+      stableLabel: womenUi.stable,
+      highPriorityLabel: womenUi.highPriority,
+      watchLabel: womenUi.watch,
+      hormoneSignalsLabel: reportsUi.hormoneSignals,
+      dayLabel: reportsUi.day,
+      cycleDayValue: sampleCycleDay,
+      sexualSummaryLabel: sexualUi.summaryLabel,
+      painLabel: sexualUi.scoreLabels.pain,
+      markerLabel: reportsUi.marker || 'Marker',
+      valueLabel: reportsUi.value || 'Value',
+      referenceLabel: reportsUi.reference || 'Reference',
+      statusLabel: reportsUi.status,
+      categoryLabel: womenUi.combinationsTitle,
+      explanationLabel: detailedUi.explanation,
+      textInputSourceLabel: reportSourcesUi.textInput,
+      manualTableSourceLabel: reportSourcesUi.manualTable,
+      clinicalFocusTitle: womenUi.clinicalFocusTitle,
+      estProgTitle: womenUi.estProgTitle,
+      estProgBody: womenUi.estProgBody,
+      insulinAndrogenTitle: womenUi.insulinAndrogenTitle,
+      insulinAndrogenBody: womenUi.insulinAndrogenBody,
+      recommendationsTitle: womenUi.recommendationsTitle,
+      recCycle: womenUi.recCycle,
+      recRepeat: womenUi.recRepeat,
+      recDoctor: womenUi.recDoctor,
+      recLifestyle: womenUi.recLifestyle,
+      rows: sampleRows,
+    });
     downloadFile(`luna-sample-report-${reportLang}.html`, localizedSampleHtml, 'text/html;charset=utf-8');
     setReportActionFeedback(reportActions.sampleDownloaded);
     setTimeout(() => setReportActionFeedback(null), 2000);
