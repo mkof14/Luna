@@ -1139,108 +1139,6 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     },
   };
   const innerWeather = innerWeatherByLang[lang] || innerWeatherByLang.en;
-  const bridgePublicByLang: Record<Language, { eyebrow: string; title: string; problemTitle: string; problemBody: string; helpsTitle: string; helps: [string, string, string]; unique: string; memberLinkTitle: string; memberLinkBody: string }> = {
-    en: {
-      eyebrow: 'THE BRIDGE',
-      title: 'Say Your State Clearly',
-      problemTitle: 'Problem',
-      problemBody: 'Sometimes it is hard to explain your state to a partner or even to yourself.',
-      helpsTitle: 'Bridge helps',
-      helps: ['formulate your state', 'explain it calmly', 'preserve respect in conversation'],
-      unique: 'This is one of Luna’s unique functions.',
-      memberLinkTitle: 'Connected to Member Logic',
-      memberLinkBody: 'In the member zone, The Bridge runs the guided 3-question flow and forms a calm reflection message you can keep or share.',
-    },
-    ru: {
-      eyebrow: 'THE BRIDGE',
-      title: 'Ясно выразить свое состояние',
-      problemTitle: 'Проблема',
-      problemBody: 'Иногда трудно объяснить партнёру или себе своё состояние.',
-      helpsTitle: 'Bridge помогает',
-      helps: ['сформулировать состояние', 'объяснить его спокойно', 'сохранить уважение в разговоре'],
-      unique: 'Это одна из уникальных функций Luna.',
-      memberLinkTitle: 'Связано с логикой Member Zone',
-      memberLinkBody: 'В member-зоне The Bridge использует поток из 3 вопросов и формирует спокойное сообщение-рефлексию, которое можно сохранить или отправить.',
-    },
-    uk: {
-      eyebrow: 'THE BRIDGE',
-      title: 'Чітко сформулювати свій стан',
-      problemTitle: 'Проблема',
-      problemBody: 'Іноді важко пояснити партнеру або собі свій стан.',
-      helpsTitle: 'Bridge допомагає',
-      helps: ['сформулювати стан', 'пояснити його спокійно', 'зберегти повагу в розмові'],
-      unique: 'Це одна з унікальних функцій Luna.',
-      memberLinkTitle: 'Повʼязано з логікою Member Zone',
-      memberLinkBody: 'У member-зоні The Bridge запускає 3-питаньний сценарій та формує спокійне рефлексивне повідомлення, яке можна зберегти або надіслати.',
-    },
-    es: {
-      eyebrow: 'THE BRIDGE',
-      title: 'Expresa tu estado con claridad',
-      problemTitle: 'Problema',
-      problemBody: 'A veces es difícil explicar tu estado a tu pareja o incluso a ti misma.',
-      helpsTitle: 'Bridge ayuda a',
-      helps: ['formular tu estado', 'explicarlo con calma', 'preservar el respeto en la conversación'],
-      unique: 'Esta es una de las funciones únicas de Luna.',
-      memberLinkTitle: 'Conectado con la lógica de Member Zone',
-      memberLinkBody: 'En la zona de miembros, The Bridge ejecuta el flujo guiado de 3 preguntas y forma un mensaje de reflexión calmado para guardar o compartir.',
-    },
-    fr: {
-      eyebrow: 'THE BRIDGE',
-      title: 'Exprimer votre état avec clarté',
-      problemTitle: 'Problème',
-      problemBody: "Parfois, il est difficile d'expliquer votre état à votre partenaire ou même à vous-même.",
-      helpsTitle: 'Bridge aide à',
-      helps: ['formuler votre état', 'l’expliquer calmement', 'préserver le respect dans la conversation'],
-      unique: 'C’est une des fonctions uniques de Luna.',
-      memberLinkTitle: 'Connecté à la logique Member Zone',
-      memberLinkBody: 'Dans la zone membre, The Bridge lance le flux guidé en 3 questions et crée un message de réflexion calme à conserver ou partager.',
-    },
-    de: {
-      eyebrow: 'THE BRIDGE',
-      title: 'Den eigenen Zustand klar ausdrücken',
-      problemTitle: 'Problem',
-      problemBody: 'Manchmal ist es schwer, den eigenen Zustand der Partnerperson oder sich selbst zu erklären.',
-      helpsTitle: 'Bridge hilft dabei',
-      helps: ['den Zustand zu formulieren', 'ihn ruhig zu erklären', 'Respekt im Gespräch zu bewahren'],
-      unique: 'Das ist eine der einzigartigen Funktionen von Luna.',
-      memberLinkTitle: 'Mit Member-Logik verbunden',
-      memberLinkBody: 'In der Member Zone läuft The Bridge durch den geführten 3-Fragen-Flow und erstellt eine ruhige Reflexionsnachricht zum Behalten oder Teilen.',
-    },
-    zh: {
-      eyebrow: 'THE BRIDGE',
-      title: '清晰表达你的状态',
-      problemTitle: '问题',
-      problemBody: '有时很难向伴侣，甚至向自己解释当前状态。',
-      helpsTitle: 'Bridge 帮你',
-      helps: ['组织你的状态表达', '平静地说明感受', '在对话中保留尊重'],
-      unique: '这是 Luna 的独特功能之一。',
-      memberLinkTitle: '与 Member Zone 逻辑联动',
-      memberLinkBody: '在会员区，The Bridge 会运行 3 个引导问题流程，并生成可保存或分享的平静反思信息。',
-    },
-    ja: {
-      eyebrow: 'THE BRIDGE',
-      title: '状態を明確に伝える',
-      problemTitle: '課題',
-      problemBody: 'ときに、自分の状態をパートナーや自分自身に説明するのは難しいです。',
-      helpsTitle: 'Bridge は次を助けます',
-      helps: ['状態を言語化する', '落ち着いて説明する', '会話の尊重を保つ'],
-      unique: 'これは Luna のユニークな機能の一つです。',
-      memberLinkTitle: 'Member Zone ロジックと接続',
-      memberLinkBody: 'メンバーゾーンでは The Bridge が3つの質問フローを実行し、保存・共有できる落ち着いたリフレクション文を生成します。',
-    },
-    pt: {
-      eyebrow: 'THE BRIDGE',
-      title: 'Expresse seu estado com clareza',
-      problemTitle: 'Problema',
-      problemBody: 'Às vezes é difícil explicar seu estado ao parceiro ou até para si mesma.',
-      helpsTitle: 'Bridge ajuda a',
-      helps: ['formular seu estado', 'explicar com calma', 'preservar o respeito na conversa'],
-      unique: 'Esta é uma das funções únicas da Luna.',
-      memberLinkTitle: 'Conectado à lógica da Member Zone',
-      memberLinkBody: 'Na área de membros, The Bridge executa o fluxo guiado de 3 perguntas e forma uma mensagem de reflexão calma para manter ou compartilhar.',
-    },
-  };
-  const bridgePublic = bridgePublicByLang[lang] || bridgePublicByLang.en;
   const publicSharedByLang: Partial<
     Record<
       Language,
@@ -1359,121 +1257,6 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     ja: 'Luna Balance コア',
     pt: 'Nucleo Luna Balance',
   };
-  const ritualCopyByLang: Record<
-    Language,
-    {
-      eyebrow: string;
-      title: string;
-      subtitle: string;
-      morningTitle: string;
-      morningBody: string;
-      middayTitle: string;
-      middayBody: string;
-      eveningTitle: string;
-      eveningBody: string;
-    }
-  > = {
-    en: {
-      eyebrow: 'RITUAL PATH',
-      title: 'A PATH, NOT A CHECKLIST',
-      subtitle: 'A simple daily rhythm that protects attention and preserves signal.',
-      morningTitle: 'MORNING',
-      morningBody: 'Name your baseline before the world names your pace.',
-      middayTitle: 'MIDDAY',
-      middayBody: 'Re-check capacity and adjust plans with respect for your energy.',
-      eveningTitle: 'EVENING',
-      eveningBody: 'Close the day with a short reflection to preserve signal, not noise.',
-    },
-    ru: {
-      eyebrow: 'РИТУАЛЬНЫЙ ПУТЬ',
-      title: 'ПУТЬ, А НЕ ЧЕК-ЛИСТ',
-      subtitle: 'Простой ежедневный ритм, который бережет внимание и сохраняет сигнал состояния.',
-      morningTitle: 'УТРО',
-      morningBody: 'Назовите свой базовый фон до того, как мир задаст вам темп.',
-      middayTitle: 'ДЕНЬ',
-      middayBody: 'Переоцените ресурс и скорректируйте планы с уважением к энергии.',
-      eveningTitle: 'ВЕЧЕР',
-      eveningBody: 'Завершите день короткой рефлексией, чтобы сохранить сигнал, а не шум.',
-    },
-    uk: {
-      eyebrow: 'РИТУАЛЬНИЙ ШЛЯХ',
-      title: 'ШЛЯХ, А НЕ ЧЕК-ЛИСТ',
-      subtitle: 'Простий щоденний ритм, що береже увагу і зберігає сигнал стану.',
-      morningTitle: 'РАНОК',
-      morningBody: 'Назвіть свій базовий стан до того, як світ задасть темп.',
-      middayTitle: 'ДЕНЬ',
-      middayBody: 'Перевірте ресурс і скоригуйте плани з повагою до енергії.',
-      eveningTitle: 'ВЕЧІР',
-      eveningBody: 'Завершіть день короткою рефлексією, щоб зберегти сигнал, а не шум.',
-    },
-    es: {
-      eyebrow: 'RUTA RITUAL',
-      title: 'UN CAMINO, NO UNA LISTA',
-      subtitle: 'Un ritmo diario simple que protege la atencion y conserva la señal.',
-      morningTitle: 'MANANA',
-      morningBody: 'Nombra tu estado base antes de que el mundo marque tu ritmo.',
-      middayTitle: 'MEDIODIA',
-      middayBody: 'Revisa tu capacidad y ajusta planes con respeto por tu energia.',
-      eveningTitle: 'NOCHE',
-      eveningBody: 'Cierra el dia con una breve reflexion para preservar señal, no ruido.',
-    },
-    fr: {
-      eyebrow: 'PARCOURS RITUEL',
-      title: 'UN PARCOURS, PAS UNE CHECK-LIST',
-      subtitle: 'Un rythme quotidien simple qui protege l attention et preserve le signal.',
-      morningTitle: 'MATIN',
-      morningBody: 'Nommez votre base avant que le monde impose son rythme.',
-      middayTitle: 'MIDI',
-      middayBody: 'Reevaluez votre capacite et ajustez vos plans selon votre energie.',
-      eveningTitle: 'SOIR',
-      eveningBody: 'Terminez la journee par une courte reflexion pour garder le signal.',
-    },
-    de: {
-      eyebrow: 'RITUALPFAD',
-      title: 'EIN PFAD, KEINE CHECKLISTE',
-      subtitle: 'Ein einfacher Tagesrhythmus, der Aufmerksamkeit schützt und Signal erhalt.',
-      morningTitle: 'MORGEN',
-      morningBody: 'Benenne deinen Grundzustand, bevor die Welt dein Tempo bestimmt.',
-      middayTitle: 'MITTAG',
-      middayBody: 'Prufe deine Kapazitat und passe Plane deiner Energie entsprechend an.',
-      eveningTitle: 'ABEND',
-      eveningBody: 'Beende den Tag mit einer kurzen Reflexion, um Signal statt Rauschen zu behalten.',
-    },
-    zh: {
-      eyebrow: '节律路径',
-      title: '这是路径，不是清单',
-      subtitle: '一个简单的日常节律，保护注意力并保留真实信号。',
-      morningTitle: '早晨',
-      morningBody: '先命名你的基础状态，再进入外部节奏。',
-      middayTitle: '中午',
-      middayBody: '重新评估容量，并根据能量调整计划。',
-      eveningTitle: '夜晚',
-      eveningBody: '用简短反思结束一天，保留信号而不是噪音。',
-    },
-    ja: {
-      eyebrow: 'リチュアルパス',
-      title: 'チェックリストではなく、道',
-      subtitle: '注意力を守り、状態のシグナルを残すシンプルな日次リズム。',
-      morningTitle: '朝',
-      morningBody: '世界にペースを決められる前に、自分の基準状態を言語化する。',
-      middayTitle: '昼',
-      middayBody: '容量を再確認し、エネルギーに合わせて予定を調整する。',
-      eveningTitle: '夜',
-      eveningBody: '短い振り返りで一日を閉じ、ノイズではなくシグナルを残す。',
-    },
-    pt: {
-      eyebrow: 'CAMINHO RITUAL',
-      title: 'UM CAMINHO, NAO UMA LISTA',
-      subtitle: 'Um ritmo diario simples que protege atencao e preserva sinal.',
-      morningTitle: 'MANHA',
-      morningBody: 'Nomeie sua base antes que o mundo imponha o ritmo.',
-      middayTitle: 'MEIO-DIA',
-      middayBody: 'Reavalie capacidade e ajuste planos com respeito a sua energia.',
-      eveningTitle: 'NOITE',
-      eveningBody: 'Feche o dia com uma reflexao curta para preservar sinal, nao ruido.',
-    },
-  };
-
   const cards = [
     {
       title: lunaBalanceVision.points[0],
@@ -1828,12 +1611,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
           <Suspense fallback={lazyFallback}>
             <PublicRitualSection
               onSignIn={onSignIn}
-              copy={ritualCopyByLang[lang] || ritualCopyByLang.en}
-              noteTitle={publicShared.noteTitle}
-              noteLine1={publicShared.noteLine1}
-              noteLine2={publicShared.noteLine2}
-              enterMember={publicShared.enterMember}
-              memberSignIn={publicShared.memberSignIn}
+              lang={lang}
             />
           </Suspense>
         )}
@@ -1842,9 +1620,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
           <Suspense fallback={lazyFallback}>
             <PublicBridgeSection
               onSignIn={onSignIn}
-              bridgePublic={bridgePublic}
-              enterMember={publicShared.enterMember}
-              memberSignIn={publicShared.memberSignIn}
+              lang={lang}
             />
           </Suspense>
         )}
