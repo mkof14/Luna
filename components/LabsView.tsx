@@ -187,6 +187,10 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const localized = useMemo(() => getLabsViewLocalizedContent(lang, reportLang), [lang, reportLang]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const identitySectionRef = useRef<HTMLElement>(null);
+  const profileSectionRef = useRef<HTMLElement>(null);
+  const labsSectionRef = useRef<HTMLElement>(null);
+  const reportSectionRef = useRef<HTMLElement>(null);
   const systemState = useMemo(() => dataService.projectState(log), [log]);
   const { sexualUi, visualGuide, reportUi, medForm, reportLangUi, reportSourcesUi, reportCategories, reportActions, conflictsUi, reportsUi, detailedUi, womenUi, reportLanguageNames, locale: reportLocale } = localized;
 
@@ -266,6 +270,9 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
   const updateProfile = (key: keyof PersonalHealthProfile, value: string) => {
     setProfile((prev) => ({ ...prev, [key]: value }));
+  };
+  const jumpTo = (ref: React.RefObject<HTMLElement | null>) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const clearDraft = () => {
@@ -391,6 +398,27 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     if (manualRows.some((row) => row.marker.trim() && row.value.trim())) pieces.push(reportSourcesUi.manualTable);
     return pieces.length ? pieces.join(' + ') : reportSourcesUi.profileOnly;
   }, [input, manualRows, reportSourcesUi.manualTable, reportSourcesUi.profileOnly, reportSourcesUi.textInput, uploadFeedback]);
+  const hasIdentityReady = useMemo(() => includeIdInReport || (includeNameInReport && Boolean(userName)), [includeIdInReport, includeNameInReport, userName]);
+  const hasProfileReady = useMemo(
+    () =>
+      [profile.birthYear, profile.cycleLength, profile.cycleDay, profile.goals]
+        .map((value) => value.trim())
+        .filter(Boolean).length >= 3,
+    [profile.birthYear, profile.cycleDay, profile.cycleLength, profile.goals],
+  );
+  const hasLabsReady = useMemo(() => manualRows.some((row) => row.marker.trim() && row.value.trim()) || input.trim().length > 0, [input, manualRows]);
+  const hasReportReady = Boolean(analysis?.text);
+  const workflowChecklist = useMemo(
+    () => [
+      { key: 'identity', label: reportsUi.identityTitle, done: hasIdentityReady, action: () => jumpTo(identitySectionRef) },
+      { key: 'profile', label: reportsUi.profileTitle, done: hasProfileReady, action: () => jumpTo(profileSectionRef) },
+      { key: 'labs', label: reportsUi.labTable, done: hasLabsReady, action: () => jumpTo(labsSectionRef) },
+      { key: 'report', label: reportUi.reportTitle, done: hasReportReady, action: () => jumpTo(reportSectionRef) },
+    ],
+    [hasIdentityReady, hasLabsReady, hasProfileReady, hasReportReady, reportUi.reportTitle, reportsUi.identityTitle, reportsUi.labTable, reportsUi.profileTitle],
+  );
+  const checklistDoneCount = workflowChecklist.filter((item) => item.done).length;
+  const checklistProgress = Math.round((checklistDoneCount / workflowChecklist.length) * 100);
 
   const markerCategory = (marker: string): string => {
     const m = marker.toLowerCase();
@@ -805,12 +833,33 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
           ))}
         </div>
       </section>
+      <section className="rounded-[2.2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/75 dark:bg-[#0a1d3f]/88 p-5 md:p-6 shadow-luna-rich space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-luna-purple">Report Workflow</p>
+          <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-500 dark:text-slate-300">{checklistDoneCount}/{workflowChecklist.length}</p>
+        </div>
+        <div className="h-2 rounded-full bg-slate-200/80 dark:bg-slate-700/70 overflow-hidden">
+          <span className="block h-full bg-gradient-to-r from-luna-purple via-luna-coral to-teal-500 transition-all duration-500" style={{ width: `${Math.max(checklistProgress, 6)}%` }} />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2">
+          {workflowChecklist.map((item, index) => (
+            <button
+              key={item.key}
+              onClick={item.action}
+              className={`rounded-xl border p-3 text-left transition-colors ${item.done ? 'border-emerald-300/80 bg-emerald-50/80 dark:bg-emerald-900/15 dark:border-emerald-700/50' : 'border-slate-200/80 bg-slate-50/80 dark:border-slate-700/70 dark:bg-slate-900/40'}`}
+            >
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500 dark:text-slate-300">{index + 1}</p>
+              <p className={`mt-1 text-xs font-bold ${item.done ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-700 dark:text-slate-200'}`}>{item.label}</p>
+            </button>
+          ))}
+        </div>
+      </section>
 
       <HormoneTestingGuide lang={lang} />
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
         <section className="xl:col-span-7 space-y-8">
-          <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
+          <article ref={identitySectionRef} className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
             <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">{reportsUi.identityTitle}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
@@ -844,7 +893,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
             <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{reportsUi.current}: {reportIdentityLine || reportsUi.privateIdentity}</p>
           </article>
 
-          <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
+          <article ref={profileSectionRef} className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
             <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">{reportsUi.profileTitle}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[
@@ -937,7 +986,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
             </div>
           </article>
 
-          <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
+          <article ref={labsSectionRef} className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">{reportsUi.labTable}</h3>
               <div className="flex flex-wrap gap-2">
@@ -1005,6 +1054,9 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                     {reportActions.autosaved}: {new Date(lastDraftSavedAt).toLocaleTimeString(reportLocale, { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 )}
+                {!hasLabsReady && (
+                  <p className="text-[10px] font-semibold text-amber-700 dark:text-amber-300">Add at least one marker value or paste lab text before generating.</p>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -1017,7 +1069,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
                 <button
                   data-testid="labs-generate-report"
                   onClick={handleAnalyze}
-                  disabled={loading}
+                  disabled={loading || !hasLabsReady}
                   className="px-6 py-3 rounded-full bg-slate-950 dark:bg-[#17366b] text-white text-[10px] font-black uppercase tracking-[0.2em] disabled:opacity-40"
                 >
                   {loading ? reportsUi.reading : reportsUi.generate}
@@ -1104,7 +1156,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
             </div>
           </article>
 
-          <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#f3e5f4]/95 via-[#eee8fb]/92 to-[#e3edf9]/90 dark:from-[#0d1f3f]/95 dark:via-[#132a50]/93 dark:to-[#17345f]/92 p-6 shadow-luna-rich space-y-4">
+          <article ref={reportSectionRef} className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#f3e5f4]/95 via-[#eee8fb]/92 to-[#e3edf9]/90 dark:from-[#0d1f3f]/95 dark:via-[#132a50]/93 dark:to-[#17345f]/92 p-6 shadow-luna-rich space-y-4">
             <div className="flex items-center gap-3">
               <img src="/images/Luna%20logo3.png" alt="Luna symbol" className="h-10 w-10 object-contain" />
               <div>
