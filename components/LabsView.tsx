@@ -8,6 +8,7 @@ import { isSupportedLabFile } from '../utils/runtimeGuards';
 import { copyTextSafely, shareTextSafely } from '../utils/share';
 import { Language } from '../constants';
 import { getLabsViewLocalizedContent } from '../utils/labsViewContent';
+import { clearLabsDraftSnapshot, createDefaultSexualScores, readLabsDraftSnapshot, writeLabsDraftSnapshot } from '../utils/labsDraft';
 import {
   computeHormoneSignals,
   detectLabValueConflicts,
@@ -23,7 +24,6 @@ import {
 } from '../services/healthReportService';
 
 const REPORT_ID_STORAGE_KEY = 'luna_report_user_id_v1';
-const LABS_DRAFT_STORAGE_KEY = 'luna_labs_draft_v1';
 
 const emptyProfile: PersonalHealthProfile = {
   birthYear: '',
@@ -32,24 +32,6 @@ const emptyProfile: PersonalHealthProfile = {
   medications: '',
   knownConditions: '',
   goals: '',
-};
-
-type LabsDraft = {
-  input?: string;
-  manualRows?: HealthLabRow[];
-  selectedSymptoms?: string[];
-  sexualScores?: {
-    libido: number;
-    arousal: number;
-    comfort: number;
-    closeness: number;
-    pain: number;
-  };
-  includeNameInReport?: boolean;
-  includeIdInReport?: boolean;
-  manualReportId?: string;
-  reportLang?: Language;
-  profile?: PersonalHealthProfile;
 };
 
 const quickSymptoms = ['Fatigue', 'Anxiety', 'PMS', 'Sleep issues', 'Headache', 'Low mood', 'Bloating', 'Cravings'];
@@ -169,27 +151,14 @@ const ensureReportId = () => {
   }
 };
 
-const isLanguage = (value: unknown): value is Language => typeof value === 'string' && ['en', 'ru', 'uk', 'es', 'fr', 'de', 'zh', 'ja', 'pt'].includes(value);
-
-const readLabsDraft = (): LabsDraft | null => {
-  try {
-    const raw = localStorage.getItem(LABS_DRAFT_STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as LabsDraft;
-    return parsed && typeof parsed === 'object' ? parsed : null;
-  } catch {
-    return null;
-  }
-};
-
 export const LabsView: React.FC<{ day: number; age: number; lang: Language; userId?: string; userName?: string; onBack?: () => void }> = ({ day, age, lang, userId, userName }) => {
-  const initialDraftRef = useRef<LabsDraft | null>(null);
-  if (initialDraftRef.current === null) initialDraftRef.current = readLabsDraft();
-  const initialDraft = initialDraftRef.current;
   const defaultProfile = useMemo<PersonalHealthProfile>(
     () => ({ ...emptyProfile, birthYear: String(new Date().getFullYear() - age), cycleDay: String(day) }),
     [age, day],
   );
+  const initialDraftRef = useRef<ReturnType<typeof readLabsDraftSnapshot> | null>(null);
+  if (initialDraftRef.current === null) initialDraftRef.current = readLabsDraftSnapshot(lang, defaultProfile);
+  const initialDraft = initialDraftRef.current;
 
   const [input, setInput] = useState(() => initialDraft?.input || '');
   const [analysis, setAnalysis] = useState<{ text: string; sources: unknown[] } | null>(null);
@@ -208,17 +177,11 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const [labConflicts, setLabConflicts] = useState<LabValueConflict[]>([]);
   const [conflictChoices, setConflictChoices] = useState<Record<string, number>>({});
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>(() => (Array.isArray(initialDraft?.selectedSymptoms) ? initialDraft.selectedSymptoms : []));
-  const [sexualScores, setSexualScores] = useState(() => ({
-    libido: Number(initialDraft?.sexualScores?.libido ?? 3),
-    arousal: Number(initialDraft?.sexualScores?.arousal ?? 3),
-    comfort: Number(initialDraft?.sexualScores?.comfort ?? 3),
-    closeness: Number(initialDraft?.sexualScores?.closeness ?? 3),
-    pain: Number(initialDraft?.sexualScores?.pain ?? 1),
-  }));
+  const [sexualScores, setSexualScores] = useState(() => initialDraft?.sexualScores || createDefaultSexualScores());
   const [includeNameInReport, setIncludeNameInReport] = useState(() => Boolean(initialDraft?.includeNameInReport));
   const [includeIdInReport, setIncludeIdInReport] = useState(() => initialDraft?.includeIdInReport ?? true);
   const [manualReportId, setManualReportId] = useState(() => initialDraft?.manualReportId || '');
-  const [reportLang, setReportLang] = useState<Language>(() => (isLanguage(initialDraft?.reportLang) ? initialDraft.reportLang : lang));
+  const [reportLang, setReportLang] = useState<Language>(() => initialDraft?.reportLang || lang);
   const [profile, setProfile] = useState<PersonalHealthProfile>(() => ({ ...defaultProfile, ...(initialDraft?.profile || {}) }));
   const [lastDraftSavedAt, setLastDraftSavedAt] = useState<number | null>(null);
   const localized = useMemo(() => getLabsViewLocalizedContent(lang, reportLang), [lang, reportLang]);
@@ -306,11 +269,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   };
 
   const clearDraft = () => {
-    try {
-      localStorage.removeItem(LABS_DRAFT_STORAGE_KEY);
-    } catch {
-      // Ignore storage errors.
-    }
+    clearLabsDraftSnapshot();
     setInput('');
     setManualRows([newRow()]);
     setParsedRows([]);
@@ -319,7 +278,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     setLabConflicts([]);
     setConflictChoices({});
     setSelectedSymptoms([]);
-    setSexualScores({ libido: 3, arousal: 3, comfort: 3, closeness: 3, pain: 1 });
+    setSexualScores(createDefaultSexualScores());
     setIncludeNameInReport(false);
     setIncludeIdInReport(true);
     setManualReportId('');
@@ -399,9 +358,16 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   }, [rawParsedValues, conflictChoices]);
 
   useEffect(() => {
-    const draft: LabsDraft = {
+    const saved = writeLabsDraftSnapshot({
       input,
-      manualRows,
+      manualRows: manualRows.map((row) => ({
+        marker: row.marker,
+        value: row.value,
+        unit: row.unit,
+        reference: row.reference,
+        date: row.date,
+        note: row.note,
+      })),
       selectedSymptoms,
       sexualScores,
       includeNameInReport,
@@ -409,13 +375,8 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       manualReportId,
       reportLang,
       profile,
-    };
-    try {
-      localStorage.setItem(LABS_DRAFT_STORAGE_KEY, JSON.stringify(draft));
-      setLastDraftSavedAt(Date.now());
-    } catch {
-      // Ignore storage write errors in private mode / restricted environments.
-    }
+    });
+    if (saved) setLastDraftSavedAt(Date.now());
   }, [includeIdInReport, includeNameInReport, input, manualReportId, manualRows, profile, reportLang, selectedSymptoms, sexualScores]);
 
   const reportGeneratedAt = useMemo(() => new Date().toLocaleString(reportLocale), [analysis?.text, parsedValues.length, reportIdentityLine, reportLocale]);

@@ -24,6 +24,7 @@ import { DEFAULT_CYCLE_LENGTH, DEFAULT_USER_AGE } from '../constants/appDefaults
 import { buildDetailedReportPayload } from '../utils/labsReportPayload';
 import { buildDetailedReportHtml } from '../utils/reportHtmlTemplate';
 import { getLabsViewLocalizedContent } from '../utils/labsViewContent';
+import { createDefaultSexualScores, sanitizeLabsDraft } from '../utils/labsDraft';
 
 type StorageMap = Map<string, string>;
 
@@ -602,6 +603,48 @@ const testLabsLocalizationCoverage = () => {
   }
 };
 
+const testLabsDraftSanitizer = () => {
+  const fallbackProfile = {
+    birthYear: '1990',
+    cycleLength: '28',
+    cycleDay: '10',
+    medications: '',
+    knownConditions: '',
+    goals: '',
+  };
+
+  const draft = sanitizeLabsDraft(
+    {
+      input: 1234,
+      manualRows: [{ marker: 'TSH', value: '4.2', unit: 'mIU/L' }, { marker: '', value: '' }, { marker: 12 }],
+      selectedSymptoms: ['Fatigue', '', 22, 'Low mood'],
+      sexualScores: { libido: 99, arousal: -5, comfort: 3.4, closeness: '4', pain: 'NaN' },
+      includeNameInReport: 'true',
+      includeIdInReport: false,
+      manualReportId: '   ID-1   ',
+      reportLang: 'ru',
+      profile: { birthYear: '1988', cycleLength: 28, cycleDay: '12', goals: 'stability' },
+    },
+    'en',
+    fallbackProfile,
+  );
+
+  assert.equal(draft.input, '', 'non-string draft input should sanitize to empty string');
+  assert.equal(draft.manualRows.length, 1, 'draft rows should keep only meaningful sanitized rows');
+  assert.equal(draft.manualRows[0].marker, 'TSH', 'draft row marker should be sanitized');
+  assert.deepEqual(draft.selectedSymptoms, ['Fatigue', 'Low mood'], 'draft symptoms should keep only valid strings');
+  assert.deepEqual(draft.sexualScores, { libido: 5, arousal: 1, comfort: 3, closeness: 4, pain: 1 }, 'draft scores should clamp to 1..5');
+  assert.equal(draft.includeNameInReport, true, 'draft includeName flag should coerce to boolean');
+  assert.equal(draft.includeIdInReport, false, 'draft includeId should respect explicit false');
+  assert.equal(draft.reportLang, 'ru', 'draft reportLang should keep valid language');
+  assert.equal(draft.profile.birthYear, '1988', 'draft profile should keep valid string fields');
+  assert.equal(draft.profile.cycleLength, '28', 'draft profile should fallback for invalid field types');
+
+  const fallbackDraft = sanitizeLabsDraft({ reportLang: 'xx', sexualScores: {} }, 'en', fallbackProfile);
+  assert.equal(fallbackDraft.reportLang, 'en', 'invalid report language should fallback');
+  assert.deepEqual(fallbackDraft.sexualScores, createDefaultSexualScores(), 'empty scores should fallback to defaults');
+};
+
 const run = async () => {
   setBrowserMocks();
   testRuleEngine();
@@ -617,9 +660,10 @@ const run = async () => {
   testBridgeUtils();
   testDetailedReportBuilders();
   testLabsLocalizationCoverage();
+  testLabsDraftSanitizer();
   await testShareUtils();
   await testGeminiFallbacks();
-  console.log('Smoke tests passed: ruleEngine + dataService + runtimeGuards + labParser + labMerge + authSecurity + coreUtils + medicationsUtils + textUtils + profileUtils + bridgeUtils + reportBuilders + labsLocalization + shareUtils + geminiFallbacks');
+  console.log('Smoke tests passed: ruleEngine + dataService + runtimeGuards + labParser + labMerge + authSecurity + coreUtils + medicationsUtils + textUtils + profileUtils + bridgeUtils + reportBuilders + labsLocalization + labsDraft + shareUtils + geminiFallbacks');
 };
 
 run().catch((error) => {
