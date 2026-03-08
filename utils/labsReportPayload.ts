@@ -91,6 +91,7 @@ type WomenUi = {
 };
 
 type BuildDetailedReportPayloadInput = {
+  reportOrigin?: string;
   analysisText?: string;
   analysisSource: string;
   parsedValues: ParsedLabValueLite[];
@@ -132,6 +133,7 @@ const inferStatus = (value: number, referenceMin?: number, referenceMax?: number
 export const buildDetailedReportPayload = (input: BuildDetailedReportPayloadInput): DetailedReportTemplateInput => {
   const {
     analysisText,
+    reportOrigin,
     analysisSource,
     parsedValues,
     doctorQuestions,
@@ -153,9 +155,11 @@ export const buildDetailedReportPayload = (input: BuildDetailedReportPayloadInpu
     hormoneTopic,
   } = input;
 
-  const logoUrl = `${window.location.origin}/images/Luna%20logo3.png`;
-  const signatureLogoUrl = `${window.location.origin}/images/Luna%20L%2044.png`;
-  const phaseArcImageUrl = `${window.location.origin}/images/moon_phases_arc.webp`;
+  const origin =
+    reportOrigin || (typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'https://luna.local');
+  const logoUrl = `${origin}/images/Luna%20logo3.png`;
+  const signatureLogoUrl = `${origin}/images/Luna%20L%2044.png`;
+  const phaseArcImageUrl = `${origin}/images/moon_phases_arc.webp`;
   const totals = parsedValues.reduce(
     (acc, item) => {
       const status = inferStatus(item.value, item.referenceMin, item.referenceMax);

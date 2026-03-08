@@ -21,6 +21,8 @@ import { normalizeProfileData } from '../utils/profile';
 import { copyTextSafely, shareTextSafely } from '../utils/share';
 import { hasMeaningfulText, normalizeUserText } from '../utils/text';
 import { DEFAULT_CYCLE_LENGTH, DEFAULT_USER_AGE } from '../constants/appDefaults';
+import { buildDetailedReportPayload } from '../utils/labsReportPayload';
+import { buildDetailedReportHtml } from '../utils/reportHtmlTemplate';
 
 type StorageMap = Map<string, string>;
 
@@ -478,6 +480,101 @@ const testShareUtils = async () => {
   assert.equal(failed, 'failed', 'shareTextSafely should fail when both share and clipboard fail');
 };
 
+const testDetailedReportBuilders = () => {
+  const payload = buildDetailedReportPayload({
+    reportOrigin: 'https://example.test',
+    analysisText: 'Clinical summary text for a patient report.',
+    analysisSource: 'manual table + text input',
+    parsedValues: [
+      { marker: 'TSH', value: 4.8, unit: 'mIU/L', referenceMin: 0.4, referenceMax: 4.0 },
+      { marker: 'Estradiol (E2)', value: 120, unit: 'pg/mL', referenceMin: 30, referenceMax: 400 },
+    ],
+    doctorQuestions: ['Could elevated TSH explain fatigue and cycle delay?'],
+    hormoneTopicStats: [
+      { count: 1, ratio: 50, meta: { accent: '#0ea5e9', label: 'Thyroid' } },
+      { count: 1, ratio: 50, meta: { accent: '#7c3aed', label: 'Cycle' } },
+    ],
+    womenClinicalInsights: {
+      combinations: [{ level: 'high', title: 'Thyroid Slowdown Pattern', body: 'Pattern may correlate with low energy and cold sensitivity.' }],
+      effects: ['Fatigue may increase during late luteal phase.'],
+      risks: ['Cycle irregularity risk may increase if trend persists.'],
+      recommendations: ['Repeat thyroid panel in 6-10 weeks.'],
+    },
+    sexualOverview: { avgPositive: 3.2, pain: 2 },
+    profileCycleDay: '21',
+    currentDay: 21,
+    reportIdentityLine: 'Report ID: LUNA-TEST',
+    reportGeneratedAt: '3/8/2026, 3:00:00 PM',
+    reportCopyright: 'Copyright © 2026 Luna Balance. All rights reserved.',
+    detailedUi: {
+      title: 'Luna Clinical Report',
+      subtitle: 'Detailed physiological interpretation for care discussion',
+      keyFindings: 'Key Findings',
+      explanation: 'Explanation',
+      whatHappening: 'What Is Happening In Your Body',
+      doctorQuestions: 'Questions To Discuss With Your Doctor',
+      noQuestions: 'No priority questions generated yet.',
+      noMarkers: 'No markers added yet.',
+    },
+    medForm: {
+      generatedAt: 'Generated At',
+      patientId: 'Patient ID',
+      source: 'Analysis Source',
+      allMarkers: 'All Lab Indicators',
+      disclaimerTitle: 'MEDICAL DISCLAIMER',
+      disclaimerBody: 'THIS REPORT IS INFORMATIONAL ONLY.',
+    },
+    reportsUi: {
+      withinRange: 'Within range',
+      outOfRange: 'Out of range',
+      quickOverview: 'Quick Overview',
+      na: 'n/a',
+      day: 'day',
+      hormoneInfographic: 'Hormone Infographic',
+      detectedMarkers: 'Detected Markers',
+      hormoneSignals: 'Hormone Signals',
+      marker: 'Marker',
+      value: 'Value',
+      reference: 'Reference',
+      status: 'Status',
+      privateIdentity: 'Private',
+      reportReadyBody: 'Report ready',
+    },
+    sexualUi: {
+      sexualSnapshotTitle: 'Sexual Wellbeing Snapshot',
+      summaryLabel: 'Sexual health snapshot',
+      scoreLabels: { pain: 'Pain During Intimacy' },
+    },
+    womenUi: {
+      stable: 'Stable',
+      watch: 'Watch',
+      highPriority: 'High Priority',
+      clinicalFocusTitle: 'Women-Specific Clinical Focus',
+      clinicalFocusLead: 'Clinical focus lead.',
+      effectsTitle: 'Potential Effects',
+      risksTitle: 'Potential Risks',
+      recommendationsTitle: 'Actionable Recommendations',
+      combinationsTitle: 'Hormone Combinations',
+      noData: 'No data.',
+    },
+    markerCategory: (marker) => (marker.toLowerCase().includes('tsh') ? 'Thyroid' : 'Cycle'),
+    markerStatusExplanation: (status) => `status:${status}`,
+    hormoneTopic: (text) => (text.toLowerCase().includes('tsh') ? { accent: '#0ea5e9', label: 'Thyroid' } : { accent: '#7c3aed', label: 'Cycle' }),
+  });
+
+  assert.equal(payload.patientIdValue, 'Report ID: LUNA-TEST', 'payload should keep selected report identity');
+  assert.equal(payload.totalMarkers, 2, 'payload should count parsed markers');
+  assert.equal(payload.disclaimerTitle, 'MEDICAL DISCLAIMER', 'payload should expose medical disclaimer title');
+  assert.equal(payload.logoUrl, 'https://example.test/images/Luna%20logo3.png', 'payload should build branded logo URL from origin');
+
+  const html = buildDetailedReportHtml(payload);
+  assert.equal(html.includes('Luna Clinical Report'), true, 'html should include report title');
+  assert.equal(html.includes('MEDICAL DISCLAIMER'), true, 'html should include disclaimer title');
+  assert.equal(html.includes('Report ID: LUNA-TEST'), true, 'html should include selected identity line');
+  assert.equal(html.includes('Thyroid Slowdown Pattern'), true, 'html should include women-specific clinical insights');
+  assert.equal(html.includes('Copyright © 2026'), true, 'html should include 2026 copyright');
+};
+
 const run = async () => {
   setBrowserMocks();
   testRuleEngine();
@@ -491,9 +588,10 @@ const run = async () => {
   testTextUtils();
   testProfileUtils();
   testBridgeUtils();
+  testDetailedReportBuilders();
   await testShareUtils();
   await testGeminiFallbacks();
-  console.log('Smoke tests passed: ruleEngine + dataService + runtimeGuards + labParser + labMerge + authSecurity + coreUtils + medicationsUtils + textUtils + profileUtils + bridgeUtils + shareUtils + geminiFallbacks');
+  console.log('Smoke tests passed: ruleEngine + dataService + runtimeGuards + labParser + labMerge + authSecurity + coreUtils + medicationsUtils + textUtils + profileUtils + bridgeUtils + reportBuilders + shareUtils + geminiFallbacks');
 };
 
 run().catch((error) => {

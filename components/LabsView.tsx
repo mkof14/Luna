@@ -517,6 +517,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     ]);
 
     const reportHtmlPayload = buildDetailedReportPayload({
+      reportOrigin: window.location.origin,
       analysisText: analysis?.text,
       analysisSource,
       parsedValues,
