@@ -3,7 +3,6 @@ import { Logo } from './Logo';
 import { Language, TranslationSchema } from '../constants';
 import LanguageSelector from './LanguageSelector';
 import ThemeToggle from './ThemeToggle';
-import { ABOUT_COPY } from '../utils/aboutContent';
 
 const HowItWorksView = lazy(() => import('./HowItWorksView').then((m) => ({ default: m.HowItWorksView })));
 const LegalDocumentView = lazy(() => import('./LegalDocumentView').then((m) => ({ default: m.LegalDocumentView })));
@@ -1008,7 +1007,6 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     ja: 'Luna について',
     pt: 'Sobre Luna',
   };
-  const aboutCopy = ABOUT_COPY[lang] || ABOUT_COPY.en;
   const lunaBalanceVisionByLang: Record<Language, { title: string; subtitle: string; points: [string, string, string, string]; ending: string }> = {
     en: {
       title: 'Luna Balance',
