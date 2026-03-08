@@ -56,12 +56,12 @@ export const PublicBridgeSection: React.FC<PublicBridgeSectionProps> = ({
         </div>
 
         <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-800/88 bg-white/72 dark:bg-[#09152d]/78 p-6 md:p-7 shadow-[0_14px_34px_rgba(88,70,126,0.14)] dark:shadow-[0_18px_42px_rgba(0,0,0,0.44)]">
-          <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple mb-3">{bridgePublic.problemTitle}</p>
+          <p className="text-base md:text-lg font-black uppercase tracking-[0.2em] text-luna-purple mb-3">{bridgePublic.problemTitle}</p>
           <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{bridgePublic.problemBody}</p>
         </article>
 
         <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-800/88 bg-white/72 dark:bg-[#09152d]/78 p-6 md:p-7 shadow-[0_14px_34px_rgba(88,70,126,0.14)] dark:shadow-[0_18px_42px_rgba(0,0,0,0.44)]">
-          <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple mb-3">{bridgePublic.helpsTitle}</p>
+          <p className="text-base md:text-lg font-black uppercase tracking-[0.2em] text-luna-purple mb-3">{bridgePublic.helpsTitle}</p>
           <ul className="space-y-2">
             <li className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">• {bridgePublic.helps[0]}</li>
             <li className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">• {bridgePublic.helps[1]}</li>
@@ -71,7 +71,7 @@ export const PublicBridgeSection: React.FC<PublicBridgeSectionProps> = ({
         </article>
 
         <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-800/88 bg-gradient-to-br from-[#f2e6f2]/86 via-[#e8e3f1]/82 to-[#e1e9f7]/78 dark:from-[#07132a]/90 dark:via-[#0b1a36]/88 dark:to-[#102546]/86 p-6 md:p-7 shadow-[0_14px_34px_rgba(88,70,126,0.14)] dark:shadow-[0_18px_42px_rgba(0,0,0,0.44)]">
-          <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple mb-3">{bridgePublic.memberLinkTitle}</p>
+          <p className="text-base md:text-lg font-black uppercase tracking-[0.2em] text-luna-purple mb-3">{bridgePublic.memberLinkTitle}</p>
           <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{bridgePublic.memberLinkBody}</p>
         </article>
 

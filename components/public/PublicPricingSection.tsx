@@ -67,7 +67,7 @@ export const PublicPricingSection: React.FC<PublicPricingSectionProps> = ({
         <div className="absolute -top-16 left-1/3 w-72 h-72 rounded-full bg-rose-200/30 blur-[120px]" />
 
         <header className="relative z-10 space-y-3 text-center max-w-3xl mx-auto">
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-luna-purple">{pricingLabel}</p>
+          <p className="text-sm md:text-base font-black uppercase tracking-[0.24em] text-luna-purple">{pricingLabel}</p>
           <h2 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-slate-100">{pricingCopy.title}</h2>
           <p className="text-base md:text-lg font-semibold text-slate-600 dark:text-slate-300">{pricingCopy.subtitle}</p>
         </header>
@@ -92,7 +92,7 @@ export const PublicPricingSection: React.FC<PublicPricingSectionProps> = ({
         <div className="relative z-10 mt-8 grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch">
           <article className="lg:col-span-3 rounded-[2.5rem] border border-slate-200/80 dark:border-slate-700/80 luna-vivid-card-alt-2 p-8 md:p-10 shadow-[0_18px_56px_rgba(71,48,104,0.18),0_6px_20px_rgba(86,140,155,0.14),inset_0_1px_0_rgba(255,255,255,0.5)]">
             <div className="flex items-center justify-between gap-4 flex-wrap">
-              <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple">{pricingUi.memberAccess}</p>
+              <p className="text-base md:text-lg font-black uppercase tracking-[0.16em] text-luna-purple">{pricingUi.memberAccess}</p>
               <span className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border ${trialState?.status === 'active' ? 'bg-emerald-100 border-emerald-300 text-emerald-700 dark:bg-emerald-900/30 dark:border-emerald-600/40 dark:text-emerald-300' : billingPeriod === 'year' ? 'bg-luna-purple/10 border-luna-purple/30 text-luna-purple' : 'bg-slate-100 border-slate-200 text-slate-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300'}`}>
                 {trialState?.status === 'active'
                   ? `${pricingUi.trialBadge} • ${pricingUi.trialDaysLeft.replace('{days}', String(trialDaysLeft))}`
@@ -141,17 +141,17 @@ export const PublicPricingSection: React.FC<PublicPricingSectionProps> = ({
           <aside className="lg:col-span-2 rounded-[2.5rem] border border-slate-200/80 dark:border-slate-700/80 luna-vivid-card-alt-4 p-6 md:p-7 shadow-[0_14px_42px_rgba(74,58,116,0.16),0_5px_16px_rgba(71,126,143,0.14),inset_0_1px_0_rgba(255,255,255,0.45)] space-y-4">
             <h3 className="text-lg font-black uppercase tracking-[0.16em] text-slate-900 dark:text-slate-100">{pricingUi.planCompare}</h3>
             <div className={`rounded-2xl border p-4 transition-all shadow-sm ${billingPeriod === 'month' ? 'border-luna-purple/40 bg-luna-purple/10 shadow-[0_8px_20px_rgba(124,58,237,0.16)]' : 'border-slate-200 dark:border-slate-700 bg-gradient-to-br from-[#f8edf6]/85 via-[#f2effa]/82 to-[#eef1fb]/82 dark:bg-slate-800/50'}`}>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{pricingUi.monthly}</p>
+              <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-slate-500">{pricingUi.monthly}</p>
               <p className="text-3xl font-black text-slate-900 dark:text-slate-100">$12.99</p>
               <p className="text-xs font-semibold text-slate-500">{pricingUi.cancelAnyTime}</p>
             </div>
             <div className={`rounded-2xl border p-4 transition-all shadow-sm ${billingPeriod === 'year' ? 'border-luna-purple/40 bg-luna-purple/10 shadow-[0_8px_20px_rgba(124,58,237,0.16)]' : 'border-slate-200 dark:border-slate-700 bg-gradient-to-br from-[#f4ebe1]/84 via-[#f1e8ee]/82 to-[#efe9f6]/82 dark:bg-slate-800/50'}`}>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{pricingUi.yearly}</p>
+              <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-slate-500">{pricingUi.yearly}</p>
               <p className="text-3xl font-black text-slate-900 dark:text-slate-100">$89</p>
               <p className="text-xs font-semibold text-slate-500">{pricingUi.bestValue}</p>
             </div>
             <div className="rounded-2xl bg-slate-100/80 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70 p-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple mb-1">{pricingUi.includes}</p>
+              <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple mb-1">{pricingUi.includes}</p>
               <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{pricingUi.includesText}</p>
             </div>
           </aside>
@@ -160,4 +160,3 @@ export const PublicPricingSection: React.FC<PublicPricingSectionProps> = ({
     </section>
   );
 };
-

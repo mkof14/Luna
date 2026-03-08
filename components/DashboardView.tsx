@@ -431,7 +431,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="lg:col-span-4 space-y-10">
           <aside className="p-10 bg-slate-950 text-white dark:bg-[#081a3d] rounded-[4rem] flex flex-col justify-center shadow-luna-deep border border-slate-800 dark:border-[#2a4670] relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-10 text-8xl group-hover:scale-110 transition-transform">💡</div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-500 mb-6">{ui.dashboard.insight}</h2>
+            <h2 className="text-sm md:text-base font-black uppercase tracking-[0.25em] text-slate-500 mb-6">{ui.dashboard.insight}</h2>
             <p className="text-xl font-bold italic leading-relaxed text-slate-100 z-10">
               {ruleOutput.archetype ? ruleOutput.archetype.description : ui.dashboard.baselineInsight}
             </p>
@@ -439,7 +439,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <aside className="p-10 bg-white dark:bg-[#081a3d] rounded-[4rem] border-2 border-slate-200 dark:border-[#2a4670] shadow-luna-rich relative overflow-hidden group">
             <div className="absolute -bottom-4 -right-4 p-8 opacity-5 text-8xl group-hover:scale-110 transition-transform">🌿</div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-luna-purple mb-6">{ui.dashboard.dailyTip}</h2>
+            <h2 className="text-sm md:text-base font-black uppercase tracking-[0.25em] text-luna-purple mb-6">{ui.dashboard.dailyTip}</h2>
             <p className="text-lg font-black text-slate-900 dark:text-slate-100 leading-tight">
               {ui.dashboard.hydrateTip}
             </p>
@@ -447,7 +447,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </aside>
 
           <aside className="p-8 bg-gradient-to-br from-[#f6ebf7]/90 to-[#e7edf9]/90 dark:from-[#081a3d]/96 dark:to-[#0e2a55]/94 rounded-[3rem] border border-slate-200/80 dark:border-[#2a4670] shadow-luna-rich space-y-4">
-            <h2 className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple">{retentionCopy.title}</h2>
+            <h2 className="text-sm md:text-base font-black uppercase tracking-[0.2em] text-luna-purple">{retentionCopy.title}</h2>
             <div className="grid grid-cols-3 gap-3">
               <div className="rounded-2xl bg-white/75 dark:bg-[#0b1d40]/92 p-3 text-center">
                 <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{retentionCopy.streak}</p>
@@ -471,7 +471,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </aside>
 
           <aside className="p-8 bg-white dark:bg-[#081a3d] rounded-[3rem] border border-slate-200/80 dark:border-[#2a4670] shadow-luna-rich space-y-4">
-            <h2 className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple">{retentionCopy.reminderTitle}</h2>
+            <h2 className="text-sm md:text-base font-black uppercase tracking-[0.2em] text-luna-purple">{retentionCopy.reminderTitle}</h2>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setReminderEnabled((prev) => !prev)}
@@ -545,7 +545,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="rounded-[2rem] border border-luna-purple/30 bg-gradient-to-r from-luna-purple/10 via-luna-coral/10 to-luna-teal/10 p-5 md:p-6 mb-2">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-luna-purple">Explore Knowledge</p>
+              <p className="text-sm md:text-base font-black uppercase tracking-[0.2em] text-luna-purple">Explore Knowledge</p>
               <p className="text-sm md:text-base font-bold text-slate-800 dark:text-slate-100">
                 Open the hormone library to understand why this marker matters, what influences it, and what to discuss with your doctor.
               </p>
@@ -567,7 +567,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         </div>
         <div className="flex justify-between items-end border-b border-slate-300 dark:border-slate-800 pb-8">
-          <h3 className="text-[11px] font-black uppercase tracking-[0.6em] text-slate-600 dark:text-slate-500">{ui.dashboard.bodyMap}</h3>
+          <h3 className="text-sm md:text-base font-black uppercase tracking-[0.28em] text-slate-600 dark:text-slate-500">{ui.dashboard.bodyMap}</h3>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
           {hormoneData.map((h) => <HormoneGauge key={h.id} hormone={h} onClick={setSelectedHormone} />)}

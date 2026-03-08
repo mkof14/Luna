@@ -479,7 +479,7 @@ export const FamilyView: React.FC<{ phase: CyclePhase; lang: Language; onBack: (
           {copy.back}
         </button>
         <div className="px-4 py-1.5 bg-luna-purple/10 rounded-full border border-luna-purple/20">
-          <span className="text-[10px] font-black uppercase text-luna-purple tracking-widest">{copy.season}: {phase}</span>
+          <span className="text-sm font-black uppercase text-luna-purple tracking-[0.16em]">{copy.season}: {phase}</span>
         </div>
       </div>
 
@@ -488,7 +488,7 @@ export const FamilyView: React.FC<{ phase: CyclePhase; lang: Language; onBack: (
         <p className="mt-2 text-sm font-semibold text-slate-600 dark:text-slate-300">{copy.subtitle}</p>
 
         <div className="mt-6 p-5 rounded-3xl luna-vivid-card-soft border border-slate-200/90 dark:border-slate-700/60 shadow-[0_12px_30px_rgba(118,96,153,0.18)]">
-          <p className="text-[10px] font-black uppercase tracking-[0.28em] text-luna-purple mb-2">{copy.phaseTipsTitle}</p>
+          <p className="text-base md:text-lg font-black uppercase tracking-[0.16em] text-luna-purple mb-2">{copy.phaseTipsTitle}</p>
           <p className="text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{copy.phaseTips[phase]}</p>
         </div>
       </section>
@@ -496,7 +496,7 @@ export const FamilyView: React.FC<{ phase: CyclePhase; lang: Language; onBack: (
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <article className="luna-vivid-card-alt-1 rounded-[2rem] p-6 border border-slate-200/90 dark:border-slate-700/60 shadow-[0_18px_45px_rgba(109,84,149,0.24)] space-y-5">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-luna-purple">{copy.plannerTitle}</p>
+            <p className="text-base md:text-lg font-black uppercase tracking-[0.16em] text-luna-purple">{copy.plannerTitle}</p>
             <p className="mt-2 text-sm font-semibold text-slate-600 dark:text-slate-300">{copy.plannerSubtitle}</p>
           </div>
 
@@ -529,7 +529,7 @@ export const FamilyView: React.FC<{ phase: CyclePhase; lang: Language; onBack: (
           </div>
 
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-300 mb-2">{copy.suggested}</p>
+            <p className="text-sm font-black uppercase tracking-[0.14em] text-slate-500 dark:text-slate-300 mb-2">{copy.suggested}</p>
             <div className="space-y-2">
               {suggestedTasks.map((task) => (
                 <div key={task.id} className="rounded-xl px-3 py-2 bg-white/70 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-200">
@@ -543,7 +543,7 @@ export const FamilyView: React.FC<{ phase: CyclePhase; lang: Language; onBack: (
 
         <article className="luna-vivid-card-alt-3 rounded-[2rem] p-6 border border-slate-200/90 dark:border-slate-700/60 shadow-[0_18px_45px_rgba(83,112,153,0.24)] space-y-5">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-cyan-600 dark:text-cyan-300">{copy.riskTitle}</p>
+            <p className="text-base md:text-lg font-black uppercase tracking-[0.16em] text-cyan-600 dark:text-cyan-300">{copy.riskTitle}</p>
             <p className="mt-2 text-sm font-semibold text-slate-600 dark:text-slate-300">{copy.riskSubtitle}</p>
           </div>
 
@@ -563,7 +563,7 @@ export const FamilyView: React.FC<{ phase: CyclePhase; lang: Language; onBack: (
           </div>
 
           <div className="rounded-2xl p-4 bg-white/70 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-300 mb-2">{copy.ritualTitle}</p>
+            <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-slate-500 dark:text-slate-300 mb-2">{copy.ritualTitle}</p>
             <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-4">{copy.ritualSubtitle}</p>
             <div className="space-y-2">
               {rituals.map((ritual) => {
@@ -589,12 +589,12 @@ export const FamilyView: React.FC<{ phase: CyclePhase; lang: Language; onBack: (
       </section>
 
       <section className="luna-vivid-card-alt-4 rounded-[2rem] p-6 border border-slate-200/90 dark:border-slate-700/60 shadow-[0_18px_45px_rgba(104,86,146,0.24)]">
-        <p className="text-[10px] font-black uppercase tracking-[0.28em] text-luna-purple">{copy.checkinTitle}</p>
+        <p className="text-base md:text-lg font-black uppercase tracking-[0.16em] text-luna-purple">{copy.checkinTitle}</p>
         <p className="mt-2 text-sm font-semibold text-slate-600 dark:text-slate-300">{copy.checkinSubtitle}</p>
 
         <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="rounded-2xl p-4 bg-white/75 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700 space-y-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-300">{copy.forPartner}</p>
+            <p className="text-sm font-black uppercase tracking-[0.14em] text-slate-500 dark:text-slate-300">{copy.forPartner}</p>
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{partnerCheckin}</p>
             <button onClick={() => copyToClipboard(partnerCheckin, 'partner')} className="px-3 py-2 rounded-full bg-luna-purple text-white text-[11px] font-black uppercase tracking-wider">
               {copiedKey === 'partner' ? copy.copied : copy.copy}
@@ -602,7 +602,7 @@ export const FamilyView: React.FC<{ phase: CyclePhase; lang: Language; onBack: (
           </div>
 
           <div className="rounded-2xl p-4 bg-white/75 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700 space-y-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-300">{copy.forFamily}</p>
+            <p className="text-sm font-black uppercase tracking-[0.14em] text-slate-500 dark:text-slate-300">{copy.forFamily}</p>
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{familyCheckin}</p>
             <button onClick={() => copyToClipboard(familyCheckin, 'family')} className="px-3 py-2 rounded-full bg-cyan-600 text-white text-[11px] font-black uppercase tracking-wider">
               {copiedKey === 'family' ? copy.copied : copy.copy}

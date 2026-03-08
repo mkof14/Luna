@@ -223,7 +223,7 @@ export const HormoneLibraryView: React.FC<{ lang: Language; onBack: () => void }
               <span className="text-5xl">{cat.icon}</span>
               <div className="space-y-1">
                 <h3 className={`text-3xl font-black uppercase tracking-tighter ${cat.color}`}>{cat.label}</h3>
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">{copy.part} {categories.indexOf(cat) + 1}</p>
+                <p className="text-sm font-black uppercase tracking-[0.16em] opacity-40">{copy.part} {categories.indexOf(cat) + 1}</p>
               </div>
             </div>
 
@@ -282,7 +282,7 @@ export const HormoneLibraryView: React.FC<{ lang: Language; onBack: () => void }
       <div className="p-20 bg-slate-900 text-white dark:bg-white dark:text-slate-900 rounded-[5rem] text-center space-y-12 shadow-2xl relative overflow-hidden group">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-luna-purple via-transparent to-transparent group-hover:scale-110 transition-transform duration-1000" />
         <div className="relative z-10 space-y-6">
-          <p className="text-[11px] font-black uppercase tracking-[0.6em] opacity-40">{copy.wisdom}</p>
+          <p className="text-sm md:text-base font-black uppercase tracking-[0.24em] opacity-40">{copy.wisdom}</p>
           <p className="text-3xl lg:text-5xl font-bold italic leading-none max-w-4xl mx-auto uppercase tracking-tighter">
             {copy.quote}
           </p>

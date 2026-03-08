@@ -159,7 +159,7 @@ const CycleTimeline: React.FC<CycleTimelineProps> = ({ currentDay, onDayChange, 
 
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="text-center">
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-pink-500 mb-2 block">{ui.internalSeason}</span>
+            <span className="text-sm md:text-base font-black uppercase tracking-[0.2em] text-pink-500 mb-2 block">{ui.internalSeason}</span>
             <h3 className="text-3xl font-black uppercase tracking-tighter">{phaseSeasonByLang[lang][currentPhase] || info.description}</h3>
           </div>
         </div>
@@ -179,7 +179,7 @@ const CycleTimeline: React.FC<CycleTimelineProps> = ({ currentDay, onDayChange, 
       </section>
 
       <article className="rounded-[2.4rem] border border-slate-200/80 dark:border-slate-800/88 bg-gradient-to-br from-[#f5e9f3]/90 via-[#ece6f2]/86 to-[#e3ebf8]/82 dark:from-[#050f23]/95 dark:via-[#08162f]/93 dark:to-[#0c1f3f]/91 p-6 md:p-7 shadow-[0_18px_42px_rgba(91,73,130,0.18)] dark:shadow-[0_20px_44px_rgba(0,0,0,0.5)]">
-        <p className="text-[10px] font-black uppercase tracking-[0.45em] text-luna-purple mb-3">{innerWeather.title}</p>
+        <p className="text-base md:text-lg font-black uppercase tracking-[0.2em] text-luna-purple mb-3">{innerWeather.title}</p>
         <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{innerWeather.intro}</p>
         <ul className="mt-3 space-y-1">
           <li className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">• {innerWeather.points[0]}</li>
@@ -206,7 +206,7 @@ const CycleTimeline: React.FC<CycleTimelineProps> = ({ currentDay, onDayChange, 
 
         <div className="space-y-10 bg-gradient-to-br from-[#f6ebf4]/84 via-[#ede5f2]/80 to-[#e4ecf8]/76 dark:from-slate-900/58 dark:via-slate-900/46 dark:to-slate-900/34 p-10 rounded-[3rem] border border-slate-200/80 dark:border-slate-800 shadow-[0_18px_42px_rgba(91,73,130,0.18)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.4)]">
           <div className="flex justify-between items-center mb-4">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">{ui.cycleRegulator}</h4>
+            <h4 className="text-sm md:text-base font-black uppercase tracking-[0.2em] text-slate-400">{ui.cycleRegulator}</h4>
             <span className="px-4 py-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full text-[10px] font-black uppercase tracking-widest">{ui.day} {currentDay}</span>
           </div>
           
@@ -265,7 +265,7 @@ const CycleTimeline: React.FC<CycleTimelineProps> = ({ currentDay, onDayChange, 
         </div>
 
         <article className="rounded-[2.6rem] border border-slate-200/80 dark:border-slate-800/88 bg-gradient-to-br from-[#f1e3ef]/92 via-[#e5e0ef]/90 to-[#dae5f5]/88 dark:from-[#061126]/94 dark:via-[#08162f]/92 dark:to-[#0d1f3c]/90 p-7 md:p-8 shadow-[0_20px_46px_rgba(92,73,132,0.18)] dark:shadow-[0_20px_44px_rgba(0,0,0,0.5)] space-y-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple">{lunaBalance.appliedTitle}</p>
+          <p className="text-sm md:text-base font-black uppercase tracking-[0.2em] text-luna-purple">{lunaBalance.appliedTitle}</p>
           <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{lunaBalance.appliedBody}</p>
         </article>
 
@@ -305,7 +305,7 @@ const CycleTimeline: React.FC<CycleTimelineProps> = ({ currentDay, onDayChange, 
                    </motion.div>
 
                    <div className="space-y-3 relative z-10">
-                     <span className="text-[10px] font-black uppercase tracking-[0.5em] opacity-50 block">{key} {ui.mode}</span>
+                     <span className="text-sm font-black uppercase tracking-[0.22em] opacity-50 block">{key} {ui.mode}</span>
                      <p className="text-3xl font-black uppercase tracking-tighter leading-none">{sensitivityByLang[lang][val] || val}</p>
                    </div>
                    

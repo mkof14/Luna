@@ -291,11 +291,11 @@ export const BridgeView: React.FC<{ lang: Language; onBack: () => void }> = ({ l
         <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-100">{info.title}</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
           <article className="rounded-[2rem] border border-slate-200/70 dark:border-slate-800/85 bg-white/75 dark:bg-slate-900/55 p-5 md:p-6 space-y-3">
-            <p className="text-sm md:text-base font-black uppercase tracking-[0.22em] text-luna-purple">{info.problemTitle}</p>
+            <p className="text-base md:text-lg font-black uppercase tracking-[0.18em] text-luna-purple">{info.problemTitle}</p>
             <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{info.problemBody}</p>
           </article>
           <article className="rounded-[2rem] border border-slate-200/70 dark:border-slate-800/85 bg-white/75 dark:bg-slate-900/55 p-5 md:p-6 space-y-3">
-            <p className="text-sm md:text-base font-black uppercase tracking-[0.22em] text-luna-purple">{info.helpsTitle}</p>
+            <p className="text-base md:text-lg font-black uppercase tracking-[0.18em] text-luna-purple">{info.helpsTitle}</p>
             <ul className="space-y-1">
               <li className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">• {info.helps[0]}</li>
               <li className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">• {info.helps[1]}</li>
@@ -305,7 +305,7 @@ export const BridgeView: React.FC<{ lang: Language; onBack: () => void }> = ({ l
           </article>
         </div>
         <article className="rounded-[2rem] border border-slate-200/70 dark:border-slate-800/85 bg-gradient-to-br from-[#f3e8f2]/86 via-[#eae5f2]/82 to-[#e2eaf8]/78 dark:from-[#081329]/92 dark:via-[#0c1a34]/90 dark:to-[#122344]/88 p-5 md:p-6 text-left space-y-3">
-          <p className="text-sm md:text-base font-black uppercase tracking-[0.22em] text-luna-purple">{info.howTitle}</p>
+          <p className="text-base md:text-lg font-black uppercase tracking-[0.18em] text-luna-purple">{info.howTitle}</p>
           <ul className="space-y-1">
             <li className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">1. {info.how[0]}</li>
             <li className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">2. {info.how[1]}</li>
@@ -313,7 +313,7 @@ export const BridgeView: React.FC<{ lang: Language; onBack: () => void }> = ({ l
           </ul>
         </article>
         <article className="rounded-[2rem] border border-slate-200/70 dark:border-slate-800/85 bg-white/72 dark:bg-slate-900/52 p-5 md:p-6 text-left space-y-3">
-          <p className="text-sm md:text-base font-black uppercase tracking-[0.22em] text-luna-purple">{info.commentsTitle}</p>
+          <p className="text-base md:text-lg font-black uppercase tracking-[0.18em] text-luna-purple">{info.commentsTitle}</p>
           {info.comments.map((item) => (
             <div key={item.author} className="rounded-2xl border border-slate-200/70 dark:border-slate-800/85 bg-slate-50/70 dark:bg-slate-950/35 p-4">
               <p className="text-sm md:text-base font-semibold italic text-slate-700 dark:text-slate-200">“{item.quote}”</p>

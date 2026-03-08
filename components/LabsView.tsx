@@ -827,7 +827,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       </header>
 
       <section className="rounded-[2.2rem] border border-slate-200/80 dark:border-slate-700/70 bg-[radial-gradient(circle_at_14%_18%,rgba(255,255,255,0.46),transparent_38%),radial-gradient(circle_at_85%_80%,rgba(168,85,247,0.18),transparent_40%),linear-gradient(135deg,rgba(242,230,239,0.95),rgba(223,236,248,0.92))] dark:bg-[radial-gradient(circle_at_14%_18%,rgba(20,184,166,0.14),transparent_40%),radial-gradient(circle_at_84%_80%,rgba(124,58,237,0.2),transparent_40%),linear-gradient(135deg,rgba(8,22,47,0.94),rgba(13,34,68,0.92))] p-5 md:p-6 shadow-luna-rich space-y-3">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{visualGuide.title}</p>
+        <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple">{visualGuide.title}</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {visualGuide.cards.map((card) => (
             <div key={card.title} className="rounded-xl border border-white/65 dark:border-white/10 bg-white/70 dark:bg-slate-900/45 p-3 space-y-1">
@@ -839,7 +839,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       </section>
       <section className="rounded-[2.2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/75 dark:bg-[#0a1d3f]/88 p-5 md:p-6 shadow-luna-rich space-y-4">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-luna-purple">Report Workflow</p>
+          <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple">Report Workflow</p>
           <p className="text-[11px] font-black uppercase tracking-[0.15em] text-slate-500 dark:text-slate-300">{checklistDoneCount}/{workflowChecklist.length}</p>
         </div>
         <div className="h-2 rounded-full bg-slate-200/80 dark:bg-slate-700/70 overflow-hidden">
@@ -872,7 +872,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
         <section className="xl:col-span-7 space-y-8">
           <article ref={identitySectionRef} className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
-            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">{reportsUi.identityTitle}</h3>
+            <h3 className="text-base md:text-lg font-black uppercase tracking-[0.16em] text-luna-purple">{reportsUi.identityTitle}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
                 <input type="checkbox" checked={includeIdInReport} onChange={(e) => setIncludeIdInReport(e.target.checked)} />
@@ -906,7 +906,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
           </article>
 
           <article ref={profileSectionRef} className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
-            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">{reportsUi.profileTitle}</h3>
+            <h3 className="text-base md:text-lg font-black uppercase tracking-[0.16em] text-luna-purple">{reportsUi.profileTitle}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[
                 ['birthYear', 'Birth Year'],
@@ -968,7 +968,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
           </article>
 
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#f9e5ee]/88 via-[#f0e8f7]/84 to-[#e3edf9]/82 dark:from-[#0a1b38]/95 dark:via-[#102448]/94 dark:to-[#142d56]/93 p-6 space-y-4 shadow-luna-rich">
-            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">{sexualUi.sexualSnapshotTitle}</h3>
+            <h3 className="text-base md:text-lg font-black uppercase tracking-[0.16em] text-luna-purple">{sexualUi.sexualSnapshotTitle}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
                 { key: 'libido', label: sexualUi.scoreLabels.libido },
@@ -1000,7 +1000,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           <article ref={labsSectionRef} className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-luna-purple">{reportsUi.labTable}</h3>
+              <h3 className="text-base md:text-lg font-black uppercase tracking-[0.16em] text-luna-purple">{reportsUi.labTable}</h3>
               <div className="flex flex-wrap gap-2">
                 <button onClick={() => applyTemplate('hormone_core')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">{reportCategories.cycle}</button>
                 <button onClick={() => applyTemplate('thyroid')} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-[10px] font-black uppercase tracking-[0.15em]">{reportCategories.thyroid}</button>
@@ -1047,7 +1047,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#081a3d]/85 p-6 space-y-4 shadow-luna-rich">
             <div className="flex items-center justify-between gap-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{reportsUi.uploadTitle}</p>
+              <p className="text-sm font-black uppercase tracking-[0.12em] text-slate-500">{reportsUi.uploadTitle}</p>
               <button onClick={() => fileInputRef.current?.click()} className="px-3 py-2 rounded-full border border-luna-purple/40 text-luna-purple bg-white/80 dark:bg-slate-900/70 text-[10px] font-black uppercase tracking-[0.15em]">{reportsUi.uploadFile}</button>
               <input type="file" ref={fileInputRef} className="hidden" accept=".txt,.csv,.md,.pdf,.png,.jpg,.jpeg,.webp,text/plain,application/pdf,image/*" onChange={handleFileUpload} />
             </div>
@@ -1132,7 +1132,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
         <aside className="xl:col-span-5 space-y-6">
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#efe1ea]/92 to-[#dce6f4]/90 dark:from-[#08162f]/92 dark:to-[#0b2040]/90 p-6 space-y-3 shadow-luna-rich">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportsUi.quickOverview}</p>
+            <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple">{reportsUi.quickOverview}</p>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl bg-white/70 dark:bg-slate-900/55 p-3">
                 <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{reportsUi.withinRange}</p>
@@ -1148,7 +1148,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#e8e6f8]/90 via-[#e7f2fb]/88 to-[#e6f7f3]/86 dark:from-[#0d1f3f]/92 dark:via-[#12294b]/90 dark:to-[#133651]/88 p-6 space-y-4 shadow-luna-rich">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportsUi.hormoneInfographic}</p>
+              <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple">{reportsUi.hormoneInfographic}</p>
               <img src="/images/moon_phases_arc.webp" alt="Cycle visual" className="h-10 w-24 object-cover rounded-lg border border-white/60 dark:border-slate-700/60" />
             </div>
             <div className="space-y-2">
@@ -1172,7 +1172,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
             <div className="flex items-center gap-3">
               <img src="/images/Luna%20logo3.png" alt="Luna symbol" className="h-10 w-10 object-contain" />
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportUi.reportTitle}</p>
+                <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple">{reportUi.reportTitle}</p>
                 <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{reportUi.reportSubtitle}</p>
               </div>
             </div>
@@ -1196,7 +1196,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
           </article>
 
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/80 dark:bg-[#0f2344]/80 p-6 shadow-luna-rich space-y-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportUi.sampleTitle}</p>
+            <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple">{reportUi.sampleTitle}</p>
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{reportUi.sampleBody}</p>
             <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">{reportUi.servicePromise}</p>
             <div className="space-y-1">
@@ -1208,7 +1208,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           {hormoneSignals.length > 0 && (
             <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/85 dark:bg-[#081a3d]/85 p-6 shadow-luna-rich space-y-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportsUi.hormoneSignals}</p>
+              <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple">{reportsUi.hormoneSignals}</p>
               <div className="space-y-3">
                 {hormoneSignals.map((signal, idx) => (
                   <div key={`${signal.marker}-${idx}`} className="rounded-xl border border-slate-200/70 dark:border-slate-700/70 p-3 bg-slate-50/80 dark:bg-slate-900/50 space-y-2">
@@ -1229,7 +1229,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           {libidoHormoneSignals.length > 0 && (
             <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#fde9ef]/90 via-[#f4e8f7]/86 to-[#e8f0fb]/84 dark:from-[#10243f]/94 dark:via-[#173053]/93 dark:to-[#1a3b60]/92 p-6 shadow-luna-rich space-y-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{sexualUi.intimacyFactors}</p>
+              <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple">{sexualUi.intimacyFactors}</p>
               <div className="space-y-2">
                 {libidoHormoneSignals.slice(0, 6).map((signal, idx) => (
                   <div key={`${signal.marker}-${idx}`} className="flex items-center justify-between rounded-lg border border-slate-200/70 dark:border-slate-700/70 px-3 py-2 bg-slate-50/70 dark:bg-slate-900/45">
@@ -1243,7 +1243,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           {doctorQuestions.length > 0 && (
             <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/85 dark:bg-[#081a3d]/85 p-6 shadow-luna-rich space-y-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportsUi.questionsDoctor}</p>
+              <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple">{reportsUi.questionsDoctor}</p>
               <ul className="space-y-2">
                 {doctorQuestions.map((question) => (
                   <li key={question} className="text-xs font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">• {question}</li>
@@ -1254,7 +1254,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
           {parsedRows.length > 0 && (
             <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/85 dark:bg-[#081a3d]/85 p-6 shadow-luna-rich space-y-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportsUi.detectedMarkers}</p>
+              <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple">{reportsUi.detectedMarkers}</p>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
@@ -1291,13 +1291,13 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
             </article>
           ) : (
             <article className="rounded-[2rem] border-2 border-dashed border-slate-300/80 dark:border-slate-700/70 bg-white/60 dark:bg-slate-900/50 p-6 text-center">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{reportsUi.reportReadyTitle}</p>
+              <p className="text-sm font-black uppercase tracking-[0.12em] text-slate-500">{reportsUi.reportReadyTitle}</p>
               <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-2">{reportsUi.reportReadyBody}</p>
             </article>
           )}
 
           <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/60 p-6 space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{reportsUi.safetyTitle}</p>
+            <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple">{reportsUi.safetyTitle}</p>
             <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 leading-relaxed">{reportsUi.safetyBody}</p>
           </article>
         </aside>

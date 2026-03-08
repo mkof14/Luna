@@ -113,7 +113,7 @@ export const FAQView: React.FC<{ lang?: Language; onBack?: () => void }> = ({ la
         {activeCategory && (
           <article className="space-y-12">
             <div className="flex items-center gap-6">
-              <span className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-300 dark:text-slate-700">
+              <span className="text-sm font-black uppercase tracking-[0.24em] text-slate-300 dark:text-slate-700">
                 {String(activeCategoryIndex + 1).padStart(2, '0')}
               </span>
               <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">{activeCategory.title}</h3>
@@ -169,7 +169,7 @@ export const FAQView: React.FC<{ lang?: Language; onBack?: () => void }> = ({ la
 
       <section className="space-y-6">
         <div className="flex items-center gap-6">
-          <span className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-300 dark:text-slate-700">06</span>
+          <span className="text-sm font-black uppercase tracking-[0.24em] text-slate-300 dark:text-slate-700">06</span>
           <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">{copy.commentsTitle}</h3>
           <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800" />
         </div>
@@ -177,7 +177,7 @@ export const FAQView: React.FC<{ lang?: Language; onBack?: () => void }> = ({ la
           {copy.comments.map((item) => (
             <article key={`${item.author}-${item.quote.slice(0, 12)}`} className="rounded-[2rem] border-2 border-slate-100 dark:border-slate-800 luna-vivid-card-soft p-6 space-y-3">
               <p className="text-base text-slate-600 dark:text-slate-300 font-medium italic leading-relaxed">“{item.quote}”</p>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{item.author}</p>
+              <p className="text-sm font-black uppercase tracking-[0.12em] text-luna-purple">{item.author}</p>
             </article>
           ))}
         </div>
@@ -188,7 +188,7 @@ export const FAQView: React.FC<{ lang?: Language; onBack?: () => void }> = ({ la
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-luna-purple rounded-full blur-[100px]" />
           <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-luna-teal rounded-full blur-[100px]" />
         </div>
-        <p className="text-[10px] font-black uppercase tracking-[0.5em] opacity-40 relative z-10">{copy.promiseTitle}</p>
+        <p className="text-sm md:text-base font-black uppercase tracking-[0.24em] opacity-40 relative z-10">{copy.promiseTitle}</p>
         <p className="text-2xl lg:text-4xl font-black italic leading-tight max-w-3xl mx-auto uppercase tracking-tighter relative z-10">
           {copy.promiseQuote}
         </p>

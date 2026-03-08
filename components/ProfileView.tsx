@@ -38,7 +38,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ onBack }) => {
   };
 
   const sectionClasses = "luna-vivid-surface p-10 rounded-[3.5rem] space-y-10 transition-all relative overflow-hidden group hover:border-luna-purple/40";
-  const labelClasses = "text-[11px] font-black uppercase text-slate-500 dark:text-slate-400 tracking-[0.2em] ml-1 block mb-3";
+  const labelClasses = "text-sm md:text-base font-black uppercase text-slate-500 dark:text-slate-400 tracking-[0.14em] ml-1 block mb-3";
   const helpTextClasses = "text-[12px] font-bold text-slate-400 dark:text-slate-500 italic leading-relaxed";
   const inputClasses = "w-full luna-vivid-chip p-5 rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-800 outline-none font-bold text-base focus:ring-4 ring-luna-purple/5 focus:border-luna-purple/40 transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600 shadow-inner";
   const areaClasses = "w-full luna-vivid-chip p-6 rounded-[2rem] border-2 border-slate-100 dark:border-slate-800 outline-none font-bold text-base focus:ring-4 ring-luna-purple/5 focus:border-luna-purple/40 transition-all resize-none text-slate-800 dark:text-slate-200 min-h-[120px] shadow-inner";
@@ -79,7 +79,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ onBack }) => {
             <div className="flex items-center gap-6">
               <div className="w-16 h-16 bg-luna-purple/10 dark:bg-luna-purple/20 flex items-center justify-center rounded-[1.8rem] text-3xl shadow-sm">👤</div>
               <div className="space-y-1">
-                <h3 className="text-2xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">Personal Pillar</h3>
+                <h3 className="text-3xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">Personal Pillar</h3>
                 <p className={helpTextClasses}>Your identification and physical baseline markers.</p>
               </div>
             </div>
@@ -129,7 +129,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ onBack }) => {
           <div className="flex items-center gap-6 pb-4 border-b-2 border-slate-100 dark:border-slate-800">
             <div className="w-16 h-16 bg-rose-500/10 dark:bg-rose-500/20 flex items-center justify-center rounded-[1.8rem] text-3xl shadow-sm">🏥</div>
             <div className="space-y-1">
-              <h3 className="text-2xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">Health Pillar</h3>
+              <h3 className="text-3xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">Health Pillar</h3>
               <p className={helpTextClasses}>Your clinical record and medical observations.</p>
             </div>
           </div>
@@ -162,7 +162,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ onBack }) => {
           <div className="flex items-center gap-6 pb-4 border-b-2 border-slate-100 dark:border-slate-800">
             <div className="w-16 h-16 bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center rounded-[1.8rem] text-3xl shadow-sm">🧠</div>
             <div className="space-y-1">
-              <h3 className="text-2xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">Mind Pillar</h3>
+              <h3 className="text-3xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">Mind Pillar</h3>
               <p className={helpTextClasses}>How you process stress and environmental inputs.</p>
             </div>
           </div>

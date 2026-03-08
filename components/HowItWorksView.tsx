@@ -108,7 +108,7 @@ export const HowItWorksView: React.FC<HowItWorksViewProps> = ({ lang, onBack }) 
         <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-luna-purple/30 blur-[120px] animate-pulse" />
         <div className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-luna-teal/24 blur-[120px]" />
         <header className="relative z-10 max-w-4xl mx-auto text-center space-y-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-luna-purple">{c.eyebrow}</p>
+          <p className="text-sm md:text-base font-black uppercase tracking-[0.24em] text-luna-purple">{c.eyebrow}</p>
           <h1 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-slate-100">{c.title}</h1>
           <p className="text-base md:text-lg font-semibold text-slate-600 dark:text-slate-300">{c.subtitle}</p>
         </header>
@@ -129,7 +129,7 @@ export const HowItWorksView: React.FC<HowItWorksViewProps> = ({ lang, onBack }) 
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-luna-purple">{item.step}</span>
+                <span className="text-sm md:text-base font-black uppercase tracking-[0.2em] text-luna-purple">{item.step}</span>
                 <span className="inline-flex items-center justify-center w-12 h-12 rounded-2xl border border-white/60 dark:border-slate-700/80 bg-white/70 dark:bg-slate-900/60 shadow-sm">
                   <FlowIcon type={item.icon} />
                 </span>
@@ -140,10 +140,10 @@ export const HowItWorksView: React.FC<HowItWorksViewProps> = ({ lang, onBack }) 
           ))}
           </div>
           <aside className="rounded-3xl border border-slate-200/80 dark:border-slate-700/80 bg-gradient-to-br from-white/90 to-[#f4edf8]/90 dark:from-slate-900/70 dark:to-slate-800/70 p-6 shadow-luna-rich flex flex-col">
-            <p className="text-[10px] font-black uppercase tracking-[0.35em] text-luna-purple mb-2">{c.livePreview}</p>
+            <p className="text-sm md:text-base font-black uppercase tracking-[0.2em] text-luna-purple mb-2">{c.livePreview}</p>
             <div className="rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/55 p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">{c.stepLabel}</span>
+                <span className="text-sm font-black uppercase tracking-[0.16em] text-slate-500">{c.stepLabel}</span>
                 <span className="text-xs font-black uppercase tracking-[0.2em] text-luna-purple">{c.flow[activeStep]?.step}</span>
               </div>
               <h4 className="text-lg font-black tracking-tight">{c.flow[activeStep]?.title}</h4>
