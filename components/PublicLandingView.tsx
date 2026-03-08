@@ -1007,138 +1007,6 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     ja: 'Luna について',
     pt: 'Sobre Luna',
   };
-  const lunaBalanceVisionByLang: Record<Language, { title: string; subtitle: string; points: [string, string, string, string]; ending: string }> = {
-    en: {
-      title: 'Luna Balance',
-      subtitle: 'Luna Balance is a visual map of physiological rhythms. It shows how hormonal and biological markers interact and influence your state.',
-      points: ['Energy', 'Mood', 'Focus', 'Recovery'],
-      ending: 'Instead of isolated numbers, Luna builds a clear picture of inner dynamics over time.',
-    },
-    ru: {
-      title: 'Luna Balance',
-      subtitle: 'Luna Balance — визуальная карта физиологических ритмов. Она показывает, как гормональные и биологические маркеры взаимодействуют и влияют на состояние.',
-      points: ['Энергия', 'Настроение', 'Концентрация', 'Восстановление'],
-      ending: 'Вместо отдельных чисел Luna формирует целостную картину внутренней динамики во времени.',
-    },
-    uk: {
-      title: 'Luna Balance',
-      subtitle: 'Luna Balance — візуальна карта фізіологічних ритмів. Вона показує, як гормональні й біологічні маркери взаємодіють і впливають на стан.',
-      points: ['Енергія', 'Настрій', 'Концентрація', 'Відновлення'],
-      ending: 'Замість окремих чисел Luna формує цілісну картину внутрішньої динаміки у часі.',
-    },
-    es: {
-      title: 'Luna Balance',
-      subtitle: 'Luna Balance es un mapa visual de ritmos fisiológicos. Muestra cómo los marcadores hormonales y biológicos interactúan e influyen en tu estado.',
-      points: ['Energía', 'Ánimo', 'Enfoque', 'Recuperación'],
-      ending: 'En lugar de números aislados, Luna construye una imagen clara de tu dinámica interna a lo largo del tiempo.',
-    },
-    fr: {
-      title: 'Luna Balance',
-      subtitle: 'Luna Balance est une carte visuelle des rythmes physiologiques. Elle montre comment les marqueurs hormonaux et biologiques interagissent et influencent votre état.',
-      points: ['Énergie', 'Humeur', 'Focus', 'Récupération'],
-      ending: 'Au lieu de chiffres isolés, Luna construit une image claire de votre dynamique interne dans le temps.',
-    },
-    de: {
-      title: 'Luna Balance',
-      subtitle: 'Luna Balance ist eine visuelle Karte physiologischer Rhythmen. Sie zeigt, wie hormonelle und biologische Marker interagieren und deinen Zustand beeinflussen.',
-      points: ['Energie', 'Stimmung', 'Fokus', 'Erholung'],
-      ending: 'Statt isolierter Zahlen zeigt Luna ein klares Bild der inneren Dynamik über die Zeit.',
-    },
-    zh: {
-      title: 'Luna Balance',
-      subtitle: 'Luna Balance 是一张生理节律可视化地图，展示激素与生物指标如何相互作用并影响你的状态。',
-      points: ['精力', '情绪', '专注', '恢复'],
-      ending: 'Luna 不只给出孤立数字，而是帮助你看到随时间变化的内在动态全貌。',
-    },
-    ja: {
-      title: 'Luna Balance',
-      subtitle: 'Luna Balance は生理リズムの可視化マップです。ホルモンと生体マーカーの相互作用が、状態にどう影響するかを示します。',
-      points: ['エネルギー', '気分', '集中', '回復'],
-      ending: '単独の数値ではなく、時間とともに変わる内的ダイナミクスを明確に示します。',
-    },
-    pt: {
-      title: 'Luna Balance',
-      subtitle: 'Luna Balance é um mapa visual dos ritmos fisiológicos. Mostra como marcadores hormonais e biológicos interagem e influenciam seu estado.',
-      points: ['Energia', 'Humor', 'Foco', 'Recuperação'],
-      ending: 'Em vez de números isolados, a Luna constrói uma imagem clara da dinâmica interna ao longo do tempo.',
-    },
-  };
-  const lunaBalanceVision = lunaBalanceVisionByLang[lang] || lunaBalanceVisionByLang.en;
-  const innerWeatherByLang: Record<Language, { title: string; intro: string; points: [string, string, string]; line1: string; line2: string; line3: string }> = {
-    en: {
-      title: 'INNER WEATHER',
-      intro: 'Short explanation:',
-      points: ['energy changes', 'mood changes', 'focus changes'],
-      line1: 'But these changes are rarely random.',
-      line2: 'More often, they are rhythms of physiology.',
-      line3: 'Luna helps you see this dynamic as a map of inner weather.',
-    },
-    ru: {
-      title: 'ВНУТРЕННЯЯ ПОГОДА',
-      intro: 'Короткое объяснение:',
-      points: ['энергия меняется', 'настроение меняется', 'концентрация меняется'],
-      line1: 'Но эти изменения редко случайны.',
-      line2: 'Чаще это ритмы физиологии.',
-      line3: 'Luna помогает видеть эту динамику как карту внутренней погоды.',
-    },
-    uk: {
-      title: 'ВНУТРІШНЯ ПОГОДА',
-      intro: 'Коротке пояснення:',
-      points: ['енергія змінюється', 'настрій змінюється', 'концентрація змінюється'],
-      line1: 'Але ці зміни рідко випадкові.',
-      line2: 'Найчастіше це ритми фізіології.',
-      line3: 'Luna допомагає бачити цю динаміку як карту внутрішньої погоди.',
-    },
-    es: {
-      title: 'CLIMA INTERIOR',
-      intro: 'Explicación breve:',
-      points: ['la energía cambia', 'el estado de ánimo cambia', 'la concentración cambia'],
-      line1: 'Pero estos cambios rara vez son aleatorios.',
-      line2: 'Con más frecuencia, son ritmos de la fisiología.',
-      line3: 'Luna te ayuda a ver esta dinámica como un mapa del clima interior.',
-    },
-    fr: {
-      title: 'MÉTÉO INTÉRIEURE',
-      intro: 'Explication courte :',
-      points: ["l'énergie change", "l'humeur change", 'la concentration change'],
-      line1: 'Mais ces changements sont rarement aléatoires.',
-      line2: 'Le plus souvent, ce sont des rythmes physiologiques.',
-      line3: 'Luna vous aide à voir cette dynamique comme une carte de la météo intérieure.',
-    },
-    de: {
-      title: 'INNERES WETTER',
-      intro: 'Kurze Erklärung:',
-      points: ['Energie verändert sich', 'Stimmung verändert sich', 'Konzentration verändert sich'],
-      line1: 'Diese Veränderungen sind jedoch selten zufällig.',
-      line2: 'Meist sind es Rhythmen der Physiologie.',
-      line3: 'Luna hilft, diese Dynamik als Karte des inneren Wetters zu sehen.',
-    },
-    zh: {
-      title: '内在天气',
-      intro: '简短说明：',
-      points: ['能量会变化', '情绪会变化', '专注会变化'],
-      line1: '但这些变化很少是随机的。',
-      line2: '更常见的是生理节律在起作用。',
-      line3: 'Luna 帮助你把这种动态看作一张内在天气地图。',
-    },
-    ja: {
-      title: 'インナーウェザー',
-      intro: '短い説明：',
-      points: ['エネルギーは変わる', '気分は変わる', '集中は変わる'],
-      line1: 'しかし、これらの変化は偶然ではありません。',
-      line2: '多くは生理的リズムです。',
-      line3: 'Luna はこの動きを「内なる天気図」として見える化します。',
-    },
-    pt: {
-      title: 'CLIMA INTERNO',
-      intro: 'Explicação curta:',
-      points: ['a energia muda', 'o humor muda', 'a concentração muda'],
-      line1: 'Mas essas mudanças raramente são aleatórias.',
-      line2: 'Na maioria das vezes, são ritmos da fisiologia.',
-      line3: 'A Luna ajuda você a ver essa dinâmica como um mapa do clima interno.',
-    },
-  };
-  const innerWeather = innerWeatherByLang[lang] || innerWeatherByLang.en;
   const publicSharedByLang: Partial<
     Record<
       Language,
@@ -1246,35 +1114,6 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     },
   };
   const publicShared = publicSharedByLang[lang] || publicSharedByLang.en!;
-  const mapCoreLabelByLang: Record<Language, string> = {
-    en: 'Luna Balance Core',
-    ru: 'Ядро Luna Balance',
-    uk: 'Ядро Luna Balance',
-    es: 'Nucleo De Luna Balance',
-    fr: 'Noyau Luna Balance',
-    de: 'Luna Balance Kern',
-    zh: 'Luna Balance 核心',
-    ja: 'Luna Balance コア',
-    pt: 'Nucleo Luna Balance',
-  };
-  const cards = [
-    {
-      title: lunaBalanceVision.points[0],
-      text: ui.publicHome.map.cards.weatherText,
-      icon: '🌙',
-    },
-    {
-      title: lunaBalanceVision.points[1],
-      text: ui.publicHome.map.cards.memoryText,
-      icon: '🌊',
-    },
-    {
-      title: lunaBalanceVision.points[2],
-      text: ui.publicHome.map.cards.languageText,
-      icon: '🕊️',
-    },
-  ];
-
   const pageTitle = useMemo(() => {
     if (activePage === 'home') return ui.publicHome.pageTitle.home;
     if (activePage === 'map') return ui.publicHome.pageTitle.map;
@@ -1594,12 +1433,10 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
         {activePage === 'map' && (
           <Suspense fallback={lazyFallback}>
             <PublicMapSection
+              lang={lang}
               theme={theme}
               eyebrow={ui.publicHome.map.eyebrow}
-              coreLabel={mapCoreLabelByLang[lang] || mapCoreLabelByLang.en}
-              lunaBalanceVision={lunaBalanceVision}
-              cards={cards}
-              innerWeather={innerWeather}
+              mapCards={ui.publicHome.map.cards}
               appliedTitle={publicShared.appliedTitle}
               appliedBody={publicShared.appliedBody}
               bodyMapBackgroundStyle={bodyMapBackgroundStyle}
