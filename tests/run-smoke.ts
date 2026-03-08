@@ -23,6 +23,7 @@ import { hasMeaningfulText, normalizeUserText } from '../utils/text';
 import { DEFAULT_CYCLE_LENGTH, DEFAULT_USER_AGE } from '../constants/appDefaults';
 import { buildDetailedReportPayload } from '../utils/labsReportPayload';
 import { buildDetailedReportHtml } from '../utils/reportHtmlTemplate';
+import { getLabsViewLocalizedContent } from '../utils/labsViewContent';
 
 type StorageMap = Map<string, string>;
 
@@ -575,6 +576,30 @@ const testDetailedReportBuilders = () => {
   assert.equal(html.includes('Copyright © 2026'), true, 'html should include 2026 copyright');
 };
 
+const testLabsLocalizationCoverage = () => {
+  const langs = ['en', 'ru', 'uk', 'es', 'fr', 'de', 'zh', 'ja', 'pt'] as const;
+  for (const lang of langs) {
+    for (const reportLang of langs) {
+      const localized = getLabsViewLocalizedContent(lang, reportLang);
+      assert.ok(localized.reportsUi.title.trim().length > 0, `reports title should be non-empty for lang=${lang}`);
+      assert.ok(localized.reportsUi.generate.trim().length > 0, `reports generate label should be non-empty for lang=${lang}`);
+      assert.ok(localized.reportUi.reportTitle.trim().length > 0, `report title should be non-empty for reportLang=${reportLang}`);
+      assert.ok(localized.reportUi.sampleDownload.trim().length > 0, `sample download label should be non-empty for reportLang=${reportLang}`);
+      assert.ok(localized.medForm.disclaimerTitle.trim().length > 0, `disclaimer title should be non-empty for reportLang=${reportLang}`);
+      assert.ok(localized.medForm.disclaimerBody.trim().length > 0, `disclaimer body should be non-empty for reportLang=${reportLang}`);
+      assert.ok(localized.reportActions.downloaded.trim().length > 0, `report action feedback should be non-empty for lang=${lang}`);
+      assert.ok(localized.conflictsUi.title.trim().length > 0, `conflicts title should be non-empty for lang=${lang}`);
+      assert.ok(localized.womenUi.clinicalFocusTitle.trim().length > 0, `women clinical title should be non-empty for reportLang=${reportLang}`);
+      assert.ok(localized.detailedUi.title.trim().length > 0, `detailed report title should be non-empty for reportLang=${reportLang}`);
+      assert.equal(typeof localized.locale, 'string', `locale should be string for reportLang=${reportLang}`);
+      assert.ok(localized.locale.includes('-'), `locale should be normalized with region for reportLang=${reportLang}`);
+      assert.ok(localized.reportLanguageNames[reportLang].trim().length > 0, `report language name should exist for ${reportLang}`);
+      assert.equal(localized.visualGuide.cards.length >= 1, true, `visual guide should have cards for lang=${lang}`);
+      assert.equal(localized.reportUi.serviceBullets.length >= 3, true, `service bullets should have enough items for reportLang=${reportLang}`);
+    }
+  }
+};
+
 const run = async () => {
   setBrowserMocks();
   testRuleEngine();
@@ -589,9 +614,10 @@ const run = async () => {
   testProfileUtils();
   testBridgeUtils();
   testDetailedReportBuilders();
+  testLabsLocalizationCoverage();
   await testShareUtils();
   await testGeminiFallbacks();
-  console.log('Smoke tests passed: ruleEngine + dataService + runtimeGuards + labParser + labMerge + authSecurity + coreUtils + medicationsUtils + textUtils + profileUtils + bridgeUtils + reportBuilders + shareUtils + geminiFallbacks');
+  console.log('Smoke tests passed: ruleEngine + dataService + runtimeGuards + labParser + labMerge + authSecurity + coreUtils + medicationsUtils + textUtils + profileUtils + bridgeUtils + reportBuilders + labsLocalization + shareUtils + geminiFallbacks');
 };
 
 run().catch((error) => {
