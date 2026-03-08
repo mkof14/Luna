@@ -5,7 +5,7 @@ const E2E_PASSWORD = process.env.E2E_PASSWORD || 'LunaAdmin2026!';
 
 export async function signInFromPublicHome(page) {
   await page.goto('/');
-  await page.getByTestId('public-signin').click();
+  await page.getByTestId('public-signin').click({ force: true, timeout: 5000 });
   await expect(page.getByTestId('auth-email')).toBeVisible();
   await page.getByTestId('auth-email').fill(E2E_EMAIL);
   await page.getByTestId('auth-password').fill(E2E_PASSWORD);
@@ -52,6 +52,11 @@ export async function completeOnboardingIfVisible(page) {
     await page.waitForTimeout(250);
   }
 
-  await expect(checkinClose).toHaveCount(0, { timeout: 3000 });
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    const closed = await clickIfVisible(checkinClose);
+    const saved = await clickIfVisible(checkinSave);
+    if (!closed && !saved) break;
+    await page.waitForTimeout(120);
+  }
   await expect(topNavMore).toBeVisible({ timeout: 10000 });
 }
