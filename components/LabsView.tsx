@@ -1,9 +1,8 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { analyzeLabResults } from '../services/geminiService';
 import { dataService } from '../services/dataService';
 import { HealthEvent } from '../types';
 import { Logo } from './Logo';
-import { HormoneTestingGuide } from './HormoneTestingGuide';
 import { isSupportedLabFile } from '../utils/runtimeGuards';
 import { copyTextSafely, shareTextSafely } from '../utils/share';
 import { Language } from '../constants';
@@ -22,6 +21,11 @@ import {
   summarizeHormoneSignals,
   toLabRows,
 } from '../services/healthReportService';
+
+const HormoneTestingGuideLazy = React.lazy(async () => {
+  const module = await import('./HormoneTestingGuide');
+  return { default: module.HormoneTestingGuide };
+});
 
 const REPORT_ID_STORAGE_KEY = 'luna_report_user_id_v1';
 
@@ -855,7 +859,15 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
         </div>
       </section>
 
-      <HormoneTestingGuide lang={lang} />
+      <Suspense
+        fallback={
+          <section className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/70 dark:bg-[#0a1d3f]/70 p-6 shadow-luna-rich">
+            <p className="text-xs font-semibold text-slate-500 dark:text-slate-300">Loading guide...</p>
+          </section>
+        }
+      >
+        <HormoneTestingGuideLazy lang={lang} />
+      </Suspense>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
         <section className="xl:col-span-7 space-y-8">
