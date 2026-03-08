@@ -1495,7 +1495,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     ].join('\n');
   }, [analysis?.text, analysisSource, detailedUi.detailedInterpretation, detailedUi.doctorQuestions, detailedUi.noMarkers, detailedUi.noQuestions, detailedUi.statusHigh, detailedUi.statusLow, detailedUi.statusNormal, detailedUi.statusUnknown, detailedUi.subtitle, detailedUi.title, doctorQuestions, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, medForm.summary, parsedValues, profile.cycleDay, reportCopyright, reportGeneratedAt, reportIdentityLine, reportsUi.day, reportsUi.privateIdentity, reportsUi.reportReadyBody, sexualOverview.avgPositive, sexualOverview.pain, sexualUi.scoreLabels.pain, sexualUi.summaryLabel, systemState.currentDay, womenClinicalInsights.combinations, womenClinicalInsights.effects, womenClinicalInsights.recommendations, womenClinicalInsights.risks, womenUi.combinationsTitle, womenUi.effectsTitle, womenUi.recommendationsTitle, womenUi.risksTitle]);
 
-  const reportHtml = useMemo(() => {
+  const reportHtmlPayload = useMemo(() => {
     const logoUrl = `${window.location.origin}/images/Luna%20logo3.png`;
     const signatureLogoUrl = `${window.location.origin}/images/Luna%20L%2044.png`;
     const phaseArcImageUrl = `${window.location.origin}/images/moon_phases_arc.webp`;
@@ -1649,189 +1649,85 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
           </div>`)
           .join('')
       : `<p style="margin:0;font-size:12px;color:#64748b;">${escapeHtml(detailedUi.noMarkers)}</p>`;
-    return `<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8"/>
-  <title>${escapeHtml(detailedUi.title)}</title>
-  <style>
-    @page { size: A4; margin: 11mm; }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: Arial, sans-serif; background: #eaf0f8; color: #0f172a; padding: 24px; }
-    .report-root { max-width: 1040px; margin: 0 auto; background: white; border: 1px solid #cbd5e1; border-radius: 18px; overflow: hidden; box-shadow: 0 20px 54px rgba(15,23,42,0.12); }
-    .print-avoid { break-inside: avoid; page-break-inside: avoid; }
-    @media print {
-      body { background: #fff; padding: 0; }
-      .report-root { max-width: 100%; border: none; border-radius: 0; box-shadow: none; }
-      .print-avoid { break-inside: avoid; page-break-inside: avoid; }
-    }
-  </style>
-</head>
-<body>
-  <div class="report-root">
-    <div style="padding:26px;background:linear-gradient(120deg,#ede9fe,#ffe4e6,#ccfbf1);border-bottom:2px solid #cbd5e1;">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <img src="${logoUrl}" alt="Luna logo" style="width:62px;height:62px;object-fit:contain;border-radius:12px;background:#fff;padding:7px;border:1px solid #e2e8f0;"/>
-          <div>
-            <p style="margin:0;font-size:42px;line-height:1;font-family:'Brush Script MT','Segoe Script',cursive;">Luna</p>
-            <p style="margin:4px 0 0;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">${escapeHtml(detailedUi.subtitle)}</p>
-          </div>
-        </div>
-        <div style="text-align:right;min-width:260px;">
-          <p style="margin:0;font-size:12px;font-weight:700;">${medForm.generatedAt}: ${reportGeneratedAt}</p>
-          <p style="margin:5px 0 0;font-size:12px;">${medForm.patientId}: ${safeIdentity}</p>
-          <p style="margin:5px 0 0;font-size:11px;color:#475569;">${medForm.source}: ${safeAnalysisSource}</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="print-avoid" style="padding:20px 24px 4px;">
-      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;">
-        <div style="border:1px solid #dbeafe;background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:14px;padding:12px;">
-          <p style="margin:0 0 6px;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#1d4ed8;">${medForm.allMarkers}</p>
-          <p style="margin:0;font-size:34px;font-weight:900;color:#1e3a8a;">${totalMarkers}</p>
-        </div>
-        <div style="border:1px solid #dcfce7;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:14px;padding:12px;">
-          <p style="margin:0 0 6px;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#047857;">${reportsUi.withinRange}</p>
-          <p style="margin:0;font-size:34px;font-weight:900;color:#047857;">${stabilityIndex}%</p>
-        </div>
-        <div style="border:1px solid #fee2e2;background:linear-gradient(135deg,#fff1f2,#fee2e2);border-radius:14px;padding:12px;">
-          <p style="margin:0 0 6px;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;">${reportsUi.outOfRange}</p>
-          <p style="margin:0;font-size:34px;font-weight:900;color:#b91c1c;">${riskIndex}%</p>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px;">
-        <div style="border:1px solid #e2e8f0;border-radius:14px;padding:12px;background:#f8fafc;">
-          <p style="margin:0 0 8px;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#475569;">${reportsUi.quickOverview}</p>
-          <div style="display:flex;height:12px;border-radius:999px;overflow:hidden;background:#e2e8f0;">
-            <span style="width:${totalMarkers ? Math.round((totals.normal / totalMarkers) * 100) : 0}%;background:#10b981;"></span>
-            <span style="width:${totalMarkers ? Math.round((totals.low / totalMarkers) * 100) : 0}%;background:#f59e0b;"></span>
-            <span style="width:${totalMarkers ? Math.round((totals.high / totalMarkers) * 100) : 0}%;background:#f43f5e;"></span>
-            <span style="width:${totalMarkers ? Math.round((totals.unknown / totalMarkers) * 100) : 0}%;background:#64748b;"></span>
-          </div>
-          <p style="margin:8px 0 0;font-size:11px;color:#475569;">${escapeHtml(womenUi.stable)} ${totals.normal} • ${escapeHtml(womenUi.watch)} ${totals.low} • ${escapeHtml(womenUi.highPriority)} ${totals.high} • ${escapeHtml(reportsUi.na || 'n/a')} ${totals.unknown}</p>
-        </div>
-        <div style="border:1px solid #e2e8f0;border-radius:14px;padding:12px;background:#f8fafc;">
-          <p style="margin:0 0 6px;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#475569;">${sexualUi.sexualSnapshotTitle}</p>
-          <p style="margin:0;font-size:30px;font-weight:900;color:#7c3aed;">${intimacyIndex}%</p>
-          <p style="margin:2px 0 0;font-size:11px;color:#475569;">${sexualUi.summaryLabel}: ${sexualOverview.avgPositive}/5 • ${sexualUi.scoreLabels.pain} ${sexualOverview.pain}/5</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="print-avoid" style="padding:10px 24px 0;">
-      <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${escapeHtml(womenUi.combinationsTitle)}</h3>
-      <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;">
-        ${categoryRows || `<p style="margin:0;font-size:12px;color:#64748b;">${escapeHtml(detailedUi.noMarkers)}</p>`}
-      </div>
-    </div>
-
-    <div class="print-avoid" style="padding:12px 24px 0;">
-      <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:10px;">
-        <article style="border:1px solid #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc;">
-          <p style="margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#334155;">${reportsUi.hormoneInfographic}</p>
-          ${hormoneInfographicHtml}
-        </article>
-        <article style="border:1px solid #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc;">
-          <p style="margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#334155;">${reportsUi.day} ${profile.cycleDay || systemState.currentDay}</p>
-          <img src="${phaseArcImageUrl}" alt="Cycle arc" style="width:100%;height:88px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;"/>
-        </article>
-      </div>
-    </div>
-
-    <div class="print-avoid" style="padding:12px 24px 0;">
-      <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:10px;">
-        <article style="border:1px solid #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc;">
-          <p style="margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#334155;">${reportsUi.detectedMarkers}</p>
-          ${statusDistributionInfographic}
-          <div style="margin-top:8px;">${topicLegendHtml}</div>
-        </article>
-        <article style="border:1px solid #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc;">
-          <p style="margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#334155;">${reportsUi.hormoneSignals}</p>
-          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;">
-            ${spotlightRows || `<p style="margin:0;font-size:12px;color:#64748b;">${escapeHtml(detailedUi.noMarkers)}</p>`}
-          </div>
-        </article>
-      </div>
-    </div>
-
-    <div class="print-avoid" style="padding:14px 24px 0;">
-      <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${escapeHtml(detailedUi.keyFindings)}</h3>
-      <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;">
-        <ul style="margin:0;padding-left:18px;font-size:13px;">${findingsHtml}</ul>
-      </div>
-    </div>
-
-    <div class="print-avoid" style="padding:14px 24px 0;">
-      <h3 style="margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${escapeHtml(womenUi.clinicalFocusTitle)}</h3>
-      <p style="margin:0 0 10px;font-size:12px;color:#475569;">${escapeHtml(womenUi.clinicalFocusLead)}</p>
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
-        ${combinationCardsHtml}
-      </div>
-    </div>
-
-    <div class="print-avoid" style="padding:14px 24px 0;">
-      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;">
-        <article style="border:1px solid #cbd5e1;border-radius:12px;padding:12px;background:#eff6ff;">
-          <h4 style="margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:#1d4ed8;">${escapeHtml(womenUi.effectsTitle)}</h4>
-          <ul style="margin:0;padding-left:16px;font-size:12px;color:#1e293b;">${womenEffectsHtml}</ul>
-        </article>
-        <article style="border:1px solid #cbd5e1;border-radius:12px;padding:12px;background:#fff1f2;">
-          <h4 style="margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:#be123c;">${escapeHtml(womenUi.risksTitle)}</h4>
-          <ul style="margin:0;padding-left:16px;font-size:12px;color:#1e293b;">${womenRisksHtml}</ul>
-        </article>
-        <article style="border:1px solid #cbd5e1;border-radius:12px;padding:12px;background:#ecfeff;">
-          <h4 style="margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:#0f766e;">${escapeHtml(womenUi.recommendationsTitle)}</h4>
-          <ul style="margin:0;padding-left:16px;font-size:12px;color:#1e293b;">${womenRecommendationsHtml}</ul>
-        </article>
-      </div>
-    </div>
-
-    <div class="print-avoid" style="padding:14px 24px 0;">
-      <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${medForm.allMarkers}</h3>
-      <table style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid #e2e8f0;">
-        <thead>
-          <tr style="background:#f8fafc;text-transform:uppercase;font-size:11px;">
-            <th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;">${reportsUi.marker || 'Marker'}</th>
-            <th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;">${reportsUi.value || 'Value'}</th>
-            <th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;">${reportsUi.reference || 'Reference'}</th>
-            <th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;">${reportsUi.status}</th>
-            <th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;">${womenUi.combinationsTitle}</th>
-            <th style="text-align:left;padding:10px;border-bottom:1px solid #e2e8f0;">${escapeHtml(detailedUi.explanation)}</th>
-          </tr>
-        </thead>
-        <tbody>${markerRows || `<tr><td colspan="6" style="padding:10px;">${escapeHtml(detailedUi.noMarkers)}</td></tr>`}</tbody>
-      </table>
-    </div>
-
-    <div class="print-avoid" style="padding:16px 24px 0;">
-      <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${escapeHtml(detailedUi.whatHappening)}</h3>
-      <p style="white-space:pre-wrap;line-height:1.68;border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;font-size:13px;">${summary}</p>
-    </div>
-
-    <div class="print-avoid" style="padding:16px 24px 0;">
-      <h3 style="margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;">${escapeHtml(detailedUi.doctorQuestions)}</h3>
-      <div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;background:#f8fafc;">
-        <ul style="margin:0;padding-left:18px;font-size:13px;">${doctorQuestionsHtml}</ul>
-      </div>
-    </div>
-
-    <div class="print-avoid" style="padding:16px 24px 20px;">
-      <div style="border:2px solid #b91c1c;border-radius:10px;padding:12px;background:#fef2f2;">
-        <p style="margin:0 0 8px;font-size:13px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#b91c1c;">${medForm.disclaimerTitle}</p>
-        <p style="margin:0;font-size:12px;font-weight:700;color:#7f1d1d;line-height:1.55;">${medForm.disclaimerBody}</p>
-      </div>
-    </div>
-
-    <div style="padding:14px 24px;border-top:1px solid #e2e8f0;background:#f8fafc;display:flex;justify-content:space-between;align-items:center;gap:12px;">
-      <p style="margin:0;font-size:11px;color:#475569;">${escapeHtml(reportCopyright)}</p>
-      <img src="${signatureLogoUrl}" alt="Luna mark" style="width:26px;height:26px;object-fit:contain;opacity:0.9;"/>
-    </div>
-  </div>
-</body>
-</html>`;
+    return {
+      logoUrl,
+      signatureLogoUrl,
+      phaseArcImageUrl,
+      detailedTitle: detailedUi.title,
+      detailedSubtitle: detailedUi.subtitle,
+      generatedAtLabel: medForm.generatedAt,
+      generatedAtValue: reportGeneratedAt,
+      patientIdLabel: medForm.patientId,
+      patientIdValue: safeIdentity,
+      sourceLabel: medForm.source,
+      sourceValue: safeAnalysisSource,
+      allMarkersLabel: medForm.allMarkers,
+      withinRangeLabel: reportsUi.withinRange,
+      outOfRangeLabel: reportsUi.outOfRange,
+      quickOverviewLabel: reportsUi.quickOverview,
+      naLabel: reportsUi.na || 'n/a',
+      stableLabel: womenUi.stable,
+      watchLabel: womenUi.watch,
+      highPriorityLabel: womenUi.highPriority,
+      sexualSnapshotTitle: sexualUi.sexualSnapshotTitle,
+      sexualSummaryLabel: sexualUi.summaryLabel,
+      sexualPainLabel: sexualUi.scoreLabels.pain,
+      sexualAvgPositive: sexualOverview.avgPositive,
+      sexualPain: sexualOverview.pain,
+      dayLabel: reportsUi.day,
+      dayValue: profile.cycleDay || systemState.currentDay,
+      hormoneInfographicLabel: reportsUi.hormoneInfographic,
+      detectedMarkersLabel: reportsUi.detectedMarkers,
+      hormoneSignalsLabel: reportsUi.hormoneSignals,
+      keyFindingsLabel: detailedUi.keyFindings,
+      clinicalFocusTitle: womenUi.clinicalFocusTitle,
+      clinicalFocusLead: womenUi.clinicalFocusLead,
+      effectsTitle: womenUi.effectsTitle,
+      risksTitle: womenUi.risksTitle,
+      recommendationsTitle: womenUi.recommendationsTitle,
+      markerLabel: reportsUi.marker || 'Marker',
+      valueLabel: reportsUi.value || 'Value',
+      referenceLabel: reportsUi.reference || 'Reference',
+      statusLabel: reportsUi.status,
+      categoryLabel: womenUi.combinationsTitle,
+      explanationLabel: detailedUi.explanation,
+      whatHappeningLabel: detailedUi.whatHappening,
+      doctorQuestionsLabel: detailedUi.doctorQuestions,
+      noMarkersLabel: detailedUi.noMarkers,
+      disclaimerTitle: medForm.disclaimerTitle,
+      disclaimerBody: medForm.disclaimerBody,
+      reportCopyright,
+      totalMarkers,
+      stabilityIndex,
+      riskIndex,
+      totalsNormal: totals.normal,
+      totalsLow: totals.low,
+      totalsHigh: totals.high,
+      totalsUnknown: totals.unknown,
+      normalPct: totalMarkers ? Math.round((totals.normal / totalMarkers) * 100) : 0,
+      lowPct: totalMarkers ? Math.round((totals.low / totalMarkers) * 100) : 0,
+      highPct: totalMarkers ? Math.round((totals.high / totalMarkers) * 100) : 0,
+      unknownPct: totalMarkers ? Math.round((totals.unknown / totalMarkers) * 100) : 0,
+      categoryRows,
+      hormoneInfographicHtml,
+      statusDistributionInfographic,
+      topicLegendHtml,
+      spotlightRows,
+      findingsHtml,
+      combinationCardsHtml,
+      womenEffectsHtml,
+      womenRisksHtml,
+      womenRecommendationsHtml,
+      markerRows,
+      summaryHtml: summary,
+      doctorQuestionsHtml,
+    };
   }, [analysis?.text, analysisSource, detailedUi.doctorQuestions, detailedUi.explanation, detailedUi.keyFindings, detailedUi.noMarkers, detailedUi.noQuestions, doctorQuestions, hormoneTopicStats, medForm.allMarkers, medForm.disclaimerBody, medForm.disclaimerTitle, medForm.generatedAt, medForm.patientId, medForm.source, parsedValues, profile.cycleDay, reportCopyright, reportGeneratedAt, reportIdentityLine, reportsUi.day, reportsUi.detectedMarkers, reportsUi.hormoneInfographic, reportsUi.hormoneSignals, reportsUi.marker, reportsUi.na, reportsUi.outOfRange, reportsUi.privateIdentity, reportsUi.quickOverview, reportsUi.reference, reportsUi.reportReadyBody, reportsUi.status, reportsUi.value, reportsUi.withinRange, sexualOverview.avgPositive, sexualOverview.pain, sexualUi.scoreLabels.pain, sexualUi.sexualSnapshotTitle, sexualUi.summaryLabel, systemState.currentDay, womenClinicalInsights.combinations, womenClinicalInsights.effects, womenClinicalInsights.recommendations, womenClinicalInsights.risks, womenUi.clinicalFocusLead, womenUi.clinicalFocusTitle, womenUi.combinationsTitle, womenUi.effectsTitle, womenUi.highPriority, womenUi.noData, womenUi.recommendationsTitle, womenUi.risksTitle, womenUi.stable, womenUi.watch]);
+
+  const getReportHtml = async () => {
+    const { buildDetailedReportHtml } = await import('../utils/reportHtmlTemplate');
+    return buildDetailedReportHtml(reportHtmlPayload);
+  };
 
   const handleAnalyze = async () => {
     const manualText = buildManualRowsText();
@@ -1910,19 +1806,22 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     setTimeout(() => setReportActionFeedback(null), 2000);
   };
 
-  const handleReportPrint = () => {
+  const handleReportPrint = async () => {
+    const reportHtml = await getReportHtml();
     const ok = openPrintableWindow(reportHtml, true);
     setReportActionFeedback(ok ? reportActions.printOpened : reportActions.printBlocked);
     setTimeout(() => setReportActionFeedback(null), 2000);
   };
 
-  const handleReportDownload = () => {
+  const handleReportDownload = async () => {
+    const reportHtml = await getReportHtml();
     downloadFile(`luna-report-${reportLang}-${Date.now()}.html`, reportHtml, 'text/html;charset=utf-8');
     setReportActionFeedback(reportActions.downloaded);
     setTimeout(() => setReportActionFeedback(null), 2000);
   };
 
-  const handleReportPdf = () => {
+  const handleReportPdf = async () => {
+    const reportHtml = await getReportHtml();
     const ok = openPrintableWindow(reportHtml, true);
     setReportActionFeedback(ok ? reportActions.pdfHint : reportActions.pdfBlocked);
     setTimeout(() => setReportActionFeedback(null), 2400);

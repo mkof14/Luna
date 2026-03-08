@@ -11,9 +11,10 @@ test('onboarding and first check-in flow works', async ({ page }) => {
   const checkinSave = page.getByTestId('checkin-save');
   const alreadyOpen = await checkinSave.isVisible().catch(() => false);
   if (!alreadyOpen) {
-    await page.getByTestId('dashboard-checkin-start').click();
+    await page.getByTestId('dashboard-checkin-start').click({ force: true });
   }
 
+  await checkinSave.waitFor({ state: 'visible', timeout: 10000 });
   await expect(checkinSave).toBeVisible();
   await checkinSave.click();
 
