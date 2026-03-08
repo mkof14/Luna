@@ -328,6 +328,28 @@ input[type='range'] {
   border-color: rgba(98, 141, 202, 0.48);
 }
 
+/* Global title scale-up across app sections */
+.luna-page-shell h1 {
+  font-size: clamp(2.5rem, 6vw, 5.2rem) !important;
+}
+
+.luna-page-shell h2 {
+  font-size: clamp(1.75rem, 3.7vw, 3.1rem) !important;
+}
+
+.luna-page-shell h3 {
+  font-size: clamp(1.15rem, 2.2vw, 1.75rem) !important;
+}
+
+.luna-page-shell h4 {
+  font-size: clamp(1.02rem, 1.6vw, 1.3rem) !important;
+}
+
+.luna-page-shell article [class*="uppercase"][class*="font-black"] {
+  font-size: 0.84rem !important;
+  letter-spacing: 0.12em !important;
+}
+
 .dark .luna-page-voice {
   background:
     radial-gradient(120% 85% at 10% 0%, rgba(126, 176, 236, 0.24), transparent 52%),
