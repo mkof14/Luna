@@ -23,6 +23,7 @@ import {
 } from '../services/healthReportService';
 
 const REPORT_ID_STORAGE_KEY = 'luna_report_user_id_v1';
+const LABS_DRAFT_STORAGE_KEY = 'luna_labs_draft_v1';
 
 const emptyProfile: PersonalHealthProfile = {
   birthYear: '',
@@ -31,6 +32,24 @@ const emptyProfile: PersonalHealthProfile = {
   medications: '',
   knownConditions: '',
   goals: '',
+};
+
+type LabsDraft = {
+  input?: string;
+  manualRows?: HealthLabRow[];
+  selectedSymptoms?: string[];
+  sexualScores?: {
+    libido: number;
+    arousal: number;
+    comfort: number;
+    closeness: number;
+    pain: number;
+  };
+  includeNameInReport?: boolean;
+  includeIdInReport?: boolean;
+  manualReportId?: string;
+  reportLang?: Language;
+  profile?: PersonalHealthProfile;
 };
 
 const quickSymptoms = ['Fatigue', 'Anxiety', 'PMS', 'Sleep issues', 'Headache', 'Low mood', 'Bloating', 'Cravings'];
@@ -150,33 +169,57 @@ const ensureReportId = () => {
   }
 };
 
+const isLanguage = (value: unknown): value is Language => typeof value === 'string' && ['en', 'ru', 'uk', 'es', 'fr', 'de', 'zh', 'ja', 'pt'].includes(value);
+
+const readLabsDraft = (): LabsDraft | null => {
+  try {
+    const raw = localStorage.getItem(LABS_DRAFT_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as LabsDraft;
+    return parsed && typeof parsed === 'object' ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
 export const LabsView: React.FC<{ day: number; age: number; lang: Language; userId?: string; userName?: string; onBack?: () => void }> = ({ day, age, lang, userId, userName }) => {
-  const [input, setInput] = useState('');
+  const initialDraftRef = useRef<LabsDraft | null>(null);
+  if (initialDraftRef.current === null) initialDraftRef.current = readLabsDraft();
+  const initialDraft = initialDraftRef.current;
+  const defaultProfile = useMemo<PersonalHealthProfile>(
+    () => ({ ...emptyProfile, birthYear: String(new Date().getFullYear() - age), cycleDay: String(day) }),
+    [age, day],
+  );
+
+  const [input, setInput] = useState(() => initialDraft?.input || '');
   const [analysis, setAnalysis] = useState<{ text: string; sources: unknown[] } | null>(null);
   const [loading, setLoading] = useState(false);
   const [reportActionFeedback, setReportActionFeedback] = useState<string | null>(null);
   const [log, setLog] = useState<HealthEvent[]>(() => dataService.getLog());
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
   const [uploadFeedback, setUploadFeedback] = useState<string | null>(null);
-  const [manualRows, setManualRows] = useState<HealthLabRow[]>([newRow()]);
+  const [manualRows, setManualRows] = useState<HealthLabRow[]>(() => {
+    if (!initialDraft?.manualRows?.length) return [newRow()];
+    return initialDraft.manualRows.map((row) => newRow(row));
+  });
   const [parsedRows, setParsedRows] = useState<HealthLabRow[]>([]);
   const [parsedValues, setParsedValues] = useState<ParsedLabValue[]>([]);
   const [rawParsedValues, setRawParsedValues] = useState<ParsedLabValue[]>([]);
   const [labConflicts, setLabConflicts] = useState<LabValueConflict[]>([]);
   const [conflictChoices, setConflictChoices] = useState<Record<string, number>>({});
-  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
-  const [sexualScores, setSexualScores] = useState({
-    libido: 3,
-    arousal: 3,
-    comfort: 3,
-    closeness: 3,
-    pain: 1,
-  });
-  const [includeNameInReport, setIncludeNameInReport] = useState(false);
-  const [includeIdInReport, setIncludeIdInReport] = useState(true);
-  const [manualReportId, setManualReportId] = useState('');
-  const [reportLang, setReportLang] = useState<Language>(lang);
-  const [profile, setProfile] = useState<PersonalHealthProfile>(() => ({ ...emptyProfile, birthYear: String(new Date().getFullYear() - age), cycleDay: String(day) }));
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>(() => (Array.isArray(initialDraft?.selectedSymptoms) ? initialDraft.selectedSymptoms : []));
+  const [sexualScores, setSexualScores] = useState(() => ({
+    libido: Number(initialDraft?.sexualScores?.libido ?? 3),
+    arousal: Number(initialDraft?.sexualScores?.arousal ?? 3),
+    comfort: Number(initialDraft?.sexualScores?.comfort ?? 3),
+    closeness: Number(initialDraft?.sexualScores?.closeness ?? 3),
+    pain: Number(initialDraft?.sexualScores?.pain ?? 1),
+  }));
+  const [includeNameInReport, setIncludeNameInReport] = useState(() => Boolean(initialDraft?.includeNameInReport));
+  const [includeIdInReport, setIncludeIdInReport] = useState(() => initialDraft?.includeIdInReport ?? true);
+  const [manualReportId, setManualReportId] = useState(() => initialDraft?.manualReportId || '');
+  const [reportLang, setReportLang] = useState<Language>(() => (isLanguage(initialDraft?.reportLang) ? initialDraft.reportLang : lang));
+  const [profile, setProfile] = useState<PersonalHealthProfile>(() => ({ ...defaultProfile, ...(initialDraft?.profile || {}) }));
   const localized = useMemo(() => getLabsViewLocalizedContent(lang, reportLang), [lang, reportLang]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -325,6 +368,25 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     setParsedValues(resolved);
     setParsedRows(toLabRows(resolved));
   }, [rawParsedValues, conflictChoices]);
+
+  useEffect(() => {
+    const draft: LabsDraft = {
+      input,
+      manualRows,
+      selectedSymptoms,
+      sexualScores,
+      includeNameInReport,
+      includeIdInReport,
+      manualReportId,
+      reportLang,
+      profile,
+    };
+    try {
+      localStorage.setItem(LABS_DRAFT_STORAGE_KEY, JSON.stringify(draft));
+    } catch {
+      // Ignore storage write errors in private mode / restricted environments.
+    }
+  }, [includeIdInReport, includeNameInReport, input, manualReportId, manualRows, profile, reportLang, selectedSymptoms, sexualScores]);
 
   const reportGeneratedAt = useMemo(() => new Date().toLocaleString(reportLocale), [analysis?.text, parsedValues.length, reportIdentityLine, reportLocale]);
   const reportCopyright = useMemo(() => {
