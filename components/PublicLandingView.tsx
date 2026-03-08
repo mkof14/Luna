@@ -1011,106 +1011,56 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     Record<
       Language,
       {
-      enterMember: string;
-      memberSignIn: string;
       flowSummary: string;
       appliedTitle: string;
       appliedBody: string;
-      noteTitle: string;
-      noteLine1: string;
-      noteLine2: string;
       }
     >
   > = {
     en: {
-      enterMember: 'Enter Member Zone',
-      memberSignIn: 'Already a member? Sign in',
       flowSummary: 'Together this forms a clear picture of your inner state.',
       appliedTitle: 'Applied In Member Zone',
       appliedBody: 'In the member zone, Luna Balance becomes practical: move through cycle day, see phase shifts, read sensitivity states, and connect markers to daily decisions.',
-      noteTitle: 'LUNA NOTE',
-      noteLine1: 'This Home is public by design. It gives orientation without extracting attention.',
-      noteLine2: 'Your private member zone is where personal data, check-ins, and deeper tools live.',
     },
     ru: {
-      enterMember: 'Перейти в Member Zone',
-      memberSignIn: 'Уже участник? Sign in',
       flowSummary: 'Вместе это формирует понятную картину внутреннего состояния.',
       appliedTitle: 'Практика В Member Zone',
       appliedBody: 'В member-зоне Luna Balance становится практичной: вы двигаетесь по дню цикла, видите сдвиги фаз, состояния чувствительности и связываете маркеры с ежедневными решениями.',
-      noteTitle: 'ЗАМЕТКА LUNA',
-      noteLine1: 'Этот Home сделан публичным по дизайну: он дает ориентир без перегруза внимания.',
-      noteLine2: 'Приватная member-зона — место для личных данных, check-in и более глубоких инструментов.',
     },
     uk: {
-      enterMember: 'Увійти в Member Zone',
-      memberSignIn: 'Вже учасник? Sign in',
       flowSummary: 'Разом це формує зрозумілу картину внутрішнього стану.',
       appliedTitle: 'Практика В Member Zone',
       appliedBody: 'У member-зоні Luna Balance стає практичною: рух по дню циклу, зміни фаз, стани чутливості та звʼязок маркерів із щоденними рішеннями.',
-      noteTitle: 'НОТАТКА LUNA',
-      noteLine1: 'Цей Home публічний за задумом: він дає орієнтацію без виснаження уваги.',
-      noteLine2: 'Приватна member-зона — місце для персональних даних, check-in і глибших інструментів.',
     },
     es: {
-      enterMember: 'Entrar En Member Zone',
-      memberSignIn: '¿Ya eres miembro? Sign in',
       flowSummary: 'En conjunto, esto forma una imagen clara de tu estado interno.',
       appliedTitle: 'Aplicado En Member Zone',
       appliedBody: 'En la zona de miembros, Luna Balance se vuelve práctico: día del ciclo, cambios de fase, sensibilidad y conexión de marcadores con decisiones diarias.',
-      noteTitle: 'LUNA NOTE',
-      noteLine1: 'Este Home es público por diseño: orienta sin secuestrar tu atención.',
-      noteLine2: 'Tu member zone privada es donde viven datos personales, check-ins y herramientas profundas.',
     },
     fr: {
-      enterMember: 'Entrer Dans Member Zone',
-      memberSignIn: 'Déjà membre ? Sign in',
       flowSummary: 'Ensemble, cela forme une image claire de votre état intérieur.',
       appliedTitle: 'Appliqué Dans Member Zone',
       appliedBody: 'Dans la zone membre, Luna Balance devient pratique: jour du cycle, transitions de phase, états de sensibilité et lien avec les décisions quotidiennes.',
-      noteTitle: 'LUNA NOTE',
-      noteLine1: 'Ce Home est public par design: il oriente sans capter excessivement votre attention.',
-      noteLine2: 'Votre member zone privée est l espace des données personnelles, check-ins et outils avancés.',
     },
     de: {
-      enterMember: 'In Member Zone Gehen',
-      memberSignIn: 'Schon Mitglied? Sign in',
       flowSummary: 'Zusammen ergibt das ein klares Bild deines inneren Zustands.',
       appliedTitle: 'Angewendet In Member Zone',
       appliedBody: 'In der Member Zone wird Luna Balance praktisch: Zyklustag, Phasenwechsel, Sensitivitätszustände und Verknüpfung der Marker mit täglichen Entscheidungen.',
-      noteTitle: 'LUNA NOTE',
-      noteLine1: 'Dieses Home ist bewusst öffentlich: Es gibt Orientierung ohne Aufmerksamkeitsdruck.',
-      noteLine2: 'In deiner privaten Member Zone liegen persönliche Daten, Check-ins und tiefere Tools.',
     },
     zh: {
-      enterMember: '进入 Member Zone',
-      memberSignIn: '已有会员？Sign in',
       flowSummary: '这些模块组合在一起，形成清晰的内在状态图景。',
       appliedTitle: '在 Member Zone 中落地',
       appliedBody: '在会员区，Luna Balance 变得可执行：查看周期日、阶段变化、敏感状态，并将指标连接到日常决策。',
-      noteTitle: 'LUNA NOTE',
-      noteLine1: '这个 Home 按设计保持公开，用于提供方向而不占用过多注意力。',
-      noteLine2: '私密 member zone 才是存放个人数据、check-in 和深度工具的空间。',
     },
     ja: {
-      enterMember: 'Member Zone に入る',
-      memberSignIn: 'すでにメンバーですか？ Sign in',
       flowSummary: 'これらを合わせることで、内的状態の全体像が明確になります。',
       appliedTitle: 'Member Zone で実用化',
       appliedBody: 'メンバーゾーンでは Luna Balance を実践的に使えます。周期日・フェーズ変化・感受性を確認し、日々の意思決定に接続します。',
-      noteTitle: 'LUNA NOTE',
-      noteLine1: 'この Home は意図的に公開設計です。注意を奪わず、方向づけを提供します。',
-      noteLine2: '個人データ、check-in、深い機能はプライベートな member zone で扱います。',
     },
     pt: {
-      enterMember: 'Entrar Na Member Zone',
-      memberSignIn: 'Já é membro? Sign in',
       flowSummary: 'Juntos, esses blocos formam uma visão clara do seu estado interno.',
       appliedTitle: 'Aplicado Na Member Zone',
       appliedBody: 'Na área de membros, Luna Balance vira prática: dia do ciclo, mudanças de fase, estados de sensibilidade e ligação dos marcadores com decisões diárias.',
-      noteTitle: 'LUNA NOTE',
-      noteLine1: 'Este Home é público por design: oferece direção sem capturar sua atenção.',
-      noteLine2: 'Sua member zone privada é onde ficam dados pessoais, check-ins e ferramentas mais profundas.',
     },
   };
   const publicShared = publicSharedByLang[lang] || publicSharedByLang.en!;
