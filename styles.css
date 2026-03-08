@@ -350,6 +350,23 @@ input[type='range'] {
   letter-spacing: 0.12em !important;
 }
 
+/* Scale common utility-based title labels used across cards/pages */
+.luna-page-shell :where([class*="text-[10px]"][class*="font-black"][class*="uppercase"]) {
+  font-size: 0.86rem !important;
+}
+
+.luna-page-shell :where([class*="text-[11px]"][class*="font-black"][class*="uppercase"]) {
+  font-size: 0.94rem !important;
+}
+
+.luna-page-shell :where([class*="text-xs"][class*="font-black"]) {
+  font-size: 0.92rem !important;
+}
+
+.luna-page-shell :where(article [class*="text-sm"][class*="font-bold"]) {
+  font-size: 1.03rem !important;
+}
+
 .dark .luna-page-voice {
   background:
     radial-gradient(120% 85% at 10% 0%, rgba(126, 176, 236, 0.24), transparent 52%),
