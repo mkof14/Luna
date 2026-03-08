@@ -588,6 +588,8 @@ const testLabsLocalizationCoverage = () => {
       assert.ok(localized.medForm.disclaimerTitle.trim().length > 0, `disclaimer title should be non-empty for reportLang=${reportLang}`);
       assert.ok(localized.medForm.disclaimerBody.trim().length > 0, `disclaimer body should be non-empty for reportLang=${reportLang}`);
       assert.ok(localized.reportActions.downloaded.trim().length > 0, `report action feedback should be non-empty for lang=${lang}`);
+      assert.ok(localized.reportActions.clearDraft.trim().length > 0, `clear draft label should be non-empty for lang=${lang}`);
+      assert.ok(localized.reportActions.autosaved.trim().length > 0, `autosaved label should be non-empty for lang=${lang}`);
       assert.ok(localized.conflictsUi.title.trim().length > 0, `conflicts title should be non-empty for lang=${lang}`);
       assert.ok(localized.womenUi.clinicalFocusTitle.trim().length > 0, `women clinical title should be non-empty for reportLang=${reportLang}`);
       assert.ok(localized.detailedUi.title.trim().length > 0, `detailed report title should be non-empty for reportLang=${reportLang}`);

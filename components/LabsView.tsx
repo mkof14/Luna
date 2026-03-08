@@ -220,6 +220,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
   const [manualReportId, setManualReportId] = useState(() => initialDraft?.manualReportId || '');
   const [reportLang, setReportLang] = useState<Language>(() => (isLanguage(initialDraft?.reportLang) ? initialDraft.reportLang : lang));
   const [profile, setProfile] = useState<PersonalHealthProfile>(() => ({ ...defaultProfile, ...(initialDraft?.profile || {}) }));
+  const [lastDraftSavedAt, setLastDraftSavedAt] = useState<number | null>(null);
   const localized = useMemo(() => getLabsViewLocalizedContent(lang, reportLang), [lang, reportLang]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -304,6 +305,34 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     setProfile((prev) => ({ ...prev, [key]: value }));
   };
 
+  const clearDraft = () => {
+    try {
+      localStorage.removeItem(LABS_DRAFT_STORAGE_KEY);
+    } catch {
+      // Ignore storage errors.
+    }
+    setInput('');
+    setManualRows([newRow()]);
+    setParsedRows([]);
+    setParsedValues([]);
+    setRawParsedValues([]);
+    setLabConflicts([]);
+    setConflictChoices({});
+    setSelectedSymptoms([]);
+    setSexualScores({ libido: 3, arousal: 3, comfort: 3, closeness: 3, pain: 1 });
+    setIncludeNameInReport(false);
+    setIncludeIdInReport(true);
+    setManualReportId('');
+    setReportLang(lang);
+    setProfile(defaultProfile);
+    setAnalysis(null);
+    setUploadFeedback(null);
+    setCopyFeedback(null);
+    setLastDraftSavedAt(null);
+    setReportActionFeedback(reportActions.draftCleared);
+    setTimeout(() => setReportActionFeedback(null), 2000);
+  };
+
   const updateRow = (id: string, key: keyof HealthLabRow, value: string) => {
     setManualRows((prev) => prev.map((row) => (row.id === id ? { ...row, [key]: value } : row)));
   };
@@ -383,6 +412,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
     };
     try {
       localStorage.setItem(LABS_DRAFT_STORAGE_KEY, JSON.stringify(draft));
+      setLastDraftSavedAt(Date.now());
     } catch {
       // Ignore storage write errors in private mode / restricted environments.
     }
@@ -1007,15 +1037,31 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
               className="w-full h-56 p-4 rounded-2xl border border-slate-300/70 dark:border-slate-700/70 bg-slate-50 dark:bg-slate-900/70 text-sm font-semibold leading-relaxed resize-none"
             />
             <div className="flex items-center justify-between gap-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{uploadFeedback || reportsUi.readyExtraction}</p>
-              <button
-                data-testid="labs-generate-report"
-                onClick={handleAnalyze}
-                disabled={loading}
-                className="px-6 py-3 rounded-full bg-slate-950 dark:bg-[#17366b] text-white text-[10px] font-black uppercase tracking-[0.2em] disabled:opacity-40"
-              >
-                {loading ? reportsUi.reading : reportsUi.generate}
-              </button>
+              <div className="space-y-1">
+                <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{uploadFeedback || reportsUi.readyExtraction}</p>
+                {lastDraftSavedAt && (
+                  <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">
+                    {reportActions.autosaved}: {new Date(lastDraftSavedAt).toLocaleTimeString(reportLocale, { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  data-testid="labs-clear-draft"
+                  onClick={clearDraft}
+                  className="px-4 py-3 rounded-full border border-slate-300/70 dark:border-slate-700/70 bg-white/80 dark:bg-slate-900/70 text-[10px] font-black uppercase tracking-[0.14em] text-slate-600 dark:text-slate-300"
+                >
+                  {reportActions.clearDraft}
+                </button>
+                <button
+                  data-testid="labs-generate-report"
+                  onClick={handleAnalyze}
+                  disabled={loading}
+                  className="px-6 py-3 rounded-full bg-slate-950 dark:bg-[#17366b] text-white text-[10px] font-black uppercase tracking-[0.2em] disabled:opacity-40"
+                >
+                  {loading ? reportsUi.reading : reportsUi.generate}
+                </button>
+              </div>
             </div>
           </article>
 
