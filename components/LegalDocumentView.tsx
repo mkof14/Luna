@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Language } from '../constants';
+import { clearLunaLocalData, downloadLunaLocalDataExport } from '../utils/privacyCompliance';
 
 export type LegalDocType = 'privacy' | 'terms' | 'medical' | 'cookies' | 'data_rights';
 
@@ -40,6 +41,7 @@ const EN_DOCS: Record<LegalDocType, DocContent> = {
       { heading: 'Legal Bases and Purpose', body: 'We process data to provide service functionality, secure access, prevent abuse, respond to support requests, and satisfy legal obligations.' },
       { heading: 'Data Sharing', body: 'We do not sell personal data. We may share data with infrastructure/service providers acting under contract and with authorities when legally required.' },
       { heading: 'Retention', body: 'We retain data only as long as required for service operation, legal compliance, dispute resolution, and security.' },
+      { heading: 'Security Incident Response', body: 'If a security incident is detected, Luna follows an internal response workflow: containment, impact assessment, remediation, and user notification where legally required.' },
       { heading: 'Children', body: 'Luna is not directed to children under 13 and is not intended for pediatric healthcare decision-making.' },
     ],
   },
@@ -116,6 +118,26 @@ export const LegalDocumentView: React.FC<LegalDocumentViewProps> = ({ lang, doc,
   const meta = DOC_META[doc];
   const effectiveDate = 'March 4, 2026';
   const lastUpdated = 'March 4, 2026';
+  const [actionFeedback, setActionFeedback] = useState('');
+
+  const exportLocalData = () => {
+    downloadLunaLocalDataExport();
+    setActionFeedback('Local data export downloaded.');
+  };
+
+  const deleteHealthData = () => {
+    const removed = clearLunaLocalData(false);
+    setActionFeedback(`Local health data removed: ${removed} keys.`);
+    window.location.reload();
+  };
+
+  const deleteAllData = () => {
+    const confirmed = window.confirm('Delete all local Luna data on this device? This cannot be undone.');
+    if (!confirmed) return;
+    const removed = clearLunaLocalData(true);
+    setActionFeedback(`All local data removed: ${removed} keys.`);
+    window.location.reload();
+  };
 
   return (
     <article className="max-w-5xl mx-auto luna-page-shell luna-page-questions space-y-10 animate-in fade-in duration-700 pb-24 p-8 md:p-10">
@@ -150,6 +172,26 @@ export const LegalDocumentView: React.FC<LegalDocumentViewProps> = ({ lang, doc,
           </article>
         ))}
       </section>
+      {doc === 'data_rights' && (
+        <section className="rounded-[2rem] border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/60 p-6 md:p-7 space-y-4">
+          <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-slate-100">Self-Service Data Actions</h2>
+          <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            This device currently uses local storage. You can export or remove local Luna data now.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            <button onClick={exportLocalData} className="px-4 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-xs font-black uppercase tracking-[0.12em]">
+              Export My Local Data
+            </button>
+            <button onClick={deleteHealthData} className="px-4 py-2 rounded-full border border-amber-500/40 text-amber-600 text-xs font-black uppercase tracking-[0.12em]">
+              Delete Local Health Data
+            </button>
+            <button onClick={deleteAllData} className="px-4 py-2 rounded-full border border-rose-500/40 text-rose-600 text-xs font-black uppercase tracking-[0.12em]">
+              Delete All Local Data
+            </button>
+          </div>
+          {actionFeedback && <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{actionFeedback}</p>}
+        </section>
+      )}
       <div className="rounded-2xl border border-slate-300/70 dark:border-slate-700/70 bg-slate-100/85 dark:bg-slate-900/45 p-5">
         <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">Legal Notice</p>
         <p className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200">

@@ -9,6 +9,7 @@ import { AppFooter } from './components/AppFooter';
 import { AppMobileNav } from './components/AppMobileNav';
 import { MainContentRouter } from './components/MainContentRouter';
 import { OnboardingGate } from './components/OnboardingGate';
+import { PrivacyControls } from './components/PrivacyControls';
 import { useHealthModel } from './hooks/useHealthModel';
 import { authService } from './services/authService';
 import { captureAppError, initMonitoring } from './services/monitoringService';
@@ -173,6 +174,7 @@ const App: React.FC = () => {
             />
           )}
         </Suspense>
+        <PrivacyControls lang={lang} isAuthenticated={false} />
       </div>
     );
   }
@@ -255,6 +257,7 @@ const App: React.FC = () => {
         navigateTo={navigateTo}
         setShowSidebar={setShowSidebar}
       />
+      <PrivacyControls lang={lang} isAuthenticated />
     </div>
   );
 };

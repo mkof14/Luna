@@ -153,14 +153,21 @@ export const ContactView: React.FC<ContactViewProps> = ({ ui, lang, onBack }) =>
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">{ui.contact.subject}</label>
             <div className="flex flex-wrap gap-2 luna-vivid-chip p-1.5 rounded-2xl border border-slate-100 dark:border-slate-800">
-               {['support', 'billing', 'feedback', 'technical', 'other'].map(s => (
+               {[
+                 { id: 'support', label: 'support' },
+                 { id: 'billing', label: 'billing' },
+                 { id: 'feedback', label: 'feedback' },
+                 { id: 'technical', label: 'technical' },
+                 { id: 'privacy_legal', label: 'privacy' },
+                 { id: 'other', label: 'other' },
+               ].map((s) => (
                  <button 
-                  key={s} 
+                  key={s.id} 
                   type="button" 
-                  onClick={() => setSubject(s)}
-                  className={`flex-1 min-w-[80px] py-3 text-[10px] font-black uppercase rounded-xl transition-all ${subject === s ? 'bg-white dark:bg-slate-800 text-luna-purple shadow-lg' : 'text-slate-400'}`}
+                  onClick={() => setSubject(s.id)}
+                  className={`flex-1 min-w-[80px] py-3 text-[10px] font-black uppercase rounded-xl transition-all ${subject === s.id ? 'bg-white dark:bg-slate-800 text-luna-purple shadow-lg' : 'text-slate-400'}`}
                  >
-                   {s}
+                   {s.label}
                  </button>
                ))}
             </div>
