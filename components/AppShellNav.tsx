@@ -177,7 +177,10 @@ export const AppShellNav: React.FC<AppShellNavProps> = ({
         </div>
       </nav>
 
-      <header className="sticky top-0 z-[100] w-full glass border-b border-slate-300 dark:border-white/10 shadow-sm transition-all duration-300">
+      <header
+        className="sticky top-0 z-[100] w-full glass border-b border-slate-300 dark:border-white/10 shadow-sm transition-all duration-300"
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
+      >
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-8">
           <div className="flex items-center gap-6 md:gap-8 shrink-0">
             <button

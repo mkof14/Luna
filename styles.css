@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --app-vh: 1vh;
+}
+
 * {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -9,6 +13,29 @@
 body {
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+@media (max-width: 768px) {
+  body {
+    min-height: calc(var(--app-vh) * 100);
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #root {
+    min-height: calc(var(--app-vh) * 100);
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  }
+
+  html.luna-standalone #root {
+    padding-top: env(safe-area-inset-top);
+  }
 }
 
 .dynamic-bg-light {
