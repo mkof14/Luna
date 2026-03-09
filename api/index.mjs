@@ -44,6 +44,7 @@ const STRIPE_PRICE_YEARLY_ID = String(process.env.STRIPE_PRICE_YEARLY_ID || '').
 const STRIPE_SUCCESS_URL = String(process.env.STRIPE_SUCCESS_URL || '').trim();
 const STRIPE_CANCEL_URL = String(process.env.STRIPE_CANCEL_URL || '').trim();
 const STRIPE_PORTAL_RETURN_URL = String(process.env.STRIPE_PORTAL_RETURN_URL || '').trim();
+const ADMIN_EMERGENCY_RESET_KEY = String(process.env.ADMIN_EMERGENCY_RESET_KEY || '').trim();
 
 const ROLE_PERMISSIONS = {
   viewer: ['view_financials', 'view_technical_metrics'],
@@ -277,6 +278,7 @@ const buildHealthPayload = async ({ verbose = false } = {}) => {
       allowedOrigins: ALLOWED_ORIGINS.size,
       superAdminEmails: SUPER_ADMIN_EMAILS.size,
       superAdminBootstrapPasswordConfigured: SUPER_ADMIN_BOOTSTRAP_PASSWORD_CONFIGURED,
+      emergencyResetConfigured: Boolean(ADMIN_EMERGENCY_RESET_KEY),
       billingEnabled: BILLING_ENABLED,
       stripeConfigReady,
       googleClientIds: GOOGLE_CLIENT_IDS.size,
@@ -1019,6 +1021,60 @@ const start = async () => {
         send(res, 200, { session: buildSessionPayload(user) }, { ...headers, 'Set-Cookie': createSessionCookie(token) });
       } catch (error) {
         send(res, 400, { error: error instanceof Error ? error.message : 'Unable to sign in.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/auth/emergency-admin-reset') {
+      if (!rateLimit(`emergency-reset:${ip}`, 5, 60_000)) {
+        send(res, 429, { error: 'Too many reset attempts. Try again in a minute.' }, headers);
+        return;
+      }
+      try {
+        if (!ADMIN_EMERGENCY_RESET_KEY) {
+          send(res, 503, { error: 'Emergency reset is not configured.' }, headers);
+          return;
+        }
+        const body = await readBody(req);
+        const key = String(req.headers['x-admin-reset-key'] || body.resetKey || '').trim();
+        if (!key || key !== ADMIN_EMERGENCY_RESET_KEY) {
+          send(res, 403, { error: 'Invalid emergency reset key.' }, headers);
+          return;
+        }
+        const email = normalizeEmail(body.email);
+        const newPassword = String(body.newPassword || '');
+        if (email !== PRIMARY_SUPER_ADMIN_EMAIL) {
+          send(res, 403, { error: 'Emergency reset allowed only for primary super admin.' }, headers);
+          return;
+        }
+        if (newPassword.length < 8) {
+          send(res, 400, { error: 'Password must contain at least 8 characters.' }, headers);
+          return;
+        }
+        let user = users.find((item) => item.email === email);
+        if (!user) {
+          user = {
+            id: randomBytes(12).toString('hex'),
+            email,
+            name: 'Luna Super Admin',
+            passwordHash: hashPassword(newPassword),
+            createdAt: new Date().toISOString(),
+            roleOverride: 'super_admin',
+            lastProvider: 'password',
+            avatarUrl: undefined,
+          };
+          users = [user, ...users];
+        } else {
+          user.passwordHash = hashPassword(newPassword);
+          user.roleOverride = 'super_admin';
+          user.lastProvider = 'password';
+        }
+        await saveUsers();
+        const token = createSession(user.id);
+        await saveSessions();
+        send(res, 200, { session: buildSessionPayload(user), ok: true }, { ...headers, 'Set-Cookie': createSessionCookie(token) });
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Emergency reset failed.' }, headers);
       }
       return;
     }
