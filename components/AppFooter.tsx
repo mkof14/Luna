@@ -11,6 +11,10 @@ interface AppFooterProps {
 }
 
 export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canAccessAdmin }) => {
+  const footerSectionTitleClass = 'text-xs font-black uppercase tracking-[0.28em] text-luna-purple';
+  const footerLinkClass =
+    'w-full text-left px-4 py-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white/75 dark:bg-slate-900/50 text-[10px] font-black uppercase tracking-[0.16em] text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/40 hover:bg-luna-purple/5 transition-all';
+
   const footerCopyByLang: Record<Language, { sanctuary: string; howItWorks: string; terms: string; legal: string; about: string; privacy: string; medical: string; cookies: string; dataRights: string }> = {
     en: {
       sanctuary: 'A biological sanctuary. Luna uses a local-first model: core reflections stay on device, and account/security workflows may use protected backend services.',
@@ -137,9 +141,9 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
             <div className="flex gap-4 pt-4" />
           </div>
 
-          <nav className="space-y-10">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-500 dark:text-slate-400">{sectionTitles.core}</h4>
-            <ul className="flex flex-col gap-5">
+          <nav className="space-y-6">
+            <h4 className={footerSectionTitleClass}>{sectionTitles.core}</h4>
+            <ul className="grid grid-cols-1 gap-3">
               {[
                 { id: 'dashboard', label: ui.navigation.home },
                 { id: 'cycle', label: ui.navigation.cycle },
@@ -148,63 +152,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
                 { id: 'profile', label: ui.navigation.profile }
               ].map((item) => (
                 <li key={item.id}>
-                  <button onClick={() => navigateTo(item.id as TabType)} className="text-[11px] font-black uppercase tracking-widest text-slate-600 hover:text-luna-purple transition-all text-left">
-                    {item.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav className="space-y-10">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-500 dark:text-slate-400">{sectionTitles.awareness}</h4>
-            <ul className="flex flex-col gap-5">
-              {[
-                { id: 'history', label: ui.navigation.history },
-                { id: 'reflections', label: ui.navigation.reflections },
-                { id: 'voice_files', label: ui.navigation.voiceFiles || 'My Voice Files' },
-                { id: 'creative', label: ui.navigation.creative },
-                { id: 'library', label: ui.navigation.library }
-              ].map((item) => (
-                <li key={item.id}>
-                  <button onClick={() => navigateTo(item.id as TabType)} className="text-[11px] font-black uppercase tracking-widest text-slate-600 hover:text-luna-purple transition-all text-left">
-                    {item.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav className="space-y-10">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-500 dark:text-slate-400">{sectionTitles.harmony}</h4>
-            <ul className="flex flex-col gap-5">
-              {[
-                { id: 'bridge', label: ui.navigation.bridge || 'The Bridge' },
-                { id: 'relationships', label: 'Relationships' },
-                { id: 'family', label: ui.navigation.family },
-                { id: 'partner_faq', label: ui.bridge.partnerFAQ.title }
-              ].map((item) => (
-                <li key={item.id}>
-                  <button onClick={() => navigateTo(item.id as TabType)} className="text-[11px] font-black uppercase tracking-widest text-slate-600 hover:text-luna-purple transition-all text-left">
-                    {item.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav className="space-y-10">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-500 dark:text-slate-400">{sectionTitles.support}</h4>
-            <ul className="flex flex-col gap-5">
-                {[
-                  { id: 'faq', label: ui.navigation.faq },
-                  { id: 'contact', label: ui.navigation.contact },
-                  { id: 'crisis', label: ui.navigation.crisis },
-                  { id: 'about', label: footerCopy.about },
-                  { id: 'how_it_works', label: footerCopy.howItWorks }
-                ].map((item) => (
-                <li key={item.id}>
-                  <button onClick={() => navigateTo(item.id as TabType)} className={`text-[11px] font-black uppercase tracking-widest transition-all text-left ${item.id === 'crisis' ? 'text-rose-600 hover:text-rose-700' : 'text-slate-600 hover:text-luna-purple'}`}>
+                  <button onClick={() => navigateTo(item.id as TabType)} className={footerLinkClass}>
                     {item.label}
                   </button>
                 </li>
@@ -213,7 +161,66 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
           </nav>
 
           <nav className="space-y-6">
-            <h4 className="text-xs font-black uppercase tracking-[0.28em] text-luna-purple">{footerCopy.legal}</h4>
+            <h4 className={footerSectionTitleClass}>{sectionTitles.awareness}</h4>
+            <ul className="grid grid-cols-1 gap-3">
+              {[
+                { id: 'history', label: ui.navigation.history },
+                { id: 'reflections', label: ui.navigation.reflections },
+                { id: 'voice_files', label: ui.navigation.voiceFiles || 'My Voice Files' },
+                { id: 'creative', label: ui.navigation.creative },
+                { id: 'library', label: ui.navigation.library }
+              ].map((item) => (
+                <li key={item.id}>
+                  <button onClick={() => navigateTo(item.id as TabType)} className={footerLinkClass}>
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav className="space-y-6">
+            <h4 className={footerSectionTitleClass}>{sectionTitles.harmony}</h4>
+            <ul className="grid grid-cols-1 gap-3">
+              {[
+                { id: 'bridge', label: ui.navigation.bridge || 'The Bridge' },
+                { id: 'relationships', label: 'Relationships' },
+                { id: 'family', label: ui.navigation.family },
+                { id: 'partner_faq', label: ui.bridge.partnerFAQ.title }
+              ].map((item) => (
+                <li key={item.id}>
+                  <button onClick={() => navigateTo(item.id as TabType)} className={footerLinkClass}>
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav className="space-y-6">
+            <h4 className={footerSectionTitleClass}>{sectionTitles.support}</h4>
+            <ul className="grid grid-cols-1 gap-3">
+                {[
+                  { id: 'faq', label: ui.navigation.faq },
+                  { id: 'contact', label: ui.navigation.contact },
+                  { id: 'crisis', label: ui.navigation.crisis },
+                  { id: 'about', label: footerCopy.about },
+                  { id: 'how_it_works', label: footerCopy.howItWorks }
+                ].map((item) => (
+                <li key={item.id}>
+                  <button
+                    onClick={() => navigateTo(item.id as TabType)}
+                    className={`${footerLinkClass} ${item.id === 'crisis' ? 'text-rose-600 hover:text-rose-700 hover:border-rose-300/70 hover:bg-rose-50/70 dark:hover:bg-rose-900/20' : ''}`}
+                  >
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav className="space-y-6">
+            <h4 className={footerSectionTitleClass}>{footerCopy.legal}</h4>
             <ul className="grid grid-cols-1 gap-3">
               {[
                 { id: 'privacy', label: footerCopy.privacy },
@@ -223,10 +230,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
                 { id: 'data_rights', label: footerCopy.dataRights },
               ].map((item) => (
                 <li key={item.id}>
-                  <button
-                    onClick={() => navigateTo(item.id as TabType)}
-                    className="w-full text-left px-4 py-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white/75 dark:bg-slate-900/50 text-[10px] font-black uppercase tracking-[0.16em] text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/40 hover:bg-luna-purple/5 transition-all"
-                  >
+                  <button onClick={() => navigateTo(item.id as TabType)} className={footerLinkClass}>
                     {item.label}
                   </button>
                 </li>
