@@ -13,6 +13,7 @@ import { PrivacyControls } from './components/PrivacyControls';
 import { useHealthModel } from './hooks/useHealthModel';
 import { authService } from './services/authService';
 import { captureAppError, initMonitoring } from './services/monitoringService';
+import { InstallAppPrompt } from './components/InstallAppPrompt';
 
 // SHARED COMPONENTS
 import { LunaLiveButton } from './components/LunaLiveButton';
@@ -174,6 +175,7 @@ const App: React.FC = () => {
             />
           )}
         </Suspense>
+        <InstallAppPrompt lang={lang} />
         <PrivacyControls lang={lang} isAuthenticated={false} />
       </div>
     );
@@ -181,15 +183,18 @@ const App: React.FC = () => {
 
   if (!hasCompletedOnboarding) {
     return (
-      <OnboardingGate
-        lang={lang}
-        onComplete={() => {
-          setLog(dataService.getLog());
-          setHasCompletedOnboarding(true);
-          setActiveTab('dashboard');
-          setShowSyncOverlay(true);
-        }}
-      />
+      <>
+        <OnboardingGate
+          lang={lang}
+          onComplete={() => {
+            setLog(dataService.getLog());
+            setHasCompletedOnboarding(true);
+            setActiveTab('dashboard');
+            setShowSyncOverlay(true);
+          }}
+        />
+        <InstallAppPrompt lang={lang} />
+      </>
     );
   }
 
@@ -257,6 +262,7 @@ const App: React.FC = () => {
         navigateTo={navigateTo}
         setShowSidebar={setShowSidebar}
       />
+      <InstallAppPrompt lang={lang} />
       <PrivacyControls lang={lang} isAuthenticated />
     </div>
   );
