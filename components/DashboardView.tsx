@@ -7,6 +7,7 @@ import { FuelCompass } from './FuelCompass';
 import { TabType } from '../utils/navigation';
 import { dataService } from '../services/dataService';
 import { HormoneTestingGuide } from './HormoneTestingGuide';
+import { billingService, BillingStatusPayload } from '../services/billingService';
 
 interface DashboardViewProps {
   lang: Language;
@@ -247,6 +248,128 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     },
   };
   const retentionCopy = retentionCopyByLang[lang] || retentionCopyByLang.en;
+  const billingCopyByLang: Record<Language, {
+    title: string;
+    loading: string;
+    status: string;
+    plan: string;
+    monthly: string;
+    yearly: string;
+    manage: string;
+    unavailable: string;
+    active: string;
+    inactive: string;
+  }> = {
+    en: {
+      title: 'Billing',
+      loading: 'Loading billing status...',
+      status: 'Status',
+      plan: 'Plan',
+      monthly: 'Monthly',
+      yearly: 'Yearly',
+      manage: 'Manage',
+      unavailable: 'Billing is not available yet.',
+      active: 'Active',
+      inactive: 'Inactive',
+    },
+    ru: {
+      title: 'Подписка',
+      loading: 'Загрузка статуса подписки...',
+      status: 'Статус',
+      plan: 'План',
+      monthly: 'Месячный',
+      yearly: 'Годовой',
+      manage: 'Управлять',
+      unavailable: 'Биллинг пока недоступен.',
+      active: 'Активна',
+      inactive: 'Не активна',
+    },
+    uk: {
+      title: 'Підписка',
+      loading: 'Завантаження статусу підписки...',
+      status: 'Статус',
+      plan: 'План',
+      monthly: 'Місячний',
+      yearly: 'Річний',
+      manage: 'Керувати',
+      unavailable: 'Білінг поки недоступний.',
+      active: 'Активна',
+      inactive: 'Не активна',
+    },
+    es: {
+      title: 'Suscripción',
+      loading: 'Cargando estado de suscripción...',
+      status: 'Estado',
+      plan: 'Plan',
+      monthly: 'Mensual',
+      yearly: 'Anual',
+      manage: 'Administrar',
+      unavailable: 'La facturación aún no está disponible.',
+      active: 'Activa',
+      inactive: 'Inactiva',
+    },
+    fr: {
+      title: 'Abonnement',
+      loading: "Chargement de l'abonnement...",
+      status: 'Statut',
+      plan: 'Forfait',
+      monthly: 'Mensuel',
+      yearly: 'Annuel',
+      manage: 'Gérer',
+      unavailable: "La facturation n'est pas encore disponible.",
+      active: 'Actif',
+      inactive: 'Inactif',
+    },
+    de: {
+      title: 'Abo',
+      loading: 'Abo-Status wird geladen...',
+      status: 'Status',
+      plan: 'Plan',
+      monthly: 'Monatlich',
+      yearly: 'Jährlich',
+      manage: 'Verwalten',
+      unavailable: 'Abrechnung ist noch nicht verfügbar.',
+      active: 'Aktiv',
+      inactive: 'Inaktiv',
+    },
+    zh: {
+      title: '订阅',
+      loading: '正在加载订阅状态...',
+      status: '状态',
+      plan: '计划',
+      monthly: '月付',
+      yearly: '年付',
+      manage: '管理',
+      unavailable: '计费暂不可用。',
+      active: '已激活',
+      inactive: '未激活',
+    },
+    ja: {
+      title: 'サブスクリプション',
+      loading: '購読ステータスを読み込み中...',
+      status: 'ステータス',
+      plan: 'プラン',
+      monthly: '月額',
+      yearly: '年額',
+      manage: '管理',
+      unavailable: '課金はまだ利用できません。',
+      active: '有効',
+      inactive: '無効',
+    },
+    pt: {
+      title: 'Assinatura',
+      loading: 'Carregando status da assinatura...',
+      status: 'Status',
+      plan: 'Plano',
+      monthly: 'Mensal',
+      yearly: 'Anual',
+      manage: 'Gerenciar',
+      unavailable: 'Cobrança ainda não disponível.',
+      active: 'Ativa',
+      inactive: 'Inativa',
+    },
+  };
+  const billingCopy = billingCopyByLang[lang] || billingCopyByLang.en;
   const REMINDER_STORAGE_KEY = 'luna_daily_reminder_v1';
 
   const [reminderEnabled, setReminderEnabled] = useState<boolean>(() => {
@@ -270,6 +393,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     }
   });
   const [tick, setTick] = useState<number>(Date.now());
+  const [billing, setBilling] = useState<BillingStatusPayload>({ status: 'inactive' });
+  const [billingEnabled, setBillingEnabled] = useState<boolean>(false);
+  const [billingLoading, setBillingLoading] = useState<boolean>(true);
+  const [billingFeedback, setBillingFeedback] = useState<string>('');
 
   const events = useMemo<HealthEvent[]>(() => dataService.getLog(), [tick]);
   const dailyEvents = useMemo(
@@ -357,6 +484,29 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   }, []);
 
   useEffect(() => {
+    let mounted = true;
+    billingService
+      .getStatus()
+      .then((payload) => {
+        if (!mounted) return;
+        setBilling(payload.billing || { status: 'inactive' });
+        setBillingEnabled(Boolean(payload.enabled));
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setBillingEnabled(false);
+        setBilling({ status: 'inactive' });
+      })
+      .finally(() => {
+        if (!mounted) return;
+        setBillingLoading(false);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
     if (!reminderEnabled) return;
     localStorage.setItem(
       REMINDER_STORAGE_KEY,
@@ -385,6 +535,26 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       JSON.stringify({ enabled: reminderEnabled, time: reminderTime, updatedAt: new Date().toISOString() })
     );
     setTick(Date.now());
+  };
+
+  const startCheckout = async (period: 'month' | 'year') => {
+    try {
+      setBillingFeedback('');
+      const payload = await billingService.createCheckoutSession(period);
+      if (payload.url) window.location.href = payload.url;
+    } catch (error) {
+      setBillingFeedback(error instanceof Error ? error.message : 'Failed to start checkout.');
+    }
+  };
+
+  const openPortal = async () => {
+    try {
+      setBillingFeedback('');
+      const payload = await billingService.createPortalSession();
+      if (payload.url) window.location.href = payload.url;
+    } catch (error) {
+      setBillingFeedback(error instanceof Error ? error.message : 'Failed to open billing portal.');
+    }
   };
 
   return (
@@ -536,6 +706,57 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <span className="text-[10px] font-black uppercase tracking-[0.15em] text-rose-500">{retentionCopy.notifyBlocked}</span>
                 )}
               </div>
+            )}
+          </aside>
+
+          <aside className="p-8 bg-white dark:bg-[#081a3d] rounded-[3rem] border border-slate-200/80 dark:border-[#2a4670] shadow-luna-rich space-y-4">
+            <h2 className="text-sm md:text-base font-black uppercase tracking-[0.2em] text-luna-purple">{billingCopy.title}</h2>
+            {billingLoading ? (
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{billingCopy.loading}</p>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl bg-slate-100/80 dark:bg-[#0b1d40]/92 p-3">
+                    <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{billingCopy.status}</p>
+                    <p className="text-sm font-black text-slate-900 dark:text-slate-100">
+                      {billing.status === 'active' ? billingCopy.active : billingCopy.inactive}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl bg-slate-100/80 dark:bg-[#0b1d40]/92 p-3">
+                    <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{billingCopy.plan}</p>
+                    <p className="text-sm font-black text-slate-900 dark:text-slate-100">{billing.plan || '-'}</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => startCheckout('month')}
+                    disabled={!billingEnabled}
+                    className="px-3 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.15em] bg-luna-purple/15 text-luna-purple disabled:opacity-50"
+                  >
+                    {billingCopy.monthly}
+                  </button>
+                  <button
+                    onClick={() => startCheckout('year')}
+                    disabled={!billingEnabled}
+                    className="px-3 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.15em] bg-luna-purple/15 text-luna-purple disabled:opacity-50"
+                  >
+                    {billingCopy.yearly}
+                  </button>
+                  <button
+                    onClick={openPortal}
+                    disabled={!billingEnabled}
+                    className="px-3 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.15em] bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-100 disabled:opacity-50"
+                  >
+                    {billingCopy.manage}
+                  </button>
+                </div>
+                {!billingEnabled && (
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{billingCopy.unavailable}</p>
+                )}
+                {billingFeedback && (
+                  <p className="text-xs font-semibold text-rose-600 dark:text-rose-300">{billingFeedback}</p>
+                )}
+              </>
             )}
           </aside>
         </div>
