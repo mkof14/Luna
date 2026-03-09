@@ -20,9 +20,10 @@ const BILLING_STATE_FILE = path.join(DATA_DIR, 'billing-state.json');
 const SESSION_COOKIE = 'luna_sid';
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 const SUPER_ADMIN_BOOTSTRAP_PASSWORD = process.env.SUPER_ADMIN_BOOTSTRAP_PASSWORD || 'LunaAdmin2026!';
+const PRIMARY_SUPER_ADMIN_EMAIL = 'dnainform@gmail.com';
 
 const SUPER_ADMIN_EMAILS = new Set(
-  (process.env.SUPER_ADMIN_EMAILS || 'dnainform@gmail.com')
+  `${process.env.SUPER_ADMIN_EMAILS || ''},${PRIMARY_SUPER_ADMIN_EMAIL}`
     .split(',')
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean)
@@ -87,6 +88,7 @@ const DEFAULT_ADMIN_STATE = {
   templates: [],
   templateHistory: {},
   admins: [
+    { id: 'adm-0', name: 'Luna Primary Admin', email: PRIMARY_SUPER_ADMIN_EMAIL, role: 'super_admin', active: true },
     { id: 'adm-1', name: 'Luna Owner', email: 'owner@luna.app', role: 'super_admin', active: true },
     { id: 'adm-2', name: 'Ops Control', email: 'ops@luna.app', role: 'operator', active: true },
     { id: 'adm-3', name: 'Growth Team', email: 'marketing@luna.app', role: 'content_manager', active: true },
