@@ -127,8 +127,65 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
     ja: { core: 'コア', awareness: '気づき', harmony: 'ハーモニー', support: 'サポート', legal: '法務', account: 'アカウント' },
     pt: { core: 'Base', awareness: 'Consciencia', harmony: 'Harmonia', support: 'Suporte', legal: 'Legal', account: 'Conta' },
   };
+  const installCopyByLang: Record<Language, { title: string; subtitle: string; ios: string; android: string }> = {
+    en: {
+      title: 'Install App',
+      subtitle: 'Mobile install guide',
+      ios: 'iPhone: Share -> Add to Home Screen',
+      android: 'Android: Browser menu -> Install App',
+    },
+    ru: {
+      title: 'Установить App',
+      subtitle: 'Инструкция для мобильной установки',
+      ios: 'iPhone: Поделиться -> На экран Домой',
+      android: 'Android: Меню браузера -> Установить приложение',
+    },
+    uk: {
+      title: 'Встановити App',
+      subtitle: 'Інструкція для мобільного встановлення',
+      ios: 'iPhone: Поділитися -> На екран Додому',
+      android: 'Android: Меню браузера -> Встановити застосунок',
+    },
+    es: {
+      title: 'Instalar App',
+      subtitle: 'Guia de instalacion movil',
+      ios: 'iPhone: Compartir -> Anadir a inicio',
+      android: 'Android: Menu del navegador -> Instalar app',
+    },
+    fr: {
+      title: 'Installer App',
+      subtitle: 'Guide installation mobile',
+      ios: 'iPhone: Partager -> Sur l ecran d accueil',
+      android: 'Android: Menu navigateur -> Installer app',
+    },
+    de: {
+      title: 'App Installieren',
+      subtitle: 'Anleitung fur mobile Installation',
+      ios: 'iPhone: Teilen -> Zum Home-Bildschirm',
+      android: 'Android: Browsermenu -> App installieren',
+    },
+    zh: {
+      title: '安装 App',
+      subtitle: '移动端安装说明',
+      ios: 'iPhone：分享 -> 添加到主屏幕',
+      android: 'Android：浏览器菜单 -> 安装应用',
+    },
+    ja: {
+      title: 'App をインストール',
+      subtitle: 'モバイル版のインストール手順',
+      ios: 'iPhone: 共有 -> ホーム画面に追加',
+      android: 'Android: ブラウザメニュー -> アプリをインストール',
+    },
+    pt: {
+      title: 'Instalar App',
+      subtitle: 'Guia de instalacao mobile',
+      ios: 'iPhone: Compartilhar -> Adicionar a Tela Inicial',
+      android: 'Android: Menu do navegador -> Instalar app',
+    },
+  };
   const footerCopy = footerCopyByLang[lang] || footerCopyByLang.en;
   const sectionTitles = sectionTitlesByLang[lang] || sectionTitlesByLang.en;
+  const installCopy = installCopyByLang[lang] || installCopyByLang.en;
   return (
     <footer className="w-full border-t border-slate-300 dark:border-white/10 py-24 px-6 glass mt-auto relative overflow-hidden">
       <div className="max-w-7xl mx-auto space-y-20 relative z-10">
@@ -138,7 +195,12 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
             <p className="text-base font-bold text-slate-700 dark:text-slate-400 leading-relaxed max-w-sm italic">
               Luna — The physiology of feeling.
             </p>
-            <div className="flex gap-4 pt-4" />
+            <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white/75 dark:bg-slate-900/50 p-4 space-y-2">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-luna-purple">{installCopy.title}</p>
+              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{installCopy.subtitle}</p>
+              <p className="text-[11px] font-bold text-slate-600 dark:text-slate-300">{installCopy.ios}</p>
+              <p className="text-[11px] font-bold text-slate-600 dark:text-slate-300">{installCopy.android}</p>
+            </div>
           </div>
 
           <nav className="space-y-6">
