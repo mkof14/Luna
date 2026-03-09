@@ -44,6 +44,9 @@ This repo is configured so Vercel serves the SPA from `dist` and handles `/api/*
 Production billing launch checklist:
 - `/Users/mk/Desktop/Luna/docs/VERCEL_STRIPE_PRODUCTION_CHECKLIST.md`
 
+Unified commercial go-live checklist:
+- `/Users/mk/Desktop/Luna/docs/GO_LIVE_CHECKLIST.md`
+
 ## Post-Deploy Smoke (Vercel)
 
 Run locally against your deployed URL:
