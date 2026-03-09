@@ -120,20 +120,79 @@ export const LegalDocumentView: React.FC<LegalDocumentViewProps> = ({ lang, doc,
   const lastUpdated = 'March 4, 2026';
   const [actionFeedback, setActionFeedback] = useState('');
 
-  const exportLocalData = () => {
+  const downloadJson = (filename: string, payload: unknown) => {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+  };
+
+  const exportLocalData = async () => {
+    try {
+      const response = await fetch('/api/privacy/export', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      if (response.ok) {
+        const payload = await response.json();
+        downloadJson(`luna-server-export-${Date.now()}.json`, payload);
+        setActionFeedback('Server export downloaded.');
+        return;
+      }
+    } catch {
+      // fallback to local export below
+    }
+
     downloadLunaLocalDataExport();
     setActionFeedback('Local data export downloaded.');
   };
 
-  const deleteHealthData = () => {
+  const deleteHealthData = async () => {
+    try {
+      const response = await fetch('/api/privacy/delete', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scope: 'support_only' }),
+      });
+      if (response.ok) {
+        setActionFeedback('Server support data deletion request completed.');
+        return;
+      }
+    } catch {
+      // fallback to local delete below
+    }
     const removed = clearLunaLocalData(false);
     setActionFeedback(`Local health data removed: ${removed} keys.`);
-    window.location.reload();
   };
 
-  const deleteAllData = () => {
+  const deleteAllData = async () => {
     const confirmed = window.confirm('Delete all local Luna data on this device? This cannot be undone.');
     if (!confirmed) return;
+
+    try {
+      const response = await fetch('/api/privacy/delete', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scope: 'account' }),
+      });
+      if (response.ok) {
+        setActionFeedback('Server account deletion request completed.');
+        window.location.reload();
+        return;
+      }
+    } catch {
+      // fallback to local delete below
+    }
+
     const removed = clearLunaLocalData(true);
     setActionFeedback(`All local data removed: ${removed} keys.`);
     window.location.reload();

@@ -1,4 +1,4 @@
-import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
+import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,6 +12,8 @@ const DATA_FILE = path.join(DATA_DIR, 'users.json');
 const ADMIN_DATA_FILE = path.join(DATA_DIR, 'admin-state.json');
 const CONTACTS_FILE = path.join(DATA_DIR, 'contact-submissions.json');
 const SESSIONS_FILE = path.join(DATA_DIR, 'sessions.json');
+const PRIVACY_REQUESTS_FILE = path.join(DATA_DIR, 'privacy-requests.json');
+const BILLING_STATE_FILE = path.join(DATA_DIR, 'billing-state.json');
 
 const SESSION_COOKIE = 'luna_sid';
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
@@ -32,6 +34,13 @@ const GOOGLE_CLIENT_IDS = new Set(
 );
 const AUTH_ALLOW_UNVERIFIED_GOOGLE = process.env.AUTH_ALLOW_UNVERIFIED_GOOGLE === 'true';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.API_KEY || '';
+const BILLING_ENABLED = process.env.STRIPE_BILLING_ENABLED === 'true';
+const STRIPE_SECRET_KEY = String(process.env.STRIPE_SECRET_KEY || '').trim();
+const STRIPE_WEBHOOK_SECRET = String(process.env.STRIPE_WEBHOOK_SECRET || '').trim();
+const STRIPE_PRICE_MONTHLY_ID = String(process.env.STRIPE_PRICE_MONTHLY_ID || '').trim();
+const STRIPE_PRICE_YEARLY_ID = String(process.env.STRIPE_PRICE_YEARLY_ID || '').trim();
+const STRIPE_SUCCESS_URL = String(process.env.STRIPE_SUCCESS_URL || '').trim();
+const STRIPE_CANCEL_URL = String(process.env.STRIPE_CANCEL_URL || '').trim();
 
 const ROLE_PERMISSIONS = {
   viewer: ['view_financials', 'view_technical_metrics'],
@@ -218,6 +227,14 @@ const readBody = async (req) => {
   } catch {
     throw new Error('Invalid JSON body');
   }
+};
+
+const readRawBody = async (req) => {
+  const chunks = [];
+  for await (const chunk of req) {
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks);
 };
 
 const decodeGoogleJwt = (credential) => {
@@ -619,6 +636,52 @@ const updateAdminStateByPermissions = (adminState, incoming, sessionPayload) => 
   return changed;
 };
 
+const stripeConfigError = () => {
+  if (!BILLING_ENABLED) return 'Stripe billing is disabled. Set STRIPE_BILLING_ENABLED=true.';
+  if (!STRIPE_SECRET_KEY) return 'Missing STRIPE_SECRET_KEY.';
+  if (!STRIPE_PRICE_MONTHLY_ID || !STRIPE_PRICE_YEARLY_ID) return 'Missing STRIPE_PRICE_MONTHLY_ID or STRIPE_PRICE_YEARLY_ID.';
+  if (!STRIPE_SUCCESS_URL || !STRIPE_CANCEL_URL) return 'Missing STRIPE_SUCCESS_URL or STRIPE_CANCEL_URL.';
+  return '';
+};
+
+const stripeFormBody = (entries) => {
+  const params = new URLSearchParams();
+  for (const [key, value] of entries) {
+    params.append(key, String(value));
+  }
+  return params.toString();
+};
+
+const constantTimeEquals = (a, b) => {
+  const left = Buffer.from(a || '', 'utf8');
+  const right = Buffer.from(b || '', 'utf8');
+  if (left.length !== right.length) return false;
+  return timingSafeEqual(left, right);
+};
+
+const verifyStripeSignature = (rawBody, signatureHeader, secret) => {
+  if (!signatureHeader || !secret) return false;
+  const pairs = String(signatureHeader)
+    .split(',')
+    .map((chunk) => chunk.trim().split('='))
+    .filter((item) => item.length === 2);
+  const timestamp = pairs.find(([key]) => key === 't')?.[1];
+  const signatures = pairs.filter(([key]) => key === 'v1').map(([, value]) => value);
+  if (!timestamp || signatures.length === 0) return false;
+  const payload = `${timestamp}.${rawBody.toString('utf8')}`;
+  const expected = createHmac('sha256', secret).update(payload).digest('hex');
+  return signatures.some((value) => constantTimeEquals(value, expected));
+};
+
+const sanitizeCorrectionPayload = (payload) => {
+  const next = {};
+  if (typeof payload !== 'object' || payload === null) return next;
+  if (typeof payload.name === 'string' && payload.name.trim()) {
+    next.name = safeText(payload.name, 120);
+  }
+  return next;
+};
+
 const start = async () => {
   let users = await readJson(DATA_FILE, []);
   if (!Array.isArray(users)) users = [];
@@ -626,6 +689,10 @@ const start = async () => {
   let adminState = sanitizeAdminState(await readJson(ADMIN_DATA_FILE, DEFAULT_ADMIN_STATE));
   let contactSubmissions = await readJson(CONTACTS_FILE, []);
   if (!Array.isArray(contactSubmissions)) contactSubmissions = [];
+  let privacyRequests = await readJson(PRIVACY_REQUESTS_FILE, []);
+  if (!Array.isArray(privacyRequests)) privacyRequests = [];
+  let billingState = await readJson(BILLING_STATE_FILE, {});
+  if (!billingState || typeof billingState !== 'object') billingState = {};
   const storedSessions = parseStoredSessions(await readJson(SESSIONS_FILE, []));
   for (const item of storedSessions) {
     sessions.set(item.token, { userId: item.userId, expiresAt: item.expiresAt });
@@ -636,6 +703,8 @@ const start = async () => {
   const saveAdminState = async () => writeJson(ADMIN_DATA_FILE, adminState);
   const saveContacts = async () => writeJson(CONTACTS_FILE, contactSubmissions);
   const saveSessions = async () => writeJson(SESSIONS_FILE, serializeSessions());
+  const savePrivacyRequests = async () => writeJson(PRIVACY_REQUESTS_FILE, privacyRequests);
+  const saveBillingState = async () => writeJson(BILLING_STATE_FILE, billingState);
 
   let didBootstrapSuperAdmin = false;
   for (const email of SUPER_ADMIN_EMAILS) {
@@ -895,6 +964,284 @@ const start = async () => {
       if (token) sessions.delete(token);
       await saveSessions();
       send(res, 200, { ok: true }, { ...headers, 'Set-Cookie': clearSessionCookie() });
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/privacy/export') {
+      const auth = await requireSession(req, res, headers);
+      if (!auth) return;
+
+      const subjectEmail = auth.sessionPayload.email;
+      const userRow = users.find((item) => item.email === subjectEmail);
+      const exportRows = {
+        generatedAt: new Date().toISOString(),
+        account: userRow
+          ? {
+              id: userRow.id,
+              email: userRow.email,
+              name: userRow.name,
+              role: resolveRole(userRow.email, userRow.roleOverride || null),
+              createdAt: userRow.createdAt,
+              lastProvider: userRow.lastProvider || 'password',
+            }
+          : null,
+        contactSubmissions: contactSubmissions
+          .filter((item) => normalizeEmail(item.email) === subjectEmail)
+          .map((item) => ({
+            id: item.id,
+            at: item.at,
+            subject: item.subject,
+            message: item.message,
+          })),
+        sessions: serializeSessions()
+          .filter((item) => item.userId === auth.current.user.id)
+          .map((item) => ({ tokenTail: item.token.slice(-8), expiresAt: item.expiresAt })),
+        notes: [
+          'Luna uses local-first architecture for core health data.',
+          'This server export includes account-level and support records only.',
+        ],
+      };
+
+      const requestId = `dsar-exp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      privacyRequests = [
+        {
+          id: requestId,
+          type: 'export',
+          status: 'completed',
+          requestedAt: new Date().toISOString(),
+          completedAt: new Date().toISOString(),
+          email: subjectEmail,
+          actor: auth.sessionPayload.email,
+        },
+        ...privacyRequests,
+      ].slice(0, 2000);
+      await savePrivacyRequests();
+
+      send(res, 200, { requestId, export: exportRows }, headers);
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/privacy/correct') {
+      const auth = await requireSession(req, res, headers);
+      if (!auth) return;
+      try {
+        const body = await readBody(req);
+        const patch = sanitizeCorrectionPayload(body);
+        if (!patch.name) {
+          send(res, 400, { error: 'No supported correction fields provided.' }, headers);
+          return;
+        }
+
+        const user = users.find((item) => item.id === auth.current.user.id);
+        if (!user) {
+          send(res, 404, { error: 'User not found.' }, headers);
+          return;
+        }
+
+        user.name = patch.name;
+        await saveUsers();
+
+        const requestId = `dsar-cor-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        privacyRequests = [
+          {
+            id: requestId,
+            type: 'correct',
+            status: 'completed',
+            requestedAt: new Date().toISOString(),
+            completedAt: new Date().toISOString(),
+            email: auth.sessionPayload.email,
+            actor: auth.sessionPayload.email,
+            fields: Object.keys(patch),
+          },
+          ...privacyRequests,
+        ].slice(0, 2000);
+        await savePrivacyRequests();
+
+        send(res, 200, { requestId, session: buildSessionPayload(user) }, headers);
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Unable to process correction request.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/privacy/delete') {
+      const auth = await requireSession(req, res, headers);
+      if (!auth) return;
+      try {
+        const body = await readBody(req);
+        const scope = safeText(body.scope || 'account', 32);
+        const user = users.find((item) => item.id === auth.current.user.id);
+        if (!user) {
+          send(res, 404, { error: 'User not found.' }, headers);
+          return;
+        }
+        const role = resolveRole(user.email, user.roleOverride || null);
+        if (role === 'super_admin') {
+          send(res, 403, { error: 'Super admin account cannot be deleted from self-service endpoint.' }, headers);
+          return;
+        }
+
+        if (scope === 'support_only') {
+          contactSubmissions = contactSubmissions.filter((item) => normalizeEmail(item.email) !== user.email);
+          await saveContacts();
+        } else {
+          users = users.filter((item) => item.id !== user.id);
+          for (const [token, session] of sessions.entries()) {
+            if (session.userId === user.id) sessions.delete(token);
+          }
+          contactSubmissions = contactSubmissions.filter((item) => normalizeEmail(item.email) !== user.email);
+          delete billingState[user.id];
+          delete billingState[user.email];
+          await Promise.all([saveUsers(), saveSessions(), saveContacts(), saveBillingState()]);
+        }
+
+        const requestId = `dsar-del-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        privacyRequests = [
+          {
+            id: requestId,
+            type: 'delete',
+            status: 'completed',
+            requestedAt: new Date().toISOString(),
+            completedAt: new Date().toISOString(),
+            email: auth.sessionPayload.email,
+            actor: auth.sessionPayload.email,
+            scope,
+          },
+          ...privacyRequests,
+        ].slice(0, 2000);
+        await savePrivacyRequests();
+
+        send(
+          res,
+          200,
+          { requestId, deleted: true, scope },
+          { ...headers, 'Set-Cookie': clearSessionCookie() }
+        );
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Unable to process deletion request.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/privacy/requests') {
+      const auth = await requireSession(req, res, headers);
+      if (!auth) return;
+      const canManage = hasAnyPermission(auth.sessionPayload, ['manage_admin_roles', 'manage_services']);
+      const rows = canManage
+        ? privacyRequests
+        : privacyRequests.filter((item) => normalizeEmail(item.email) === normalizeEmail(auth.sessionPayload.email));
+      send(res, 200, { requests: rows.slice(0, 200) }, headers);
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/billing/status') {
+      const auth = await requireSession(req, res, headers);
+      if (!auth) return;
+      const byId = billingState[auth.current.user.id];
+      const byEmail = billingState[auth.current.user.email];
+      const currentStatus = byId || byEmail || { status: 'inactive', plan: 'none' };
+      send(res, 200, { billing: currentStatus, enabled: BILLING_ENABLED }, headers);
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/billing/checkout-session') {
+      const auth = await requireSession(req, res, headers);
+      if (!auth) return;
+
+      const configError = stripeConfigError();
+      if (configError) {
+        send(res, 503, { error: configError }, headers);
+        return;
+      }
+
+      try {
+        const body = await readBody(req);
+        const period = safeText(body.period || 'month', 12) === 'year' ? 'year' : 'month';
+        const price = period === 'year' ? STRIPE_PRICE_YEARLY_ID : STRIPE_PRICE_MONTHLY_ID;
+        const form = stripeFormBody([
+          ['mode', 'subscription'],
+          ['success_url', STRIPE_SUCCESS_URL],
+          ['cancel_url', STRIPE_CANCEL_URL],
+          ['client_reference_id', auth.current.user.id],
+          ['customer_email', auth.current.user.email],
+          ['line_items[0][price]', price],
+          ['line_items[0][quantity]', '1'],
+          ['metadata[luna_user_id]', auth.current.user.id],
+          ['metadata[luna_email]', auth.current.user.email],
+          ['metadata[luna_period]', period],
+        ]);
+
+        const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: form,
+        });
+
+        const raw = await response.text();
+        let parsed = {};
+        try {
+          parsed = raw ? JSON.parse(raw) : {};
+        } catch {
+          parsed = { raw };
+        }
+
+        if (!response.ok) {
+          send(res, 502, { error: 'Stripe checkout session creation failed.', detail: parsed }, headers);
+          return;
+        }
+
+        const sessionId = safeText(parsed.id, 200);
+        const checkoutUrl = safeText(parsed.url, 1000);
+        send(res, 200, { id: sessionId, url: checkoutUrl }, headers);
+      } catch (error) {
+        send(res, 500, { error: error instanceof Error ? error.message : 'Unable to create checkout session.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/billing/webhook') {
+      const rawBody = await readRawBody(req);
+      const sig = req.headers['stripe-signature'];
+
+      if (!verifyStripeSignature(rawBody, sig, STRIPE_WEBHOOK_SECRET)) {
+        send(res, 401, { error: 'Invalid Stripe signature.' }, headers);
+        return;
+      }
+
+      let event;
+      try {
+        event = JSON.parse(rawBody.toString('utf8'));
+      } catch {
+        send(res, 400, { error: 'Invalid Stripe payload.' }, headers);
+        return;
+      }
+
+      const eventType = safeText(event?.type, 80);
+      const data = event?.data?.object || {};
+      const customerEmail = normalizeEmail(data.customer_email || data.metadata?.luna_email || '');
+      const userId = safeText(data.client_reference_id || data.metadata?.luna_user_id || '', 120);
+      const period = safeText(data.metadata?.luna_period || '', 12) || 'month';
+      const nowIso = new Date().toISOString();
+
+      const setBilling = (status, extra = {}) => {
+        const payload = { status, period, updatedAt: nowIso, ...extra };
+        if (userId) billingState[userId] = payload;
+        if (customerEmail) billingState[customerEmail] = payload;
+      };
+
+      if (eventType === 'checkout.session.completed' || eventType === 'invoice.paid') {
+        setBilling('active', { source: eventType });
+      } else if (eventType === 'invoice.payment_failed') {
+        setBilling('past_due', { source: eventType });
+      } else if (eventType === 'customer.subscription.deleted') {
+        setBilling('canceled', { source: eventType });
+      }
+
+      await saveBillingState();
+      send(res, 200, { received: true }, headers);
       return;
     }
 

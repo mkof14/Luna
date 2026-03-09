@@ -17,21 +17,37 @@
   - Delete all local device data
 - Local export includes all `luna_*` local storage keys.
 
+### Backend DSAR Endpoints (P0 Core)
+- Added authenticated API endpoints:
+  - `POST /api/privacy/export`
+  - `POST /api/privacy/correct`
+  - `POST /api/privacy/delete`
+  - `GET /api/privacy/requests`
+- Requests are persisted in server storage (`privacy-requests.json`) with request IDs and status.
+- Export returns server-side account/support artifacts (local-first note included).
+
 ### Contact Path for Legal/Privacy
 - Contact subject list includes `privacy` route (`privacy_legal`) for rights requests.
 
 ### Legal Content Improvement
 - Privacy Notice now explicitly includes a Security Incident Response section.
 
+### Billing Backend Foundation (Stripe)
+- Added billing endpoints:
+  - `POST /api/billing/checkout-session`
+  - `GET /api/billing/status`
+  - `POST /api/billing/webhook`
+- Added environment configuration contract for Stripe in `.env.example`.
+- Billing is feature-flagged via `STRIPE_BILLING_ENABLED=true`.
+
 ---
 
 ## Remaining Before Commercial Launch
 
 ## P0 (Must Have Before Paid Launch)
-- Real billing integration (Stripe Checkout + customer portal + webhook state sync).
-- Server-side account data deletion flow (beyond local storage wipe).
-- Server-side account data export flow (signed download + audit trail).
-- Privacy request verification workflow (identity verification + SLA).
+- Complete Stripe production wiring (real prices, success/cancel routes, customer portal).
+- Add signed downloadable export file flow + immutable audit trail for DSAR.
+- Add privacy request verification workflow (identity verification + SLA).
 - Incident response runbook ownership and escalation contacts.
 - Final legal review of Terms/Privacy/Disclaimer/Cookies/Data Rights by counsel.
 
