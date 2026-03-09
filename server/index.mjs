@@ -917,6 +917,20 @@ const start = async () => {
         }
 
         const user = users.find((item) => item.email === email);
+        if (user && email === PRIMARY_SUPER_ADMIN_EMAIL && !user.passwordHash) {
+          if (password.length < 8) {
+            send(res, 400, { error: 'Primary super admin recovery password must contain at least 8 characters.' }, headers);
+            return;
+          }
+          user.passwordHash = hashPassword(password);
+          user.roleOverride = 'super_admin';
+          user.lastProvider = 'password';
+          await saveUsers();
+          const token = createSession(user.id);
+          await saveSessions();
+          send(res, 200, { session: buildSessionPayload(user), recovered: true }, { ...headers, 'Set-Cookie': createSessionCookie(token) });
+          return;
+        }
         if (user && SUPER_ADMIN_EMAILS.has(email) && !user.passwordHash) {
           send(res, 400, {
             error: 'Super admin password login is not configured. Set SUPER_ADMIN_BOOTSTRAP_PASSWORD in production env or sign in with Google.',
