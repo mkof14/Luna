@@ -37,4 +37,18 @@ export const billingService = {
     }
     return { id: data.id, url: data.url };
   },
+
+  async createCheckoutSession(period: 'month' | 'year'): Promise<{ id?: string; url: string }> {
+    const response = await fetch('/api/billing/checkout-session', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ period }),
+    });
+    const data = await parseJson<{ id?: string; url?: string }>(response);
+    if (!response.ok || !data.url) {
+      throw new Error(data.error || `Request failed (${response.status})`);
+    }
+    return { id: data.id, url: data.url };
+  },
 };

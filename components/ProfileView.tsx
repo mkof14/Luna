@@ -16,6 +16,18 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ onBack }) => {
   const [billingLoading, setBillingLoading] = useState(false);
   const [billingFeedback, setBillingFeedback] = useState('');
 
+  const refreshBillingStatus = () => {
+    return billingService
+      .getStatus()
+      .then((payload) => {
+        setBilling(payload.billing || { status: 'inactive', plan: 'none' });
+        setBillingEnabled(Boolean(payload.enabled));
+      })
+      .catch(() => {
+        setBillingEnabled(false);
+      });
+  };
+
   const updateProfile = (updates: Partial<ProfileData>) => {
     setProfile(prev => ({ ...prev, ...updates }));
     setIsSaved(false);
@@ -49,21 +61,23 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ onBack }) => {
 
   useEffect(() => {
     let alive = true;
-    billingService
-      .getStatus()
-      .then((payload) => {
+    refreshBillingStatus().catch(() => undefined);
+
+    const billingResult = new URLSearchParams(window.location.search).get('billing');
+    if (billingResult === 'success') {
+      setBillingFeedback('Payment completed. Updating subscription status...');
+      setTimeout(() => {
         if (!alive) return;
-        setBilling(payload.billing || { status: 'inactive', plan: 'none' });
-        setBillingEnabled(Boolean(payload.enabled));
-      })
-      .catch(() => {
-        if (!alive) return;
-        setBillingEnabled(false);
-      });
+        refreshBillingStatus().then(() => setBillingFeedback('Subscription updated.'));
+      }, 1200);
+    } else if (billingResult === 'canceled') {
+      setBillingFeedback('Checkout canceled. No charges were made.');
+    }
+
     return () => {
       alive = false;
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const openBillingPortal = async () => {
     setBillingFeedback('');
@@ -73,6 +87,19 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ onBack }) => {
       window.location.assign(payload.url);
     } catch (error) {
       setBillingFeedback(error instanceof Error ? error.message : 'Could not open billing portal.');
+    } finally {
+      setBillingLoading(false);
+    }
+  };
+
+  const startCheckout = async (period: 'month' | 'year') => {
+    setBillingFeedback('');
+    setBillingLoading(true);
+    try {
+      const payload = await billingService.createCheckoutSession(period);
+      window.location.assign(payload.url);
+    } catch (error) {
+      setBillingFeedback(error instanceof Error ? error.message : 'Could not start checkout.');
     } finally {
       setBillingLoading(false);
     }
@@ -121,6 +148,42 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ onBack }) => {
       {billingFeedback && (
         <p className="text-xs font-bold text-center text-rose-500 -mt-8">{billingFeedback}</p>
       )}
+      <div className="max-w-5xl mx-auto px-2 -mt-6">
+        <div className="rounded-[2rem] border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/60 p-4 md:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div className="space-y-1">
+            <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple">Membership Billing</p>
+            <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+              Status: {billing.status}{billing.period ? ` • ${billing.period}` : ''} • Plan: {billing.plan || 'none'}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={!billingEnabled || billingLoading}
+              onClick={() => startCheckout('month')}
+              className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.12em] ${
+                billingEnabled && !billingLoading
+                  ? 'bg-luna-purple text-white hover:brightness-110'
+                  : 'bg-slate-200/80 text-slate-500 cursor-not-allowed'
+              }`}
+            >
+              {billingLoading ? 'Opening...' : 'Start Monthly'}
+            </button>
+            <button
+              type="button"
+              disabled={!billingEnabled || billingLoading}
+              onClick={() => startCheckout('year')}
+              className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.12em] ${
+                billingEnabled && !billingLoading
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 hover:brightness-110'
+                  : 'bg-slate-200/80 text-slate-500 cursor-not-allowed'
+              }`}
+            >
+              {billingLoading ? 'Opening...' : 'Start Yearly'}
+            </button>
+          </div>
+        </div>
+      </div>
 
       <header className="text-center space-y-4 max-w-2xl mx-auto">
         <h2 className="text-6xl font-black tracking-tighter text-slate-900 dark:text-slate-100 uppercase">My Identity</h2>
