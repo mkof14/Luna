@@ -1786,6 +1786,11 @@ export default async function handler(req, res) {
     requestHandlerPromise = start();
   }
 
-  const requestHandler = await requestHandlerPromise;
-  return requestHandler(req, res);
+  try {
+    const requestHandler = await requestHandlerPromise;
+    return await requestHandler(req, res);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Internal server error.';
+    send(res, 500, { error: message, code: 'UNHANDLED_API_ERROR' });
+  }
 }

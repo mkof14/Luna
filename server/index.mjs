@@ -776,6 +776,7 @@ const start = async () => {
   };
 
   const server = http.createServer(async (req, res) => {
+    try {
     const method = req.method || 'GET';
     const origin = req.headers.origin;
     const headers = corsHeaders(origin);
@@ -1673,6 +1674,10 @@ const start = async () => {
     }
 
     send(res, 404, { error: 'Not found.' }, headers);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Internal server error.';
+      send(res, 500, { error: message, code: 'UNHANDLED_API_ERROR' });
+    }
   });
 
   server.listen(PORT, () => {
