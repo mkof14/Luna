@@ -46,15 +46,15 @@ const HormoneGauge: React.FC<HormoneGaugeProps> = ({ hormone, onClick, isActive 
         </div>
         
         <div className="space-y-1">
-          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 dark:text-slate-400 group-hover:text-slate-950 dark:group-hover:text-white transition-colors">
+          <p className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.18em] text-slate-600 dark:text-slate-400 group-hover:text-slate-950 dark:group-hover:text-white transition-colors leading-tight">
             {displayName}
-          </h4>
+          </p>
           <div className="flex items-center justify-center gap-1.5">
              <div 
                className="w-2 h-2 rounded-full shadow-[0_0_12px_rgba(0,0,0,0.1)]" 
                style={{ backgroundColor: hormone.color, boxShadow: `0 0 15px ${hormone.color}66` }} 
              />
-             <span className="text-[9px] font-black text-slate-500 dark:text-slate-500 uppercase tracking-widest">{hormone.status}</span>
+             <span className="text-[8px] font-black text-slate-500 dark:text-slate-500 uppercase tracking-[0.14em]">{hormone.status}</span>
           </div>
         </div>
       </div>

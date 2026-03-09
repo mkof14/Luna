@@ -601,7 +601,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="lg:col-span-4 space-y-10">
           <aside className="p-10 bg-slate-950 text-white dark:bg-[#081a3d] rounded-[4rem] flex flex-col justify-center shadow-luna-deep border border-slate-800 dark:border-[#2a4670] relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-10 text-8xl group-hover:scale-110 transition-transform">💡</div>
-            <h2 className="text-[11px] md:text-xs font-black uppercase tracking-[0.16em] text-slate-500 mb-6">{ui.dashboard.insight}</h2>
+            <p className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.12em] text-slate-500 mb-6">{ui.dashboard.insight}</p>
             <p className="text-xl font-bold italic leading-relaxed text-slate-100 z-10">
               {ruleOutput.archetype ? ruleOutput.archetype.description : ui.dashboard.baselineInsight}
             </p>
@@ -609,7 +609,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <aside className="p-10 bg-white dark:bg-[#081a3d] rounded-[4rem] border-2 border-slate-200 dark:border-[#2a4670] shadow-luna-rich relative overflow-hidden group">
             <div className="absolute -bottom-4 -right-4 p-8 opacity-5 text-8xl group-hover:scale-110 transition-transform">🌿</div>
-            <h2 className="text-[11px] md:text-xs font-black uppercase tracking-[0.16em] text-luna-purple mb-6">{ui.dashboard.dailyTip}</h2>
+            <p className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.12em] text-luna-purple mb-6">{ui.dashboard.dailyTip}</p>
             <p className="text-lg font-black text-slate-900 dark:text-slate-100 leading-tight">
               {ui.dashboard.hydrateTip}
             </p>
@@ -617,7 +617,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </aside>
 
           <aside className="p-8 bg-gradient-to-br from-[#f6ebf7]/90 to-[#e7edf9]/90 dark:from-[#081a3d]/96 dark:to-[#0e2a55]/94 rounded-[3rem] border border-slate-200/80 dark:border-[#2a4670] shadow-luna-rich space-y-4">
-            <h2 className="text-[11px] md:text-xs font-black uppercase tracking-[0.16em] text-luna-purple">{retentionCopy.title}</h2>
+            <p className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.12em] text-luna-purple">{retentionCopy.title}</p>
             <div className="grid grid-cols-3 gap-3">
               <div className="rounded-2xl bg-white/75 dark:bg-[#0b1d40]/92 p-3 text-center">
                 <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{retentionCopy.streak}</p>
@@ -641,7 +641,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </aside>
 
           <aside className="p-8 bg-white dark:bg-[#081a3d] rounded-[3rem] border border-slate-200/80 dark:border-[#2a4670] shadow-luna-rich space-y-4">
-            <h2 className="text-[11px] md:text-xs font-black uppercase tracking-[0.16em] text-luna-purple">{retentionCopy.reminderTitle}</h2>
+            <p className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.12em] text-luna-purple">{retentionCopy.reminderTitle}</p>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setReminderEnabled((prev) => !prev)}
@@ -710,7 +710,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </aside>
 
           <aside className="p-8 bg-white dark:bg-[#081a3d] rounded-[3rem] border border-slate-200/80 dark:border-[#2a4670] shadow-luna-rich space-y-4">
-            <h2 className="text-[11px] md:text-xs font-black uppercase tracking-[0.16em] text-luna-purple">{billingCopy.title}</h2>
+            <p className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.12em] text-luna-purple">{billingCopy.title}</p>
             {billingLoading ? (
               <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{billingCopy.loading}</p>
             ) : (
