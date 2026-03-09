@@ -41,6 +41,9 @@ View your app in AI Studio: https://ai.studio/apps/2982aa11-1f40-4a50-bc23-4f3bf
 
 This repo is configured so Vercel serves the SPA from `dist` and handles `/api/*` via `api/index.mjs` (Vercel Function).
 
+Production billing launch checklist:
+- `/Users/mk/Desktop/Luna/docs/VERCEL_STRIPE_PRODUCTION_CHECKLIST.md`
+
 ## Post-Deploy Smoke (Vercel)
 
 Run locally against your deployed URL:
