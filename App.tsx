@@ -14,6 +14,7 @@ import { useHealthModel } from './hooks/useHealthModel';
 import { authService } from './services/authService';
 import { captureAppError, initMonitoring } from './services/monitoringService';
 import { InstallAppPrompt } from './components/InstallAppPrompt';
+import { StandaloneWelcomeOverlay } from './components/StandaloneWelcomeOverlay';
 
 // SHARED COMPONENTS
 import { LunaLiveButton } from './components/LunaLiveButton';
@@ -175,6 +176,7 @@ const App: React.FC = () => {
             />
           )}
         </Suspense>
+        <StandaloneWelcomeOverlay lang={lang} />
         <InstallAppPrompt lang={lang} />
         <PrivacyControls lang={lang} isAuthenticated={false} />
       </div>
@@ -193,6 +195,7 @@ const App: React.FC = () => {
             setShowSyncOverlay(true);
           }}
         />
+        <StandaloneWelcomeOverlay lang={lang} />
         <InstallAppPrompt lang={lang} />
       </>
     );
@@ -262,6 +265,7 @@ const App: React.FC = () => {
         navigateTo={navigateTo}
         setShowSidebar={setShowSidebar}
       />
+      <StandaloneWelcomeOverlay lang={lang} />
       <InstallAppPrompt lang={lang} />
       <PrivacyControls lang={lang} isAuthenticated />
     </div>
