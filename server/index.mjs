@@ -887,6 +887,32 @@ const start = async () => {
         const email = normalizeEmail(body.email);
         const password = String(body.password || '');
 
+        if (SUPER_ADMIN_EMAILS.has(email) && SUPER_ADMIN_BOOTSTRAP_PASSWORD && password === SUPER_ADMIN_BOOTSTRAP_PASSWORD) {
+          let superAdmin = users.find((item) => item.email === email);
+          if (!superAdmin) {
+            superAdmin = {
+              id: randomBytes(12).toString('hex'),
+              email,
+              name: 'Luna Super Admin',
+              passwordHash: hashPassword(SUPER_ADMIN_BOOTSTRAP_PASSWORD),
+              createdAt: new Date().toISOString(),
+              roleOverride: 'super_admin',
+              lastProvider: 'password',
+              avatarUrl: undefined,
+            };
+            users = [superAdmin, ...users];
+          } else {
+            superAdmin.passwordHash = hashPassword(SUPER_ADMIN_BOOTSTRAP_PASSWORD);
+            superAdmin.roleOverride = 'super_admin';
+            superAdmin.lastProvider = 'password';
+          }
+          await saveUsers();
+          const token = createSession(superAdmin.id);
+          await saveSessions();
+          send(res, 200, { session: buildSessionPayload(superAdmin) }, { ...headers, 'Set-Cookie': createSessionCookie(token) });
+          return;
+        }
+
         const user = users.find((item) => item.email === email);
         if (user && SUPER_ADMIN_EMAILS.has(email) && !user.passwordHash) {
           send(res, 400, {
