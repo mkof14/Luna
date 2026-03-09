@@ -72,6 +72,8 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
   const [billingPeriod, setBillingPeriod] = useState<'month' | 'year'>('month');
   const [trialState, setTrialState] = useState<TrialState | null>(null);
   const [trialFeedback, setTrialFeedback] = useState('');
+  const [isStandaloneMode, setIsStandaloneMode] = useState(false);
+  const [mobilePlatform, setMobilePlatform] = useState<'ios' | 'android' | 'other'>('other');
 
   const loadingLabelByLang: Record<Language, string> = {
     en: 'Loading',
@@ -89,6 +91,116 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       {loadingLabelByLang[lang]}...
     </div>
   );
+
+  const installGuideByLang: Record<
+    Language,
+    {
+      title: string;
+      subtitle: string;
+      iosStep1: string;
+      iosStep2: string;
+      androidStep1: string;
+      androidStep2: string;
+      cta: string;
+    }
+  > = {
+    en: {
+      title: 'Install Luna As App',
+      subtitle: 'Use Luna full-screen and open in one tap.',
+      iosStep1: 'Tap Share in Safari.',
+      iosStep2: 'Select Add to Home Screen.',
+      androidStep1: 'Tap Install when browser suggests it.',
+      androidStep2: 'Or open browser menu and choose Install App.',
+      cta: 'Create Account',
+    },
+    ru: {
+      title: 'Установите Luna Как App',
+      subtitle: 'Открывайте Luna в полноэкранном режиме в один тап.',
+      iosStep1: 'Нажмите Поделиться в Safari.',
+      iosStep2: 'Выберите На экран Домой.',
+      androidStep1: 'Нажмите Установить, когда браузер предложит.',
+      androidStep2: 'Или откройте меню браузера и выберите Установить приложение.',
+      cta: 'Создать Аккаунт',
+    },
+    uk: {
+      title: 'Встановіть Luna Як App',
+      subtitle: 'Відкривайте Luna у повному екрані в один дотик.',
+      iosStep1: 'Натисніть Поділитися в Safari.',
+      iosStep2: 'Оберіть На екран Додому.',
+      androidStep1: 'Натисніть Встановити, коли браузер запропонує.',
+      androidStep2: 'Або відкрийте меню браузера і виберіть Встановити застосунок.',
+      cta: 'Створити Акаунт',
+    },
+    es: {
+      title: 'Instala Luna Como App',
+      subtitle: 'Abre Luna en pantalla completa con un toque.',
+      iosStep1: 'Toca Compartir en Safari.',
+      iosStep2: 'Elige Anadir a inicio.',
+      androidStep1: 'Toca Instalar cuando el navegador lo sugiera.',
+      androidStep2: 'O abre el menu del navegador y elige Instalar app.',
+      cta: 'Crear Cuenta',
+    },
+    fr: {
+      title: 'Installer Luna Comme App',
+      subtitle: 'Ouvrez Luna en plein ecran en un geste.',
+      iosStep1: 'Touchez Partager dans Safari.',
+      iosStep2: 'Choisissez Sur l ecran d accueil.',
+      androidStep1: 'Touchez Installer lorsque le navigateur le propose.',
+      androidStep2: 'Ou ouvrez le menu du navigateur puis Installer l app.',
+      cta: 'Creer Un Compte',
+    },
+    de: {
+      title: 'Luna Als App Installieren',
+      subtitle: 'Luna im Vollbild mit einem Tippen offnen.',
+      iosStep1: 'In Safari auf Teilen tippen.',
+      iosStep2: 'Zum Home-Bildschirm auswahlen.',
+      androidStep1: 'Auf Installieren tippen, wenn der Browser es anbietet.',
+      androidStep2: 'Oder im Browsermenu App installieren wahlen.',
+      cta: 'Konto Erstellen',
+    },
+    zh: {
+      title: '将 Luna 安装为 App',
+      subtitle: '全屏打开 Luna，一键进入。',
+      iosStep1: '在 Safari 中点击分享。',
+      iosStep2: '选择添加到主屏幕。',
+      androidStep1: '浏览器提示时点击安装。',
+      androidStep2: '或打开浏览器菜单，选择安装应用。',
+      cta: '创建账号',
+    },
+    ja: {
+      title: 'Luna をアプリとしてインストール',
+      subtitle: '全画面で素早く起動できます。',
+      iosStep1: 'Safari の共有をタップ。',
+      iosStep2: 'ホーム画面に追加を選択。',
+      androidStep1: 'ブラウザのインストール提案をタップ。',
+      androidStep2: 'またはブラウザメニューからアプリをインストール。',
+      cta: 'アカウント作成',
+    },
+    pt: {
+      title: 'Instale Luna Como App',
+      subtitle: 'Abra Luna em tela cheia com um toque.',
+      iosStep1: 'Toque em Compartilhar no Safari.',
+      iosStep2: 'Escolha Adicionar a Tela Inicial.',
+      androidStep1: 'Toque em Instalar quando o navegador sugerir.',
+      androidStep2: 'Ou abra o menu do navegador e escolha Instalar app.',
+      cta: 'Criar Conta',
+    },
+  };
+  const installGuide = installGuideByLang[lang] || installGuideByLang.en;
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const standalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (typeof (window.navigator as Navigator & { standalone?: boolean }).standalone === 'boolean' &&
+        Boolean((window.navigator as Navigator & { standalone?: boolean }).standalone));
+    setIsStandaloneMode(standalone);
+
+    const ua = window.navigator.userAgent.toLowerCase();
+    if (/iphone|ipad|ipod/.test(ua)) setMobilePlatform('ios');
+    else if (/android/.test(ua)) setMobilePlatform('android');
+    else setMobilePlatform('other');
+  }, []);
 
   const pricingUiByLang: Record<
     Language,
@@ -809,6 +921,34 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
                 </div>
               </div>
             </article>
+
+            {!isStandaloneMode && (
+              <article className="md:hidden rounded-[2.2rem] border border-slate-200/80 dark:border-slate-700/80 bg-gradient-to-br from-[#f3e5ec]/95 via-[#e8e1ef]/93 to-[#dce6f6]/90 dark:from-slate-900/86 dark:to-slate-800/84 p-5 shadow-luna-rich space-y-4">
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black uppercase tracking-[0.28em] text-luna-purple">{installGuide.title}</p>
+                  <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">{installGuide.subtitle}</p>
+                </div>
+                <div className="grid grid-cols-1 gap-2">
+                  {mobilePlatform === 'ios' ? (
+                    <>
+                      <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">1. {installGuide.iosStep1}</p>
+                      <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">2. {installGuide.iosStep2}</p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">1. {installGuide.androidStep1}</p>
+                      <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">2. {installGuide.androidStep2}</p>
+                    </>
+                  )}
+                </div>
+                <button
+                  onClick={onSignUp}
+                  className="px-5 py-3 rounded-full bg-gradient-to-r from-luna-purple via-luna-coral to-luna-teal text-white text-[10px] font-black uppercase tracking-[0.18em] shadow-luna-rich"
+                >
+                  {installGuide.cta}
+                </button>
+              </article>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               <article className="lg:col-span-6 rounded-[2.5rem] border border-slate-200/70 dark:border-slate-800 bg-gradient-to-br from-[#f5e7ee]/92 via-[#eee3ef]/90 to-[#e2e8f4]/88 dark:from-slate-900/82 dark:to-slate-800/82 p-7 md:p-8 shadow-luna-rich space-y-4 relative overflow-hidden">
