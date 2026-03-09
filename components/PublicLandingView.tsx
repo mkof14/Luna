@@ -22,6 +22,11 @@ interface PublicLandingViewProps {
   ui: TranslationSchema;
 }
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+}
+
 export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, onSignUp, lang, setLang, theme, setTheme, ui }) => {
   type PublicPage = 'home' | 'map' | 'ritual' | 'bridge' | 'pricing' | 'about' | 'how_it_works' | 'privacy' | 'terms' | 'medical' | 'cookies' | 'data_rights';
   type TrialState = {
@@ -72,6 +77,8 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
   const [billingPeriod, setBillingPeriod] = useState<'month' | 'year'>('month');
   const [trialState, setTrialState] = useState<TrialState | null>(null);
   const [trialFeedback, setTrialFeedback] = useState('');
+  const [publicInstallPrompt, setPublicInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [installFeedback, setInstallFeedback] = useState('');
   const [isStandaloneMode, setIsStandaloneMode] = useState(false);
   const [mobilePlatform, setMobilePlatform] = useState<'ios' | 'android' | 'other'>('other');
 
@@ -564,6 +571,17 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     };
   }, [lang]);
 
+  useEffect(() => {
+    const onBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setPublicInstallPrompt(event as BeforeInstallPromptEvent);
+    };
+    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt);
+    };
+  }, []);
+
   const homeStory = landingNarratives?.homeStory || {
     heroTitle: 'Luna',
     heroLead: 'Luna — The physiology of feeling.',
@@ -643,6 +661,79 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
   };
   const legalLabels = legalLabelsByLang[lang];
   const footerSectionTitles = footerSectionTitlesByLang[lang] || footerSectionTitlesByLang.en;
+  const installActionsByLang: Record<Language, { ios: string; android: string; iosTip: string; androidTip: string; noPrompt: string }> = {
+    en: {
+      ios: 'iPhone Install',
+      android: 'Android Install',
+      iosTip: 'Open Safari -> Share -> Add to Home Screen.',
+      androidTip: 'Use browser menu -> Install App.',
+      noPrompt: 'Install prompt is not available in this browser session.',
+    },
+    ru: {
+      ios: 'Установить на iPhone',
+      android: 'Установить на Android',
+      iosTip: 'Откройте Safari -> Поделиться -> На экран Домой.',
+      androidTip: 'Используйте меню браузера -> Установить приложение.',
+      noPrompt: 'Системный install prompt сейчас недоступен в этом браузере.',
+    },
+    uk: {
+      ios: 'Встановити на iPhone',
+      android: 'Встановити на Android',
+      iosTip: 'Відкрийте Safari -> Поділитися -> На екран Додому.',
+      androidTip: 'Використайте меню браузера -> Встановити застосунок.',
+      noPrompt: 'Системний install prompt зараз недоступний у цьому браузері.',
+    },
+    es: {
+      ios: 'Instalar en iPhone',
+      android: 'Instalar en Android',
+      iosTip: 'Abre Safari -> Compartir -> Anadir a inicio.',
+      androidTip: 'Usa menu del navegador -> Instalar app.',
+      noPrompt: 'El prompt de instalacion no esta disponible ahora.',
+    },
+    fr: {
+      ios: 'Installer sur iPhone',
+      android: 'Installer sur Android',
+      iosTip: 'Ouvrez Safari -> Partager -> Sur l ecran d accueil.',
+      androidTip: 'Utilisez menu navigateur -> Installer app.',
+      noPrompt: "Le prompt d installation n est pas disponible actuellement.",
+    },
+    de: {
+      ios: 'Auf iPhone installieren',
+      android: 'Auf Android installieren',
+      iosTip: 'Safari offnen -> Teilen -> Zum Home-Bildschirm.',
+      androidTip: 'Browsermenu -> App installieren.',
+      noPrompt: 'Installationsdialog ist in dieser Sitzung nicht verfugbar.',
+    },
+    zh: {
+      ios: 'iPhone 安装',
+      android: 'Android 安装',
+      iosTip: '打开 Safari -> 分享 -> 添加到主屏幕。',
+      androidTip: '使用浏览器菜单 -> 安装应用。',
+      noPrompt: '当前浏览器会话中无法触发安装弹窗。',
+    },
+    ja: {
+      ios: 'iPhone にインストール',
+      android: 'Android にインストール',
+      iosTip: 'Safari を開く -> 共有 -> ホーム画面に追加。',
+      androidTip: 'ブラウザメニュー -> アプリをインストール。',
+      noPrompt: 'このブラウザではインストールダイアログを表示できません。',
+    },
+    pt: {
+      ios: 'Instalar no iPhone',
+      android: 'Instalar no Android',
+      iosTip: 'Abra Safari -> Compartilhar -> Adicionar a Tela Inicial.',
+      androidTip: 'Use menu do navegador -> Instalar app.',
+      noPrompt: 'O prompt de instalacao nao esta disponivel nesta sessao.',
+    },
+  };
+  const installActions = installActionsByLang[lang] || installActionsByLang.en;
+
+  const socialLinks = [
+    { id: 'facebook', label: 'Facebook', href: 'https://facebook.com' },
+    { id: 'instagram', label: 'Instagram', href: 'https://instagram.com' },
+    { id: 'youtube', label: 'YouTube', href: 'https://youtube.com' },
+    { id: 'tiktok', label: 'TikTok', href: 'https://tiktok.com' },
+  ];
   const aboutLabelByLang: Record<Language, string> = {
     en: 'About',
     ru: 'О проекте',
@@ -1161,6 +1252,8 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       </main>
 
       <footer className="w-full border-t border-slate-300 dark:border-white/10 py-14 px-6 glass mt-auto relative overflow-hidden">
+        <div className="pointer-events-none absolute -top-16 left-1/4 w-52 h-52 rounded-full bg-luna-purple/20 blur-[95px]" />
+        <div className="pointer-events-none absolute bottom-0 right-1/4 w-56 h-56 rounded-full bg-luna-teal/18 blur-[100px]" />
         <div className="max-w-7xl mx-auto space-y-10 relative z-10">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-2">
@@ -1180,12 +1273,12 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
               <p className="text-sm font-semibold text-slate-600 dark:text-slate-400">Luna — The physiology of feeling.</p>
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
             <nav className="space-y-4">
               <p className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">{footerSectionTitles.explore}</p>
-              <div className="flex flex-col gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
                 {footerPageLinks.map((page) => (
-                  <button key={`footer-${page.id}`} onClick={() => setActivePage(page.id)} className="text-left hover:text-luna-purple transition-colors">
+                  <button key={`footer-${page.id}`} onClick={() => setActivePage(page.id)} className="text-left hover:text-luna-purple transition-colors hover:-translate-y-[1px]">
                     {page.label}
                   </button>
                 ))}
@@ -1214,9 +1307,46 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
             </nav>
             <nav className="space-y-4">
               <p className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">{footerSectionTitles.install}</p>
-              <div className="flex flex-col gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
-                <p className="text-left">iPhone: Share -&gt; Add to Home Screen</p>
-                <p className="text-left">Android: Browser menu -&gt; Install App</p>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={() => setInstallFeedback(installActions.iosTip)}
+                  className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/75 dark:bg-slate-900/60 text-[9px] font-black uppercase tracking-[0.14em] text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/40 transition-colors text-left"
+                >
+                  {installActions.ios}
+                </button>
+                <button
+                  onClick={async () => {
+                    if (publicInstallPrompt) {
+                      await publicInstallPrompt.prompt();
+                      await publicInstallPrompt.userChoice;
+                      setInstallFeedback(installActions.androidTip);
+                      return;
+                    }
+                    setInstallFeedback(installActions.noPrompt);
+                  }}
+                  className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/75 dark:bg-slate-900/60 text-[9px] font-black uppercase tracking-[0.14em] text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/40 transition-colors text-left"
+                >
+                  {installActions.android}
+                </button>
+                {installFeedback && (
+                  <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">{installFeedback}</p>
+                )}
+              </div>
+            </nav>
+            <nav className="space-y-4">
+              <p className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">Social</p>
+              <div className="flex flex-col gap-2 text-[10px] font-black uppercase tracking-[0.2em]">
+                {socialLinks.map((social) => (
+                  <a
+                    key={social.id}
+                    href={social.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/75 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/40 hover:-translate-y-[1px] transition-all"
+                  >
+                    {social.label}
+                  </a>
+                ))}
               </div>
             </nav>
             <nav className="space-y-4">
