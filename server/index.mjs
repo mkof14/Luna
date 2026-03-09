@@ -34,6 +34,7 @@ const STRIPE_PRICE_MONTHLY_ID = String(process.env.STRIPE_PRICE_MONTHLY_ID || ''
 const STRIPE_PRICE_YEARLY_ID = String(process.env.STRIPE_PRICE_YEARLY_ID || '').trim();
 const STRIPE_SUCCESS_URL = String(process.env.STRIPE_SUCCESS_URL || '').trim();
 const STRIPE_CANCEL_URL = String(process.env.STRIPE_CANCEL_URL || '').trim();
+const STRIPE_PORTAL_RETURN_URL = String(process.env.STRIPE_PORTAL_RETURN_URL || '').trim();
 
 const ROLE_PERMISSIONS = {
   viewer: ['view_financials', 'view_technical_metrics'],
@@ -604,6 +605,25 @@ const sanitizeCorrectionPayload = (payload) => {
   return next;
 };
 
+const stripeRequest = async (method, url, body = null) => {
+  const response = await fetch(url, {
+    method,
+    headers: {
+      Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
+      ...(body ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
+    },
+    ...(body ? { body } : {}),
+  });
+  const raw = await response.text();
+  let parsed = {};
+  try {
+    parsed = raw ? JSON.parse(raw) : {};
+  } catch {
+    parsed = { raw };
+  }
+  return { ok: response.ok, status: response.status, data: parsed };
+};
+
 const start = async () => {
   let users = await readJson(DATA_FILE, []);
   if (!Array.isArray(users)) users = [];
@@ -1088,6 +1108,53 @@ const start = async () => {
         send(res, 200, { id: sessionId, url: checkoutUrl }, headers);
       } catch (error) {
         send(res, 500, { error: error instanceof Error ? error.message : 'Unable to create checkout session.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/billing/portal-session') {
+      const auth = await requireSession(req, res, headers);
+      if (!auth) return;
+
+      const configError = stripeConfigError();
+      if (configError) {
+        send(res, 503, { error: configError }, headers);
+        return;
+      }
+
+      try {
+        const lookup = await stripeRequest(
+          'GET',
+          `https://api.stripe.com/v1/customers?email=${encodeURIComponent(auth.current.user.email)}&limit=1`
+        );
+        if (!lookup.ok) {
+          send(res, 502, { error: 'Could not query Stripe customer.', detail: lookup.data }, headers);
+          return;
+        }
+
+        const customerId = safeText(lookup.data?.data?.[0]?.id, 120);
+        if (!customerId) {
+          send(res, 404, { error: 'No Stripe customer found for this account yet.' }, headers);
+          return;
+        }
+
+        const returnUrl =
+          STRIPE_PORTAL_RETURN_URL ||
+          STRIPE_SUCCESS_URL ||
+          `${req.headers.origin || 'http://localhost:3000'}/profile`;
+        const form = stripeFormBody([
+          ['customer', customerId],
+          ['return_url', returnUrl],
+        ]);
+        const portal = await stripeRequest('POST', 'https://api.stripe.com/v1/billing_portal/sessions', form);
+        if (!portal.ok) {
+          send(res, 502, { error: 'Stripe portal session creation failed.', detail: portal.data }, headers);
+          return;
+        }
+
+        send(res, 200, { id: safeText(portal.data?.id, 200), url: safeText(portal.data?.url, 1200) }, headers);
+      } catch (error) {
+        send(res, 500, { error: error instanceof Error ? error.message : 'Unable to create billing portal session.' }, headers);
       }
       return;
     }

@@ -1,8 +1,8 @@
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { dataService } from '../services/dataService';
 import { ProfileData } from '../types';
 import { normalizeProfileData } from '../utils/profile';
+import { billingService, BillingStatusPayload } from '../services/billingService';
 
 interface ProfileViewProps { onBack: () => void; }
 
@@ -11,6 +11,10 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ onBack }) => {
   const systemState = dataService.projectState(log);
   const [profile, setProfile] = useState<ProfileData>(systemState.profile);
   const [isSaved, setIsSaved] = useState(false);
+  const [billing, setBilling] = useState<BillingStatusPayload>({ status: 'inactive', plan: 'none' });
+  const [billingEnabled, setBillingEnabled] = useState(false);
+  const [billingLoading, setBillingLoading] = useState(false);
+  const [billingFeedback, setBillingFeedback] = useState('');
 
   const updateProfile = (updates: Partial<ProfileData>) => {
     setProfile(prev => ({ ...prev, ...updates }));
@@ -43,6 +47,37 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ onBack }) => {
   const inputClasses = "w-full luna-vivid-chip p-5 rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-800 outline-none font-bold text-base focus:ring-4 ring-luna-purple/5 focus:border-luna-purple/40 transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600 shadow-inner";
   const areaClasses = "w-full luna-vivid-chip p-6 rounded-[2rem] border-2 border-slate-100 dark:border-slate-800 outline-none font-bold text-base focus:ring-4 ring-luna-purple/5 focus:border-luna-purple/40 transition-all resize-none text-slate-800 dark:text-slate-200 min-h-[120px] shadow-inner";
 
+  useEffect(() => {
+    let alive = true;
+    billingService
+      .getStatus()
+      .then((payload) => {
+        if (!alive) return;
+        setBilling(payload.billing || { status: 'inactive', plan: 'none' });
+        setBillingEnabled(Boolean(payload.enabled));
+      })
+      .catch(() => {
+        if (!alive) return;
+        setBillingEnabled(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const openBillingPortal = async () => {
+    setBillingFeedback('');
+    setBillingLoading(true);
+    try {
+      const payload = await billingService.createPortalSession();
+      window.location.assign(payload.url);
+    } catch (error) {
+      setBillingFeedback(error instanceof Error ? error.message : 'Could not open billing portal.');
+    } finally {
+      setBillingLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto luna-page-shell luna-page-profile space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-1000 p-8 md:p-10 pb-32">
       {/* GLOBAL PROFILE ACTIONS */}
@@ -52,10 +87,28 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ onBack }) => {
           System Map
         </button>
         <div className="flex items-center gap-10">
+          <div className="hidden md:flex flex-col items-end gap-0.5">
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Billing</span>
+            <span className="text-[11px] font-bold text-slate-900 dark:text-slate-100">
+              {billingEnabled ? `${billing.status}${billing.period ? ` • ${billing.period}` : ''}` : 'Disabled'}
+            </span>
+          </div>
           {profile.lastUpdated && <div className="hidden md:flex flex-col items-end gap-0.5">
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Calibration Point</span>
             <span className="text-[11px] font-bold text-slate-900 dark:text-slate-100">{new Date(profile.lastUpdated).toLocaleDateString()}</span>
           </div>}
+          <button
+            type="button"
+            onClick={openBillingPortal}
+            disabled={!billingEnabled || billingLoading}
+            className={`px-8 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.2em] transition-all shadow-xl ${
+              billingEnabled && !billingLoading
+                ? 'bg-luna-purple/10 text-luna-purple border border-luna-purple/25 hover:scale-[1.02] active:scale-95'
+                : 'bg-slate-200/80 text-slate-500 border border-slate-300/80 cursor-not-allowed'
+            }`}
+          >
+            {billingLoading ? 'Opening...' : 'Manage Subscription'}
+          </button>
           <button 
             data-testid="profile-save"
             onClick={handleSave} 
@@ -65,6 +118,9 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ onBack }) => {
           </button>
         </div>
       </div>
+      {billingFeedback && (
+        <p className="text-xs font-bold text-center text-rose-500 -mt-8">{billingFeedback}</p>
+      )}
 
       <header className="text-center space-y-4 max-w-2xl mx-auto">
         <h2 className="text-6xl font-black tracking-tighter text-slate-900 dark:text-slate-100 uppercase">My Identity</h2>
