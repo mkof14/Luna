@@ -1,4 +1,5 @@
 import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
+import { Facebook, Instagram, Music2, Youtube } from 'lucide-react';
 import { Logo } from './Logo';
 import { Language, TranslationSchema } from '../constants';
 import LanguageSelector from './LanguageSelector';
@@ -729,10 +730,38 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
   const installActions = installActionsByLang[lang] || installActionsByLang.en;
 
   const socialLinks = [
-    { id: 'facebook', label: 'Facebook', href: 'https://facebook.com' },
-    { id: 'instagram', label: 'Instagram', href: 'https://instagram.com' },
-    { id: 'youtube', label: 'YouTube', href: 'https://youtube.com' },
-    { id: 'tiktok', label: 'TikTok', href: 'https://tiktok.com' },
+    {
+      id: 'facebook',
+      label: 'Facebook',
+      href: 'https://facebook.com',
+      icon: Facebook,
+      iconBg: 'bg-[#1877F2]/15',
+      iconColor: 'text-[#1877F2]',
+    },
+    {
+      id: 'instagram',
+      label: 'Instagram',
+      href: 'https://instagram.com',
+      icon: Instagram,
+      iconBg: 'bg-gradient-to-br from-[#F58529]/20 via-[#DD2A7B]/20 to-[#8134AF]/20',
+      iconColor: 'text-[#DD2A7B]',
+    },
+    {
+      id: 'youtube',
+      label: 'YouTube',
+      href: 'https://youtube.com',
+      icon: Youtube,
+      iconBg: 'bg-[#FF0000]/15',
+      iconColor: 'text-[#FF0000]',
+    },
+    {
+      id: 'tiktok',
+      label: 'TikTok',
+      href: 'https://tiktok.com',
+      icon: Music2,
+      iconBg: 'bg-[#111111]/15 dark:bg-white/10',
+      iconColor: 'text-[#111111] dark:text-white',
+    },
   ];
   const aboutLabelByLang: Record<Language, string> = {
     en: 'About',
@@ -1342,8 +1371,11 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
                     href={social.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/75 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/40 hover:-translate-y-[1px] transition-all"
+                    className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/75 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/40 hover:-translate-y-[1px] transition-all flex items-center gap-2"
                   >
+                    <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${social.iconBg}`}>
+                      <social.icon size={14} className={social.iconColor} />
+                    </span>
                     {social.label}
                   </a>
                 ))}
