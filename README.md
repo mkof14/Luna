@@ -62,6 +62,7 @@ Checks include:
 - public routes (`/`, `/pricing`, `/about`, `/how-it-works`)
 - session endpoint (`/api/auth/session`)
 - health endpoint (`/api/health`)
+- verbose diagnostics endpoint (`/api/health?verbose=1`)
 
 ## Monitoring
 

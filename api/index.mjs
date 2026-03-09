@@ -216,6 +216,73 @@ const sendEmpty = (res, status, extraHeaders = {}) => {
   res.end();
 };
 
+const isStripeConfigReady = () =>
+  Boolean(
+    STRIPE_SECRET_KEY &&
+      STRIPE_WEBHOOK_SECRET &&
+      STRIPE_PRICE_MONTHLY_ID &&
+      STRIPE_PRICE_YEARLY_ID &&
+      STRIPE_SUCCESS_URL &&
+      STRIPE_CANCEL_URL &&
+      STRIPE_PORTAL_RETURN_URL
+  );
+
+const checkStorageWritable = async () => {
+  try {
+    await fs.mkdir(DATA_DIR, { recursive: true });
+    const probePath = path.join(DATA_DIR, '.healthcheck-probe');
+    await fs.writeFile(probePath, String(Date.now()), 'utf8');
+    await fs.unlink(probePath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const buildHealthPayload = async ({ verbose = false } = {}) => {
+  const now = new Date().toISOString();
+  const storageWritable = await checkStorageWritable();
+  const stripeConfigReady = isStripeConfigReady();
+  const billingStatus = !BILLING_ENABLED ? 'disabled' : stripeConfigReady ? 'ready' : 'misconfigured';
+  const googleAuthConfigured = GOOGLE_CLIENT_IDS.size > 0;
+  const aiScanEnabled = Boolean(GEMINI_API_KEY);
+  const ok = storageWritable && (!BILLING_ENABLED || stripeConfigReady);
+  const warnings = [];
+
+  if (!storageWritable) warnings.push('Storage is not writable.');
+  if (BILLING_ENABLED && !stripeConfigReady) warnings.push('Stripe billing is enabled but required env vars are missing.');
+  if (!googleAuthConfigured) warnings.push('Google OAuth client IDs are not configured.');
+  if (!aiScanEnabled) warnings.push('AI scan-to-text is disabled (set GEMINI_API_KEY to enable).');
+
+  const payload = {
+    ok,
+    service: 'luna-auth-api',
+    timestamp: now,
+    uptimeSec: Math.floor(process.uptime()),
+    environment: process.env.VERCEL ? 'vercel' : 'node',
+    checks: {
+      storage: storageWritable ? 'ok' : 'error',
+      billing: billingStatus,
+      googleAuth: googleAuthConfigured ? 'configured' : 'missing',
+      aiScan: aiScanEnabled ? 'enabled' : 'disabled',
+    },
+  };
+
+  if (verbose) {
+    payload.warnings = warnings;
+    payload.config = {
+      allowedOrigins: ALLOWED_ORIGINS.size,
+      superAdminEmails: SUPER_ADMIN_EMAILS.size,
+      billingEnabled: BILLING_ENABLED,
+      stripeConfigReady,
+      googleClientIds: GOOGLE_CLIENT_IDS.size,
+      aiScanEnabled,
+    };
+  }
+
+  return payload;
+};
+
 const readBody = async (req) => {
   const chunks = [];
   for await (const chunk of req) {
@@ -794,7 +861,9 @@ const start = async () => {
     }
 
     if (method === 'GET' && url.pathname === '/api/health') {
-      send(res, 200, { ok: true, service: 'luna-auth-api' }, headers);
+      const verbose = ['1', 'true', 'yes'].includes(String(url.searchParams.get('verbose') || '').toLowerCase());
+      const payload = await buildHealthPayload({ verbose });
+      send(res, payload.ok ? 200 : 503, payload, headers);
       return;
     }
 

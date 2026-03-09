@@ -9,12 +9,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = Number(process.env.AUTH_API_PORT || 8787);
-const DATA_FILE = path.join(__dirname, 'data', 'users.json');
-const ADMIN_DATA_FILE = path.join(__dirname, 'data', 'admin-state.json');
-const CONTACTS_FILE = path.join(__dirname, 'data', 'contact-submissions.json');
-const SESSIONS_FILE = path.join(__dirname, 'data', 'sessions.json');
-const PRIVACY_REQUESTS_FILE = path.join(__dirname, 'data', 'privacy-requests.json');
-const BILLING_STATE_FILE = path.join(__dirname, 'data', 'billing-state.json');
+const DATA_DIR = path.join(__dirname, 'data');
+const DATA_FILE = path.join(DATA_DIR, 'users.json');
+const ADMIN_DATA_FILE = path.join(DATA_DIR, 'admin-state.json');
+const CONTACTS_FILE = path.join(DATA_DIR, 'contact-submissions.json');
+const SESSIONS_FILE = path.join(DATA_DIR, 'sessions.json');
+const PRIVACY_REQUESTS_FILE = path.join(DATA_DIR, 'privacy-requests.json');
+const BILLING_STATE_FILE = path.join(DATA_DIR, 'billing-state.json');
 
 const SESSION_COOKIE = 'luna_sid';
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
@@ -24,6 +25,12 @@ const SUPER_ADMIN_EMAILS = new Set(
   (process.env.SUPER_ADMIN_EMAILS || 'dnainform@gmail.com')
     .split(',')
     .map((email) => email.trim().toLowerCase())
+    .filter(Boolean)
+);
+const GOOGLE_CLIENT_IDS = new Set(
+  (process.env.AUTH_GOOGLE_CLIENT_IDS || process.env.VITE_GOOGLE_CLIENT_ID || '')
+    .split(',')
+    .map((id) => id.trim())
     .filter(Boolean)
 );
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.API_KEY || '';
@@ -208,6 +215,73 @@ const sendEmpty = (res, status, extraHeaders = {}) => {
     ...extraHeaders,
   });
   res.end();
+};
+
+const isStripeConfigReady = () =>
+  Boolean(
+    STRIPE_SECRET_KEY &&
+      STRIPE_WEBHOOK_SECRET &&
+      STRIPE_PRICE_MONTHLY_ID &&
+      STRIPE_PRICE_YEARLY_ID &&
+      STRIPE_SUCCESS_URL &&
+      STRIPE_CANCEL_URL &&
+      STRIPE_PORTAL_RETURN_URL
+  );
+
+const checkStorageWritable = async () => {
+  try {
+    await fs.mkdir(DATA_DIR, { recursive: true });
+    const probePath = path.join(DATA_DIR, '.healthcheck-probe');
+    await fs.writeFile(probePath, String(Date.now()), 'utf8');
+    await fs.unlink(probePath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const buildHealthPayload = async ({ verbose = false } = {}) => {
+  const now = new Date().toISOString();
+  const storageWritable = await checkStorageWritable();
+  const stripeConfigReady = isStripeConfigReady();
+  const billingStatus = !BILLING_ENABLED ? 'disabled' : stripeConfigReady ? 'ready' : 'misconfigured';
+  const googleAuthConfigured = GOOGLE_CLIENT_IDS.size > 0;
+  const aiScanEnabled = Boolean(GEMINI_API_KEY);
+  const ok = storageWritable && (!BILLING_ENABLED || stripeConfigReady);
+  const warnings = [];
+
+  if (!storageWritable) warnings.push('Storage is not writable.');
+  if (BILLING_ENABLED && !stripeConfigReady) warnings.push('Stripe billing is enabled but required env vars are missing.');
+  if (!googleAuthConfigured) warnings.push('Google OAuth client IDs are not configured.');
+  if (!aiScanEnabled) warnings.push('AI scan-to-text is disabled (set GEMINI_API_KEY to enable).');
+
+  const payload = {
+    ok,
+    service: 'luna-auth-api',
+    timestamp: now,
+    uptimeSec: Math.floor(process.uptime()),
+    environment: 'node',
+    checks: {
+      storage: storageWritable ? 'ok' : 'error',
+      billing: billingStatus,
+      googleAuth: googleAuthConfigured ? 'configured' : 'missing',
+      aiScan: aiScanEnabled ? 'enabled' : 'disabled',
+    },
+  };
+
+  if (verbose) {
+    payload.warnings = warnings;
+    payload.config = {
+      allowedOrigins: ALLOWED_ORIGINS.size,
+      superAdminEmails: SUPER_ADMIN_EMAILS.size,
+      billingEnabled: BILLING_ENABLED,
+      stripeConfigReady,
+      googleClientIds: GOOGLE_CLIENT_IDS.size,
+      aiScanEnabled,
+    };
+  }
+
+  return payload;
 };
 
 const readBody = async (req) => {
@@ -716,7 +790,9 @@ const start = async () => {
     }
 
     if (method === 'GET' && url.pathname === '/api/health') {
-      send(res, 200, { ok: true, service: 'luna-auth-api' }, headers);
+      const verbose = ['1', 'true', 'yes'].includes(String(url.searchParams.get('verbose') || '').toLowerCase());
+      const payload = await buildHealthPayload({ verbose });
+      send(res, payload.ok ? 200 : 503, payload, headers);
       return;
     }
 
