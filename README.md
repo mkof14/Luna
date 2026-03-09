@@ -64,6 +64,9 @@ Checks include:
 - health endpoint (`/api/health`)
 - verbose diagnostics endpoint (`/api/health?verbose=1`)
 
+Commercial manual smoke runbook (5-10 min):
+- `/Users/mk/Desktop/Luna/docs/COMMERCIAL_SMOKE_RUNBOOK.md`
+
 ## Monitoring
 
 ### Frontend error monitoring (Sentry)
