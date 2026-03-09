@@ -12,8 +12,7 @@ interface AppFooterProps {
 
 export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canAccessAdmin }) => {
   const footerSectionTitleClass = 'text-xs font-black uppercase tracking-[0.28em] text-luna-purple';
-  const footerLinkClass =
-    'w-full text-left px-4 py-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white/75 dark:bg-slate-900/50 text-[10px] font-black uppercase tracking-[0.16em] text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/40 hover:bg-luna-purple/5 transition-all';
+  const footerLinkClass = 'text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-luna-purple transition-colors';
 
   const footerCopyByLang: Record<Language, { sanctuary: string; howItWorks: string; terms: string; legal: string; about: string; privacy: string; medical: string; cookies: string; dataRights: string }> = {
     en: {
@@ -116,76 +115,32 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
       dataRights: 'Direitos De Dados',
     },
   };
-  const sectionTitlesByLang: Record<Language, { core: string; awareness: string; harmony: string; support: string; legal: string; account: string }> = {
-    en: { core: 'Core', awareness: 'Awareness', harmony: 'Harmony', support: 'Support', legal: 'Legal', account: 'Account' },
-    ru: { core: 'Основа', awareness: 'Осознанность', harmony: 'Гармония', support: 'Поддержка', legal: 'Юридический', account: 'Аккаунт' },
-    uk: { core: 'Основа', awareness: 'Усвідомлення', harmony: 'Гармонія', support: 'Підтримка', legal: 'Юридичний', account: 'Акаунт' },
-    es: { core: 'Base', awareness: 'Conciencia', harmony: 'Armonia', support: 'Soporte', legal: 'Legal', account: 'Cuenta' },
-    fr: { core: 'Base', awareness: 'Conscience', harmony: 'Harmonie', support: 'Support', legal: 'Juridique', account: 'Compte' },
-    de: { core: 'Basis', awareness: 'Achtsamkeit', harmony: 'Harmonie', support: 'Support', legal: 'Recht', account: 'Konto' },
-    zh: { core: '核心', awareness: '觉察', harmony: '和谐', support: '支持', legal: '法律', account: '账户' },
-    ja: { core: 'コア', awareness: '気づき', harmony: 'ハーモニー', support: 'サポート', legal: '法務', account: 'アカウント' },
-    pt: { core: 'Base', awareness: 'Consciencia', harmony: 'Harmonia', support: 'Suporte', legal: 'Legal', account: 'Conta' },
-  };
-  const installCopyByLang: Record<Language, { title: string; subtitle: string; ios: string; android: string }> = {
-    en: {
-      title: 'Install App',
-      subtitle: 'Mobile install guide',
-      ios: 'iPhone: Share -> Add to Home Screen',
-      android: 'Android: Browser menu -> Install App',
-    },
-    ru: {
-      title: 'Установить App',
-      subtitle: 'Инструкция для мобильной установки',
-      ios: 'iPhone: Поделиться -> На экран Домой',
-      android: 'Android: Меню браузера -> Установить приложение',
-    },
-    uk: {
-      title: 'Встановити App',
-      subtitle: 'Інструкція для мобільного встановлення',
-      ios: 'iPhone: Поділитися -> На екран Додому',
-      android: 'Android: Меню браузера -> Встановити застосунок',
-    },
-    es: {
-      title: 'Instalar App',
-      subtitle: 'Guia de instalacion movil',
-      ios: 'iPhone: Compartir -> Anadir a inicio',
-      android: 'Android: Menu del navegador -> Instalar app',
-    },
-    fr: {
-      title: 'Installer App',
-      subtitle: 'Guide installation mobile',
-      ios: 'iPhone: Partager -> Sur l ecran d accueil',
-      android: 'Android: Menu navigateur -> Installer app',
-    },
-    de: {
-      title: 'App Installieren',
-      subtitle: 'Anleitung fur mobile Installation',
-      ios: 'iPhone: Teilen -> Zum Home-Bildschirm',
-      android: 'Android: Browsermenu -> App installieren',
-    },
-    zh: {
-      title: '安装 App',
-      subtitle: '移动端安装说明',
-      ios: 'iPhone：分享 -> 添加到主屏幕',
-      android: 'Android：浏览器菜单 -> 安装应用',
-    },
-    ja: {
-      title: 'App をインストール',
-      subtitle: 'モバイル版のインストール手順',
-      ios: 'iPhone: 共有 -> ホーム画面に追加',
-      android: 'Android: ブラウザメニュー -> アプリをインストール',
-    },
-    pt: {
-      title: 'Instalar App',
-      subtitle: 'Guia de instalacao mobile',
-      ios: 'iPhone: Compartilhar -> Adicionar a Tela Inicial',
-      android: 'Android: Menu do navegador -> Instalar app',
-    },
+  const sectionTitlesByLang: Record<Language, { core: string; awareness: string; harmony: string; support: string; legal: string; public: string; social: string; account: string }> = {
+    en: { core: 'Core', awareness: 'Awareness', harmony: 'Harmony', support: 'Support', legal: 'Legal', public: 'Public', social: 'Social', account: 'Account' },
+    ru: { core: 'Основа', awareness: 'Осознанность', harmony: 'Гармония', support: 'Поддержка', legal: 'Юридический', public: 'Публичный', social: 'Соцсети', account: 'Аккаунт' },
+    uk: { core: 'Основа', awareness: 'Усвідомлення', harmony: 'Гармонія', support: 'Підтримка', legal: 'Юридичний', public: 'Публічний', social: 'Соцмережі', account: 'Акаунт' },
+    es: { core: 'Base', awareness: 'Conciencia', harmony: 'Armonia', support: 'Soporte', legal: 'Legal', public: 'Publico', social: 'Social', account: 'Cuenta' },
+    fr: { core: 'Base', awareness: 'Conscience', harmony: 'Harmonie', support: 'Support', legal: 'Juridique', public: 'Public', social: 'Social', account: 'Compte' },
+    de: { core: 'Basis', awareness: 'Achtsamkeit', harmony: 'Harmonie', support: 'Support', legal: 'Recht', public: 'Offentlich', social: 'Social', account: 'Konto' },
+    zh: { core: '核心', awareness: '觉察', harmony: '和谐', support: '支持', legal: '法律', public: '公开', social: '社交', account: '账户' },
+    ja: { core: 'コア', awareness: '気づき', harmony: 'ハーモニー', support: 'サポート', legal: '法務', public: '公開', social: 'ソーシャル', account: 'アカウント' },
+    pt: { core: 'Base', awareness: 'Consciencia', harmony: 'Harmonia', support: 'Suporte', legal: 'Legal', public: 'Publico', social: 'Social', account: 'Conta' },
   };
   const footerCopy = footerCopyByLang[lang] || footerCopyByLang.en;
   const sectionTitles = sectionTitlesByLang[lang] || sectionTitlesByLang.en;
-  const installCopy = installCopyByLang[lang] || installCopyByLang.en;
+  const publicLinks = [
+    { href: '/', label: ui.publicHome.tabs.home },
+    { href: '/luna-balance', label: ui.publicHome.tabs.map },
+    { href: '/ritual-path', label: 'Ritual Path' },
+    { href: '/the-bridge', label: ui.navigation.bridge || 'The Bridge' },
+    { href: '/pricing', label: 'Pricing' },
+  ];
+  const socialLinks = [
+    { href: 'https://facebook.com', label: 'Facebook' },
+    { href: 'https://instagram.com', label: 'Instagram' },
+    { href: 'https://youtube.com', label: 'YouTube' },
+    { href: 'https://tiktok.com', label: 'TikTok' },
+  ];
   return (
     <footer className="w-full border-t border-slate-300 dark:border-white/10 py-24 px-6 glass mt-auto relative overflow-hidden">
       <div className="max-w-7xl mx-auto space-y-20 relative z-10">
@@ -195,17 +150,12 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
             <p className="text-base font-bold text-slate-700 dark:text-slate-400 leading-relaxed max-w-sm italic">
               Luna — The physiology of feeling.
             </p>
-            <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white/75 dark:bg-slate-900/50 p-4 space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-luna-purple">{installCopy.title}</p>
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{installCopy.subtitle}</p>
-              <p className="text-[11px] font-bold text-slate-600 dark:text-slate-300">{installCopy.ios}</p>
-              <p className="text-[11px] font-bold text-slate-600 dark:text-slate-300">{installCopy.android}</p>
-            </div>
+            <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 leading-relaxed max-w-sm">{footerCopy.sanctuary}</p>
           </div>
 
           <nav className="space-y-6">
             <h4 className={footerSectionTitleClass}>{sectionTitles.core}</h4>
-            <ul className="grid grid-cols-1 gap-3">
+            <ul className="grid grid-cols-1 gap-2">
               {[
                 { id: 'dashboard', label: ui.navigation.home },
                 { id: 'cycle', label: ui.navigation.cycle },
@@ -224,7 +174,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
 
           <nav className="space-y-6">
             <h4 className={footerSectionTitleClass}>{sectionTitles.awareness}</h4>
-            <ul className="grid grid-cols-1 gap-3">
+            <ul className="grid grid-cols-1 gap-2">
               {[
                 { id: 'history', label: ui.navigation.history },
                 { id: 'reflections', label: ui.navigation.reflections },
@@ -243,7 +193,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
 
           <nav className="space-y-6">
             <h4 className={footerSectionTitleClass}>{sectionTitles.harmony}</h4>
-            <ul className="grid grid-cols-1 gap-3">
+            <ul className="grid grid-cols-1 gap-2">
               {[
                 { id: 'bridge', label: ui.navigation.bridge || 'The Bridge' },
                 { id: 'relationships', label: 'Relationships' },
@@ -261,7 +211,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
 
           <nav className="space-y-6">
             <h4 className={footerSectionTitleClass}>{sectionTitles.support}</h4>
-            <ul className="grid grid-cols-1 gap-3">
+            <ul className="grid grid-cols-1 gap-2">
                 {[
                   { id: 'faq', label: ui.navigation.faq },
                   { id: 'contact', label: ui.navigation.contact },
@@ -272,7 +222,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
                 <li key={item.id}>
                   <button
                     onClick={() => navigateTo(item.id as TabType)}
-                    className={`${footerLinkClass} ${item.id === 'crisis' ? 'text-rose-600 hover:text-rose-700 hover:border-rose-300/70 hover:bg-rose-50/70 dark:hover:bg-rose-900/20' : ''}`}
+                    className={`${footerLinkClass} ${item.id === 'crisis' ? 'text-rose-600 hover:text-rose-700' : ''}`}
                   >
                     {item.label}
                   </button>
@@ -283,7 +233,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
 
           <nav className="space-y-6">
             <h4 className={footerSectionTitleClass}>{footerCopy.legal}</h4>
-            <ul className="grid grid-cols-1 gap-3">
+            <ul className="grid grid-cols-1 gap-2">
               {[
                 { id: 'privacy', label: footerCopy.privacy },
                 { id: 'terms', label: footerCopy.terms },
@@ -299,13 +249,35 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
               ))}
             </ul>
           </nav>
+
+          <nav className="space-y-6">
+            <h4 className={footerSectionTitleClass}>{sectionTitles.public}</h4>
+            <ul className="grid grid-cols-1 gap-2">
+              {publicLinks.map((item) => (
+                <li key={item.href}>
+                  <a href={item.href} className={footerLinkClass}>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
 
-        <div className="pt-12 border-t border-slate-300 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-10">
+        <div className="pt-12 border-t border-slate-300 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-8">
           <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-500 dark:text-slate-400">
             © 2026 LUNA BALANCE SYSTEMS • LOCAL-FIRST HYBRID ARCHITECTURE
           </p>
-          <div className="flex flex-wrap items-center justify-end gap-6">
+          <div className="flex flex-col items-end gap-4">
+            <div className="flex items-center gap-4">
+              <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">{sectionTitles.social}</span>
+              {socialLinks.map((social) => (
+                <a key={social.href} href={social.href} target="_blank" rel="noreferrer" className="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-luna-purple transition-colors">
+                  {social.label}
+                </a>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center justify-end gap-6">
             <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">{sectionTitles.account}</span>
             <span
               onClick={() => navigateTo('admin')}
@@ -314,6 +286,7 @@ export const AppFooter: React.FC<AppFooterProps> = ({ ui, lang, navigateTo, canA
               {ui.navigation.admin || 'Admin'}
             </span>
             <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-700">v5.0.1</span>
+            </div>
           </div>
         </div>
         <div className="rounded-2xl border border-slate-300/70 dark:border-slate-700/70 bg-slate-100/85 dark:bg-slate-900/45 p-4">

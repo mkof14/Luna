@@ -601,7 +601,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="lg:col-span-4 space-y-10">
           <aside className="p-10 bg-slate-950 text-white dark:bg-[#081a3d] rounded-[4rem] flex flex-col justify-center shadow-luna-deep border border-slate-800 dark:border-[#2a4670] relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-10 text-8xl group-hover:scale-110 transition-transform">💡</div>
-            <h2 className="text-sm md:text-base font-black uppercase tracking-[0.25em] text-slate-500 mb-6">{ui.dashboard.insight}</h2>
+            <h2 className="text-[11px] md:text-xs font-black uppercase tracking-[0.16em] text-slate-500 mb-6">{ui.dashboard.insight}</h2>
             <p className="text-xl font-bold italic leading-relaxed text-slate-100 z-10">
               {ruleOutput.archetype ? ruleOutput.archetype.description : ui.dashboard.baselineInsight}
             </p>
@@ -609,7 +609,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <aside className="p-10 bg-white dark:bg-[#081a3d] rounded-[4rem] border-2 border-slate-200 dark:border-[#2a4670] shadow-luna-rich relative overflow-hidden group">
             <div className="absolute -bottom-4 -right-4 p-8 opacity-5 text-8xl group-hover:scale-110 transition-transform">🌿</div>
-            <h2 className="text-sm md:text-base font-black uppercase tracking-[0.25em] text-luna-purple mb-6">{ui.dashboard.dailyTip}</h2>
+            <h2 className="text-[11px] md:text-xs font-black uppercase tracking-[0.16em] text-luna-purple mb-6">{ui.dashboard.dailyTip}</h2>
             <p className="text-lg font-black text-slate-900 dark:text-slate-100 leading-tight">
               {ui.dashboard.hydrateTip}
             </p>
@@ -617,7 +617,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </aside>
 
           <aside className="p-8 bg-gradient-to-br from-[#f6ebf7]/90 to-[#e7edf9]/90 dark:from-[#081a3d]/96 dark:to-[#0e2a55]/94 rounded-[3rem] border border-slate-200/80 dark:border-[#2a4670] shadow-luna-rich space-y-4">
-            <h2 className="text-sm md:text-base font-black uppercase tracking-[0.2em] text-luna-purple">{retentionCopy.title}</h2>
+            <h2 className="text-[11px] md:text-xs font-black uppercase tracking-[0.16em] text-luna-purple">{retentionCopy.title}</h2>
             <div className="grid grid-cols-3 gap-3">
               <div className="rounded-2xl bg-white/75 dark:bg-[#0b1d40]/92 p-3 text-center">
                 <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">{retentionCopy.streak}</p>
@@ -641,7 +641,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </aside>
 
           <aside className="p-8 bg-white dark:bg-[#081a3d] rounded-[3rem] border border-slate-200/80 dark:border-[#2a4670] shadow-luna-rich space-y-4">
-            <h2 className="text-sm md:text-base font-black uppercase tracking-[0.2em] text-luna-purple">{retentionCopy.reminderTitle}</h2>
+            <h2 className="text-[11px] md:text-xs font-black uppercase tracking-[0.16em] text-luna-purple">{retentionCopy.reminderTitle}</h2>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setReminderEnabled((prev) => !prev)}
@@ -710,7 +710,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </aside>
 
           <aside className="p-8 bg-white dark:bg-[#081a3d] rounded-[3rem] border border-slate-200/80 dark:border-[#2a4670] shadow-luna-rich space-y-4">
-            <h2 className="text-sm md:text-base font-black uppercase tracking-[0.2em] text-luna-purple">{billingCopy.title}</h2>
+            <h2 className="text-[11px] md:text-xs font-black uppercase tracking-[0.16em] text-luna-purple">{billingCopy.title}</h2>
             {billingLoading ? (
               <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{billingCopy.loading}</p>
             ) : (
@@ -766,7 +766,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="rounded-[2rem] border border-luna-purple/30 bg-gradient-to-r from-luna-purple/10 via-luna-coral/10 to-luna-teal/10 p-5 md:p-6 mb-2">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="space-y-2">
-              <p className="text-sm md:text-base font-black uppercase tracking-[0.2em] text-luna-purple">Explore Knowledge</p>
+              <p className="text-[11px] md:text-xs font-black uppercase tracking-[0.16em] text-luna-purple">Explore Knowledge</p>
               <p className="text-sm md:text-base font-bold text-slate-800 dark:text-slate-100">
                 Open the hormone library to understand why this marker matters, what influences it, and what to discuss with your doctor.
               </p>
@@ -774,13 +774,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="flex items-center gap-3">
               <button
                 onClick={() => navigateTo('library')}
-                className="px-5 py-2.5 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-[0.18em] shadow-luna-rich hover:brightness-110 transition-all"
+                className="px-5 py-2.5 rounded-full bg-luna-purple text-white text-[9px] font-black uppercase tracking-[0.12em] shadow-luna-rich hover:brightness-110 transition-all"
               >
                 {ui.dashboard.exploreKnowledge}
               </button>
               <button
                 onClick={() => navigateTo('labs')}
-                className="px-5 py-2.5 rounded-full border border-luna-purple/40 text-luna-purple bg-white/80 dark:bg-slate-900/70 text-[10px] font-black uppercase tracking-[0.18em] hover:bg-luna-purple/10 transition-all"
+                className="px-5 py-2.5 rounded-full border border-luna-purple/40 text-luna-purple bg-white/80 dark:bg-slate-900/70 text-[9px] font-black uppercase tracking-[0.12em] hover:bg-luna-purple/10 transition-all"
               >
                 My Health Reports
               </button>
