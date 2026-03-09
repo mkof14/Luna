@@ -8,6 +8,7 @@ import { copyTextSafely, shareTextSafely } from '../utils/share';
 import { Language } from '../constants';
 import { getLabsViewLocalizedContent } from '../utils/labsViewContent';
 import { clearLabsDraftSnapshot, createDefaultSexualScores, readLabsDraftSnapshot, writeLabsDraftSnapshot } from '../utils/labsDraft';
+import { briefService } from '../services/briefService';
 import {
   computeHormoneSignals,
   detectLabValueConflicts,
@@ -242,11 +243,24 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
 
   const doctorQuestions = useMemo(() => {
     const risky = hormoneSignals.filter((s) => s.status === 'low' || s.status === 'high').slice(0, 4);
-    if (risky.length === 0) return [];
-    return risky.map((signal) => {
+    const riskQuestions = risky.map((signal) => {
       const direction = signal.status === 'high' ? 'elevated' : 'reduced';
       return `Could ${signal.marker} (${direction}) explain my symptoms and cycle changes, and what follow-up test timing is best?`;
     });
+    const briefQuestions = briefService
+      .getItems()
+      .flatMap((item) => item.questions)
+      .slice(0, 8);
+    const combined = [...riskQuestions, ...briefQuestions];
+    const unique: string[] = [];
+    const seen = new Set<string>();
+    for (const question of combined) {
+      const key = question.trim().toLowerCase();
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      unique.push(question.trim());
+    }
+    return unique;
   }, [hormoneSignals]);
 
   const sexualOverview = useMemo(() => {
@@ -1207,7 +1221,7 @@ export const LabsView: React.FC<{ day: number; age: number; lang: Language; user
           </article>
 
           {hormoneSignals.length > 0 && (
-            <article className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/85 dark:bg-[#081a3d]/85 p-6 shadow-luna-rich space-y-4">
+            <article data-testid="labs-doctor-questions-card" className="rounded-[2rem] border border-slate-200/80 dark:border-slate-700/70 bg-white/85 dark:bg-[#081a3d]/85 p-6 shadow-luna-rich space-y-4">
               <p className="text-sm md:text-base font-black uppercase tracking-[0.14em] text-luna-purple">{reportsUi.hormoneSignals}</p>
               <div className="space-y-3">
                 {hormoneSignals.map((signal, idx) => (

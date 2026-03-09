@@ -1,9 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { HormoneData } from '../types';
 import { Logo } from './Logo';
 import { Language } from '../constants';
 import { getLocalizedHormone } from '../utils/hormoneLocalization';
+import { briefService } from '../services/briefService';
+import { dataService } from '../services/dataService';
 
 interface HormoneDetailProps {
   hormone: HormoneData;
@@ -13,21 +15,22 @@ interface HormoneDetailProps {
 
 const HormoneDetail: React.FC<HormoneDetailProps> = ({ hormone, lang, onClose }) => {
   const displayHormone = getLocalizedHormone(hormone, lang);
+  const [briefFeedback, setBriefFeedback] = useState('');
   const copyByLang: Record<Language, {
     back: string; currentState: string; coreMarker: string; howItFeels: string; yourExperience: string; dailyImpact: string;
     howItWorks: string; whatItAffects: string; whatItAffectsSub: string; whatInfluences: string; whatInfluencesSub: string;
     talkToDoctor: string; talkToDoctorSub: string; questionsToAsk: string; doctorHint: string; addToBrief: string;
-    privacy: string; privacySub: string;
+    privacy: string; privacySub: string; briefAdded: string; briefUpdated: string;
   }> = {
-    en: { back: 'Back', currentState: 'Current State', coreMarker: 'Core Marker', howItFeels: 'How it feels', yourExperience: 'Your experience', dailyImpact: 'Daily impact', howItWorks: 'How it works', whatItAffects: 'What it affects', whatItAffectsSub: 'Where this marker signals changes.', whatInfluences: 'What influences this', whatInfluencesSub: 'Variables that shift this baseline.', talkToDoctor: 'Talk to your doctor', talkToDoctorSub: 'Structured vocabulary for your consultation.', questionsToAsk: 'Questions to ask', doctorHint: 'Use these questions to start clinical dialogue.', addToBrief: 'Add to Brief', privacy: 'Privacy Promise Active', privacySub: 'Luna is a digital mirror. This mapping is observational and reflects your reported patterns across your rhythm history.' },
-    ru: { back: 'Назад', currentState: 'Текущее состояние', coreMarker: 'Ключевой маркер', howItFeels: 'Как ощущается', yourExperience: 'Ваш опыт', dailyImpact: 'Ежедневное влияние', howItWorks: 'Как это работает', whatItAffects: 'На что влияет', whatItAffectsSub: 'Где этот маркер отражает изменения.', whatInfluences: 'Что на это влияет', whatInfluencesSub: 'Факторы, сдвигающие этот baseline.', talkToDoctor: 'Обсудите с врачом', talkToDoctorSub: 'Структурированные формулировки для консультации.', questionsToAsk: 'Вопросы врачу', doctorHint: 'Используйте эти вопросы для клинического диалога.', addToBrief: 'Добавить в бриф', privacy: 'Режим приватности активен', privacySub: 'Luna — цифровое зеркало. Эта карта наблюдательная и отражает ваши паттерны по истории ритма.' },
-    uk: { back: 'Назад', currentState: 'Поточний стан', coreMarker: 'Ключовий маркер', howItFeels: 'Як відчувається', yourExperience: 'Ваш досвід', dailyImpact: 'Щоденний вплив', howItWorks: 'Як це працює', whatItAffects: 'На що впливає', whatItAffectsSub: 'Де цей маркер показує зміни.', whatInfluences: 'Що на це впливає', whatInfluencesSub: 'Фактори, що зміщують цей baseline.', talkToDoctor: 'Обговоріть з лікарем', talkToDoctorSub: 'Структурована лексика для консультації.', questionsToAsk: 'Питання до лікаря', doctorHint: 'Використайте ці питання для клінічного діалогу.', addToBrief: 'Додати в бриф', privacy: 'Режим приватності активний', privacySub: 'Luna — цифрове дзеркало. Ця карта є спостережною і відображає ваші патерни ритму.' },
-    es: { back: 'Atrás', currentState: 'Estado actual', coreMarker: 'Marcador clave', howItFeels: 'Cómo se siente', yourExperience: 'Tu experiencia', dailyImpact: 'Impacto diario', howItWorks: 'Cómo funciona', whatItAffects: 'Qué afecta', whatItAffectsSub: 'Dónde este marcador señala cambios.', whatInfluences: 'Qué lo influye', whatInfluencesSub: 'Variables que desplazan esta línea base.', talkToDoctor: 'Habla con tu médico', talkToDoctorSub: 'Vocabulario estructurado para tu consulta.', questionsToAsk: 'Preguntas para hacer', doctorHint: 'Usa estas preguntas para iniciar el diálogo clínico.', addToBrief: 'Añadir al resumen', privacy: 'Promesa de privacidad activa', privacySub: 'Luna es un espejo digital. Este mapa es observacional y refleja tus patrones reportados.' },
-    fr: { back: 'Retour', currentState: 'État actuel', coreMarker: 'Marqueur clé', howItFeels: 'Ressenti', yourExperience: 'Votre expérience', dailyImpact: 'Impact quotidien', howItWorks: 'Comment cela fonctionne', whatItAffects: 'Ce que cela affecte', whatItAffectsSub: 'Là où ce marqueur signale des changements.', whatInfluences: "Ce qui l'influence", whatInfluencesSub: 'Variables qui déplacent cette ligne de base.', talkToDoctor: 'Parlez à votre médecin', talkToDoctorSub: 'Vocabulaire structuré pour votre consultation.', questionsToAsk: 'Questions à poser', doctorHint: 'Utilisez ces questions pour lancer le dialogue clinique.', addToBrief: 'Ajouter au brief', privacy: 'Promesse de confidentialité active', privacySub: 'Luna est un miroir numérique. Cette cartographie est observationnelle et reflète vos schémas déclarés.' },
-    de: { back: 'Zurück', currentState: 'Aktueller Zustand', coreMarker: 'Kernmarker', howItFeels: 'Wie es sich anfühlt', yourExperience: 'Deine Erfahrung', dailyImpact: 'Tägliche Wirkung', howItWorks: 'Wie es wirkt', whatItAffects: 'Was es beeinflusst', whatItAffectsSub: 'Wo dieser Marker Veränderungen signalisiert.', whatInfluences: 'Was das beeinflusst', whatInfluencesSub: 'Variablen, die diese Basislinie verschieben.', talkToDoctor: 'Mit dem Arzt besprechen', talkToDoctorSub: 'Strukturierte Sprache für deine Konsultation.', questionsToAsk: 'Fragen an den Arzt', doctorHint: 'Nutze diese Fragen für den klinischen Dialog.', addToBrief: 'Zum Brief hinzufügen', privacy: 'Datenschutz aktiv', privacySub: 'Luna ist ein digitaler Spiegel. Diese Abbildung ist beobachtend und spiegelt deine gemeldeten Muster.' },
-    zh: { back: '返回', currentState: '当前状态', coreMarker: '核心指标', howItFeels: '主观感受', yourExperience: '你的体验', dailyImpact: '日常影响', howItWorks: '作用机制', whatItAffects: '影响范围', whatItAffectsSub: '该指标在哪些方面提示变化。', whatInfluences: '影响因素', whatInfluencesSub: '会改变该基线的变量。', talkToDoctor: '与医生沟通', talkToDoctorSub: '用于就诊沟通的结构化表达。', questionsToAsk: '可提问的问题', doctorHint: '使用这些问题开启临床沟通。', addToBrief: '加入简报', privacy: '隐私承诺已启用', privacySub: 'Luna 是数字镜像工具。该映射用于观察，反映你记录的节律模式。' },
-    ja: { back: '戻る', currentState: '現在の状態', coreMarker: 'コアマーカー', howItFeels: '体感', yourExperience: 'あなたの体験', dailyImpact: '日常への影響', howItWorks: '仕組み', whatItAffects: '影響する領域', whatItAffectsSub: 'このマーカーが変化を示す領域です。', whatInfluences: '影響要因', whatInfluencesSub: 'このベースラインを動かす要因。', talkToDoctor: '医師に相談', talkToDoctorSub: '受診時に使える構造化された語彙。', questionsToAsk: '確認したい質問', doctorHint: 'これらの質問で臨床対話を始めましょう。', addToBrief: 'ブリーフに追加', privacy: 'プライバシー保護有効', privacySub: 'Lunaはデジタルミラーです。このマッピングは観察目的で、記録されたパターンを反映します。' },
-    pt: { back: 'Voltar', currentState: 'Estado atual', coreMarker: 'Marcador central', howItFeels: 'Como se sente', yourExperience: 'Sua experiência', dailyImpact: 'Impacto diário', howItWorks: 'Como funciona', whatItAffects: 'O que afeta', whatItAffectsSub: 'Onde este marcador sinaliza mudanças.', whatInfluences: 'O que influencia isso', whatInfluencesSub: 'Variáveis que alteram essa linha de base.', talkToDoctor: 'Converse com seu médico', talkToDoctorSub: 'Vocabulário estruturado para sua consulta.', questionsToAsk: 'Perguntas para fazer', doctorHint: 'Use essas perguntas para iniciar o diálogo clínico.', addToBrief: 'Adicionar ao resumo', privacy: 'Promessa de privacidade ativa', privacySub: 'Luna é um espelho digital. Este mapeamento é observacional e reflete seus padrões reportados.' },
+    en: { back: 'Back', currentState: 'Current State', coreMarker: 'Core Marker', howItFeels: 'How it feels', yourExperience: 'Your experience', dailyImpact: 'Daily impact', howItWorks: 'How it works', whatItAffects: 'What it affects', whatItAffectsSub: 'Where this marker signals changes.', whatInfluences: 'What influences this', whatInfluencesSub: 'Variables that shift this baseline.', talkToDoctor: 'Talk to your doctor', talkToDoctorSub: 'Structured vocabulary for your consultation.', questionsToAsk: 'Questions to ask', doctorHint: 'Use these questions to start clinical dialogue.', addToBrief: 'Add to Brief', privacy: 'Privacy Promise Active', privacySub: 'Luna is a digital mirror. This mapping is observational and reflects your reported patterns across your rhythm history.', briefAdded: 'Added to Brief', briefUpdated: 'Brief updated' },
+    ru: { back: 'Назад', currentState: 'Текущее состояние', coreMarker: 'Ключевой маркер', howItFeels: 'Как ощущается', yourExperience: 'Ваш опыт', dailyImpact: 'Ежедневное влияние', howItWorks: 'Как это работает', whatItAffects: 'На что влияет', whatItAffectsSub: 'Где этот маркер отражает изменения.', whatInfluences: 'Что на это влияет', whatInfluencesSub: 'Факторы, сдвигающие этот baseline.', talkToDoctor: 'Обсудите с врачом', talkToDoctorSub: 'Структурированные формулировки для консультации.', questionsToAsk: 'Вопросы врачу', doctorHint: 'Используйте эти вопросы для клинического диалога.', addToBrief: 'Добавить в бриф', privacy: 'Режим приватности активен', privacySub: 'Luna — цифровое зеркало. Эта карта наблюдательная и отражает ваши паттерны по истории ритма.', briefAdded: 'Добавлено в бриф', briefUpdated: 'Бриф обновлен' },
+    uk: { back: 'Назад', currentState: 'Поточний стан', coreMarker: 'Ключовий маркер', howItFeels: 'Як відчувається', yourExperience: 'Ваш досвід', dailyImpact: 'Щоденний вплив', howItWorks: 'Як це працює', whatItAffects: 'На що впливає', whatItAffectsSub: 'Де цей маркер показує зміни.', whatInfluences: 'Що на це впливає', whatInfluencesSub: 'Фактори, що зміщують цей baseline.', talkToDoctor: 'Обговоріть з лікарем', talkToDoctorSub: 'Структурована лексика для консультації.', questionsToAsk: 'Питання до лікаря', doctorHint: 'Використайте ці питання для клінічного діалогу.', addToBrief: 'Додати в бриф', privacy: 'Режим приватності активний', privacySub: 'Luna — цифрове дзеркало. Ця карта є спостережною і відображає ваші патерни ритму.', briefAdded: 'Додано у бриф', briefUpdated: 'Бриф оновлено' },
+    es: { back: 'Atrás', currentState: 'Estado actual', coreMarker: 'Marcador clave', howItFeels: 'Cómo se siente', yourExperience: 'Tu experiencia', dailyImpact: 'Impacto diario', howItWorks: 'Cómo funciona', whatItAffects: 'Qué afecta', whatItAffectsSub: 'Dónde este marcador señala cambios.', whatInfluences: 'Qué lo influye', whatInfluencesSub: 'Variables que desplazan esta línea base.', talkToDoctor: 'Habla con tu médico', talkToDoctorSub: 'Vocabulario estructurado para tu consulta.', questionsToAsk: 'Preguntas para hacer', doctorHint: 'Usa estas preguntas para iniciar el diálogo clínico.', addToBrief: 'Añadir al resumen', privacy: 'Promesa de privacidad activa', privacySub: 'Luna es un espejo digital. Este mapa es observacional y refleja tus patrones reportados.', briefAdded: 'Anadido al resumen', briefUpdated: 'Resumen actualizado' },
+    fr: { back: 'Retour', currentState: 'État actuel', coreMarker: 'Marqueur clé', howItFeels: 'Ressenti', yourExperience: 'Votre expérience', dailyImpact: 'Impact quotidien', howItWorks: 'Comment cela fonctionne', whatItAffects: 'Ce que cela affecte', whatItAffectsSub: 'Là où ce marqueur signale des changements.', whatInfluences: "Ce qui l'influence", whatInfluencesSub: 'Variables qui déplacent cette ligne de base.', talkToDoctor: 'Parlez à votre médecin', talkToDoctorSub: 'Vocabulaire structuré pour votre consultation.', questionsToAsk: 'Questions à poser', doctorHint: 'Utilisez ces questions pour lancer le dialogue clinique.', addToBrief: 'Ajouter au brief', privacy: 'Promesse de confidentialité active', privacySub: 'Luna est un miroir numérique. Cette cartographie est observationnelle et reflète vos schémas déclarés.', briefAdded: 'Ajoute au brief', briefUpdated: 'Brief mis a jour' },
+    de: { back: 'Zurück', currentState: 'Aktueller Zustand', coreMarker: 'Kernmarker', howItFeels: 'Wie es sich anfühlt', yourExperience: 'Deine Erfahrung', dailyImpact: 'Tägliche Wirkung', howItWorks: 'Wie es wirkt', whatItAffects: 'Was es beeinflusst', whatItAffectsSub: 'Wo dieser Marker Veränderungen signalisiert.', whatInfluences: 'Was das beeinflusst', whatInfluencesSub: 'Variablen, die diese Basislinie verschieben.', talkToDoctor: 'Mit dem Arzt besprechen', talkToDoctorSub: 'Strukturierte Sprache für deine Konsultation.', questionsToAsk: 'Fragen an den Arzt', doctorHint: 'Nutze diese Fragen für den klinischen Dialog.', addToBrief: 'Zum Brief hinzufügen', privacy: 'Datenschutz aktiv', privacySub: 'Luna ist ein digitaler Spiegel. Diese Abbildung ist beobachtend und spiegelt deine gemeldeten Muster.', briefAdded: 'Zum Brief hinzugefugt', briefUpdated: 'Brief aktualisiert' },
+    zh: { back: '返回', currentState: '当前状态', coreMarker: '核心指标', howItFeels: '主观感受', yourExperience: '你的体验', dailyImpact: '日常影响', howItWorks: '作用机制', whatItAffects: '影响范围', whatItAffectsSub: '该指标在哪些方面提示变化。', whatInfluences: '影响因素', whatInfluencesSub: '会改变该基线的变量。', talkToDoctor: '与医生沟通', talkToDoctorSub: '用于就诊沟通的结构化表达。', questionsToAsk: '可提问的问题', doctorHint: '使用这些问题开启临床沟通。', addToBrief: '加入简报', privacy: '隐私承诺已启用', privacySub: 'Luna 是数字镜像工具。该映射用于观察，反映你记录的节律模式。', briefAdded: '已加入简报', briefUpdated: '简报已更新' },
+    ja: { back: '戻る', currentState: '現在の状態', coreMarker: 'コアマーカー', howItFeels: '体感', yourExperience: 'あなたの体験', dailyImpact: '日常への影響', howItWorks: '仕組み', whatItAffects: '影響する領域', whatItAffectsSub: 'このマーカーが変化を示す領域です。', whatInfluences: '影響要因', whatInfluencesSub: 'このベースラインを動かす要因。', talkToDoctor: '医師に相談', talkToDoctorSub: '受診時に使える構造化された語彙。', questionsToAsk: '確認したい質問', doctorHint: 'これらの質問で臨床対話を始めましょう。', addToBrief: 'ブリーフに追加', privacy: 'プライバシー保護有効', privacySub: 'Lunaはデジタルミラーです。このマッピングは観察目的で、記録されたパターンを反映します。', briefAdded: 'ブリーフに追加しました', briefUpdated: 'ブリーフを更新しました' },
+    pt: { back: 'Voltar', currentState: 'Estado atual', coreMarker: 'Marcador central', howItFeels: 'Como se sente', yourExperience: 'Sua experiência', dailyImpact: 'Impacto diário', howItWorks: 'Como funciona', whatItAffects: 'O que afeta', whatItAffectsSub: 'Onde este marcador sinaliza mudanças.', whatInfluences: 'O que influencia isso', whatInfluencesSub: 'Variáveis que alteram essa linha de base.', talkToDoctor: 'Converse com seu médico', talkToDoctorSub: 'Vocabulário estruturado para sua consulta.', questionsToAsk: 'Perguntas para fazer', doctorHint: 'Use essas perguntas para iniciar o diálogo clínico.', addToBrief: 'Adicionar ao resumo', privacy: 'Promessa de privacidade ativa', privacySub: 'Luna é um espelho digital. Este mapeamento é observacional e reflete seus padrões reportados.', briefAdded: 'Adicionado ao resumo', briefUpdated: 'Resumo atualizado' },
   };
   const statusByLang: Record<Language, Record<string, string>> = {
     en: { Steady: 'Steady', Sensitive: 'Sensitive', Stressed: 'Stressed', Changing: 'Changing', Active: 'Active', Quiet: 'Quiet' },
@@ -41,11 +44,23 @@ const HormoneDetail: React.FC<HormoneDetailProps> = ({ hormone, lang, onClose })
     pt: { Steady: 'Estável', Sensitive: 'Sensível', Stressed: 'Estressado', Changing: 'Mudando', Active: 'Ativo', Quiet: 'Calmo' },
   };
   const copy = copyByLang[lang];
+  const handleAddToBrief = () => {
+    const result = briefService.addHormone(displayHormone);
+    dataService.logEvent('INSIGHT_GENERATED', {
+      source: 'hormone_detail',
+      action: 'add_to_brief',
+      hormoneId: displayHormone.id,
+      questionCount: displayHormone.generalDoctorQuestions.length,
+    });
+    setBriefFeedback(result.created ? copy.briefAdded : copy.briefUpdated);
+    window.setTimeout(() => setBriefFeedback(''), 1800);
+  };
   return (
-    <div className="fixed inset-0 z-[250] bg-slate-50/98 dark:bg-slate-950/98 backdrop-blur-2xl overflow-y-auto animate-in slide-in-from-bottom duration-700 ease-out no-scrollbar">
+    <div data-testid="hormone-detail" className="fixed inset-0 z-[250] bg-slate-50/98 dark:bg-slate-950/98 backdrop-blur-2xl overflow-y-auto animate-in slide-in-from-bottom duration-700 ease-out no-scrollbar">
       {/* STICKY HEADER */}
       <nav className="sticky top-0 bg-white/60 dark:bg-slate-950/60 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/50 px-8 py-5 flex justify-between items-center z-[260] shadow-sm">
         <button 
+          data-testid="hormone-detail-back"
           onClick={onClose} 
           className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 hover:text-luna-purple transition-all"
         >
@@ -190,10 +205,20 @@ const HormoneDetail: React.FC<HormoneDetailProps> = ({ hormone, lang, onClose })
                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest text-center md:text-left">
                   {copy.doctorHint}
                 </p>
-                <button className="px-10 py-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-luna-purple hover:text-white transition-all shadow-sm">
+                <button
+                  data-testid="hormone-add-to-brief"
+                  type="button"
+                  onClick={handleAddToBrief}
+                  className="px-10 py-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-luna-purple hover:text-white transition-all shadow-sm"
+                >
                   {copy.addToBrief}
                 </button>
              </div>
+             {briefFeedback && (
+               <p data-testid="hormone-add-feedback" className="text-[10px] font-black uppercase tracking-[0.15em] text-luna-purple">
+                 {briefFeedback}
+               </p>
+             )}
           </div>
         </section>
         

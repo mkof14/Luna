@@ -176,9 +176,9 @@ export const HormoneLibraryView: React.FC<{ lang: Language; onBack: () => void }
   };
 
   return (
-    <div className="max-w-7xl mx-auto luna-page-shell luna-page-knowledge space-y-24 animate-in fade-in slide-in-from-bottom-12 duration-1000 p-8 md:p-10 pb-40 px-6">
+    <div data-testid="library-root" className="max-w-7xl mx-auto luna-page-shell luna-page-knowledge space-y-24 animate-in fade-in slide-in-from-bottom-12 duration-1000 p-8 md:p-10 pb-40 px-6">
       <header className="flex flex-col items-center lg:items-start gap-8">
-        <button onClick={onBack} className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-luna-purple transition-all">
+        <button data-testid="library-back" onClick={onBack} className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-luna-purple transition-all">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           {copy.back}
         </button>
@@ -233,6 +233,7 @@ export const HormoneLibraryView: React.FC<{ lang: Language; onBack: () => void }
                 return (
                   <button
                     key={hormone.id}
+                    data-testid={`library-card-${hormone.id}`}
                     onClick={() => setSelectedHormone(hormone)}
                     className={`group relative luna-vivid-card p-8 rounded-[3rem] shadow-luna border-2 transition-all text-left overflow-hidden flex flex-col justify-between min-h-[340px] ${isSync ? 'border-luna-purple/40 ring-4 ring-luna-purple/5 shadow-2xl scale-[1.02]' : 'border-slate-50 dark:border-slate-800 hover:border-slate-200'}`}
                   >

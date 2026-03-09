@@ -773,12 +773,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
             <div className="flex items-center gap-3">
               <button
+                data-testid="dashboard-explore-knowledge-btn"
                 onClick={() => navigateTo('library')}
                 className="px-5 py-2.5 rounded-full bg-luna-purple text-white text-[9px] font-black uppercase tracking-[0.12em] shadow-luna-rich hover:brightness-110 transition-all"
               >
                 {ui.dashboard.exploreKnowledge}
               </button>
               <button
+                data-testid="dashboard-open-reports-btn"
                 onClick={() => navigateTo('labs')}
                 className="px-5 py-2.5 rounded-full border border-luna-purple/40 text-luna-purple bg-white/80 dark:bg-slate-900/70 text-[9px] font-black uppercase tracking-[0.12em] hover:bg-luna-purple/10 transition-all"
               >
