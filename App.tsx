@@ -15,6 +15,7 @@ import { authService } from './services/authService';
 import { captureAppError, initMonitoring } from './services/monitoringService';
 import { InstallAppPrompt } from './components/InstallAppPrompt';
 import { StandaloneWelcomeOverlay } from './components/StandaloneWelcomeOverlay';
+import { StandaloneLaunchSplash } from './components/StandaloneLaunchSplash';
 
 // SHARED COMPONENTS
 import { LunaLiveButton } from './components/LunaLiveButton';
@@ -25,6 +26,7 @@ const AuthView = lazy(() => import('./components/AuthView').then((m) => ({ defau
 const PublicLandingView = lazy(() => import('./components/PublicLandingView').then((m) => ({ default: m.PublicLandingView })));
 
 const App: React.FC = () => {
+  const [showLaunchSplash, setShowLaunchSplash] = useState(false);
   const [session, setSession] = useState<AuthSession | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
@@ -41,6 +43,33 @@ const App: React.FC = () => {
   });
   
   const { lang, setLang, theme, setTheme, ui } = useAppPreferences();
+
+  useEffect(() => {
+    const standalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (typeof (window.navigator as Navigator & { standalone?: boolean }).standalone === 'boolean' &&
+        Boolean((window.navigator as Navigator & { standalone?: boolean }).standalone));
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (!standalone || !isMobile) return;
+
+    const key = 'luna_launch_splash_seen_session_v1';
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem(key) === '1';
+    } catch {
+      seen = false;
+    }
+    if (seen) return;
+
+    setShowLaunchSplash(true);
+    try {
+      sessionStorage.setItem(key, '1');
+    } catch {
+      // ignore
+    }
+    const timer = window.setTimeout(() => setShowLaunchSplash(false), 1300);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     initMonitoring().catch(() => undefined);
@@ -136,6 +165,10 @@ const App: React.FC = () => {
         setActiveTab('dashboard');
       });
   }, []);
+
+  if (showLaunchSplash) {
+    return <StandaloneLaunchSplash lang={lang} />;
+  }
 
   if (isAuthLoading) {
     return (
