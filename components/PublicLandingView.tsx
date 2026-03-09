@@ -80,6 +80,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
   const [trialFeedback, setTrialFeedback] = useState('');
   const [publicInstallPrompt, setPublicInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [installFeedback, setInstallFeedback] = useState('');
+  const [showInstallGuideModal, setShowInstallGuideModal] = useState(false);
   const [isStandaloneMode, setIsStandaloneMode] = useState(false);
   const [mobilePlatform, setMobilePlatform] = useState<'ios' | 'android' | 'other'>('other');
 
@@ -827,6 +828,55 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     },
   };
   const installActions = installActionsByLang[lang] || installActionsByLang.en;
+  const installGuideModalByLang: Partial<
+    Record<
+      Language,
+      {
+        title: string;
+        how: string;
+        intro: string;
+        iosTitle: string;
+        androidTitle: string;
+        iosStep1: string;
+        iosStep2: string;
+        androidStep1: string;
+        androidStep2: string;
+        fallback: string;
+        close: string;
+        openPrompt: string;
+      }
+    >
+  > = {
+    en: {
+      title: 'Install App',
+      how: 'How Install Works',
+      intro: 'Install adds Luna to your home screen and opens full-screen like an app.',
+      iosTitle: 'iPhone Install',
+      androidTitle: 'Android Install',
+      iosStep1: 'Step 1: Open Luna in Safari.',
+      iosStep2: 'Step 2: Tap Share and choose Add to Home Screen.',
+      androidStep1: 'Step 1: Open Luna in Chrome/Edge.',
+      androidStep2: 'Step 2: Tap browser menu and choose Install App.',
+      fallback: 'Open Safari -> Share -> Add to Home Screen.',
+      close: 'Close',
+      openPrompt: 'Open Android Install',
+    },
+    ru: {
+      title: 'Install App',
+      how: 'How Install Works',
+      intro: 'Install добавляет Luna на домашний экран и открывает в полноэкранном режиме как app.',
+      iosTitle: 'iPhone Install',
+      androidTitle: 'Android Install',
+      iosStep1: 'Step 1: Open Luna in Safari.',
+      iosStep2: 'Step 2: Tap Share and choose Add to Home Screen.',
+      androidStep1: 'Step 1: Open Luna in Chrome/Edge.',
+      androidStep2: 'Step 2: Tap browser menu and choose Install App.',
+      fallback: 'Open Safari -> Share -> Add to Home Screen.',
+      close: 'Закрыть',
+      openPrompt: 'Открыть Android Install',
+    },
+  };
+  const installGuideModal = installGuideModalByLang[lang] || installGuideModalByLang.en!;
 
   const socialLinks = [
     {
@@ -1435,37 +1485,12 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
             </nav>
             <nav className="space-y-4">
               <p className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">{footerSectionTitles.install}</p>
-              <div className="flex flex-col gap-2">
-                <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-600 dark:text-slate-300">{installActions.explainTitle}</p>
-                <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">{installActions.explainBody}</p>
-                <p className="text-[10px] font-semibold text-slate-600 dark:text-slate-300">{installActions.stepPrefix} 1: {installActions.iosStep1}</p>
-                <p className="text-[10px] font-semibold text-slate-600 dark:text-slate-300">{installActions.stepPrefix} 2: {installActions.iosStep2}</p>
-                <button
-                  onClick={() => setInstallFeedback(installActions.iosTip)}
-                  className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/75 dark:bg-slate-900/60 text-[9px] font-black uppercase tracking-[0.14em] text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/40 transition-colors text-left"
-                >
-                  {installActions.ios}
-                </button>
-                <p className="text-[10px] font-semibold text-slate-600 dark:text-slate-300">{installActions.stepPrefix} 1: {installActions.androidStep1}</p>
-                <p className="text-[10px] font-semibold text-slate-600 dark:text-slate-300">{installActions.stepPrefix} 2: {installActions.androidStep2}</p>
-                <button
-                  onClick={async () => {
-                    if (publicInstallPrompt) {
-                      await publicInstallPrompt.prompt();
-                      await publicInstallPrompt.userChoice;
-                      setInstallFeedback(installActions.androidTip);
-                      return;
-                    }
-                    setInstallFeedback(installActions.noPrompt);
-                  }}
-                  className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/75 dark:bg-slate-900/60 text-[9px] font-black uppercase tracking-[0.14em] text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/40 transition-colors text-left"
-                >
-                  {installActions.android}
-                </button>
-                {installFeedback && (
-                  <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">{installFeedback}</p>
-                )}
-              </div>
+              <button
+                onClick={() => setShowInstallGuideModal(true)}
+                className="text-left text-[10px] font-black uppercase tracking-[0.16em] text-luna-purple underline underline-offset-4 hover:opacity-80 transition-opacity"
+              >
+                {installGuideModal.title}
+              </button>
             </nav>
             <nav className="space-y-4">
               <p className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">{installActions.social}</p>
@@ -1490,7 +1515,9 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
               <p className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">{footerSectionTitles.account}</p>
               <div className="flex flex-col gap-3">
                 <button onClick={onSignIn} className="px-4 py-2 rounded-full border border-luna-purple/40 bg-white/80 dark:bg-slate-900/70 text-[9px] font-black uppercase tracking-widest text-luna-purple hover:border-luna-purple/70 hover:bg-luna-purple/10 hover:scale-[1.03] active:scale-[0.98] transition-all">{ui.publicHome.signInUp}</button>
-                <button onClick={onSignIn} className="px-4 py-2 rounded-full border border-slate-300 dark:border-slate-700 bg-white/80 dark:bg-slate-900/70 text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/60 transition-all">{installActions.admin}</button>
+                <button onClick={onSignIn} className="text-left text-[10px] font-black uppercase tracking-[0.16em] text-slate-600 dark:text-slate-300 underline underline-offset-4 hover:text-luna-purple transition-colors">
+                  Admin Login
+                </button>
               </div>
             </nav>
           </div>
@@ -1503,6 +1530,48 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
           </div>
         </div>
       </footer>
+      {showInstallGuideModal && (
+        <div className="fixed inset-0 z-[900] bg-slate-950/55 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowInstallGuideModal(false)}>
+          <div className="w-full max-w-2xl rounded-[2rem] border border-slate-200/80 dark:border-slate-700/80 bg-white/95 dark:bg-slate-900/95 p-6 md:p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)] space-y-4" onClick={(e) => e.stopPropagation()}>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-luna-purple">{installGuideModal.title}</p>
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-slate-700 dark:text-slate-200">{installGuideModal.how}</p>
+            <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 leading-relaxed">{installGuideModal.intro}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <article className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/90 dark:bg-slate-800/40 p-4 space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-luna-purple">{installGuideModal.iosTitle}</p>
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{installGuideModal.iosStep1}</p>
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{installGuideModal.iosStep2}</p>
+              </article>
+              <article className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/90 dark:bg-slate-800/40 p-4 space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-luna-purple">{installGuideModal.androidTitle}</p>
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{installGuideModal.androidStep1}</p>
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{installGuideModal.androidStep2}</p>
+                <button
+                  onClick={async () => {
+                    if (publicInstallPrompt) {
+                      await publicInstallPrompt.prompt();
+                      await publicInstallPrompt.userChoice;
+                      setInstallFeedback(installActions.androidTip);
+                      return;
+                    }
+                    setInstallFeedback(installActions.noPrompt);
+                  }}
+                  className="mt-2 px-3 py-2 rounded-xl border border-luna-purple/40 bg-luna-purple/10 text-[10px] font-black uppercase tracking-[0.14em] text-luna-purple hover:bg-luna-purple/20 transition-colors"
+                >
+                  {installGuideModal.openPrompt}
+                </button>
+              </article>
+            </div>
+            <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{installGuideModal.fallback}</p>
+            {installFeedback && <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{installFeedback}</p>}
+            <div className="pt-2">
+              <button onClick={() => setShowInstallGuideModal(false)} className="px-4 py-2 rounded-full border border-slate-300 dark:border-slate-700 text-[10px] font-black uppercase tracking-[0.16em] text-slate-600 dark:text-slate-300">
+                {installGuideModal.close}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
