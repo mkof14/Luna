@@ -618,16 +618,16 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     { id: 'bridge', label: ui.navigation.bridge || 'The Bridge' },
     { id: 'pricing', label: pricingLabelByLang[lang] || 'Pricing' },
   ] as const;
-  const footerSectionTitlesByLang: Record<Language, { explore: string; guides: string; legal: string; account: string }> = {
-    en: { explore: 'Explore', guides: 'Guides', legal: 'Legal', account: 'Account' },
-    ru: { explore: 'Разделы', guides: 'Гайды', legal: 'Юридический', account: 'Аккаунт' },
-    uk: { explore: 'Розділи', guides: 'Гайди', legal: 'Юридичний', account: 'Акаунт' },
-    es: { explore: 'Secciones', guides: 'Guias', legal: 'Legal', account: 'Cuenta' },
-    fr: { explore: 'Sections', guides: 'Guides', legal: 'Juridique', account: 'Compte' },
-    de: { explore: 'Bereiche', guides: 'Leitfaden', legal: 'Recht', account: 'Konto' },
-    zh: { explore: '页面', guides: '指南', legal: '法律', account: '账户' },
-    ja: { explore: 'ページ', guides: 'ガイド', legal: '法務', account: 'アカウント' },
-    pt: { explore: 'Secoes', guides: 'Guias', legal: 'Legal', account: 'Conta' },
+  const footerSectionTitlesByLang: Record<Language, { explore: string; guides: string; legal: string; install: string; account: string }> = {
+    en: { explore: 'Explore', guides: 'Guides', legal: 'Legal', install: 'Install App', account: 'Account' },
+    ru: { explore: 'Разделы', guides: 'Гайды', legal: 'Юридический', install: 'Установить App', account: 'Аккаунт' },
+    uk: { explore: 'Розділи', guides: 'Гайди', legal: 'Юридичний', install: 'Встановити App', account: 'Акаунт' },
+    es: { explore: 'Secciones', guides: 'Guias', legal: 'Legal', install: 'Instalar App', account: 'Cuenta' },
+    fr: { explore: 'Sections', guides: 'Guides', legal: 'Juridique', install: 'Installer App', account: 'Compte' },
+    de: { explore: 'Bereiche', guides: 'Leitfaden', legal: 'Recht', install: 'App Installieren', account: 'Konto' },
+    zh: { explore: '页面', guides: '指南', legal: '法律', install: '安装 App', account: '账户' },
+    ja: { explore: 'ページ', guides: 'ガイド', legal: '法務', install: 'App をインストール', account: 'アカウント' },
+    pt: { explore: 'Secoes', guides: 'Guias', legal: 'Legal', install: 'Instalar App', account: 'Conta' },
   };
 
   const legalLabelsByLang: Record<Language, { legal: string; privacy: string; terms: string; medical: string; cookies: string; dataRights: string }> = {
@@ -654,6 +654,20 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     ja: '概要',
     pt: 'Sobre',
   };
+  const footerPageLinks: Array<{ id: PublicPage; label: string }> = [
+    { id: 'home', label: ui.publicHome.tabs.home },
+    { id: 'map', label: ui.publicHome.tabs.map },
+    { id: 'ritual', label: 'Ritual Path' },
+    { id: 'bridge', label: ui.navigation.bridge || 'The Bridge' },
+    { id: 'pricing', label: pricingLabelByLang[lang] || 'Pricing' },
+    { id: 'about', label: aboutLabelByLang[lang] || 'About' },
+    { id: 'how_it_works', label: howItWorksLabelByLang[lang] || 'How It Works' },
+    { id: 'privacy', label: legalLabels.privacy },
+    { id: 'terms', label: legalLabels.terms },
+    { id: 'medical', label: legalLabels.medical },
+    { id: 'cookies', label: legalLabels.cookies },
+    { id: 'data_rights', label: legalLabels.dataRights },
+  ];
   const aboutPageTitleByLang: Record<Language, string> = {
     en: 'About Luna',
     ru: 'О Luna',
@@ -1166,13 +1180,13 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
               <p className="text-sm font-semibold text-slate-600 dark:text-slate-400">Luna — The physiology of feeling.</p>
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
             <nav className="space-y-4">
               <p className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">{footerSectionTitles.explore}</p>
               <div className="flex flex-col gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
-                {sections.map((section) => (
-                  <button key={`footer-${section.id}`} onClick={() => setActivePage(section.id)} className="text-left hover:text-luna-purple transition-colors">
-                    {section.label}
+                {footerPageLinks.map((page) => (
+                  <button key={`footer-${page.id}`} onClick={() => setActivePage(page.id)} className="text-left hover:text-luna-purple transition-colors">
+                    {page.label}
                   </button>
                 ))}
               </div>
@@ -1196,6 +1210,13 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
                 <button onClick={() => setActivePage('medical')} className="text-left hover:text-luna-purple transition-colors">{legalLabels.medical}</button>
                 <button onClick={() => setActivePage('cookies')} className="text-left hover:text-luna-purple transition-colors">{legalLabels.cookies}</button>
                 <button onClick={() => setActivePage('data_rights')} className="text-left hover:text-luna-purple transition-colors">{legalLabels.dataRights}</button>
+              </div>
+            </nav>
+            <nav className="space-y-4">
+              <p className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">{footerSectionTitles.install}</p>
+              <div className="flex flex-col gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
+                <p className="text-left">iPhone: Share -&gt; Add to Home Screen</p>
+                <p className="text-left">Android: Browser menu -&gt; Install App</p>
               </div>
             </nav>
             <nav className="space-y-4">
