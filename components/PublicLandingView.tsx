@@ -662,13 +662,40 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
   };
   const legalLabels = legalLabelsByLang[lang];
   const footerSectionTitles = footerSectionTitlesByLang[lang] || footerSectionTitlesByLang.en;
-  const installActionsByLang: Record<Language, { ios: string; android: string; iosTip: string; androidTip: string; noPrompt: string }> = {
+  const installActionsByLang: Record<
+    Language,
+    {
+      ios: string;
+      android: string;
+      iosTip: string;
+      androidTip: string;
+      noPrompt: string;
+      explainTitle: string;
+      explainBody: string;
+      stepPrefix: string;
+      iosStep1: string;
+      iosStep2: string;
+      androidStep1: string;
+      androidStep2: string;
+      admin: string;
+      social: string;
+    }
+  > = {
     en: {
       ios: 'iPhone Install',
       android: 'Android Install',
       iosTip: 'Open Safari -> Share -> Add to Home Screen.',
       androidTip: 'Use browser menu -> Install App.',
       noPrompt: 'Install prompt is not available in this browser session.',
+      explainTitle: 'How Install Works',
+      explainBody: 'Install adds Luna to your home screen and opens full-screen like an app.',
+      stepPrefix: 'Step',
+      iosStep1: 'Open Luna in Safari.',
+      iosStep2: 'Tap Share and choose Add to Home Screen.',
+      androidStep1: 'Open Luna in Chrome/Edge.',
+      androidStep2: 'Tap browser menu and choose Install App.',
+      admin: 'Admin',
+      social: 'Social',
     },
     ru: {
       ios: 'Установить на iPhone',
@@ -676,6 +703,15 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       iosTip: 'Откройте Safari -> Поделиться -> На экран Домой.',
       androidTip: 'Используйте меню браузера -> Установить приложение.',
       noPrompt: 'Системный install prompt сейчас недоступен в этом браузере.',
+      explainTitle: 'Как работает установка',
+      explainBody: 'После установки Luna появится на домашнем экране и будет открываться как приложение.',
+      stepPrefix: 'Шаг',
+      iosStep1: 'Откройте Luna в Safari.',
+      iosStep2: 'Нажмите Поделиться и выберите На экран Домой.',
+      androidStep1: 'Откройте Luna в Chrome/Edge.',
+      androidStep2: 'Откройте меню браузера и выберите Установить приложение.',
+      admin: 'Админ',
+      social: 'Соцсети',
     },
     uk: {
       ios: 'Встановити на iPhone',
@@ -683,6 +719,15 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       iosTip: 'Відкрийте Safari -> Поділитися -> На екран Додому.',
       androidTip: 'Використайте меню браузера -> Встановити застосунок.',
       noPrompt: 'Системний install prompt зараз недоступний у цьому браузері.',
+      explainTitle: 'Як працює встановлення',
+      explainBody: 'Після встановлення Luna зʼявиться на головному екрані та відкриватиметься як застосунок.',
+      stepPrefix: 'Крок',
+      iosStep1: 'Відкрийте Luna у Safari.',
+      iosStep2: 'Натисніть Поділитися і оберіть На екран Додому.',
+      androidStep1: 'Відкрийте Luna у Chrome/Edge.',
+      androidStep2: 'Відкрийте меню браузера і оберіть Встановити застосунок.',
+      admin: 'Адмін',
+      social: 'Соцмережі',
     },
     es: {
       ios: 'Instalar en iPhone',
@@ -690,6 +735,15 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       iosTip: 'Abre Safari -> Compartir -> Anadir a inicio.',
       androidTip: 'Usa menu del navegador -> Instalar app.',
       noPrompt: 'El prompt de instalacion no esta disponible ahora.',
+      explainTitle: 'Como funciona la instalacion',
+      explainBody: 'Al instalar, Luna aparece en inicio y se abre en pantalla completa como app.',
+      stepPrefix: 'Paso',
+      iosStep1: 'Abre Luna en Safari.',
+      iosStep2: 'Toca Compartir y luego Anadir a inicio.',
+      androidStep1: 'Abre Luna en Chrome/Edge.',
+      androidStep2: 'Abre menu del navegador y elige Instalar app.',
+      admin: 'Admin',
+      social: 'Redes',
     },
     fr: {
       ios: 'Installer sur iPhone',
@@ -697,6 +751,15 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       iosTip: 'Ouvrez Safari -> Partager -> Sur l ecran d accueil.',
       androidTip: 'Utilisez menu navigateur -> Installer app.',
       noPrompt: "Le prompt d installation n est pas disponible actuellement.",
+      explainTitle: "Comment l installation fonctionne",
+      explainBody: 'Apres installation, Luna apparait sur accueil et s ouvre en plein ecran.',
+      stepPrefix: 'Etape',
+      iosStep1: 'Ouvrez Luna dans Safari.',
+      iosStep2: "Touchez Partager puis Sur l ecran d accueil.",
+      androidStep1: 'Ouvrez Luna dans Chrome/Edge.',
+      androidStep2: 'Ouvrez le menu du navigateur puis Installer app.',
+      admin: 'Admin',
+      social: 'Reseaux',
     },
     de: {
       ios: 'Auf iPhone installieren',
@@ -704,6 +767,15 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       iosTip: 'Safari offnen -> Teilen -> Zum Home-Bildschirm.',
       androidTip: 'Browsermenu -> App installieren.',
       noPrompt: 'Installationsdialog ist in dieser Sitzung nicht verfugbar.',
+      explainTitle: 'So funktioniert die Installation',
+      explainBody: 'Nach Installation erscheint Luna auf dem Homescreen und startet im Vollbild.',
+      stepPrefix: 'Schritt',
+      iosStep1: 'Luna in Safari offnen.',
+      iosStep2: 'Teilen tippen und Zum Home-Bildschirm wahlen.',
+      androidStep1: 'Luna in Chrome/Edge offnen.',
+      androidStep2: 'Browsermenu offnen und App installieren wahlen.',
+      admin: 'Admin',
+      social: 'Social',
     },
     zh: {
       ios: 'iPhone 安装',
@@ -711,6 +783,15 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       iosTip: '打开 Safari -> 分享 -> 添加到主屏幕。',
       androidTip: '使用浏览器菜单 -> 安装应用。',
       noPrompt: '当前浏览器会话中无法触发安装弹窗。',
+      explainTitle: '安装说明',
+      explainBody: '安装后 Luna 会出现在主屏幕，并以全屏应用方式打开。',
+      stepPrefix: '步骤',
+      iosStep1: '在 Safari 中打开 Luna。',
+      iosStep2: '点击分享，选择添加到主屏幕。',
+      androidStep1: '在 Chrome/Edge 中打开 Luna。',
+      androidStep2: '打开浏览器菜单，选择安装应用。',
+      admin: '管理',
+      social: '社交',
     },
     ja: {
       ios: 'iPhone にインストール',
@@ -718,6 +799,15 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       iosTip: 'Safari を開く -> 共有 -> ホーム画面に追加。',
       androidTip: 'ブラウザメニュー -> アプリをインストール。',
       noPrompt: 'このブラウザではインストールダイアログを表示できません。',
+      explainTitle: 'インストール方法',
+      explainBody: 'インストールするとホーム画面に追加され、全画面アプリとして起動できます。',
+      stepPrefix: '手順',
+      iosStep1: 'Safari で Luna を開く。',
+      iosStep2: '共有を押してホーム画面に追加を選択。',
+      androidStep1: 'Chrome/Edge で Luna を開く。',
+      androidStep2: 'ブラウザメニューからアプリをインストール。',
+      admin: '管理',
+      social: 'SNS',
     },
     pt: {
       ios: 'Instalar no iPhone',
@@ -725,6 +815,15 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       iosTip: 'Abra Safari -> Compartilhar -> Adicionar a Tela Inicial.',
       androidTip: 'Use menu do navegador -> Instalar app.',
       noPrompt: 'O prompt de instalacao nao esta disponivel nesta sessao.',
+      explainTitle: 'Como funciona a instalacao',
+      explainBody: 'Depois de instalar, Luna aparece na tela inicial e abre em tela cheia.',
+      stepPrefix: 'Passo',
+      iosStep1: 'Abra Luna no Safari.',
+      iosStep2: 'Toque em Compartilhar e escolha Adicionar a Tela Inicial.',
+      androidStep1: 'Abra Luna no Chrome/Edge.',
+      androidStep2: 'Abra o menu do navegador e escolha Instalar app.',
+      admin: 'Admin',
+      social: 'Sociais',
     },
   };
   const installActions = installActionsByLang[lang] || installActionsByLang.en;
@@ -1337,12 +1436,18 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
             <nav className="space-y-4">
               <p className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">{footerSectionTitles.install}</p>
               <div className="flex flex-col gap-2">
+                <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-600 dark:text-slate-300">{installActions.explainTitle}</p>
+                <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">{installActions.explainBody}</p>
+                <p className="text-[10px] font-semibold text-slate-600 dark:text-slate-300">{installActions.stepPrefix} 1: {installActions.iosStep1}</p>
+                <p className="text-[10px] font-semibold text-slate-600 dark:text-slate-300">{installActions.stepPrefix} 2: {installActions.iosStep2}</p>
                 <button
                   onClick={() => setInstallFeedback(installActions.iosTip)}
                   className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/75 dark:bg-slate-900/60 text-[9px] font-black uppercase tracking-[0.14em] text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/40 transition-colors text-left"
                 >
                   {installActions.ios}
                 </button>
+                <p className="text-[10px] font-semibold text-slate-600 dark:text-slate-300">{installActions.stepPrefix} 1: {installActions.androidStep1}</p>
+                <p className="text-[10px] font-semibold text-slate-600 dark:text-slate-300">{installActions.stepPrefix} 2: {installActions.androidStep2}</p>
                 <button
                   onClick={async () => {
                     if (publicInstallPrompt) {
@@ -1363,20 +1468,20 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
               </div>
             </nav>
             <nav className="space-y-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">Social</p>
-              <div className="flex flex-col gap-2 text-[10px] font-black uppercase tracking-[0.2em]">
+              <p className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">{installActions.social}</p>
+              <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.2em]">
                 {socialLinks.map((social) => (
                   <a
                     key={social.id}
                     href={social.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/75 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/40 hover:-translate-y-[1px] transition-all flex items-center gap-2"
+                    aria-label={social.label}
+                    className="text-slate-500 dark:text-slate-300 hover:-translate-y-[1px] transition-transform"
                   >
-                    <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${social.iconBg}`}>
+                    <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${social.iconBg}`}>
                       <social.icon size={14} className={social.iconColor} />
                     </span>
-                    {social.label}
                   </a>
                 ))}
               </div>
@@ -1385,6 +1490,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
               <p className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">{footerSectionTitles.account}</p>
               <div className="flex flex-col gap-3">
                 <button onClick={onSignIn} className="px-4 py-2 rounded-full border border-luna-purple/40 bg-white/80 dark:bg-slate-900/70 text-[9px] font-black uppercase tracking-widest text-luna-purple hover:border-luna-purple/70 hover:bg-luna-purple/10 hover:scale-[1.03] active:scale-[0.98] transition-all">{ui.publicHome.signInUp}</button>
+                <button onClick={onSignIn} className="px-4 py-2 rounded-full border border-slate-300 dark:border-slate-700 bg-white/80 dark:bg-slate-900/70 text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:text-luna-purple hover:border-luna-purple/60 transition-all">{installActions.admin}</button>
               </div>
             </nav>
           </div>
