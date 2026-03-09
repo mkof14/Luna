@@ -20,6 +20,7 @@ const BILLING_STATE_FILE = path.join(DATA_DIR, 'billing-state.json');
 const SESSION_COOKIE = 'luna_sid';
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 const SUPER_ADMIN_BOOTSTRAP_PASSWORD = process.env.SUPER_ADMIN_BOOTSTRAP_PASSWORD || 'LunaAdmin2026!';
+const SUPER_ADMIN_BOOTSTRAP_PASSWORD_CONFIGURED = Boolean(SUPER_ADMIN_BOOTSTRAP_PASSWORD);
 const PRIMARY_SUPER_ADMIN_EMAIL = 'dnainform@gmail.com';
 
 const SUPER_ADMIN_EMAILS = new Set(
@@ -276,6 +277,7 @@ const buildHealthPayload = async ({ verbose = false } = {}) => {
     payload.config = {
       allowedOrigins: ALLOWED_ORIGINS.size,
       superAdminEmails: SUPER_ADMIN_EMAILS.size,
+      superAdminBootstrapPasswordConfigured: SUPER_ADMIN_BOOTSTRAP_PASSWORD_CONFIGURED,
       billingEnabled: BILLING_ENABLED,
       stripeConfigReady,
       googleClientIds: GOOGLE_CLIENT_IDS.size,
@@ -886,6 +888,12 @@ const start = async () => {
         const password = String(body.password || '');
 
         const user = users.find((item) => item.email === email);
+        if (user && SUPER_ADMIN_EMAILS.has(email) && !user.passwordHash) {
+          send(res, 400, {
+            error: 'Super admin password login is not configured. Set SUPER_ADMIN_BOOTSTRAP_PASSWORD in production env or sign in with Google.',
+          }, headers);
+          return;
+        }
         if (!user || !user.passwordHash || !verifyPassword(password, user.passwordHash)) {
           send(res, 401, { error: 'Incorrect email or password.' }, headers);
           return;
