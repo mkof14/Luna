@@ -23,7 +23,7 @@ const en = {
     contact: "Contact",
     crisis: "Reset Room",
     admin: "Admin",
-    partner: "Partner Info",
+    partner: "PARTNER FAQ",
     support: "Support",
     healthHub: "Health Hub",
     awareness: "Awareness",
@@ -261,7 +261,7 @@ const ru = {
     contact: "Контакт",
     crisis: "Комната Стабилизации",
     admin: "Админ",
-    partner: "Для партнера",
+    partner: "PARTNER FAQ",
     support: "Поддержка",
     healthHub: "Центр здоровья",
     awareness: "Осознанность",
@@ -401,7 +401,7 @@ const ru = {
     signInUp: "Вход / Регистрация",
     heroTitleA: "Ежедневное",
     heroTitleB: "Зеркало.",
-    heroSubtitle: "Luna Home — это спокойная публичная точка входа: наблюдайте свой ритм, понимайте состояние и входите в личное пространство, когда будете готовы.",
+    heroSubtitle: "Luna — это спокойная публичная точка входа: наблюдайте свой ритм, понимайте состояние и входите в личное пространство, когда будете готовы.",
     panel: {
       phase: "Открыто",
       summary: "Сначала присутствие. Потом действие.",
@@ -430,7 +430,7 @@ const ru = {
       eveningTitle: "Вечер",
       eveningText: "Закройте день короткой рефлексией, чтобы сохранять сигнал, а не шум.",
       noteTitle: "Заметка Luna",
-      noteMain: "Эта Home публичная по дизайну. Она дает ориентир без борьбы за внимание.",
+      noteMain: "Эта главная страница публичная по дизайну. Она дает ориентир без борьбы за внимание.",
       noteSub: "Личная зона — это ваши данные, отметки состояния и более глубокие инструменты."
     },
     privacy: {
@@ -439,8 +439,8 @@ const ru = {
       cta: "Войти в личную зону",
       body: "Luna следует local-first подходу. Публичная страница остается информационной и открытой. Личные записи и ролевые инструменты находятся внутри авторизованной зоны."
     },
-    footerTagline: "Публичная Home для ориентации, ритма и рефлексии.",
-    footerCopy: "© 2026 LUNA • ПУБЛИЧНАЯ HOME"
+    footerTagline: "Публичная главная для ориентации, ритма и рефлексии.",
+    footerCopy: "© 2026 LUNA • ПУБЛИЧНАЯ ГЛАВНАЯ"
   },
   shared: {
     footer: "Приватно и локально. Ваши данные остаются на вашем устройстве.",
@@ -486,7 +486,7 @@ const uk: TranslationSchema = {
     contact: 'Контакт',
     crisis: 'Кімната Стабілізації',
     admin: 'Адмін',
-    partner: 'Для партнера',
+    partner: 'PARTNER FAQ',
   },
   dashboard: {
     ...en.dashboard,
@@ -526,9 +526,9 @@ const uk: TranslationSchema = {
     signInUp: 'Вхід / Реєстрація',
     heroTitleA: 'Щоденне',
     heroTitleB: 'Дзеркало.',
-    heroSubtitle: 'Luna Home - спокійна публічна точка входу: спостерігайте ритм, розумійте стан і заходьте у приватний простір, коли будете готові.',
-    footerTagline: 'Публічна Home для орієнтації, ритму та рефлексії.',
-    footerCopy: '© 2026 LUNA • ПУБЛІЧНА HOME'
+    heroSubtitle: 'Luna — спокійна публічна точка входу: спостерігайте ритм, розумійте стан і заходьте у приватний простір, коли будете готові.',
+    footerTagline: 'Публічна головна для орієнтації, ритму та рефлексії.',
+    footerCopy: '© 2026 LUNA • ПУБЛІЧНА ГОЛОВНА'
   },
   shared: {
     footer: 'Приватно і локально. Ваші дані залишаються на вашому пристрої.',
@@ -558,7 +558,7 @@ const es: TranslationSchema = {
     contact: 'Contacto',
     crisis: 'Sala Reset',
     admin: 'Admin',
-    partner: 'Para la pareja',
+    partner: 'PARTNER FAQ',
   },
   dashboard: {
     ...en.dashboard,
@@ -598,9 +598,9 @@ const es: TranslationSchema = {
     signInUp: 'Entrar / Crear cuenta',
     heroTitleA: 'Espejo',
     heroTitleB: 'Diario.',
-    heroSubtitle: 'Luna Home es una entrada pública y tranquila: observa tu ritmo, comprende tu estado y entra al espacio privado cuando quieras.',
-    footerTagline: 'Home pública para orientación, ritmo y reflexión.',
-    footerCopy: '© 2026 LUNA • HOME PÚBLICA'
+    heroSubtitle: 'Luna es una entrada pública y tranquila: observa tu ritmo, comprende tu estado y entra al espacio privado cuando quieras.',
+    footerTagline: 'Página pública para orientación, ritmo y reflexión.',
+    footerCopy: '© 2026 LUNA • PÁGINA PÚBLICA'
   },
   shared: {
     footer: 'Privado y local. Tus datos se quedan en tu dispositivo.',
@@ -630,7 +630,7 @@ const fr: TranslationSchema = {
     contact: 'Contact',
     crisis: 'Salle Reset',
     admin: 'Admin',
-    partner: 'Partenaire',
+    partner: 'PARTNER FAQ',
   },
   dashboard: {
     ...en.dashboard,
@@ -670,7 +670,7 @@ const fr: TranslationSchema = {
     signInUp: 'Connexion / Inscription',
     heroTitleA: 'Miroir',
     heroTitleB: 'Quotidien.',
-    heroSubtitle: 'Luna Home est une entrée publique et apaisée: observez votre rythme, comprenez votre état et entrez dans votre espace privé quand vous êtes prête.',
+    heroSubtitle: 'Luna est une entrée publique et apaisée: observez votre rythme, comprenez votre état et entrez dans votre espace privé quand vous êtes prête.',
     footerTagline: 'Accueil public pour orientation, rythme et réflexion.',
     footerCopy: '© 2026 LUNA • ACCUEIL PUBLIC'
   },
@@ -702,7 +702,7 @@ const de: TranslationSchema = {
     contact: 'Kontakt',
     crisis: 'Reset Raum',
     admin: 'Admin',
-    partner: 'Partner',
+    partner: 'PARTNER FAQ',
   },
   dashboard: {
     ...en.dashboard,
@@ -742,9 +742,9 @@ const de: TranslationSchema = {
     signInUp: 'Anmelden / Registrieren',
     heroTitleA: 'Täglicher',
     heroTitleB: 'Spiegel.',
-    heroSubtitle: 'Luna Home ist ein ruhiger öffentlicher Einstieg: beobachte deinen Rhythmus, verstehe deinen Zustand und betrete den privaten Bereich, wenn du bereit bist.',
-    footerTagline: 'Öffentliche Home für Orientierung, Rhythmus und Reflexion.',
-    footerCopy: '© 2026 LUNA • ÖFFENTLICHE HOME'
+    heroSubtitle: 'Luna ist ein ruhiger öffentlicher Einstieg: beobachte deinen Rhythmus, verstehe deinen Zustand und betrete den privaten Bereich, wenn du bereit bist.',
+    footerTagline: 'Öffentliche Startseite für Orientierung, Rhythmus und Reflexion.',
+    footerCopy: '© 2026 LUNA • ÖFFENTLICHE STARTSEITE'
   },
   shared: {
     footer: 'Privat und lokal. Deine Daten bleiben auf deinem Gerät.',
@@ -774,7 +774,7 @@ const zh: TranslationSchema = {
     contact: '联系',
     crisis: '重置空间',
     admin: '管理',
-    partner: '伴侣',
+    partner: 'PARTNER FAQ',
   },
   dashboard: {
     ...en.dashboard,
@@ -814,9 +814,9 @@ const zh: TranslationSchema = {
     signInUp: '登录 / 注册',
     heroTitleA: '每日',
     heroTitleB: '镜像。',
-    heroSubtitle: 'Luna Home 是平静的公开入口：观察你的节律，理解你的状态，并在准备好时进入私密空间。',
-    footerTagline: '公开 Home：用于定位、节律与反思。',
-    footerCopy: '© 2026 LUNA • 公开 HOME'
+    heroSubtitle: 'Luna 是平静的公开入口：观察你的节律，理解你的状态，并在准备好时进入私密空间。',
+    footerTagline: '公开主页：用于定位、节律与反思。',
+    footerCopy: '© 2026 LUNA • 公开主页'
   },
   shared: {
     footer: '私密且本地化。你的数据保留在你的设备上。',
@@ -846,7 +846,7 @@ const ja: TranslationSchema = {
     contact: '連絡先',
     crisis: 'リセットルーム',
     admin: '管理',
-    partner: 'パートナー',
+    partner: 'PARTNER FAQ',
   },
   dashboard: {
     ...en.dashboard,
@@ -886,9 +886,9 @@ const ja: TranslationSchema = {
     signInUp: 'サインイン / サインアップ',
     heroTitleA: '毎日の',
     heroTitleB: 'ミラー。',
-    heroSubtitle: 'Luna Home は穏やかな公開入口です。リズムを観察し、状態を理解し、準備ができたらプライベート空間へ。',
-    footerTagline: '公開Home: 方向づけ、リズム、リフレクションのために。',
-    footerCopy: '© 2026 LUNA • 公開 HOME'
+    heroSubtitle: 'Luna は穏やかな公開入口です。リズムを観察し、状態を理解し、準備ができたらプライベート空間へ。',
+    footerTagline: '公開ホーム: 方向づけ、リズム、リフレクションのために。',
+    footerCopy: '© 2026 LUNA • 公開ホーム'
   },
   shared: {
     footer: 'プライベートかつローカル。データはあなたの端末に保存されます。',
@@ -918,7 +918,7 @@ const pt: TranslationSchema = {
     contact: 'Contato',
     crisis: 'Sala Reset',
     admin: 'Admin',
-    partner: 'Parceiro',
+    partner: 'PARTNER FAQ',
   },
   dashboard: {
     ...en.dashboard,
@@ -954,13 +954,13 @@ const pt: TranslationSchema = {
   publicHome: {
     ...en.publicHome,
     tabs: { home: 'Início', map: 'Mapa corporal', ritual: 'Caminho ritual' },
-    pageTitle: { home: 'Home pública', map: 'Mapa corporal', ritual: 'Caminho ritual', privacy: 'Privacidade' },
+    pageTitle: { home: 'Página pública', map: 'Mapa corporal', ritual: 'Caminho ritual', privacy: 'Privacidade' },
     signInUp: 'Entrar / Cadastrar',
     heroTitleA: 'Espelho',
     heroTitleB: 'Diário.',
-    heroSubtitle: 'Luna Home é uma entrada pública e calma: observe seu ritmo, entenda seu estado e entre no espaço privado quando estiver pronta.',
-    footerTagline: 'Home pública para orientação, ritmo e reflexão.',
-    footerCopy: '© 2026 LUNA • HOME PÚBLICA'
+    heroSubtitle: 'Luna é uma entrada pública e calma: observe seu ritmo, entenda seu estado e entre no espaço privado quando estiver pronta.',
+    footerTagline: 'Página pública para orientação, ritmo e reflexão.',
+    footerCopy: '© 2026 LUNA • PÁGINA PÚBLICA'
   },
   shared: {
     footer: 'Privado e local. Seus dados ficam no seu dispositivo.',

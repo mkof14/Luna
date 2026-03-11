@@ -24,7 +24,7 @@ export const HarmonyLandingView: React.FC<HarmonyLandingViewProps> = ({ onNaviga
 
   return (
     <div className="max-w-5xl mx-auto space-y-16 animate-in fade-in duration-1000 pb-32">
-      <button onClick={onBack} className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-luna-purple transition-all">← Dashboard</button>
+      <button onClick={onBack} className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-luna-purple transition-all">← Home</button>
       
       <header className="text-center space-y-6">
         <h2 className="text-6xl font-black tracking-tighter uppercase">Life & Harmony</h2>

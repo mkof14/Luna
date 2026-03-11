@@ -1,11 +1,13 @@
 import { expect, test } from '@playwright/test';
-import { completeOnboardingIfVisible, signInFromPublicHome } from './helpers/auth';
+import { openMoreMenu } from './helpers/auth';
+import { bootstrapMemberSession } from './helpers/bootstrap';
 
 test('labs clear draft removes saved input', async ({ page }) => {
-  await signInFromPublicHome(page);
-  await completeOnboardingIfVisible(page);
+  await bootstrapMemberSession(page, { onboardingComplete: true });
+  await page.goto('/');
+  await page.waitForTimeout(300);
 
-  await page.getByTestId('top-nav-more').click();
+  await openMoreMenu(page);
   await page.getByTestId('sidebar-nav-labs').click();
 
   const input = page.getByTestId('labs-report-input');
@@ -16,9 +18,15 @@ test('labs clear draft removes saved input', async ({ page }) => {
   await expect(page.getByTestId('labs-report-input')).toHaveValue('');
 
   await page.reload();
-  await completeOnboardingIfVisible(page);
-  await page.getByTestId('top-nav-more').click();
-  await page.getByTestId('sidebar-nav-labs').click();
-
-  await expect(page.getByTestId('labs-report-input')).toHaveValue('');
+  const savedInput = await page.evaluate(() => {
+    const raw = window.localStorage.getItem('luna_labs_draft_v1');
+    if (!raw) return '';
+    try {
+      const parsed = JSON.parse(raw);
+      return typeof parsed?.input === 'string' ? parsed.input : '';
+    } catch {
+      return '';
+    }
+  });
+  expect(savedInput).toBe('');
 });

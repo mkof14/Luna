@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test';
-import { completeOnboardingIfVisible, signInFromPublicHome } from './helpers/auth';
+import { openMoreMenu } from './helpers/auth';
+import { bootstrapMemberSession } from './helpers/bootstrap';
 
 test('bridge reflection flow renders generated local note', async ({ page }) => {
-  await signInFromPublicHome(page);
-  await completeOnboardingIfVisible(page);
-  await page.getByTestId('top-nav-more').click();
+  await bootstrapMemberSession(page, { onboardingComplete: true });
+  await page.goto('/');
+  await page.waitForTimeout(300);
+  await openMoreMenu(page);
   await page.getByTestId('sidebar-nav-bridge').click();
 
   await page.getByRole('button', { name: /continue/i }).click();

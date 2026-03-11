@@ -1,8 +1,10 @@
 import { expect, test } from '@playwright/test';
-import { signInFromPublicHome } from './helpers/auth';
+import { bootstrapMemberSession } from './helpers/bootstrap';
 
 test('onboarding and first check-in flow works', async ({ page }) => {
-  await signInFromPublicHome(page);
+  await bootstrapMemberSession(page, { onboardingComplete: false });
+  await page.goto('/');
+  await page.waitForTimeout(300);
 
   await expect(page.getByTestId('onboarding-begin')).toBeVisible();
   await page.getByTestId('onboarding-begin').click();

@@ -17,6 +17,7 @@ const BILLING_STATE_FILE = path.join(DATA_DIR, 'billing-state.json');
 
 const SESSION_COOKIE = 'luna_sid';
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
+const SUPER_ADMIN_SESSION_TTL_SECONDS = 60 * 60 * 24 * 180;
 const SUPER_ADMIN_BOOTSTRAP_PASSWORD = String(process.env.SUPER_ADMIN_BOOTSTRAP_PASSWORD || '').trim();
 const SUPER_ADMIN_BOOTSTRAP_PASSWORD_CONFIGURED = Boolean(SUPER_ADMIN_BOOTSTRAP_PASSWORD);
 const PRIMARY_SUPER_ADMIN_EMAIL = 'dnainform@gmail.com';
@@ -396,8 +397,14 @@ const parseStoredSessions = (value) => {
       const token = safeText(item.token, 256);
       const userId = safeText(item.userId, 256);
       const expiresAt = Number(item.expiresAt);
+      const maxAgeSec = Number(item.maxAgeSec);
       if (!token || !userId || !Number.isFinite(expiresAt)) return null;
-      return { token, userId, expiresAt };
+      return {
+        token,
+        userId,
+        expiresAt,
+        maxAgeSec: Number.isFinite(maxAgeSec) && maxAgeSec > 0 ? maxAgeSec : SESSION_TTL_SECONDS,
+      };
     })
     .filter(Boolean);
 };
@@ -407,6 +414,7 @@ const serializeSessions = () =>
     token,
     userId: value.userId,
     expiresAt: value.expiresAt,
+    maxAgeSec: Number.isFinite(value.maxAgeSec) && value.maxAgeSec > 0 ? value.maxAgeSec : SESSION_TTL_SECONDS,
   }));
 
 const purgeExpiredSessions = (now = Date.now()) => {
@@ -420,10 +428,11 @@ const purgeExpiredSessions = (now = Date.now()) => {
   return changed;
 };
 
-const createSession = (userId) => {
+const createSession = (user) => {
+  const maxAgeSec = SUPER_ADMIN_EMAILS.has(normalizeEmail(user.email)) ? SUPER_ADMIN_SESSION_TTL_SECONDS : SESSION_TTL_SECONDS;
   const token = randomBytes(32).toString('hex');
-  const expiresAt = Date.now() + SESSION_TTL_SECONDS * 1000;
-  sessions.set(token, { userId, expiresAt });
+  const expiresAt = Date.now() + maxAgeSec * 1000;
+  sessions.set(token, { userId: user.id, expiresAt, maxAgeSec });
   return token;
 };
 
@@ -462,8 +471,10 @@ const corsHeaders = (origin) => {
 const clearSessionCookie = () => `${SESSION_COOKIE}=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax`;
 
 const createSessionCookie = (token) => {
+  const session = sessions.get(token);
+  const maxAge = session && Number.isFinite(session.maxAgeSec) && session.maxAgeSec > 0 ? session.maxAgeSec : SESSION_TTL_SECONDS;
   const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
-  return `${SESSION_COOKIE}=${token}; Max-Age=${SESSION_TTL_SECONDS}; Path=/; HttpOnly; SameSite=Lax${secure}`;
+  return `${SESSION_COOKIE}=${token}; Max-Age=${maxAge}; Path=/; HttpOnly; SameSite=Lax${secure}`;
 };
 
 const getClientIp = (req) => {
@@ -957,7 +968,7 @@ const start = async () => {
         users = [user, ...users];
         await saveUsers();
 
-        const token = createSession(user.id);
+        const token = createSession(user);
         await saveSessions();
         send(res, 200, { session: buildSessionPayload(user) }, { ...headers, 'Set-Cookie': createSessionCookie(token) });
       } catch (error) {
@@ -997,31 +1008,25 @@ const start = async () => {
             superAdmin.lastProvider = 'password';
           }
           await saveUsers();
-          const token = createSession(superAdmin.id);
+          const token = createSession(superAdmin);
           await saveSessions();
           send(res, 200, { session: buildSessionPayload(superAdmin) }, { ...headers, 'Set-Cookie': createSessionCookie(token) });
           return;
         }
 
         const user = users.find((item) => item.email === email);
-        if (user && email === PRIMARY_SUPER_ADMIN_EMAIL && !user.passwordHash) {
+        if (user && SUPER_ADMIN_EMAILS.has(email) && !user.passwordHash) {
           if (password.length < 8) {
-            send(res, 400, { error: 'Primary super admin recovery password must contain at least 8 characters.' }, headers);
+            send(res, 400, { error: 'Super admin recovery password must contain at least 8 characters.' }, headers);
             return;
           }
           user.passwordHash = hashPassword(password);
           user.roleOverride = 'super_admin';
           user.lastProvider = 'password';
           await saveUsers();
-          const token = createSession(user.id);
+          const token = createSession(user);
           await saveSessions();
           send(res, 200, { session: buildSessionPayload(user), recovered: true }, { ...headers, 'Set-Cookie': createSessionCookie(token) });
-          return;
-        }
-        if (user && SUPER_ADMIN_EMAILS.has(email) && !user.passwordHash) {
-          send(res, 400, {
-            error: 'Super admin password login is not configured. Set SUPER_ADMIN_BOOTSTRAP_PASSWORD in production env or sign in with Google.',
-          }, headers);
           return;
         }
         if (!user || !user.passwordHash || !verifyPassword(password, user.passwordHash)) {
@@ -1030,7 +1035,7 @@ const start = async () => {
         }
 
         user.lastProvider = 'password';
-        const token = createSession(user.id);
+        const token = createSession(user);
         await saveSessions();
         send(res, 200, { session: buildSessionPayload(user) }, { ...headers, 'Set-Cookie': createSessionCookie(token) });
       } catch (error) {
@@ -1084,7 +1089,7 @@ const start = async () => {
           user.lastProvider = 'password';
         }
         await saveUsers();
-        const token = createSession(user.id);
+        const token = createSession(user);
         await saveSessions();
         send(res, 200, { session: buildSessionPayload(user), ok: true }, { ...headers, 'Set-Cookie': createSessionCookie(token) });
       } catch (error) {
@@ -1144,7 +1149,7 @@ const start = async () => {
 
         await saveUsers();
 
-        const token = createSession(user.id);
+        const token = createSession(user);
         await saveSessions();
         send(res, 200, { session: buildSessionPayload(user) }, { ...headers, 'Set-Cookie': createSessionCookie(token) });
       } catch (error) {
@@ -1502,6 +1507,10 @@ const start = async () => {
         const role = String(body.role || '');
         if (!email || !ROLE_PERMISSIONS[role]) {
           send(res, 400, { error: 'Invalid role update request.' }, headers);
+          return;
+        }
+        if (SUPER_ADMIN_EMAILS.has(email) && role !== 'super_admin') {
+          send(res, 403, { error: 'Primary super admin role is protected and cannot be downgraded.' }, headers);
           return;
         }
 

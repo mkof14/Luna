@@ -530,6 +530,17 @@ const openPrintPreview = (title: string, htmlBody: string): boolean => {
 };
 
 export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, onBack, onLogout, onRoleChange }) => {
+  const loadingByLang: Record<Language, string> = {
+    en: 'Loading...',
+    ru: 'Загрузка...',
+    uk: 'Завантаження...',
+    es: 'Cargando...',
+    fr: 'Chargement...',
+    de: 'Lädt...',
+    zh: '加载中...',
+    ja: '読み込み中...',
+    pt: 'Carregando...',
+  };
   const [labels, setLabels] = useState<import('../utils/adminPanelLabels').AdminPanelLabels | null>(null);
   useEffect(() => {
     let alive = true;
@@ -544,7 +555,7 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
   if (!labels) {
     return (
       <section className="max-w-7xl mx-auto p-6">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Loading...</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{loadingByLang[lang] || loadingByLang.en}</p>
       </section>
     );
   }
@@ -677,6 +688,18 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
   }, [services]);
 
   const roleOptions: AdminRole[] = ['viewer', 'operator', 'content_manager', 'finance_manager', 'super_admin'];
+  const roleLabelByLang: Record<Language, Record<AdminRole, string>> = {
+    en: { viewer: 'Observer', operator: 'Coordinator', content_manager: 'Content Lead', finance_manager: 'Finance Lead', super_admin: 'Super Admin' },
+    ru: { viewer: 'Наблюдатель', operator: 'Координатор', content_manager: 'Контент-лид', finance_manager: 'Финансовый лид', super_admin: 'Супер админ' },
+    uk: { viewer: 'Спостерігач', operator: 'Координатор', content_manager: 'Контент-лід', finance_manager: 'Фінансовий лід', super_admin: 'Супер адмін' },
+    es: { viewer: 'Observador', operator: 'Coordinador', content_manager: 'Lider de contenido', finance_manager: 'Lider financiero', super_admin: 'Super Admin' },
+    fr: { viewer: 'Observateur', operator: 'Coordinateur', content_manager: 'Responsable contenu', finance_manager: 'Responsable finance', super_admin: 'Super Admin' },
+    de: { viewer: 'Beobachter', operator: 'Koordinator', content_manager: 'Content Lead', finance_manager: 'Finance Lead', super_admin: 'Super Admin' },
+    zh: { viewer: '观察者', operator: '协调员', content_manager: '内容负责人', finance_manager: '财务负责人', super_admin: '超级管理员' },
+    ja: { viewer: 'オブザーバー', operator: 'コーディネーター', content_manager: 'コンテンツ担当', finance_manager: '財務担当', super_admin: 'スーパー管理者' },
+    pt: { viewer: 'Observador', operator: 'Coordenador', content_manager: 'Lider de conteudo', finance_manager: 'Lider financeiro', super_admin: 'Super Admin' },
+  };
+  const roleLabel = (role: AdminRole) => (roleLabelByLang[lang] || roleLabelByLang.en)[role];
 
   const runTechChecks = async () => {
     try {
@@ -685,9 +708,9 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
       setTestHistory(parseTestHistory(result.testHistory));
       const audit = await adminService.getAudit().catch(() => []);
       setAuditEntries(Array.isArray(audit) ? audit.slice(0, 40) : []);
-      setActionFeedback('Tech checks completed.');
+      setActionFeedback('Health checks completed.');
     } catch (error) {
-      setActionFeedback(error instanceof Error ? error.message : 'Run checks failed.');
+      setActionFeedback(error instanceof Error ? error.message : 'Health check failed.');
     }
   };
 
@@ -1078,25 +1101,25 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
 
   return (
     <article className="max-w-7xl mx-auto space-y-12 pb-40 animate-in fade-in duration-700">
-      <header className="p-8 md:p-12 rounded-[3rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-luna space-y-6">
+      <header className="p-8 md:p-12 rounded-[3rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-[0_26px_80px_rgba(17,24,39,0.16)] dark:shadow-[0_28px_80px_rgba(2,6,23,0.55)] space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <button onClick={onBack} className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-luna-purple transition-all">← {copy.dashboard}</button>
           <button onClick={onLogout} className="px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-luna-purple transition-colors">{copy.logout}</button>
         </div>
         <div className="space-y-3">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight uppercase text-slate-900 dark:text-slate-100">Luna Admin Console</h1>
-          <p className="text-slate-600 dark:text-slate-400 font-semibold">Internal operations center for service control, growth content, financial analytics, and technical reliability.</p>
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight uppercase text-slate-900 dark:text-slate-100">Luna Care Studio</h1>
+          <p className="text-slate-600 dark:text-slate-300 font-semibold">Private space for team flow, content quality, account stability, and service wellbeing.</p>
         </div>
         <div className="flex flex-wrap gap-3 items-center">
           <span className="px-4 py-2 rounded-full bg-luna-purple/10 text-luna-purple text-[10px] font-black uppercase tracking-widest">{session?.email || copy.noSession}</span>
-          <span className="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest">{copy.role}: {session?.role || 'viewer'}</span>
+          <span className="px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest">{copy.role}: {roleLabel((session?.role || 'viewer') as AdminRole)}</span>
           <select
             value={session?.role || 'viewer'}
             onChange={(e) => onRoleChange(e.target.value as AdminRole)}
             className="px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[10px] font-black uppercase tracking-widest"
           >
             {roleOptions.map((role) => (
-              <option key={role} value={role}>{role}</option>
+              <option key={role} value={role}>{roleLabel(role)}</option>
             ))}
           </select>
         </div>
@@ -1119,8 +1142,8 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-luna-rich">
-          <h2 className="text-xl font-black uppercase tracking-wider">Service Operations</h2>
+        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-luna-rich">
+          <h2 className="text-xl font-black uppercase tracking-wider">Service Health</h2>
           <div className="space-y-3">
             {services.map((service) => (
               <div key={service.id} className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
@@ -1142,8 +1165,8 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
           </div>
         </div>
 
-        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-luna-rich">
-          <h2 className="text-xl font-black uppercase tracking-wider">Marketing Content Center</h2>
+        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-luna-rich">
+          <h2 className="text-xl font-black uppercase tracking-wider">Content Flow</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <input
               value={newCampaignTitle}
@@ -1208,11 +1231,11 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-luna-rich">
-          <h2 className="text-xl font-black uppercase tracking-wider">Email Templates</h2>
+        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-luna-rich">
+          <h2 className="text-xl font-black uppercase tracking-wider">Message Templates</h2>
           {editingTemplateId && (
             <div className="px-4 py-3 rounded-2xl bg-luna-purple/10 border border-luna-purple/30 flex items-center justify-between gap-3">
-              <p className="text-xs font-black text-luna-purple uppercase tracking-widest">Edit mode enabled</p>
+              <p className="text-xs font-black text-luna-purple uppercase tracking-widest">Edit mode active</p>
               <button
                 type="button"
                 onClick={resetTemplateForm}
@@ -1276,12 +1299,12 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
                   onClick={() => insertVariableToken(token)}
                   className="px-3 py-2 rounded-full bg-luna-teal/10 text-luna-teal border border-luna-teal/30 text-[10px] font-black tracking-wide hover:bg-luna-teal/20 transition-colors"
                 >
-                  Insert {token}
+                  Add {token}
                 </button>
               ))}
             </div>
             <button onClick={addTemplate} disabled={isTemplateLocalizing} className="md:col-span-2 px-5 py-3 rounded-2xl bg-luna-teal text-white text-[10px] font-black uppercase tracking-widest disabled:opacity-60">
-              {isTemplateLocalizing ? copy.autoTranslating : editingTemplateId ? 'Save Template' : copy.create}
+              {isTemplateLocalizing ? copy.autoTranslating : editingTemplateId ? 'Save Changes' : copy.create}
             </button>
           </div>
 
@@ -1320,9 +1343,9 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
                   </div>
                   {expandedHistoryId === template.id && (
                     <div className="mt-2 p-3 rounded-xl border border-slate-200/70 dark:border-slate-700/50 bg-white/70 dark:bg-slate-900/40 space-y-2">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Version History</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Change History</p>
                       {(templateHistory[template.id] || []).length === 0 ? (
-                        <p className="text-xs text-slate-400">No history yet.</p>
+                        <p className="text-xs text-slate-400">No updates yet.</p>
                       ) : (
                         (templateHistory[template.id] || []).map((entry) => (
                           <div key={entry.id} className="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
@@ -1343,8 +1366,8 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
           </div>
         </div>
 
-        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-luna-rich">
-          <h2 className="text-xl font-black uppercase tracking-wider">Admin Rights & Assignment</h2>
+        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-luna-rich">
+          <h2 className="text-xl font-black uppercase tracking-wider">Access & Roles</h2>
           <div className="space-y-3 max-h-80 overflow-auto pr-1">
             {admins.map((member) => (
               <div key={member.id} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 flex flex-wrap items-center justify-between gap-3">
@@ -1359,7 +1382,7 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
                     className="text-[10px] font-black uppercase tracking-widest px-3 py-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
                   >
                     {roleOptions.map((role) => (
-                      <option key={role} value={role}>{role}</option>
+                      <option key={role} value={role}>{roleLabel(role)}</option>
                     ))}
                   </select>
                   <button
@@ -1376,33 +1399,33 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        <div className="space-y-5 p-8 rounded-[2.5rem] bg-slate-950 text-white border border-slate-800 shadow-luna-deep">
-          <h2 className="text-xl font-black uppercase tracking-wider">Financial Intelligence</h2>
+        <div className="space-y-5 p-8 rounded-[2.5rem] bg-[#15182a] text-white border border-white/12 shadow-luna-deep">
+          <h2 className="text-xl font-black uppercase tracking-wider">Growth Overview</h2>
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10"><p className="text-[10px] uppercase tracking-widest opacity-60">MRR</p><p className="text-2xl font-black">${financialMetrics.mrr.toLocaleString()}</p></div>
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10"><p className="text-[10px] uppercase tracking-widest opacity-60">ARR</p><p className="text-2xl font-black">${financialMetrics.arr.toLocaleString()}</p></div>
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10"><p className="text-[10px] uppercase tracking-widest opacity-60">Monthly Revenue</p><p className="text-2xl font-black">${financialMetrics.mrr.toLocaleString()}</p></div>
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10"><p className="text-[10px] uppercase tracking-widest opacity-60">Yearly Revenue</p><p className="text-2xl font-black">${financialMetrics.arr.toLocaleString()}</p></div>
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10"><p className="text-[10px] uppercase tracking-widest opacity-60">Churn</p><p className="text-2xl font-black">{financialMetrics.churn}%</p></div>
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10"><p className="text-[10px] uppercase tracking-widest opacity-60">LTV/CAC</p><p className="text-2xl font-black">{(financialMetrics.ltv / financialMetrics.cac).toFixed(2)}x</p></div>
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10"><p className="text-[10px] uppercase tracking-widest opacity-60">Value Ratio</p><p className="text-2xl font-black">{(financialMetrics.ltv / financialMetrics.cac).toFixed(2)}x</p></div>
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10"><p className="text-[10px] uppercase tracking-widest opacity-60">Subscribers</p><p className="text-2xl font-black">{financialMetrics.activeSubscribers.toLocaleString()}</p></div>
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10"><p className="text-[10px] uppercase tracking-widest opacity-60">Trial to Paid</p><p className="text-2xl font-black">{financialMetrics.trialToPaid}%</p></div>
           </div>
         </div>
 
-        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-luna-rich">
+        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-luna-rich">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-xl font-black uppercase tracking-wider">Technical Metrics & Tests</h2>
-            <button onClick={runTechChecks} className="px-4 py-2 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-widest">Run checks</button>
+            <h2 className="text-xl font-black uppercase tracking-wider">Reliability & Checks</h2>
+            <button onClick={runTechChecks} className="px-4 py-2 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-widest">Run health check</button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50"><p className="text-[10px] uppercase tracking-widest text-slate-500">API p95</p><p className="text-2xl font-black">{technicalMetrics.apiP95}ms</p></div>
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50"><p className="text-[10px] uppercase tracking-widest text-slate-500">Error Rate</p><p className="text-2xl font-black">{technicalMetrics.errorRate}%</p></div>
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50"><p className="text-[10px] uppercase tracking-widest text-slate-500">Queue lag</p><p className="text-2xl font-black">{technicalMetrics.queueLag}s</p></div>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50"><p className="text-[10px] uppercase tracking-widest text-slate-500">Response Speed</p><p className="text-2xl font-black">{technicalMetrics.apiP95}ms</p></div>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50"><p className="text-[10px] uppercase tracking-widest text-slate-500">Stability Issues</p><p className="text-2xl font-black">{technicalMetrics.errorRate}%</p></div>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50"><p className="text-[10px] uppercase tracking-widest text-slate-500">Queue Delay</p><p className="text-2xl font-black">{technicalMetrics.queueLag}s</p></div>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button onClick={() => exportAdminData('metrics', 'csv')} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">Metrics CSV</button>
-            <button onClick={() => exportAdminData('metrics', 'json')} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">Metrics JSON</button>
-            <button onClick={() => exportAdminData('audit', 'csv')} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">Audit CSV</button>
-            <button onClick={() => exportAdminData('audit', 'json')} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">Audit JSON</button>
+            <button onClick={() => exportAdminData('metrics', 'csv')} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">Health CSV</button>
+            <button onClick={() => exportAdminData('metrics', 'json')} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">Health JSON</button>
+            <button onClick={() => exportAdminData('audit', 'csv')} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">Activity CSV</button>
+            <button onClick={() => exportAdminData('audit', 'json')} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">Activity JSON</button>
           </div>
           <div className="space-y-2 max-h-56 overflow-auto pr-1">
             {testHistory.map((entry) => (
@@ -1412,10 +1435,10 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
             ))}
           </div>
           <div className="space-y-2 max-h-56 overflow-auto pr-1 pt-2">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Audit Log</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Activity Log</p>
             {auditEntries.length === 0 ? (
               <div className="px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 text-xs font-semibold text-slate-500">
-                No server audit records yet.
+                No activity records yet.
               </div>
             ) : (
               auditEntries.map((entry) => (

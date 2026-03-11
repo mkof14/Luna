@@ -21,10 +21,10 @@ export type HomeStory = {
   const homeStoryByLang: Partial<Record<Language, HomeStory>> = {
     ru: {
       heroTitle: 'Luna',
-      heroLead: 'Luna — The physiology of feeling.',
+      heroLead: 'Luna — физиология чувств.',
       heroBody: 'Персональная система, которая соединяет физиологические ритмы, личные наблюдения и спокойную формулировку мыслей.',
-      heroCta: 'Try Luna',
-      heroSub: 'Private. Calm. Personal.',
+      heroCta: 'Попробовать Luna',
+      heroSub: 'Приватно. Спокойно. Лично.',
       explainTitle: 'Короткое объяснение',
       explainParagraphs: [
         'В обычной жизни многие состояния сложно сразу понять: усталость, напряжение, перегруженность, непонятные эмоции.',
@@ -47,12 +47,12 @@ export type HomeStory = {
           body: 'Не нужно писать длинные дневники. Вы можете просто записать голосовую заметку — что вы чувствуете, что происходит в течение дня. Luna аккуратно превращает голос в структурированную запись, помогая увидеть смысл и сохранить наблюдение.',
         },
         {
-          title: 'The Bridge',
-          body: 'Иногда состояние трудно объяснить словами. The Bridge помогает сформулировать его спокойно и точно. Несколько коротких вопросов помогают превратить внутреннюю неясность в ясное сообщение — для себя или, при желании, для общения с близкими.',
+          title: 'Мост',
+          body: 'Иногда состояние трудно объяснить словами. Мост помогает сформулировать его спокойно и точно. Несколько коротких вопросов помогают превратить внутреннюю неясность в ясное сообщение — для себя или, при желании, для общения с близкими.',
         },
         {
-          title: 'Reset Room',
-          body: 'Иногда лучший шаг — остановиться. Reset Room — это тихое пространство, где можно на несколько минут снизить внутреннее напряжение и восстановить ощущение устойчивости. Без давления. Без задач. Без необходимости что-то исправлять.',
+          title: 'Комната восстановления',
+          body: 'Иногда лучший шаг — остановиться. Комната восстановления — это тихое пространство, где можно на несколько минут снизить внутреннее напряжение и восстановить ощущение устойчивости. Без давления. Без задач. Без необходимости что-то исправлять.',
         },
       ],
       differenceTitle: 'Почему Luna отличается',
@@ -60,11 +60,11 @@ export type HomeStory = {
       differenceBody: 'Luna делает другое. Она помогает увидеть взаимосвязи между телом, состоянием и мыслями — и превратить это понимание в ясные слова.',
       finalTitle: 'Luna — это не ещё одно приложение для самоконтроля.',
       finalBody: 'Это тихое пространство, где можно остановиться, понять своё состояние и вернуть ясность.',
-      finalCta: 'Try Luna',
+      finalCta: 'Попробовать Luna',
     },
     en: {
       heroTitle: 'Luna',
-      heroLead: 'Luna — The physiology of feeling.',
+      heroLead: 'Luna — фізіологія відчуттів.',
       heroBody: 'A personal system that connects body rhythms, lived observations, and calm language for your inner state.',
       heroCta: 'Try Luna',
       heroSub: 'Private. Calm. Personal.',
@@ -114,8 +114,8 @@ export type HomeStory = {
       sections: [
         { title: 'Luna Balance', body: 'Luna Balance — це візуальна карта ваших фізіологічних ритмів. Вона показує, як гормональні та біологічні маркери взаємодіють і відображаються в енергії, концентрації та настрої.' },
         { title: 'Voice Journal', body: 'Довгі щоденники не потрібні. Запишіть коротку голосову нотатку про відчуття та події дня. Luna перетворює голос на структуровану рефлексію.' },
-        { title: 'The Bridge', body: 'Іноді стан важко пояснити. The Bridge допомагає перевести внутрішню неясність у зрозуміле повідомлення для себе або близьких.' },
-        { title: 'Reset Room', body: 'Іноді найкращий крок — зупинитися. Reset Room — це тиха зона для зниження напруги та повернення стабільності на кілька хвилин.' },
+        { title: 'Міст', body: 'Іноді стан важко пояснити. Міст допомагає перевести внутрішню неясність у зрозуміле повідомлення для себе або близьких.' },
+        { title: 'Кімната відновлення', body: 'Іноді найкращий крок — зупинитися. Кімната відновлення — це тиха зона для зниження напруги та повернення стабільності на кілька хвилин.' },
       ],
       differenceTitle: 'Чому Luna Відрізняється',
       differenceList: ['рахують кроки', 'відстежують звички', 'аналізують поведінку'],
@@ -126,7 +126,7 @@ export type HomeStory = {
     },
     es: {
       heroTitle: 'Luna',
-      heroLead: 'Luna — The physiology of feeling.',
+      heroLead: 'Luna — la fisiología del sentir.',
       heroBody: 'Un sistema personal que conecta ritmos corporales, observaciones reales y lenguaje claro para tu estado interno.',
       heroCta: 'Probar Luna',
       heroSub: 'Privado. Calmo. Personal.',
@@ -145,8 +145,8 @@ export type HomeStory = {
       sections: [
         { title: 'Luna Balance', body: 'Luna Balance es un mapa visual de tus ritmos fisiológicos. Muestra cómo los marcadores hormonales y biológicos se relacionan con energía, enfoque y estado de ánimo.' },
         { title: 'Voice Journal', body: 'No necesitas escribir mucho. Graba una nota de voz breve sobre cómo te sientes y qué pasó en tu día. Luna la convierte en una reflexión estructurada.' },
-        { title: 'The Bridge', body: 'A veces es difícil explicar un estado interno. The Bridge usa preguntas cortas para convertir esa sensación en un mensaje claro para ti o para comunicarlo.' },
-        { title: 'Reset Room', body: 'A veces la mejor decisión es pausar. Reset Room es un espacio tranquilo para bajar la presión interna y recuperar estabilidad.' },
+        { title: 'Puente', body: 'A veces es difícil explicar un estado interno. El Puente usa preguntas cortas para convertir esa sensación en un mensaje claro para ti o para comunicarlo.' },
+        { title: 'Sala de reinicio', body: 'A veces la mejor decisión es pausar. La Sala de reinicio es un espacio tranquilo para bajar la presión interna y recuperar estabilidad.' },
       ],
       differenceTitle: 'Por Qué Luna Es Diferente',
       differenceList: ['cuentan pasos', 'rastrean hábitos', 'analizan conducta'],
@@ -157,7 +157,7 @@ export type HomeStory = {
     },
     fr: {
       heroTitle: 'Luna',
-      heroLead: 'Luna — The physiology of feeling.',
+      heroLead: 'Luna — la physiologie du ressenti.',
       heroBody: 'Un système personnel qui relie les rythmes du corps, les observations vécues et un langage apaisé pour votre état intérieur.',
       heroCta: 'Essayer Luna',
       heroSub: 'Privé. Calme. Personnel.',
@@ -176,8 +176,8 @@ export type HomeStory = {
       sections: [
         { title: 'Luna Balance', body: 'Luna Balance est une carte visuelle de vos rythmes physiologiques. Elle montre comment les marqueurs hormonaux et biologiques influencent énergie, concentration et humeur.' },
         { title: 'Voice Journal', body: 'Pas besoin d’écrire longuement. Enregistrez une note vocale courte. Luna la transforme en réflexion structurée.' },
-        { title: 'The Bridge', body: 'Parfois, il est difficile d’expliquer son état. The Bridge aide à transformer ce flou intérieur en message clair.' },
-        { title: 'Reset Room', body: 'Parfois, la meilleure action est de faire une pause. Reset Room est un espace calme pour relâcher la pression interne et retrouver de la stabilité.' },
+        { title: 'Le Pont', body: 'Parfois, il est difficile d’expliquer son état. Le Pont aide à transformer ce flou intérieur en message clair.' },
+        { title: 'Salle de réinitialisation', body: 'Parfois, la meilleure action est de faire une pause. La Salle de réinitialisation est un espace calme pour relâcher la pression interne et retrouver de la stabilité.' },
       ],
       differenceTitle: 'Pourquoi Luna Est Différente',
       differenceList: ['comptent les pas', 'suivent les habitudes', 'analysent les comportements'],
@@ -188,7 +188,7 @@ export type HomeStory = {
     },
     de: {
       heroTitle: 'Luna',
-      heroLead: 'Luna — The physiology of feeling.',
+      heroLead: 'Luna — die Physiologie des Fühlens.',
       heroBody: 'Ein persönliches System, das Körperrhythmen, Beobachtungen und klare Sprache für den inneren Zustand verbindet.',
       heroCta: 'Luna testen',
       heroSub: 'Privat. Ruhig. Persönlich.',
@@ -207,8 +207,8 @@ export type HomeStory = {
       sections: [
         { title: 'Luna Balance', body: 'Luna Balance ist eine visuelle Karte deiner physiologischen Rhythmen. Sie zeigt, wie hormonelle und biologische Marker Energie, Fokus und Stimmung beeinflussen.' },
         { title: 'Voice Journal', body: 'Keine langen Tagebücher nötig. Nimm eine kurze Sprachnotiz auf. Luna wandelt sie in eine strukturierte Reflexion um.' },
-        { title: 'The Bridge', body: 'Manchmal ist ein Zustand schwer zu erklären. The Bridge hilft, innere Unklarheit in eine klare Botschaft zu übersetzen.' },
-        { title: 'Reset Room', body: 'Manchmal ist Pause der beste Schritt. Reset Room ist ein ruhiger Raum, um innere Anspannung zu senken und Stabilität zurückzugewinnen.' },
+        { title: 'Die Brücke', body: 'Manchmal ist ein Zustand schwer zu erklären. Die Brücke hilft, innere Unklarheit in eine klare Botschaft zu übersetzen.' },
+        { title: 'Reset-Raum', body: 'Manchmal ist Pause der beste Schritt. Der Reset-Raum ist ein ruhiger Raum, um innere Anspannung zu senken und Stabilität zurückzugewinnen.' },
       ],
       differenceTitle: 'Warum Luna Anders Ist',
       differenceList: ['zählen Schritte', 'tracken Gewohnheiten', 'analysieren Verhalten'],
@@ -219,7 +219,7 @@ export type HomeStory = {
     },
     zh: {
       heroTitle: 'Luna',
-      heroLead: 'Luna — The physiology of feeling.',
+      heroLead: 'Luna — 感受的生理学。',
       heroBody: '一个连接身体节律、真实观察与平静表达的个人系统，帮助你理解当下内在状态。',
       heroCta: '体验 Luna',
       heroSub: '私密。平静。个人化。',
@@ -238,8 +238,8 @@ export type HomeStory = {
       sections: [
         { title: 'Luna Balance', body: 'Luna Balance 是你的生理节律可视化地图，帮助你看到激素与生物指标如何共同影响精力、专注和情绪。' },
         { title: 'Voice Journal', body: '不需要写长日记。你只需录一段语音，Luna 会将其整理为结构化反思。' },
-        { title: 'The Bridge', body: '有些状态很难说清。The Bridge 通过简短引导，把模糊感受转为清晰信息。' },
-        { title: 'Reset Room', body: '有时暂停是最好的选择。Reset Room 提供一个安静空间，帮助你降低内在压力、恢复稳定。' },
+        { title: '连接桥', body: '有些状态很难说清。连接桥通过简短引导，把模糊感受转为清晰信息。' },
+        { title: '重置空间', body: '有时暂停是最好的选择。重置空间提供一个安静空间，帮助你降低内在压力、恢复稳定。' },
       ],
       differenceTitle: 'Luna 的不同之处',
       differenceList: ['统计步数', '追踪习惯', '分析行为'],
@@ -250,7 +250,7 @@ export type HomeStory = {
     },
     ja: {
       heroTitle: 'Luna',
-      heroLead: 'Luna — The physiology of feeling.',
+      heroLead: 'Luna — 感覚の生理学。',
       heroBody: '身体リズム・日々の観察・落ち着いた言語化をつなぐ、あなたのための個人システムです。',
       heroCta: 'Luna を試す',
       heroSub: 'プライベート。穏やか。パーソナル。',
@@ -269,8 +269,8 @@ export type HomeStory = {
       sections: [
         { title: 'Luna Balance', body: 'Luna Balance は生理リズムの可視化マップです。ホルモンや生体マーカーが、エネルギー・集中・気分にどう影響するかを示します。' },
         { title: 'Voice Journal', body: '長文記録は不要です。短い音声メモを残すだけで、Luna が構造化された振り返りに変換します。' },
-        { title: 'The Bridge', body: '状態を説明しにくい時、The Bridge が内面の曖昧さを明確なメッセージに整えます。' },
-        { title: 'Reset Room', body: '最善の一歩が「止まること」の日もあります。Reset Room は内圧を下げ、安定を取り戻す静かな空間です。' },
+        { title: 'ブリッジ', body: '状態を説明しにくい時、ブリッジが内面の曖昧さを明確なメッセージに整えます。' },
+        { title: 'リセットルーム', body: '最善の一歩が「止まること」の日もあります。リセットルームは内圧を下げ、安定を取り戻す静かな空間です。' },
       ],
       differenceTitle: 'Luna が違う理由',
       differenceList: ['歩数を数える', '習慣を追う', '行動を分析する'],
@@ -281,7 +281,7 @@ export type HomeStory = {
     },
     pt: {
       heroTitle: 'Luna',
-      heroLead: 'Luna — The physiology of feeling.',
+      heroLead: 'Luna — a fisiologia de sentir.',
       heroBody: 'Um sistema pessoal que conecta ritmos do corpo, observações reais e linguagem calma para o seu estado interno.',
       heroCta: 'Experimentar Luna',
       heroSub: 'Privado. Calmo. Pessoal.',
@@ -300,8 +300,8 @@ export type HomeStory = {
       sections: [
         { title: 'Luna Balance', body: 'Luna Balance é um mapa visual dos seus ritmos fisiológicos. Mostra como marcadores hormonais e biológicos influenciam energia, foco e humor.' },
         { title: 'Voice Journal', body: 'Sem diário longo. Grave uma nota de voz curta sobre seu dia, e a Luna transforma em reflexão estruturada.' },
-        { title: 'The Bridge', body: 'Às vezes é difícil explicar o próprio estado. The Bridge ajuda a transformar incerteza interna em mensagem clara.' },
-        { title: 'Reset Room', body: 'Às vezes a melhor decisão é pausar. Reset Room é um espaço silencioso para reduzir pressão interna e recuperar estabilidade.' },
+        { title: 'A Ponte', body: 'Às vezes é difícil explicar o próprio estado. A Ponte ajuda a transformar incerteza interna em mensagem clara.' },
+        { title: 'Sala de reinício', body: 'Às vezes a melhor decisão é pausar. A Sala de reinício é um espaço silencioso para reduzir pressão interna e recuperar estabilidade.' },
       ],
       differenceTitle: 'Por Que A Luna É Diferente',
       differenceList: ['contam passos', 'rastreiam hábitos', 'analisam comportamento'],
@@ -326,7 +326,7 @@ export type HomeStory = {
     },
     ru: {
       title: 'Прозрачная И Простая Цена',
-      subtitle: 'Один план. Полный доступ к member-зоне Luna. Выберите оплату помесячно или за год.',
+      subtitle: 'Один план. Полный доступ к зоне участника Luna. Выберите оплату помесячно или за год.',
       month: '$12.99',
       year: '$89',
       monthNote: 'в месяц',
@@ -337,7 +337,7 @@ export type HomeStory = {
     },
     uk: {
       title: 'Прозора Та Проста Ціна',
-      subtitle: 'Один план. Повний доступ до member-зони Luna. Оберіть місяць або рік.',
+      subtitle: 'Один план. Повний доступ до зони учасника Luna. Оберіть місяць або рік.',
       month: '$12.99',
       year: '$89',
       monthNote: 'за місяць',

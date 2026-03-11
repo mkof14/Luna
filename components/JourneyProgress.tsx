@@ -9,15 +9,15 @@ interface JourneyProgressProps {
 }
 
 const copyByLang: Record<Language, { title: string; steps: [string, string, string] }> = {
-  en: { title: 'Member Path', steps: ['Dashboard', 'Cycle', 'Bridge'] },
-  ru: { title: 'Путь Внутри Luna', steps: ['Dashboard', 'Cycle', 'Bridge'] },
-  uk: { title: 'Шлях Усередині Luna', steps: ['Dashboard', 'Cycle', 'Bridge'] },
-  es: { title: 'Ruta De Miembro', steps: ['Dashboard', 'Cycle', 'Bridge'] },
-  fr: { title: 'Parcours Membre', steps: ['Dashboard', 'Cycle', 'Bridge'] },
-  de: { title: 'Mitgliederpfad', steps: ['Dashboard', 'Cycle', 'Bridge'] },
-  zh: { title: '成员路径', steps: ['Dashboard', 'Cycle', 'Bridge'] },
-  ja: { title: 'メンバーパス', steps: ['Dashboard', 'Cycle', 'Bridge'] },
-  pt: { title: 'Caminho Da Membro', steps: ['Dashboard', 'Cycle', 'Bridge'] },
+  en: { title: 'Member Path', steps: ['Home', 'Cycle', 'Bridge'] },
+  ru: { title: 'Путь Внутри Luna', steps: ['Home', 'Cycle', 'Bridge'] },
+  uk: { title: 'Шлях Усередині Luna', steps: ['Home', 'Cycle', 'Bridge'] },
+  es: { title: 'Ruta De Miembro', steps: ['Home', 'Cycle', 'Bridge'] },
+  fr: { title: 'Parcours Membre', steps: ['Home', 'Cycle', 'Bridge'] },
+  de: { title: 'Mitgliederpfad', steps: ['Home', 'Cycle', 'Bridge'] },
+  zh: { title: '成员路径', steps: ['Home', 'Cycle', 'Bridge'] },
+  ja: { title: 'メンバーパス', steps: ['Home', 'Cycle', 'Bridge'] },
+  pt: { title: 'Caminho Da Membro', steps: ['Home', 'Cycle', 'Bridge'] },
 };
 
 export const JourneyProgress: React.FC<JourneyProgressProps> = ({ lang, currentStep }) => {
@@ -54,4 +54,3 @@ export const JourneyProgress: React.FC<JourneyProgressProps> = ({ lang, currentS
     </section>
   );
 };
-

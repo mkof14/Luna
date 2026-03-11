@@ -78,6 +78,15 @@ export const PublicMapSection: React.FC<PublicMapSectionProps> = ({
       <div className="absolute top-1/3 left-1/3 w-72 h-72 rounded-full bg-luna-coral/24 blur-[110px]" />
       <div className="relative z-10 h-56 md:h-72 lg:h-80 rounded-[2.5rem] overflow-hidden border border-transparent bg-transparent">
         <div className="absolute inset-0" style={bodyMapBackgroundStyle} />
+        <img
+          src="/images/f5.webp"
+          alt="Body map visual"
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover opacity-68"
+          style={{ objectPosition: '50% 44%', filter: 'saturate(.62) contrast(.86) brightness(.82)' }}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(110%_75%_at_20%_18%,rgba(245,236,250,0.30),transparent_58%),radial-gradient(95%_70%_at_84%_82%,rgba(206,184,228,0.20),transparent_62%)] dark:bg-[radial-gradient(110%_75%_at_20%_18%,rgba(57,45,86,0.28),transparent_58%),radial-gradient(95%_70%_at_84%_82%,rgba(42,66,108,0.24),transparent_62%)]" />
         <div className="absolute inset-0 bg-gradient-to-r from-[rgba(247,236,230,0.32)] via-transparent to-[rgba(240,230,238,0.3)] dark:from-[rgba(12,16,30,0.44)] dark:via-transparent dark:to-[rgba(14,18,32,0.42)]" />
       </div>
       <header className="space-y-2 relative z-10">
@@ -91,7 +100,7 @@ export const PublicMapSection: React.FC<PublicMapSectionProps> = ({
         <p className="text-base md:text-lg font-black uppercase tracking-[0.16em] text-luna-purple mb-3">{coreLabel}</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {lunaBalanceVision.points.map((point) => (
-            <div key={point} className="rounded-2xl border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#fff8fd]/92 via-[#f3e9f8]/84 to-[#e4ecf9]/78 dark:from-slate-900/72 dark:to-slate-900/58 p-4 text-center shadow-[0_12px_28px_rgba(91,76,131,0.2)] dark:shadow-[0_10px_24px_rgba(0,0,0,0.35)]">
+            <div key={point} className="rounded-2xl border border-slate-200/80 dark:border-slate-700/70 bg-[linear-gradient(160deg,rgba(255,252,255,0.76),rgba(244,238,250,0.82)),url('/images/bg1.webp')] bg-cover bg-center dark:bg-[linear-gradient(160deg,rgba(22,19,48,0.78),rgba(14,16,41,0.84)),url('/images/bg1.webp')] p-4 text-center shadow-[0_12px_28px_rgba(91,76,131,0.2)] dark:shadow-[0_10px_24px_rgba(0,0,0,0.35)]">
               <p className="text-sm md:text-base font-black uppercase tracking-[0.12em] text-slate-800 dark:text-slate-100">{point}</p>
             </div>
           ))}
@@ -131,7 +140,7 @@ export const PublicMapSection: React.FC<PublicMapSectionProps> = ({
           {innerWeather.line3}
         </p>
       </article>
-      <article className="relative z-10 rounded-[2rem] border border-slate-200/80 dark:border-slate-800/85 bg-gradient-to-br from-[#f3e5f1]/90 via-[#e8e2f2]/84 to-[#dce8f5]/82 dark:from-[#061126]/94 dark:via-[#08162f]/92 dark:to-[#0d1f3c]/90 p-6 shadow-[0_18px_42px_rgba(88,69,126,0.2)] dark:shadow-[0_20px_42px_rgba(0,0,0,0.5)]">
+      <article className="relative z-10 rounded-[2rem] border border-slate-200/80 dark:border-slate-800/85 bg-[linear-gradient(165deg,rgba(248,243,251,0.78),rgba(236,230,246,0.86)),url('/images/bg5.webp')] bg-cover bg-center dark:bg-[linear-gradient(165deg,rgba(13,18,40,0.78),rgba(9,18,40,0.86)),url('/images/bg5.webp')] p-6 shadow-[0_18px_42px_rgba(88,69,126,0.2)] dark:shadow-[0_20px_42px_rgba(0,0,0,0.5)]">
         <p className="text-base md:text-lg font-black uppercase tracking-[0.16em] text-luna-purple mb-3">{appliedTitle}</p>
         <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">
           {appliedBody}

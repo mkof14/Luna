@@ -76,7 +76,7 @@ const copyByLang: Record<Language, {
   preheader: string;
 }> = {
   en: {
-    dashboard: 'Dashboard', logout: 'Logout', noSession: 'No session', role: 'Role',
+    dashboard: 'Home', logout: 'Logout', noSession: 'No session', role: 'Role',
     campaignPlaceholder: 'New campaign name', campaignBodyPlaceholder: 'Campaign message/body',
     templatePlaceholder: 'Template title', templateBodyPlaceholder: 'Template body',
     triggerPlaceholder: 'Trigger (e.g. New signup)', subjectPlaceholder: 'Email subject', preheaderPlaceholder: 'Email preheader',
@@ -86,7 +86,7 @@ const copyByLang: Record<Language, {
     closePreview: 'Close', channel: 'Channel', status: 'Status', subject: 'Subject', preheader: 'Preheader'
   },
   ru: {
-    dashboard: 'Дашборд', logout: 'Выйти', noSession: 'Нет сессии', role: 'Роль',
+    dashboard: 'Главная', logout: 'Выйти', noSession: 'Нет сессии', role: 'Роль',
     campaignPlaceholder: 'Название кампании', campaignBodyPlaceholder: 'Текст кампании',
     templatePlaceholder: 'Название шаблона', templateBodyPlaceholder: 'Текст шаблона',
     triggerPlaceholder: 'Триггер (например New signup)', subjectPlaceholder: 'Тема письма', preheaderPlaceholder: 'Преheader письма',
@@ -96,7 +96,7 @@ const copyByLang: Record<Language, {
     closePreview: 'Закрыть', channel: 'Канал', status: 'Статус', subject: 'Тема', preheader: 'Преheader'
   },
   uk: {
-    dashboard: 'Дашборд', logout: 'Вийти', noSession: 'Немає сесії', role: 'Роль',
+    dashboard: 'Головна', logout: 'Вийти', noSession: 'Немає сесії', role: 'Роль',
     campaignPlaceholder: 'Назва кампанії', campaignBodyPlaceholder: 'Текст кампанії',
     templatePlaceholder: 'Назва шаблону', templateBodyPlaceholder: 'Текст шаблону',
     triggerPlaceholder: 'Тригер (наприклад New signup)', subjectPlaceholder: 'Тема листа', preheaderPlaceholder: 'Преheader листа',
@@ -106,7 +106,7 @@ const copyByLang: Record<Language, {
     closePreview: 'Закрити', channel: 'Канал', status: 'Статус', subject: 'Тема', preheader: 'Преheader'
   },
   es: {
-    dashboard: 'Panel', logout: 'Cerrar sesion', noSession: 'Sin sesion', role: 'Rol',
+    dashboard: 'Inicio', logout: 'Cerrar sesion', noSession: 'Sin sesion', role: 'Rol',
     campaignPlaceholder: 'Nombre de campana', campaignBodyPlaceholder: 'Texto de campana',
     templatePlaceholder: 'Titulo de plantilla', templateBodyPlaceholder: 'Texto de plantilla',
     triggerPlaceholder: 'Disparador', subjectPlaceholder: 'Asunto', preheaderPlaceholder: 'Preheader',
@@ -116,7 +116,7 @@ const copyByLang: Record<Language, {
     closePreview: 'Cerrar', channel: 'Canal', status: 'Estado', subject: 'Asunto', preheader: 'Preheader'
   },
   fr: {
-    dashboard: 'Tableau', logout: 'Deconnexion', noSession: 'Aucune session', role: 'Role',
+    dashboard: 'Accueil', logout: 'Deconnexion', noSession: 'Aucune session', role: 'Role',
     campaignPlaceholder: 'Nom de campagne', campaignBodyPlaceholder: 'Texte de campagne',
     templatePlaceholder: 'Titre du modele', templateBodyPlaceholder: 'Corps du modele',
     triggerPlaceholder: 'Declencheur', subjectPlaceholder: 'Sujet', preheaderPlaceholder: 'Preheader',
@@ -126,7 +126,7 @@ const copyByLang: Record<Language, {
     closePreview: 'Fermer', channel: 'Canal', status: 'Statut', subject: 'Sujet', preheader: 'Preheader'
   },
   de: {
-    dashboard: 'Dashboard', logout: 'Abmelden', noSession: 'Keine Sitzung', role: 'Rolle',
+    dashboard: 'Start', logout: 'Abmelden', noSession: 'Keine Sitzung', role: 'Rolle',
     campaignPlaceholder: 'Kampagnenname', campaignBodyPlaceholder: 'Kampagnentext',
     templatePlaceholder: 'Vorlagentitel', templateBodyPlaceholder: 'Vorlageninhalt',
     triggerPlaceholder: 'Ausloeser', subjectPlaceholder: 'Betreff', preheaderPlaceholder: 'Preheader',
@@ -136,7 +136,7 @@ const copyByLang: Record<Language, {
     closePreview: 'Schliessen', channel: 'Kanal', status: 'Status', subject: 'Betreff', preheader: 'Preheader'
   },
   zh: {
-    dashboard: '仪表盘', logout: '退出', noSession: '无会话', role: '角色',
+    dashboard: '首页', logout: '退出', noSession: '无会话', role: '角色',
     campaignPlaceholder: '活动名称', campaignBodyPlaceholder: '活动内容',
     templatePlaceholder: '模板标题', templateBodyPlaceholder: '模板正文',
     triggerPlaceholder: '触发条件', subjectPlaceholder: '邮件主题', preheaderPlaceholder: '预览摘要',
@@ -146,7 +146,7 @@ const copyByLang: Record<Language, {
     closePreview: '关闭', channel: '渠道', status: '状态', subject: '主题', preheader: '预览摘要'
   },
   ja: {
-    dashboard: 'ダッシュボード', logout: 'ログアウト', noSession: 'セッションなし', role: 'ロール',
+    dashboard: 'ホーム', logout: 'ログアウト', noSession: 'セッションなし', role: 'ロール',
     campaignPlaceholder: 'キャンペーン名', campaignBodyPlaceholder: 'キャンペーン本文',
     templatePlaceholder: 'テンプレート名', templateBodyPlaceholder: 'テンプレート本文',
     triggerPlaceholder: 'トリガー', subjectPlaceholder: '件名', preheaderPlaceholder: 'プレヘッダー',

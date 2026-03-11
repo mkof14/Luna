@@ -413,6 +413,9 @@ const CORE_FAQ_BY_LANG: Record<Language, FAQItem[]> = {
     { q: 'What data does Luna use?', a: 'Luna uses your in-app inputs: check-ins, reflections, optional profile context, and usage events required for functionality.' },
     { q: 'Can Luna replace a doctor?', a: 'No. Luna helps you organize observations before consultation. Medical decisions must be made with licensed clinicians.' },
     { q: 'How private is Luna?', a: 'Luna is local-first in development mode. Your data stays on device unless you export/share it.' },
+    { q: 'Can I upload scans and lab PDFs to reports?', a: 'Yes. My Health Reports accepts text, images, and PDF files for extraction and structured review in one report flow.' },
+    { q: 'Can report language match my selected app language?', a: 'Yes. Reports and key explanations can be generated in your active interface language.' },
+    { q: 'Where can partners learn how to support without pressure?', a: 'Open PARTNER FAQ and The Bridge sections. They provide calm wording, context, and communication guidance.' },
   ],
   ru: [
     { q: 'Luna является медицинским сервисом?', a: 'Нет. Luna не является медицинской услугой, устройством, диагностикой или лечением.' },
@@ -420,6 +423,9 @@ const CORE_FAQ_BY_LANG: Record<Language, FAQItem[]> = {
     { q: 'Какие данные использует Luna?', a: 'Luna использует ваши данные внутри приложения: check-in, рефлексии, контекст профиля и сервисные события для работы функций.' },
     { q: 'Может ли Luna заменить врача?', a: 'Нет. Luna помогает структурировать наблюдения перед консультацией. Медицинские решения принимаются только с лицензированным врачом.' },
     { q: 'Насколько приватна Luna?', a: 'В режиме разработки Luna local-first: данные остаются на устройстве, пока вы сами их не экспортируете/поделитесь.' },
+    { q: 'Можно загружать сканы и PDF анализов в отчеты?', a: 'Да. My Health Reports принимает текст, изображения и PDF-файлы для распознавания и структурированного разбора в одном потоке.' },
+    { q: 'Можно ли делать отчеты на выбранном языке?', a: 'Да. Отчеты и ключевые пояснения могут генерироваться на активном языке интерфейса.' },
+    { q: 'Где партнеру понять, как поддерживать без давления?', a: 'Откройте разделы PARTNER FAQ и The Bridge. Там есть спокойные формулировки, контекст и правила коммуникации.' },
   ],
   uk: [
     { q: 'Luna є медичним сервісом?', a: 'Ні. Luna не є медичною послугою, пристроєм, діагностикою або лікуванням.' },
@@ -427,6 +433,9 @@ const CORE_FAQ_BY_LANG: Record<Language, FAQItem[]> = {
     { q: 'Які дані використовує Luna?', a: 'Luna використовує ваші дані в застосунку: check-in, рефлексії, контекст профілю та технічні події для роботи функцій.' },
     { q: 'Чи може Luna замінити лікаря?', a: 'Ні. Luna допомагає структурувати спостереження перед консультацією. Медичні рішення ухвалюються лише з ліцензованим лікарем.' },
     { q: 'Наскільки приватна Luna?', a: 'У dev-режимі Luna local-first: дані залишаються на вашому пристрої, поки ви самі не експортуєте або не поділитеся ними.' },
+    { q: 'Чи можна завантажувати скани та PDF аналізів у звіти?', a: 'Так. My Health Reports приймає текст, зображення і PDF для розпізнавання та структурованого розбору.' },
+    { q: 'Чи можна формувати звіти мовою інтерфейсу?', a: 'Так. Звіти та ключові пояснення можуть генеруватись активною мовою застосунку.' },
+    { q: 'Де партнеру зрозуміти, як підтримувати без тиску?', a: 'Відкрийте PARTNER FAQ та The Bridge — там є спокійні формулювання і правила комунікації.' },
   ],
   es: [
     { q: '¿Luna es médica?', a: 'No. Luna no es un servicio médico, dispositivo médico, herramienta diagnóstica ni proveedor de tratamiento.' },
@@ -434,6 +443,9 @@ const CORE_FAQ_BY_LANG: Record<Language, FAQItem[]> = {
     { q: '¿Qué datos usa Luna?', a: 'Luna usa tus entradas en la app: check-ins, reflexiones, contexto opcional del perfil y eventos técnicos necesarios para el funcionamiento.' },
     { q: '¿Puede Luna reemplazar a un médico?', a: 'No. Luna ayuda a organizar observaciones antes de una consulta. Las decisiones médicas deben tomarse con profesionales licenciados.' },
     { q: '¿Qué tan privada es Luna?', a: 'En modo desarrollo, Luna es local-first. Tus datos permanecen en el dispositivo salvo que los exportes o compartas.' },
+    { q: '¿Puedo subir escaneos y PDFs de laboratorio a los reportes?', a: 'Sí. My Health Reports acepta texto, imágenes y PDF para extracción y revisión estructurada.' },
+    { q: '¿El reporte puede generarse en el idioma seleccionado?', a: 'Sí. El reporte y sus explicaciones clave se pueden generar en el idioma activo de la interfaz.' },
+    { q: '¿Dónde aprende la pareja a apoyar sin presión?', a: 'En PARTNER FAQ y The Bridge. Ahí hay contexto y frases claras para comunicar sin conflicto.' },
   ],
   fr: [
     { q: 'Luna est-elle médicale ?', a: 'Non. Luna n est ni un service médical, ni un dispositif médical, ni un outil de diagnostic ou de traitement.' },
@@ -441,6 +453,9 @@ const CORE_FAQ_BY_LANG: Record<Language, FAQItem[]> = {
     { q: 'Quelles données Luna utilise-t-elle ?', a: 'Luna utilise vos entrées dans l application : check-ins, réflexions, contexte de profil optionnel et événements techniques nécessaires.' },
     { q: 'Luna peut-elle remplacer un médecin ?', a: 'Non. Luna aide à structurer les observations avant consultation. Les décisions médicales doivent être prises avec des professionnels agréés.' },
     { q: 'Quel est le niveau de confidentialité ?', a: 'En mode développement, Luna est local-first. Les données restent sur l appareil sauf export ou partage volontaire.' },
+    { q: 'Puis-je importer des scans et PDF de laboratoire dans les rapports ?', a: 'Oui. My Health Reports accepte texte, images et PDF pour extraction et synthèse structurée.' },
+    { q: 'Le rapport peut-il être généré dans la langue choisie ?', a: 'Oui. Le rapport et ses explications principales suivent la langue active de l interface.' },
+    { q: 'Où le partenaire apprend-il à soutenir sans pression ?', a: 'Dans PARTNER FAQ et The Bridge. Vous y trouverez contexte et formulations calmes.' },
   ],
   de: [
     { q: 'Ist Luna medizinisch?', a: 'Nein. Luna ist kein medizinischer Dienst, kein Medizinprodukt, kein Diagnosetool und kein Behandlungsanbieter.' },
@@ -448,6 +463,9 @@ const CORE_FAQ_BY_LANG: Record<Language, FAQItem[]> = {
     { q: 'Welche Daten nutzt Luna?', a: 'Luna nutzt deine In-App-Eingaben: Check-ins, Reflexionen, optionalen Profilkontext und technische Ereignisse für die Funktion.' },
     { q: 'Kann Luna einen Arzt ersetzen?', a: 'Nein. Luna hilft, Beobachtungen vor einem Termin zu strukturieren. Medizinische Entscheidungen gehören zu lizenzierten Fachkräften.' },
     { q: 'Wie privat ist Luna?', a: 'Im Entwicklungsmodus arbeitet Luna local-first. Daten bleiben auf dem Gerät, außer bei aktivem Export/Teilen.' },
+    { q: 'Kann ich Scans und Labor-PDFs in Berichte hochladen?', a: 'Ja. My Health Reports akzeptiert Text, Bilder und PDF-Dateien für Extraktion und strukturierte Auswertung.' },
+    { q: 'Kann der Bericht in der gewählten Sprache erstellt werden?', a: 'Ja. Bericht und Kern-Erklärungen folgen der aktiven App-Sprache.' },
+    { q: 'Wo lernt ein Partner Unterstützung ohne Druck?', a: 'In PARTNER FAQ und The Bridge. Dort gibt es ruhige Formulierungen und klare Kommunikationshilfe.' },
   ],
   zh: [
     { q: 'Luna 是医疗服务吗？', a: '不是。Luna 不是医疗服务、医疗设备、诊断工具或治疗提供方。' },
@@ -455,6 +473,9 @@ const CORE_FAQ_BY_LANG: Record<Language, FAQItem[]> = {
     { q: 'Luna 使用哪些数据？', a: 'Luna 使用你在应用内输入的数据：check-in、反思、可选资料上下文，以及功能运行所需的技术事件。' },
     { q: 'Luna 能替代医生吗？', a: '不能。Luna 用于在就诊前整理观察信息。医疗决策必须由持证专业人士做出。' },
     { q: 'Luna 的隐私如何？', a: '在开发模式下，Luna 采用 local-first。除非你主动导出或分享，数据都保留在本地设备。' },
+    { q: '可以上传化验单扫描件和 PDF 吗？', a: '可以。My Health Reports 支持文本、图片和 PDF 的提取与结构化整理。' },
+    { q: '报告能按当前语言生成吗？', a: '可以。报告及关键解释可按当前界面语言生成。' },
+    { q: '伴侣如何学习“无压力支持”？', a: '请查看 PARTNER FAQ 与 The Bridge，提供清晰、平和的沟通方式。' },
   ],
   ja: [
     { q: 'Luna は医療サービスですか？', a: 'いいえ。Luna は医療サービス、医療機器、診断ツール、治療提供者ではありません。' },
@@ -462,6 +483,9 @@ const CORE_FAQ_BY_LANG: Record<Language, FAQItem[]> = {
     { q: 'Luna はどのデータを使いますか？', a: 'Luna はアプリ内入力（check-in、リフレクション、任意のプロフィール文脈、機能に必要な技術イベント）を使います。' },
     { q: 'Luna は医師の代わりになりますか？', a: 'いいえ。Luna は受診前の観察整理に使います。医療判断は有資格の専門家と行ってください。' },
     { q: 'Luna のプライバシーは？', a: '開発モードでは local-first で動作します。エクスポート/共有しない限り、データは端末内に保持されます。' },
+    { q: '検査スキャンやPDFをレポートにアップロードできますか？', a: 'はい。My Health Reports はテキスト・画像・PDF の抽出と整理に対応しています。' },
+    { q: 'レポートは選択言語で生成できますか？', a: 'はい。レポートと主要説明は現在の表示言語で生成できます。' },
+    { q: 'パートナーが無理なく支える方法はどこで学べますか？', a: 'PARTNER FAQ と The Bridge を確認してください。落ち着いた伝え方を案内します。' },
   ],
   pt: [
     { q: 'Luna é médica?', a: 'Não. Luna não é serviço médico, dispositivo médico, ferramenta diagnóstica nem provedora de tratamento.' },
@@ -469,6 +493,9 @@ const CORE_FAQ_BY_LANG: Record<Language, FAQItem[]> = {
     { q: 'Quais dados a Luna usa?', a: 'A Luna usa suas entradas no app: check-ins, reflexões, contexto opcional de perfil e eventos técnicos necessários ao funcionamento.' },
     { q: 'A Luna pode substituir um médico?', a: 'Não. Luna ajuda a organizar observações antes da consulta. Decisões médicas devem ser tomadas com profissionais licenciados.' },
     { q: 'Quão privada é a Luna?', a: 'No modo de desenvolvimento, Luna é local-first. Os dados ficam no dispositivo, salvo quando você exporta ou compartilha.' },
+    { q: 'Posso enviar scans e PDFs de exames para os relatórios?', a: 'Sim. My Health Reports aceita texto, imagem e PDF para extração e organização estruturada.' },
+    { q: 'O relatório pode ser gerado no idioma escolhido?', a: 'Sim. O relatório e as explicações principais seguem o idioma ativo da interface.' },
+    { q: 'Onde o parceiro aprende a apoiar sem pressão?', a: 'Veja PARTNER FAQ e The Bridge, com contexto e linguagem clara para conversa respeitosa.' },
   ],
 };
 

@@ -20,7 +20,12 @@ type GoogleIdClient = {
     auto_select?: boolean;
     context?: 'signin' | 'signup' | 'use';
   }) => void;
-  prompt: (cb?: (notification: { isNotDisplayed: () => boolean; isSkippedMoment: () => boolean }) => void) => void;
+  prompt: (cb?: (notification: {
+    isNotDisplayed: () => boolean;
+    isSkippedMoment: () => boolean;
+    getNotDisplayedReason?: () => string;
+    getSkippedReason?: () => string;
+  }) => void) => void;
 };
 
 declare global {
@@ -110,49 +115,64 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
 
     setIsLoading(true);
 
-    window.google.accounts.id.initialize({
-      client_id: googleClientId,
-      context: isLogin ? 'signin' : 'signup',
-      callback: async (response) => {
-        try {
-          if (!response.credential) {
-            throw new Error('Google response does not contain a credential.');
+    try {
+      window.google.accounts.id.initialize({
+        client_id: googleClientId,
+        context: isLogin ? 'signin' : 'signup',
+        callback: async (response) => {
+          try {
+            if (!response.credential) {
+              throw new Error('Google response does not contain a credential.');
+            }
+            const session = await authService.loginWithGoogleCredential(response.credential);
+            onSuccess(session);
+          } catch (error) {
+            setAuthError(error instanceof Error ? error.message : 'Google authorization failed.');
+            setIsLoading(false);
           }
-          const session = await authService.loginWithGoogleCredential(response.credential);
-          onSuccess(session);
-        } catch (error) {
-          setAuthError(error instanceof Error ? error.message : 'Google authorization failed.');
+        },
+      });
+
+      window.google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed()) {
+          const reason = notification.getNotDisplayedReason?.() ?? 'unknown';
+          setAuthError(`Google sign-in is unavailable in this browser context (${reason}). Try Google button again or use email/password.`);
+          setIsLoading(false);
+          return;
+        }
+        if (notification.isSkippedMoment()) {
+          const reason = notification.getSkippedReason?.() ?? 'unknown';
+          setAuthError(`Google sign-in was skipped (${reason}). Try again.`);
           setIsLoading(false);
         }
-      },
-    });
-
-    window.google.accounts.id.prompt((notification) => {
-      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-        setIsLoading(false);
-      }
-    });
+      });
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Google sign-in failed to start.');
+      setIsLoading(false);
+    }
   };
 
   if (showRecovery) {
     return (
-      <div className="fixed inset-0 z-[500] bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-6 animate-in fade-in duration-700">
-        <div className="max-w-md w-full bg-white dark:bg-slate-900 p-10 md:p-12 rounded-[3rem] shadow-2xl border border-slate-200 dark:border-slate-800 space-y-10">
+      <div className="fixed inset-0 z-[500] bg-gradient-to-br from-[#f6f3fa] via-[#f3eff8] to-[#eceef6] dark:from-[#080d1d] dark:via-[#0b1328] dark:to-[#111f3d] flex items-center justify-center p-6 animate-in fade-in duration-700 overflow-hidden">
+        <div className="pointer-events-none absolute -top-20 -left-20 w-96 h-96 rounded-full bg-[#e5dbf4]/70 dark:bg-violet-500/20 blur-[120px]" />
+        <div className="pointer-events-none absolute -bottom-24 -right-16 w-96 h-96 rounded-full bg-[#e3e6f7]/70 dark:bg-indigo-500/20 blur-[120px]" />
+        <div className="max-w-md w-full p-8 md:p-10 rounded-[2.4rem] border border-slate-300/70 dark:border-slate-700/70 bg-white/88 dark:bg-[#0b1328]/88 backdrop-blur-xl shadow-[0_30px_70px_rgba(71,85,105,0.22)] dark:shadow-[0_30px_70px_rgba(2,6,23,0.65)] space-y-8 relative z-10">
           <header className="text-center space-y-4">
             <Logo size="md" className="mx-auto" />
             <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100">{ui.auth.recoveryHeadline}</h2>
-            <p className="text-sm font-medium text-slate-500 italic leading-relaxed">{ui.auth.recoveryText}</p>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300 italic leading-relaxed">{ui.auth.recoveryText}</p>
           </header>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">{ui.auth.email}</label>
+              <label className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 tracking-widest ml-1">{ui.auth.email}</label>
               <input
                 data-testid="auth-recovery-email"
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 outline-none font-bold text-sm focus:ring-2 ring-luna-purple/40 transition-all"
+                className="w-full bg-white/80 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 outline-none font-bold text-sm focus:ring-2 ring-luna-purple/40 transition-all"
                 placeholder="you@example.com"
               />
             </div>
@@ -160,7 +180,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
               data-testid="auth-recovery-submit"
               type="submit"
               disabled={isLoading}
-              className="w-full py-5 bg-luna-purple text-white font-black uppercase tracking-[0.2em] rounded-full hover:shadow-2xl active:scale-95 transition-all shadow-xl shadow-luna-purple/40"
+              className="w-full py-4 bg-gradient-to-r from-luna-purple via-luna-coral to-luna-purple text-white font-black uppercase tracking-[0.16em] rounded-full hover:shadow-2xl hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-luna-purple/40"
             >
               {isLoading ? 'Processing...' : ui.auth.recoveryCta}
             </button>
@@ -180,26 +200,28 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
   }
 
   return (
-    <div className="fixed inset-0 z-[500] bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-6 animate-in fade-in duration-700 overflow-hidden">
-      <div className="absolute top-1/4 -left-20 w-80 h-80 bg-purple-300/20 dark:bg-purple-900/10 rounded-full blur-[100px] animate-blob-slow" />
-      <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-cyan-300/20 dark:bg-cyan-900/10 rounded-full blur-[100px] animate-blob-slow delay-1000" />
+    <div className="fixed inset-0 z-[500] bg-gradient-to-br from-[#f6f3fa] via-[#f3eff8] to-[#eceef6] dark:from-[#080d1d] dark:via-[#0b1328] dark:to-[#111f3d] flex items-center justify-center p-6 animate-in fade-in duration-700 overflow-hidden">
+      <div className="pointer-events-none absolute -top-24 -left-24 w-[30rem] h-[30rem] bg-[#e7def6]/70 dark:bg-violet-500/24 rounded-full blur-[120px]" />
+      <div className="pointer-events-none absolute bottom-0 -right-24 w-[28rem] h-[28rem] bg-[#e3e7f8]/75 dark:bg-indigo-500/22 rounded-full blur-[120px]" />
+      <div className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 w-[24rem] h-[24rem] bg-[#f0e8f6]/60 dark:bg-fuchsia-500/12 rounded-full blur-[110px]" />
 
-      <div className="w-full max-w-6xl rounded-[3rem] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl bg-white dark:bg-slate-900 grid grid-cols-1 lg:grid-cols-2 relative z-10">
-        <aside className="hidden lg:block relative min-h-[680px] bg-gradient-to-br from-[#f7ede7] via-[#efe3ea] to-[#ddd4e5] dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      <div className="w-full max-w-6xl rounded-[2.8rem] overflow-hidden border border-slate-300/70 dark:border-slate-700/70 shadow-[0_34px_90px_rgba(71,85,105,0.26)] dark:shadow-[0_34px_90px_rgba(2,6,23,0.72)] bg-white/86 dark:bg-[#0a1328]/88 backdrop-blur-xl grid grid-cols-1 lg:grid-cols-2 relative z-10">
+        <aside className="hidden lg:block relative min-h-[680px] bg-gradient-to-br from-[#f4ecf8] via-[#efe7f5] to-[#e7eaf5] dark:from-[#0a1328] dark:via-[#0f1b38] dark:to-[#13264a]">
           <img
             src="/images/Luna%20logo3.png"
             alt="Luna artwork"
-            className="absolute inset-0 h-full w-full object-contain scale-[1.18] opacity-95"
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-75 dark:opacity-60"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[rgba(255,255,255,0.15)] to-transparent dark:from-[rgba(15,23,42,0.25)] dark:to-transparent" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[rgba(255,255,255,0.38)] to-[rgba(255,255,255,0.04)] dark:from-[rgba(9,14,30,0.18)] dark:to-[rgba(9,14,30,0.42)]" />
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white/35 to-transparent dark:from-[#0a1328]/55 dark:to-transparent" />
         </aside>
 
-        <div className="p-10 md:p-12 space-y-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-luna-purple/10 blur-3xl rounded-full -mr-10 -mt-10" />
+        <div className="p-8 md:p-10 lg:p-12 space-y-8 relative overflow-hidden">
+          <div className="pointer-events-none absolute top-0 right-0 w-36 h-36 bg-luna-purple/15 dark:bg-luna-purple/20 blur-3xl rounded-full -mr-10 -mt-10" />
           {onClose && (
             <button
               onClick={onClose}
-              className="absolute top-6 right-6 w-9 h-9 rounded-full border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-luna-purple transition-colors"
+              className="absolute top-6 right-6 w-9 h-9 rounded-full border border-slate-300/80 dark:border-slate-700 text-slate-500 dark:text-slate-300 hover:text-luna-purple transition-colors"
               aria-label="Close authorization"
             >
               ×
@@ -215,8 +237,10 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
           <div className="space-y-4">
             <button
               data-testid="auth-google"
+              type="button"
               onClick={handleGoogleAuth}
-              className="w-full py-4 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-full flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all group"
+              disabled={isLoading}
+              className="w-full py-4 bg-white/82 dark:bg-slate-900/60 border border-slate-300/70 dark:border-slate-700 rounded-full flex items-center justify-center gap-3 hover:bg-white dark:hover:bg-slate-800 transition-all group shadow-[0_10px_24px_rgba(71,85,105,0.12)] dark:shadow-[0_10px_24px_rgba(2,6,23,0.4)] cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
             >
               <svg width="20" height="20" viewBox="0 0 48 48">
                 <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -228,27 +252,27 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
             </button>
 
             <div className="relative flex items-center gap-4 py-2">
-              <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800" />
-              <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">or</span>
-              <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800" />
+              <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">or</span>
+              <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">{ui.auth.email}</label>
+                <label className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 tracking-widest ml-1">{ui.auth.email}</label>
                 <input
                   data-testid="auth-email"
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 outline-none font-bold text-sm focus:ring-2 ring-luna-purple/40 transition-all"
+                  className="w-full bg-white/80 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-300/70 dark:border-slate-700 outline-none font-bold text-sm focus:ring-2 ring-luna-purple/40 transition-all"
                   placeholder="you@example.com"
                 />
               </div>
               <div className="space-y-1.5 relative">
                 <div className="flex justify-between items-center pr-1">
-                  <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">{ui.auth.password}</label>
+                  <label className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 tracking-widest ml-1">{ui.auth.password}</label>
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -263,7 +287,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 outline-none font-bold text-sm focus:ring-2 ring-luna-purple/40 transition-all pr-12"
+                  className="w-full bg-white/80 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-300/70 dark:border-slate-700 outline-none font-bold text-sm focus:ring-2 ring-luna-purple/40 transition-all pr-12"
                   placeholder="••••••••"
                 />
               </div>
@@ -280,7 +304,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ ui, onSuccess, initialMode =
                 data-testid="auth-submit"
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-5 bg-luna-purple text-white font-black uppercase tracking-[0.2em] rounded-full hover:shadow-2xl active:scale-95 transition-all shadow-xl shadow-luna-purple/40 flex items-center justify-center gap-3"
+                className="w-full py-4 bg-gradient-to-r from-luna-purple via-luna-coral to-luna-purple text-white font-black uppercase tracking-[0.16em] rounded-full hover:shadow-2xl hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-luna-purple/40 flex items-center justify-center gap-3"
               >
                 {isLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : isLogin ? ui.auth.login : ui.auth.signup}
               </button>

@@ -8,6 +8,17 @@ interface AboutLunaViewProps {
 }
 
 export const AboutLunaView: React.FC<AboutLunaViewProps> = ({ lang, mode = 'public', onBack }) => {
+  const loadingByLang: Record<Language, string> = {
+    en: 'Loading...',
+    ru: 'Загрузка...',
+    uk: 'Завантаження...',
+    es: 'Cargando...',
+    fr: 'Chargement...',
+    de: 'Lädt...',
+    zh: '加载中...',
+    ja: '読み込み中...',
+    pt: 'Carregando...',
+  };
   const [content, setContent] = useState<{
     about: {
       eyebrow: string;
@@ -40,7 +51,7 @@ export const AboutLunaView: React.FC<AboutLunaViewProps> = ({ lang, mode = 'publ
   if (!content) {
     return (
       <section className={`${mode === 'public' ? 'luna-page-shell luna-page-knowledge p-6 md:p-8' : 'max-w-6xl mx-auto pb-24'} animate-in fade-in duration-500`}>
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Loading...</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{loadingByLang[lang] || loadingByLang.en}</p>
       </section>
     );
   }

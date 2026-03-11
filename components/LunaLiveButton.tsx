@@ -17,25 +17,18 @@ export const LunaLiveButton: React.FC<LunaLiveButtonProps> = ({ onClick, isActiv
       <div className={`absolute inset-[-20px] rounded-full blur-2xl transition-all duration-1000 ${isActive ? 'bg-luna-purple/40 opacity-100' : 'bg-luna-purple/5 opacity-0 group-hover:opacity-100'}`} />
       
       {/* Main Orb */}
-      <div className={`relative w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center transition-all duration-700 shadow-2xl border-4 ${isActive ? 'bg-slate-900 dark:bg-white border-luna-purple scale-110' : 'bg-white dark:bg-slate-900 border-white dark:border-slate-800 group-hover:scale-105'}`}>
+      <div className={`relative w-[58px] h-[58px] md:w-[64px] md:h-[64px] rounded-full flex items-center justify-center transition-all duration-700 shadow-2xl border-2 ${isActive ? 'bg-slate-900 dark:bg-white border-luna-purple scale-110' : 'bg-white/95 dark:bg-slate-900 border-white dark:border-slate-800 group-hover:scale-105 animate-pulse'}`}>
         
         {/* Animated Waveform inside when active */}
-        {isActive ? (
-          <div className="flex gap-1 items-center h-8">
-            {[0.1, 0.2, 0.3, 0.4].map((d, i) => (
-              <div 
-                key={i} 
-                className="w-1.5 bg-luna-purple dark:bg-slate-900 rounded-full animate-bounce" 
-                style={{ height: '100%', animationDelay: `${d}s` }} 
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="relative">
-            <span className="text-3xl transition-transform group-hover:scale-125 block">🌙</span>
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-luna-coral rounded-full border-2 border-white dark:border-slate-900 animate-pulse" />
-          </div>
-        )}
+        <div className="relative flex items-center justify-center">
+          <span className={`absolute rounded-full bg-luna-purple/25 blur-md ${isActive ? 'inset-[-10px] animate-pulse' : 'inset-[-8px] animate-pulse'}`} />
+          <img
+            src="/images/luna-logo-transparent.webp"
+            alt="Luna Live"
+            className={`relative object-contain transition-transform duration-700 ${isActive ? 'h-[74px] w-[74px] md:h-[84px] md:w-[84px] scale-110' : 'h-[68px] w-[68px] md:h-[78px] md:w-[78px] group-hover:scale-110'}`}
+          />
+          <div className={`absolute rounded-full bg-luna-coral border-2 border-white dark:border-slate-900 animate-pulse ${isActive ? '-top-2 -right-2 w-5 h-5' : '-top-1 -right-1 w-4 h-4'}`} />
+        </div>
 
         {/* Floating Label */}
         <div className="absolute right-full mr-6 top-1/2 -translate-y-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0 pointer-events-none">
@@ -46,8 +39,8 @@ export const LunaLiveButton: React.FC<LunaLiveButtonProps> = ({ onClick, isActiv
       </div>
 
       {/* Radial Breathing Rings */}
-      <div className="absolute inset-0 rounded-full border-2 border-luna-purple/20 animate-ping opacity-20" />
-      <div className="absolute inset-[-10px] rounded-full border border-luna-teal/10 animate-pulse opacity-10" />
+      <div className="absolute inset-0 rounded-full border-2 border-luna-purple/25 animate-ping opacity-35" />
+      <div className="absolute inset-[-14px] rounded-full border border-luna-teal/25 animate-pulse opacity-25" />
     </button>
   );
 };

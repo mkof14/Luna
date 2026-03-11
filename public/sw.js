@@ -1,4 +1,4 @@
-const CACHE_NAME = 'luna-app-shell-v1';
+const CACHE_NAME = 'luna-app-shell-v2';
 const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {
@@ -38,7 +38,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned));
           return response;
         })
-        .catch(() => caches.match('/index.html'));
+        .catch(() => Response.error());
     })
   );
 });

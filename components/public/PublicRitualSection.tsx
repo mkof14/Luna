@@ -26,20 +26,20 @@ export const PublicRitualSection: React.FC<PublicRitualSectionProps> = ({
   };
   const sharedByLang: Record<Language, { noteTitle: string; noteLine1: string; noteLine2: string; enterMember: string; memberSignIn: string }> = {
     en: { noteTitle: 'LUNA NOTE', noteLine1: 'This Home is public by design. It gives orientation without extracting attention.', noteLine2: 'Your private member zone is where personal data, check-ins, and deeper tools live.', enterMember: 'Enter Member Zone', memberSignIn: 'Already a member? Sign in' },
-    ru: { noteTitle: 'ЗАМЕТКА LUNA', noteLine1: 'Этот Home сделан публичным по дизайну: он дает ориентир без перегруза внимания.', noteLine2: 'Приватная member-зона — место для личных данных, check-in и более глубоких инструментов.', enterMember: 'Перейти в Member Zone', memberSignIn: 'Уже участник? Sign in' },
-    uk: { noteTitle: 'НОТАТКА LUNA', noteLine1: 'Цей Home публічний за задумом: він дає орієнтацію без виснаження уваги.', noteLine2: 'Приватна member-зона — місце для персональних даних, check-in і глибших інструментів.', enterMember: 'Увійти в Member Zone', memberSignIn: 'Вже учасник? Sign in' },
-    es: { noteTitle: 'LUNA NOTE', noteLine1: 'Este Home es público por diseño: orienta sin secuestrar tu atención.', noteLine2: 'Tu member zone privada es donde viven datos personales, check-ins y herramientas profundas.', enterMember: 'Entrar En Member Zone', memberSignIn: '¿Ya eres miembro? Sign in' },
-    fr: { noteTitle: 'LUNA NOTE', noteLine1: 'Ce Home est public par design: il oriente sans capter excessivement votre attention.', noteLine2: 'Votre member zone privée est l espace des données personnelles, check-ins et outils avancés.', enterMember: 'Entrer Dans Member Zone', memberSignIn: 'Déjà membre ? Sign in' },
-    de: { noteTitle: 'LUNA NOTE', noteLine1: 'Dieses Home ist bewusst öffentlich: Es gibt Orientierung ohne Aufmerksamkeitsdruck.', noteLine2: 'In deiner privaten Member Zone liegen persönliche Daten, Check-ins und tiefere Tools.', enterMember: 'In Member Zone Gehen', memberSignIn: 'Schon Mitglied? Sign in' },
-    zh: { noteTitle: 'LUNA NOTE', noteLine1: 'Home 页面是公开设计：提供方向，不消耗注意力。', noteLine2: '你的私密 member zone 才是个人数据、check-in 和深度工具所在。', enterMember: '进入 Member Zone', memberSignIn: '已有会员？Sign in' },
-    ja: { noteTitle: 'LUNA NOTE', noteLine1: 'この Home は公開設計です。注意を奪わず、方向だけを示します。', noteLine2: '個人データ、check-in、深いツールは private member zone にあります。', enterMember: 'Member Zone に入る', memberSignIn: 'メンバーですか？ Sign in' },
-    pt: { noteTitle: 'LUNA NOTE', noteLine1: 'Este Home e publico por design: orienta sem sequestrar sua atencao.', noteLine2: 'Sua member zone privada e onde ficam dados pessoais, check-ins e ferramentas profundas.', enterMember: 'Entrar Na Member Zone', memberSignIn: 'Ja e membro? Sign in' },
+    ru: { noteTitle: 'ЗАМЕТКА LUNA', noteLine1: 'Эта главная страница публичная по дизайну: она дает ориентир без перегруза внимания.', noteLine2: 'Приватная зона участника — место для личных данных, отметок состояния и более глубоких инструментов.', enterMember: 'Перейти в зону участника', memberSignIn: 'Уже участник? Войти' },
+    uk: { noteTitle: 'НОТАТКА LUNA', noteLine1: 'Ця головна сторінка публічна за задумом: вона дає орієнтацію без виснаження уваги.', noteLine2: 'Приватна зона учасника — місце для персональних даних, відміток стану та глибших інструментів.', enterMember: 'Увійти в зону учасника', memberSignIn: 'Вже учасниця? Увійти' },
+    es: { noteTitle: 'NOTA LUNA', noteLine1: 'Esta página principal es pública por diseño: orienta sin secuestrar tu atención.', noteLine2: 'Tu zona privada de miembro es donde viven datos personales, registros y herramientas profundas.', enterMember: 'Entrar a zona de miembro', memberSignIn: '¿Ya eres miembro? Iniciar sesión' },
+    fr: { noteTitle: 'NOTE LUNA', noteLine1: 'Cette page d accueil est publique par design: elle oriente sans capter excessivement votre attention.', noteLine2: 'Votre zone membre privée contient les données personnelles, suivis et outils avancés.', enterMember: 'Entrer dans la zone membre', memberSignIn: 'Déjà membre ? Se connecter' },
+    de: { noteTitle: 'LUNA HINWEIS', noteLine1: 'Diese Startseite ist bewusst öffentlich: Sie gibt Orientierung ohne Aufmerksamkeitsdruck.', noteLine2: 'In deiner privaten Mitgliederzone liegen persönliche Daten, Status-Checks und tiefere Tools.', enterMember: 'Zur Mitgliederzone', memberSignIn: 'Schon Mitglied? Anmelden' },
+    zh: { noteTitle: 'LUNA 提示', noteLine1: '主页采用公开设计：提供方向，不消耗注意力。', noteLine2: '你的私密会员区才是个人数据、状态记录和深度工具所在。', enterMember: '进入会员区', memberSignIn: '已经是会员？登录' },
+    ja: { noteTitle: 'LUNA NOTE', noteLine1: 'このホームは公開設計です。注意を奪わず、方向だけを示します。', noteLine2: '個人データ、状態チェック、深いツールはプライベートなメンバーゾーンにあります。', enterMember: 'メンバーゾーンへ', memberSignIn: 'メンバーですか？ サインイン' },
+    pt: { noteTitle: 'NOTA LUNA', noteLine1: 'Esta página inicial é pública por design: orienta sem sequestrar sua atenção.', noteLine2: 'Sua zona privada de membro é onde ficam dados pessoais, registros de estado e ferramentas profundas.', enterMember: 'Entrar na zona de membro', memberSignIn: 'Ja e membro? Entrar' },
   };
   const copy = ritualCopyByLang[lang] || ritualCopyByLang.en;
   const shared = sharedByLang[lang] || sharedByLang.en;
   return (
     <section className="max-w-[1100px] mx-auto animate-in fade-in duration-500">
-      <div className="rounded-[3rem] border border-slate-200/70 dark:border-slate-800/80 bg-gradient-to-br from-[#fbf3f8]/90 via-[#f3eef7]/86 to-[#ecf2fa]/82 dark:from-[#070f23]/92 dark:via-[#0b1733]/90 dark:to-[#122345]/88 p-8 md:p-12 shadow-[0_24px_64px_rgba(88,68,128,0.16)] dark:shadow-[0_24px_64px_rgba(0,0,0,0.5)] space-y-12">
+      <div className="luna-page-shell luna-page-ritual rounded-[3rem] border border-slate-200/70 dark:border-slate-800/80 bg-gradient-to-br from-[#fbf3f8]/90 via-[#f3eef7]/86 to-[#ecf2fa]/82 dark:from-[#070f23]/92 dark:via-[#0b1733]/90 dark:to-[#122345]/88 p-8 md:p-12 shadow-[0_24px_64px_rgba(88,68,128,0.16)] dark:shadow-[0_24px_64px_rgba(0,0,0,0.5)] space-y-12">
         <header className="space-y-4 max-w-3xl">
           <p className="text-xs font-black uppercase tracking-[0.42em] text-luna-purple dark:text-fuchsia-200">{copy.eyebrow}</p>
           <h1 className="text-5xl md:text-7xl font-black tracking-tight text-slate-900 dark:text-slate-100">{copy.title}</h1>
@@ -47,21 +47,21 @@ export const PublicRitualSection: React.FC<PublicRitualSectionProps> = ({
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/50 p-6 md:p-7 min-h-[220px] shadow-[0_12px_30px_rgba(88,70,126,0.12)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.34)]">
+          <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-700/70 bg-[linear-gradient(160deg,rgba(251,248,254,0.8),rgba(241,236,249,0.86)),url('/images/bg5.webp')] bg-cover bg-center dark:bg-[linear-gradient(160deg,rgba(24,20,50,0.8),rgba(14,16,40,0.86)),url('/images/bg5.webp')] p-6 md:p-7 min-h-[220px] shadow-[0_12px_30px_rgba(88,70,126,0.12)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.34)]">
             <h2 className="text-sm md:text-base font-black uppercase tracking-[0.28em] text-luna-purple dark:text-fuchsia-200 mb-4">{copy.morningTitle}</h2>
             <p className="text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{copy.morningBody}</p>
           </article>
-          <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/50 p-6 md:p-7 min-h-[220px] shadow-[0_12px_30px_rgba(88,70,126,0.12)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.34)]">
+          <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-700/70 bg-[linear-gradient(160deg,rgba(251,248,254,0.8),rgba(241,236,249,0.86)),url('/images/bg1.webp')] bg-cover bg-center dark:bg-[linear-gradient(160deg,rgba(24,20,50,0.8),rgba(14,16,40,0.86)),url('/images/bg1.webp')] p-6 md:p-7 min-h-[220px] shadow-[0_12px_30px_rgba(88,70,126,0.12)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.34)]">
             <h2 className="text-sm md:text-base font-black uppercase tracking-[0.28em] text-luna-purple dark:text-fuchsia-200 mb-4">{copy.middayTitle}</h2>
             <p className="text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{copy.middayBody}</p>
           </article>
-          <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-700/70 bg-white/70 dark:bg-slate-900/50 p-6 md:p-7 min-h-[220px] shadow-[0_12px_30px_rgba(88,70,126,0.12)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.34)]">
+          <article className="rounded-[2rem] border border-slate-200/75 dark:border-slate-700/70 bg-[linear-gradient(160deg,rgba(251,248,254,0.8),rgba(241,236,249,0.86)),url('/images/bg4.webp')] bg-cover bg-center dark:bg-[linear-gradient(160deg,rgba(24,20,50,0.8),rgba(14,16,40,0.86)),url('/images/bg4.webp')] p-6 md:p-7 min-h-[220px] shadow-[0_12px_30px_rgba(88,70,126,0.12)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.34)]">
             <h2 className="text-sm md:text-base font-black uppercase tracking-[0.28em] text-luna-purple dark:text-fuchsia-200 mb-4">{copy.eveningTitle}</h2>
             <p className="text-base font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">{copy.eveningBody}</p>
           </article>
         </div>
 
-        <article className="rounded-[2.2rem] border border-slate-200/75 dark:border-slate-800/85 bg-gradient-to-br from-[#f4e8f1]/84 via-[#ece6f2]/80 to-[#e5ecf8]/76 dark:from-[#061127]/94 dark:via-[#0a1732]/92 dark:to-[#0f2142]/90 p-6 md:p-8 space-y-3 shadow-[0_16px_38px_rgba(88,70,126,0.14)] dark:shadow-[0_20px_44px_rgba(0,0,0,0.5)]">
+        <article className="rounded-[2.2rem] border border-slate-200/75 dark:border-slate-800/85 bg-[linear-gradient(165deg,rgba(246,241,250,0.8),rgba(236,230,246,0.86)),url('/images/moon_phases_arc.webp')] bg-cover bg-center dark:bg-[linear-gradient(165deg,rgba(12,18,40,0.8),rgba(9,17,38,0.88)),url('/images/moon_phases_arc.webp')] p-6 md:p-8 space-y-3 shadow-[0_16px_38px_rgba(88,70,126,0.14)] dark:shadow-[0_20px_44px_rgba(0,0,0,0.5)]">
           <p className="text-xs font-black uppercase tracking-[0.36em] text-luna-purple dark:text-fuchsia-200">{shared.noteTitle}</p>
           <p className="text-base md:text-lg font-semibold text-slate-700 dark:text-slate-100 leading-relaxed">
             {shared.noteLine1}

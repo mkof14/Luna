@@ -38,6 +38,13 @@ export const HistoryView: React.FC<{ log: HealthEvent[]; lang?: Language; onBack
     return copy.system;
   };
 
+  const getEventTypeLabel = (event: HealthEvent) =>
+    event.type
+      .toLowerCase()
+      .split('_')
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+
   return (
     <div className="max-w-6xl mx-auto luna-page-shell luna-page-journey space-y-24 animate-in fade-in slide-in-from-bottom-12 duration-1000 p-8 md:p-10 pb-40">
       <header className="flex flex-col items-center lg:items-start gap-10">
@@ -74,11 +81,13 @@ export const HistoryView: React.FC<{ log: HealthEvent[]; lang?: Language; onBack
                 <div className="flex-1 luna-vivid-surface p-12 rounded-[3.5rem] transition-all hover:-translate-y-1 hover:shadow-luna-deep">
                   <div className="flex justify-between items-start mb-6">
                     <span className="text-[9px] font-black uppercase tracking-[0.5em] text-luna-purple">
-                      {event.type.replace(/_/g, ' ')}
+                      {getEventTypeLabel(event)}
                     </span>
-                    <span className="px-3 py-1 bg-slate-100 dark:bg-slate-950 rounded-full text-[8px] font-black text-slate-500 border border-slate-200">
-                      V.{event.version}
-                    </span>
+                    {event.version !== 4 && (
+                      <span className="px-3 py-1 bg-slate-100 dark:bg-slate-950 rounded-full text-[8px] font-black text-slate-500 border border-slate-200">
+                        V.{event.version}
+                      </span>
+                    )}
                   </div>
                   <p data-testid="history-event-summary" className="text-2xl font-bold text-slate-900 dark:text-slate-100 leading-tight italic">
                     {getEventSummary(event)}

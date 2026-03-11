@@ -5,13 +5,8 @@ import App from './App';
 import './styles.css';
 
 const applyInitialTheme = () => {
-  const savedTheme = localStorage.getItem('luna_theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
-  }
+  document.documentElement.classList.remove('dark');
+  localStorage.setItem('luna_theme', 'light');
 };
 
 applyInitialTheme();
@@ -50,6 +45,20 @@ root.render(
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => undefined);
+    navigator.serviceWorker.getRegistrations()
+      .then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
+      .catch(() => undefined);
+
+    if ('caches' in window) {
+      caches.keys()
+        .then((keys) =>
+          Promise.all(
+            keys
+              .filter((key) => key.startsWith('luna-app-shell'))
+              .map((key) => caches.delete(key))
+          )
+        )
+        .catch(() => undefined);
+    }
   });
 }

@@ -13,9 +13,7 @@ export const useAppPreferences = () => {
   });
 
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const saved = localStorage.getItem('luna_theme');
-    if (saved === 'light' || saved === 'dark') return saved;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return 'light';
   });
 
   const ui = useMemo(() => TRANSLATIONS[lang], [lang]);

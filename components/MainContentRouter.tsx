@@ -49,6 +49,59 @@ const LoadingFallback: React.FC<{ lang: Language }> = ({ lang }) => (
   </div>
 );
 
+class MemberContentErrorBoundary extends React.Component<
+  { lang: Language; onBackHome: () => void; children: React.ReactNode },
+  { hasError: boolean; message: string }
+> {
+  constructor(props: { lang: Language; onBackHome: () => void; children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, message: '' };
+  }
+
+  static getDerivedStateFromError(error: unknown) {
+    return {
+      hasError: true,
+      message: error instanceof Error ? error.message : 'Unknown rendering error',
+    };
+  }
+
+  componentDidCatch(error: unknown) {
+    console.error('Member content render error:', error);
+  }
+
+  render() {
+    if (!this.state.hasError) return this.props.children;
+
+    const copyByLang: Record<Language, { title: string; body: string; home: string; reload: string }> = {
+      en: { title: 'Section Failed To Render', body: 'This section crashed while loading. You can go back home or reload.', home: 'Back To Home', reload: 'Reload' },
+      ru: { title: 'Раздел Не Загрузился', body: 'Этот раздел упал при загрузке. Вернитесь на главную или перезагрузите страницу.', home: 'На Главную', reload: 'Перезагрузить' },
+      uk: { title: 'Розділ Не Завантажився', body: 'Цей розділ впав під час завантаження. Поверніться на головну або перезавантажте сторінку.', home: 'На Головну', reload: 'Перезавантажити' },
+      es: { title: 'La Sección Falló', body: 'Esta sección falló al cargar. Puedes volver al inicio o recargar.', home: 'Volver Al Inicio', reload: 'Recargar' },
+      fr: { title: 'Échec Du Chargement', body: 'Cette section a échoué au chargement. Revenez à l accueil ou rechargez.', home: 'Retour Accueil', reload: 'Recharger' },
+      de: { title: 'Bereich Konnte Nicht Laden', body: 'Dieser Bereich ist beim Laden abgestürzt. Zur Startseite oder neu laden.', home: 'Zur Startseite', reload: 'Neu Laden' },
+      zh: { title: '页面加载失败', body: '该模块加载时发生错误。可返回首页或刷新页面。', home: '返回首页', reload: '刷新页面' },
+      ja: { title: 'セクションの表示に失敗しました', body: 'このセクションの読み込み中にエラーが発生しました。ホームへ戻るか再読み込みしてください。', home: 'ホームへ戻る', reload: '再読み込み' },
+      pt: { title: 'Falha Ao Carregar Seção', body: 'Esta seção falhou ao carregar. Volte ao início ou recarregue.', home: 'Voltar Ao Início', reload: 'Recarregar' },
+    };
+    const copy = copyByLang[this.props.lang] || copyByLang.en;
+
+    return (
+      <section className="min-h-[50vh] flex flex-col items-center justify-center text-center space-y-5">
+        <p className="text-xs font-black uppercase tracking-[0.4em] text-rose-400">{copy.title}</p>
+        <p className="max-w-xl text-slate-500 font-semibold">{copy.body}</p>
+        <div className="flex flex-wrap gap-3 justify-center">
+          <button onClick={this.props.onBackHome} className="px-6 py-3 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-widest">
+            {copy.home}
+          </button>
+          <button onClick={() => window.location.reload()} className="px-6 py-3 rounded-full border border-slate-300 dark:border-slate-700 text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-200">
+            {copy.reload}
+          </button>
+        </div>
+      </section>
+    );
+  }
+}
+
 interface MainContentRouterProps {
   activeTab: TabType;
   lang: Language;
@@ -95,63 +148,66 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
     en: {
       accessRestricted: 'Access Restricted',
       permissionRequired: 'Admin Permission Required',
-      permissionBody: 'Your account currently does not have internal console permissions. Contact the Luna system owner to get admin role assignment.',
+      permissionBody: 'Your account currently does not have admin access. Contact the Luna owner to request access.',
       backHome: 'Back to Home'
     },
     ru: {
       accessRestricted: 'Доступ ограничен',
       permissionRequired: 'Требуются права администратора',
-      permissionBody: 'У вашего аккаунта пока нет доступа к внутренней консоли. Обратитесь к владельцу системы Luna для назначения админ-роли.',
+      permissionBody: 'У вашего аккаунта пока нет доступа к админ-пространству. Обратитесь к владельцу Luna для выдачи прав.',
       backHome: 'На главную'
     },
     uk: {
       accessRestricted: 'Доступ обмежено',
       permissionRequired: 'Потрібні права адміністратора',
-      permissionBody: 'Ваш акаунт поки не має доступу до внутрішньої консолі. Зверніться до власника системи Luna для призначення адмін-ролі.',
+      permissionBody: 'Ваш акаунт поки не має доступу до адмін-простору. Зверніться до власника Luna для надання прав.',
       backHome: 'На головну'
     },
     es: {
       accessRestricted: 'Acceso restringido',
       permissionRequired: 'Se requieren permisos de administrador',
-      permissionBody: 'Tu cuenta actualmente no tiene permisos para la consola interna. Contacta al propietario del sistema Luna para la asignación de rol admin.',
+      permissionBody: 'Tu cuenta no tiene acceso al espacio admin. Contacta al propietario de Luna para solicitar permisos.',
       backHome: 'Volver al inicio'
     },
     fr: {
       accessRestricted: 'Accès restreint',
       permissionRequired: "Permission administrateur requise",
-      permissionBody: "Votre compte n'a pas encore les droits de la console interne. Contactez le propriétaire du système Luna pour l'attribution du rôle admin.",
+      permissionBody: "Votre compte n'a pas encore accès à l'espace admin. Contactez le propriétaire de Luna pour obtenir les droits.",
       backHome: "Retour à l'accueil"
     },
     de: {
       accessRestricted: 'Zugriff eingeschränkt',
       permissionRequired: 'Admin-Rechte erforderlich',
-      permissionBody: 'Dein Konto hat derzeit keine Berechtigung für die interne Konsole. Kontaktiere den Luna-Systeminhaber zur Rollenzuweisung.',
+      permissionBody: 'Dein Konto hat derzeit keinen Admin-Zugang. Kontaktiere die Luna-Inhaberin für die Freigabe.',
       backHome: 'Zur Startseite'
     },
     zh: {
       accessRestricted: '访问受限',
       permissionRequired: '需要管理员权限',
-      permissionBody: '你的账户目前没有内部控制台权限。请联系 Luna 系统所有者分配管理员角色。',
+      permissionBody: '你的账户目前没有管理员访问权限。请联系 Luna 管理员开通权限。',
       backHome: '返回主页'
     },
     ja: {
       accessRestricted: 'アクセス制限',
       permissionRequired: '管理者権限が必要です',
-      permissionBody: '現在のアカウントには内部コンソール権限がありません。Lunaシステム管理者にロール付与を依頼してください。',
+      permissionBody: '現在のアカウントには管理者アクセスがありません。Luna管理者に権限付与を依頼してください。',
       backHome: 'ホームへ戻る'
     },
     pt: {
       accessRestricted: 'Acesso restrito',
       permissionRequired: 'Permissão de admin necessária',
-      permissionBody: 'Sua conta ainda não possui permissões para o console interno. Contate o proprietário do sistema Luna para atribuição de função admin.',
+      permissionBody: 'Sua conta ainda não possui acesso admin. Contate o responsável do Luna para liberação.',
       backHome: 'Voltar ao início'
     }
   };
   const copy = copyByLang[lang];
 
   return (
-    <main className="flex-grow max-w-7xl mx-auto w-full px-6 pt-12 pb-40 relative z-10">
+    <main data-testid={`member-tab-${activeTab}`} className="flex-grow max-w-7xl mx-auto w-full px-6 pt-12 pb-40 relative z-10">
+      <div className="pointer-events-none absolute -top-16 left-10 w-72 h-72 rounded-full bg-[#f2ccda]/20 dark:bg-luna-purple/18 blur-[90px]" />
+      <div className="pointer-events-none absolute top-1/3 right-0 w-96 h-96 rounded-full bg-[#d6dff7]/24 dark:bg-[#1e3a7a]/20 blur-[120px]" />
       <MemberPageHero activeTab={activeTab} lang={lang} ui={ui} />
+      <MemberContentErrorBoundary lang={lang} onBackHome={() => navigateTo('dashboard')}>
       <Suspense fallback={<LoadingFallback lang={lang} />}>
         {activeTab === 'dashboard' && (
           <DashboardView
@@ -228,6 +284,7 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
           )
         )}
       </Suspense>
+      </MemberContentErrorBoundary>
     </main>
   );
 };

@@ -406,3 +406,152 @@ input[type='range'] {
   background: linear-gradient(150deg, rgba(34, 66, 108, 0.94), rgba(40, 76, 122, 0.92), rgba(47, 87, 136, 0.9));
   border-color: rgba(106, 151, 212, 0.58);
 }
+
+/* Public pages baseline: align non-Home public pages to Home visual system */
+.luna-public-baseline .luna-page-shell {
+  border-radius: 2.2rem;
+  border: 1px solid rgba(188, 178, 208, 0.32);
+  background:
+    radial-gradient(120% 90% at 84% 10%, rgba(205, 188, 229, 0.28), transparent 58%),
+    radial-gradient(95% 80% at 12% 88%, rgba(221, 214, 239, 0.26), transparent 58%),
+    linear-gradient(165deg, rgba(250, 248, 253, 0.88), rgba(242, 238, 248, 0.84));
+  box-shadow: 0 16px 34px rgba(108, 94, 139, 0.12), 0 2px 0 rgba(255, 255, 255, 0.56) inset;
+}
+
+.luna-public-baseline .luna-page-shell::after {
+  background:
+    radial-gradient(88% 52% at 50% -8%, rgba(255, 255, 255, 0.34), transparent 64%);
+}
+
+.luna-public-baseline .luna-vivid-surface,
+.luna-public-baseline .luna-vivid-card,
+.luna-public-baseline .luna-vivid-card-soft,
+.luna-public-baseline .luna-vivid-card-alt-1,
+.luna-public-baseline .luna-vivid-card-alt-2,
+.luna-public-baseline .luna-vivid-card-alt-3,
+.luna-public-baseline .luna-vivid-card-alt-4 {
+  border: 1px solid rgba(191, 182, 211, 0.3);
+  background:
+    linear-gradient(160deg, rgba(252, 251, 254, 0.9), rgba(244, 240, 249, 0.86));
+  box-shadow: 0 12px 26px rgba(109, 95, 138, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.48);
+}
+
+.luna-public-baseline .luna-vivid-chip {
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.78), rgba(245, 239, 250, 0.76));
+  border-color: rgba(189, 180, 209, 0.36);
+}
+
+.luna-public-baseline .luna-page-shell h1,
+.luna-public-baseline .luna-page-shell h2,
+.luna-public-baseline .luna-page-shell h3,
+.luna-public-baseline .luna-page-shell h4 {
+  font-family: Georgia, "Times New Roman", serif !important;
+  letter-spacing: -0.02em !important;
+  color: #2b2337 !important;
+}
+
+.luna-public-baseline .luna-page-shell h1 {
+  font-size: clamp(2.1rem, 4.3vw, 3.3rem) !important;
+}
+
+.luna-public-baseline .luna-page-shell h2 {
+  font-size: clamp(1.45rem, 2.8vw, 2.2rem) !important;
+}
+
+.luna-public-baseline .luna-page-shell h3 {
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem) !important;
+}
+
+.luna-public-baseline .luna-page-shell :where(p, li, span, button) {
+  text-wrap: pretty;
+}
+
+.dark .luna-public-baseline .luna-page-shell {
+  border-color: rgba(165, 137, 203, 0.22);
+  background:
+    radial-gradient(120% 90% at 84% 10%, rgba(117, 90, 161, 0.2), transparent 58%),
+    radial-gradient(95% 80% at 12% 88%, rgba(95, 112, 178, 0.18), transparent 58%),
+    linear-gradient(165deg, rgba(24, 21, 53, 0.9), rgba(12, 14, 36, 0.9));
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+}
+
+.dark .luna-public-baseline .luna-vivid-surface,
+.dark .luna-public-baseline .luna-vivid-card,
+.dark .luna-public-baseline .luna-vivid-card-soft,
+.dark .luna-public-baseline .luna-vivid-card-alt-1,
+.dark .luna-public-baseline .luna-vivid-card-alt-2,
+.dark .luna-public-baseline .luna-vivid-card-alt-3,
+.dark .luna-public-baseline .luna-vivid-card-alt-4 {
+  border-color: rgba(163, 136, 200, 0.2);
+  background: linear-gradient(160deg, rgba(34, 29, 73, 0.7), rgba(17, 19, 48, 0.74));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.dark .luna-public-baseline .luna-vivid-chip {
+  border-color: rgba(168, 142, 206, 0.22);
+  background: linear-gradient(140deg, rgba(30, 27, 67, 0.7), rgba(19, 22, 54, 0.72));
+}
+
+.dark .luna-public-baseline .luna-page-shell h1,
+.dark .luna-public-baseline .luna-page-shell h2,
+.dark .luna-public-baseline .luna-page-shell h3,
+.dark .luna-public-baseline .luna-page-shell h4 {
+  color: #efe6ff !important;
+}
+
+.luna-public-baseline .luna-page-shell :where(p, li) {
+  color: rgba(69, 60, 88, 0.92);
+}
+
+.dark .luna-public-baseline .luna-page-shell :where(p, li) {
+  color: rgba(225, 214, 245, 0.9);
+}
+
+.luna-public-baseline .luna-page-shell button[class*="rounded-full"] {
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: linear-gradient(180deg, rgba(214, 91, 146, 0.56), rgba(186, 56, 117, 0.5));
+  color: #fff7fb;
+  box-shadow: 0 8px 18px rgba(151, 47, 96, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(3px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, filter 0.2s ease;
+}
+
+.luna-public-baseline .luna-page-shell button[class*="rounded-full"]:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.5);
+  filter: saturate(1.06);
+  box-shadow: 0 12px 24px rgba(133, 41, 86, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.luna-public-baseline .luna-page-shell button[class*="rounded-full"][class*="border-emerald"] {
+  background: linear-gradient(180deg, rgba(170, 212, 188, 0.34), rgba(130, 181, 154, 0.3));
+  color: #1f513b;
+}
+
+.dark .luna-public-baseline .luna-page-shell button[class*="rounded-full"] {
+  border-color: rgba(235, 218, 255, 0.2);
+  background: linear-gradient(180deg, rgba(171, 119, 191, 0.42), rgba(135, 94, 162, 0.36));
+  color: #f4ecff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.dark .luna-public-baseline .luna-page-shell button[class*="rounded-full"][class*="border-emerald"] {
+  background: linear-gradient(180deg, rgba(78, 122, 102, 0.4), rgba(56, 98, 80, 0.38));
+  color: #c7f3de;
+}
+
+@keyframes luna-life-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: saturate(1);
+  }
+  50% {
+    transform: scale(1.08);
+    filter: saturate(1.18);
+  }
+}
+
+.luna-life-breathe {
+  animation: luna-life-breathe 2.4s ease-in-out infinite;
+}

@@ -112,9 +112,222 @@ const getDoc = (lang: Language, doc: LegalDocType): DocContent => {
   return EN_DOCS[doc];
 };
 
+const LEGAL_UI_BY_LANG: Record<Language, {
+  back: string;
+  modePublic: string;
+  modeMember: string;
+  effectiveDate: string;
+  lastUpdated: string;
+  actionsTitle: string;
+  actionsBody: string;
+  exportData: string;
+  deleteHealth: string;
+  deleteAll: string;
+  legalNotice: string;
+  legalNoticeBody: string;
+  feedbackServerExport: string;
+  feedbackLocalExport: string;
+  feedbackServerSupportDelete: string;
+  feedbackLocalHealthDelete: string;
+  confirmDeleteAll: string;
+  feedbackServerAccountDelete: string;
+  feedbackAllLocalDelete: string;
+}> = {
+  en: {
+    back: 'Back',
+    modePublic: 'PUBLIC LEGAL',
+    modeMember: 'MEMBER LEGAL',
+    effectiveDate: 'Effective Date',
+    lastUpdated: 'Last Updated',
+    actionsTitle: 'Self-Service Data Actions',
+    actionsBody: 'This device currently uses local storage. You can export or remove local Luna data now.',
+    exportData: 'Export My Local Data',
+    deleteHealth: 'Delete Local Health Data',
+    deleteAll: 'Delete All Local Data',
+    legalNotice: 'Legal Notice',
+    legalNoticeBody: 'This content is a baseline compliance template for U.S.-oriented product disclosures and does not constitute legal advice.',
+    feedbackServerExport: 'Server export downloaded.',
+    feedbackLocalExport: 'Local data export downloaded.',
+    feedbackServerSupportDelete: 'Server support data deletion request completed.',
+    feedbackLocalHealthDelete: 'Local health data removed',
+    confirmDeleteAll: 'Delete all local Luna data on this device? This cannot be undone.',
+    feedbackServerAccountDelete: 'Server account deletion request completed.',
+    feedbackAllLocalDelete: 'All local data removed',
+  },
+  ru: {
+    back: 'Назад',
+    modePublic: 'ПУБЛИЧЕСКОЕ ПРАВО',
+    modeMember: 'ПРАВО УЧАСТНИКА',
+    effectiveDate: 'Дата вступления',
+    lastUpdated: 'Последнее обновление',
+    actionsTitle: 'Самостоятельные действия с данными',
+    actionsBody: 'На этом устройстве используются локальные данные. Вы можете экспортировать или удалить локальные данные Luna.',
+    exportData: 'Экспорт локальных данных',
+    deleteHealth: 'Удалить локальные данные здоровья',
+    deleteAll: 'Удалить все локальные данные',
+    legalNotice: 'Юридическое уведомление',
+    legalNoticeBody: 'Этот текст является базовым шаблоном соответствия требованиям для США и не является юридической консультацией.',
+    feedbackServerExport: 'Выгрузка с сервера скачана.',
+    feedbackLocalExport: 'Локальная выгрузка данных скачана.',
+    feedbackServerSupportDelete: 'Запрос на удаление support-данных на сервере выполнен.',
+    feedbackLocalHealthDelete: 'Локальные данные здоровья удалены',
+    confirmDeleteAll: 'Удалить все локальные данные Luna на этом устройстве? Это действие нельзя отменить.',
+    feedbackServerAccountDelete: 'Запрос на удаление аккаунта на сервере выполнен.',
+    feedbackAllLocalDelete: 'Все локальные данные удалены',
+  },
+  uk: {
+    back: 'Назад',
+    modePublic: 'ПУБЛІЧНІ ПРАВИЛА',
+    modeMember: 'ПРАВИЛА УЧАСНИКА',
+    effectiveDate: 'Дата набуття чинності',
+    lastUpdated: 'Останнє оновлення',
+    actionsTitle: 'Самостійні дії з даними',
+    actionsBody: 'На цьому пристрої використовується локальне сховище. Ви можете експортувати або видалити локальні дані Luna.',
+    exportData: 'Експортувати мої локальні дані',
+    deleteHealth: 'Видалити локальні дані здоровʼя',
+    deleteAll: 'Видалити всі локальні дані',
+    legalNotice: 'Юридичне повідомлення',
+    legalNoticeBody: 'Цей контент є базовим шаблоном комплаєнсу для орієнтованих на США розкриттів і не є юридичною порадою.',
+    feedbackServerExport: 'Серверний експорт завантажено.',
+    feedbackLocalExport: 'Локальний експорт даних завантажено.',
+    feedbackServerSupportDelete: 'Запит на видалення support-даних на сервері виконано.',
+    feedbackLocalHealthDelete: 'Локальні дані здоровʼя видалено',
+    confirmDeleteAll: 'Видалити всі локальні дані Luna на цьому пристрої? Це неможливо скасувати.',
+    feedbackServerAccountDelete: 'Запит на видалення акаунта на сервері виконано.',
+    feedbackAllLocalDelete: 'Усі локальні дані видалено',
+  },
+  es: {
+    back: 'Volver',
+    modePublic: 'LEGAL PÚBLICO',
+    modeMember: 'LEGAL DE MIEMBRO',
+    effectiveDate: 'Fecha de vigencia',
+    lastUpdated: 'Última actualización',
+    actionsTitle: 'Acciones de datos de autoservicio',
+    actionsBody: 'Este dispositivo usa almacenamiento local. Puedes exportar o eliminar ahora los datos locales de Luna.',
+    exportData: 'Exportar mis datos locales',
+    deleteHealth: 'Eliminar datos locales de salud',
+    deleteAll: 'Eliminar todos los datos locales',
+    legalNotice: 'Aviso legal',
+    legalNoticeBody: 'Este contenido es una plantilla base de cumplimiento para divulgaciones orientadas a EE. UU. y no constituye asesoría legal.',
+    feedbackServerExport: 'Exportación del servidor descargada.',
+    feedbackLocalExport: 'Exportación local de datos descargada.',
+    feedbackServerSupportDelete: 'Solicitud de eliminación de datos de soporte en servidor completada.',
+    feedbackLocalHealthDelete: 'Datos locales de salud eliminados',
+    confirmDeleteAll: '¿Eliminar todos los datos locales de Luna en este dispositivo? Esta acción no se puede deshacer.',
+    feedbackServerAccountDelete: 'Solicitud de eliminación de cuenta en servidor completada.',
+    feedbackAllLocalDelete: 'Todos los datos locales eliminados',
+  },
+  fr: {
+    back: 'Retour',
+    modePublic: 'JURIDIQUE PUBLIC',
+    modeMember: 'JURIDIQUE MEMBRE',
+    effectiveDate: 'Date d’effet',
+    lastUpdated: 'Dernière mise à jour',
+    actionsTitle: 'Actions de données en libre-service',
+    actionsBody: 'Cet appareil utilise un stockage local. Vous pouvez exporter ou supprimer les données locales Luna.',
+    exportData: 'Exporter mes données locales',
+    deleteHealth: 'Supprimer les données santé locales',
+    deleteAll: 'Supprimer toutes les données locales',
+    legalNotice: 'Mentions légales',
+    legalNoticeBody: 'Ce contenu est un modèle de conformité de base pour des divulgations orientées U.S. et ne constitue pas un conseil juridique.',
+    feedbackServerExport: 'Export serveur téléchargé.',
+    feedbackLocalExport: 'Export local des données téléchargé.',
+    feedbackServerSupportDelete: 'Demande de suppression des données support sur serveur effectuée.',
+    feedbackLocalHealthDelete: 'Données santé locales supprimées',
+    confirmDeleteAll: 'Supprimer toutes les données locales Luna sur cet appareil ? Cette action est irréversible.',
+    feedbackServerAccountDelete: 'Demande de suppression du compte sur serveur effectuée.',
+    feedbackAllLocalDelete: 'Toutes les données locales supprimées',
+  },
+  de: {
+    back: 'Zurück',
+    modePublic: 'ÖFFENTLICH RECHTLICH',
+    modeMember: 'MITGLIED RECHTLICH',
+    effectiveDate: 'Gültig ab',
+    lastUpdated: 'Zuletzt aktualisiert',
+    actionsTitle: 'Self-Service-Datenaktionen',
+    actionsBody: 'Dieses Gerät nutzt lokalen Speicher. Sie können lokale Luna-Daten jetzt exportieren oder entfernen.',
+    exportData: 'Meine lokalen Daten exportieren',
+    deleteHealth: 'Lokale Gesundheitsdaten löschen',
+    deleteAll: 'Alle lokalen Daten löschen',
+    legalNotice: 'Rechtlicher Hinweis',
+    legalNoticeBody: 'Dieser Inhalt ist eine Basis-Compliance-Vorlage für U.S.-orientierte Offenlegungen und stellt keine Rechtsberatung dar.',
+    feedbackServerExport: 'Server-Export heruntergeladen.',
+    feedbackLocalExport: 'Lokaler Datenexport heruntergeladen.',
+    feedbackServerSupportDelete: 'Anfrage zur Löschung von Support-Daten auf dem Server abgeschlossen.',
+    feedbackLocalHealthDelete: 'Lokale Gesundheitsdaten gelöscht',
+    confirmDeleteAll: 'Alle lokalen Luna-Daten auf diesem Gerät löschen? Dies kann nicht rückgängig gemacht werden.',
+    feedbackServerAccountDelete: 'Anfrage zur Kontolöschung auf dem Server abgeschlossen.',
+    feedbackAllLocalDelete: 'Alle lokalen Daten gelöscht',
+  },
+  zh: {
+    back: '返回',
+    modePublic: '公开法律',
+    modeMember: '会员法律',
+    effectiveDate: '生效日期',
+    lastUpdated: '最后更新',
+    actionsTitle: '自助数据操作',
+    actionsBody: '此设备当前使用本地存储。你可以立即导出或删除 Luna 本地数据。',
+    exportData: '导出我的本地数据',
+    deleteHealth: '删除本地健康数据',
+    deleteAll: '删除所有本地数据',
+    legalNotice: '法律声明',
+    legalNoticeBody: '本内容为面向美国披露要求的基础合规模板，不构成法律建议。',
+    feedbackServerExport: '服务器导出已下载。',
+    feedbackLocalExport: '本地数据导出已下载。',
+    feedbackServerSupportDelete: '服务器支持数据删除请求已完成。',
+    feedbackLocalHealthDelete: '本地健康数据已删除',
+    confirmDeleteAll: '删除此设备上的所有 Luna 本地数据？此操作无法撤销。',
+    feedbackServerAccountDelete: '服务器账户删除请求已完成。',
+    feedbackAllLocalDelete: '所有本地数据已删除',
+  },
+  ja: {
+    back: '戻る',
+    modePublic: '公開リーガル',
+    modeMember: 'メンバーリーガル',
+    effectiveDate: '発効日',
+    lastUpdated: '最終更新',
+    actionsTitle: 'セルフサービスデータ操作',
+    actionsBody: 'このデバイスはローカルストレージを使用しています。Lunaのローカルデータをエクスポートまたは削除できます。',
+    exportData: 'ローカルデータをエクスポート',
+    deleteHealth: 'ローカル健康データを削除',
+    deleteAll: 'すべてのローカルデータを削除',
+    legalNotice: '法的通知',
+    legalNoticeBody: 'この内容は米国向け開示のための基本的なコンプライアンステンプレートであり、法的助言ではありません。',
+    feedbackServerExport: 'サーバーエクスポートをダウンロードしました。',
+    feedbackLocalExport: 'ローカルデータエクスポートをダウンロードしました。',
+    feedbackServerSupportDelete: 'サーバー上のサポートデータ削除リクエストが完了しました。',
+    feedbackLocalHealthDelete: 'ローカル健康データを削除しました',
+    confirmDeleteAll: 'このデバイス上のLunaローカルデータをすべて削除しますか？元に戻せません。',
+    feedbackServerAccountDelete: 'サーバー上のアカウント削除リクエストが完了しました。',
+    feedbackAllLocalDelete: 'すべてのローカルデータを削除しました',
+  },
+  pt: {
+    back: 'Voltar',
+    modePublic: 'LEGAL PÚBLICO',
+    modeMember: 'LEGAL DE MEMBRO',
+    effectiveDate: 'Data de vigência',
+    lastUpdated: 'Última atualização',
+    actionsTitle: 'Ações de dados em autoatendimento',
+    actionsBody: 'Este dispositivo usa armazenamento local. Você pode exportar ou remover agora os dados locais da Luna.',
+    exportData: 'Exportar meus dados locais',
+    deleteHealth: 'Excluir dados locais de saúde',
+    deleteAll: 'Excluir todos os dados locais',
+    legalNotice: 'Aviso legal',
+    legalNoticeBody: 'Este conteúdo é um modelo básico de conformidade para divulgações orientadas aos EUA e não constitui aconselhamento jurídico.',
+    feedbackServerExport: 'Exportação do servidor baixada.',
+    feedbackLocalExport: 'Exportação local de dados baixada.',
+    feedbackServerSupportDelete: 'Solicitação de exclusão de dados de suporte no servidor concluída.',
+    feedbackLocalHealthDelete: 'Dados locais de saúde removidos',
+    confirmDeleteAll: 'Excluir todos os dados locais da Luna neste dispositivo? Esta ação não pode ser desfeita.',
+    feedbackServerAccountDelete: 'Solicitação de exclusão de conta no servidor concluída.',
+    feedbackAllLocalDelete: 'Todos os dados locais removidos',
+  },
+};
+
 export const LegalDocumentView: React.FC<LegalDocumentViewProps> = ({ lang, doc, onBack, mode = 'member' }) => {
   const copy = getDoc(lang, doc);
-  const modeLabel = mode === 'public' ? 'PUBLIC LEGAL' : 'MEMBER LEGAL';
+  const ui = LEGAL_UI_BY_LANG[lang] || LEGAL_UI_BY_LANG.en;
+  const modeLabel = mode === 'public' ? ui.modePublic : ui.modeMember;
   const meta = DOC_META[doc];
   const effectiveDate = 'March 4, 2026';
   const lastUpdated = 'March 4, 2026';
@@ -143,7 +356,7 @@ export const LegalDocumentView: React.FC<LegalDocumentViewProps> = ({ lang, doc,
       if (response.ok) {
         const payload = await response.json();
         downloadJson(`luna-server-export-${Date.now()}.json`, payload);
-        setActionFeedback('Server export downloaded.');
+        setActionFeedback(ui.feedbackServerExport);
         return;
       }
     } catch {
@@ -151,7 +364,7 @@ export const LegalDocumentView: React.FC<LegalDocumentViewProps> = ({ lang, doc,
     }
 
     downloadLunaLocalDataExport();
-    setActionFeedback('Local data export downloaded.');
+    setActionFeedback(ui.feedbackLocalExport);
   };
 
   const deleteHealthData = async () => {
@@ -163,18 +376,18 @@ export const LegalDocumentView: React.FC<LegalDocumentViewProps> = ({ lang, doc,
         body: JSON.stringify({ scope: 'support_only' }),
       });
       if (response.ok) {
-        setActionFeedback('Server support data deletion request completed.');
+        setActionFeedback(ui.feedbackServerSupportDelete);
         return;
       }
     } catch {
       // fallback to local delete below
     }
     const removed = clearLunaLocalData(false);
-    setActionFeedback(`Local health data removed: ${removed} keys.`);
+    setActionFeedback(`${ui.feedbackLocalHealthDelete}: ${removed} keys.`);
   };
 
   const deleteAllData = async () => {
-    const confirmed = window.confirm('Delete all local Luna data on this device? This cannot be undone.');
+    const confirmed = window.confirm(ui.confirmDeleteAll);
     if (!confirmed) return;
 
     try {
@@ -185,7 +398,7 @@ export const LegalDocumentView: React.FC<LegalDocumentViewProps> = ({ lang, doc,
         body: JSON.stringify({ scope: 'account' }),
       });
       if (response.ok) {
-        setActionFeedback('Server account deletion request completed.');
+        setActionFeedback(ui.feedbackServerAccountDelete);
         window.location.reload();
         return;
       }
@@ -194,7 +407,7 @@ export const LegalDocumentView: React.FC<LegalDocumentViewProps> = ({ lang, doc,
     }
 
     const removed = clearLunaLocalData(true);
-    setActionFeedback(`All local data removed: ${removed} keys.`);
+    setActionFeedback(`${ui.feedbackAllLocalDelete}: ${removed} keys.`);
     window.location.reload();
   };
 
@@ -202,7 +415,7 @@ export const LegalDocumentView: React.FC<LegalDocumentViewProps> = ({ lang, doc,
     <article className="max-w-5xl mx-auto luna-page-shell luna-page-questions space-y-10 animate-in fade-in duration-700 pb-24 p-8 md:p-10">
       {onBack && (
         <button onClick={onBack} className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-luna-purple transition-all">
-          ← Back
+          ← {ui.back}
         </button>
       )}
       <header className="rounded-[2rem] border border-slate-200 dark:border-slate-700 luna-vivid-surface p-6 md:p-7 space-y-4">
@@ -214,11 +427,11 @@ export const LegalDocumentView: React.FC<LegalDocumentViewProps> = ({ lang, doc,
         <p className="text-base font-semibold text-slate-600 dark:text-slate-300">{copy.subtitle}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
           <div className="rounded-xl luna-vivid-chip p-3 border border-slate-200 dark:border-slate-700">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-300">Effective Date</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-300">{ui.effectiveDate}</p>
             <p className="text-sm font-bold text-slate-700 dark:text-slate-100">{effectiveDate}</p>
           </div>
           <div className="rounded-xl luna-vivid-chip p-3 border border-slate-200 dark:border-slate-700">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-300">Last Updated</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-300">{ui.lastUpdated}</p>
             <p className="text-sm font-bold text-slate-700 dark:text-slate-100">{lastUpdated}</p>
           </div>
         </div>
@@ -233,28 +446,28 @@ export const LegalDocumentView: React.FC<LegalDocumentViewProps> = ({ lang, doc,
       </section>
       {doc === 'data_rights' && (
         <section className="rounded-[2rem] border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/60 p-6 md:p-7 space-y-4">
-          <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-slate-100">Self-Service Data Actions</h2>
+          <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-slate-100">{ui.actionsTitle}</h2>
           <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-            This device currently uses local storage. You can export or remove local Luna data now.
+            {ui.actionsBody}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
             <button onClick={exportLocalData} className="px-4 py-2 rounded-full border border-luna-purple/40 text-luna-purple text-xs font-black uppercase tracking-[0.12em]">
-              Export My Local Data
+              {ui.exportData}
             </button>
             <button onClick={deleteHealthData} className="px-4 py-2 rounded-full border border-amber-500/40 text-amber-600 text-xs font-black uppercase tracking-[0.12em]">
-              Delete Local Health Data
+              {ui.deleteHealth}
             </button>
             <button onClick={deleteAllData} className="px-4 py-2 rounded-full border border-rose-500/40 text-rose-600 text-xs font-black uppercase tracking-[0.12em]">
-              Delete All Local Data
+              {ui.deleteAll}
             </button>
           </div>
           {actionFeedback && <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{actionFeedback}</p>}
         </section>
       )}
       <div className="rounded-2xl border border-slate-300/70 dark:border-slate-700/70 bg-slate-100/85 dark:bg-slate-900/45 p-5">
-        <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">Legal Notice</p>
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">{ui.legalNotice}</p>
         <p className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
-          This content is a baseline compliance template for U.S.-oriented product disclosures and does not constitute legal advice.
+          {ui.legalNoticeBody}
         </p>
       </div>
     </article>

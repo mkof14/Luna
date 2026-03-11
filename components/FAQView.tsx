@@ -24,6 +24,17 @@ interface FAQCopy {
 }
 
 export const FAQView: React.FC<{ lang?: Language; onBack?: () => void }> = ({ lang = 'en', onBack }) => {
+  const loadingByLang: Record<Language, string> = {
+    en: 'Loading...',
+    ru: 'Загрузка...',
+    uk: 'Завантаження...',
+    es: 'Cargando...',
+    fr: 'Chargement...',
+    de: 'Lädt...',
+    zh: '加载中...',
+    ja: '読み込み中...',
+    pt: 'Carregando...',
+  };
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [content, setContent] = useState<{ data: FAQCategory[]; copy: FAQCopy } | null>(null);
@@ -47,7 +58,7 @@ export const FAQView: React.FC<{ lang?: Language; onBack?: () => void }> = ({ la
   if (!content) {
     return (
       <div className="max-w-6xl mx-auto luna-page-shell luna-page-questions p-8 md:p-10 pb-40 px-6">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Loading...</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{loadingByLang[lang] || loadingByLang.en}</p>
       </div>
     );
   }

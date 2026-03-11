@@ -7,16 +7,16 @@ interface LanguageSelectorProps {
   onSelect: (lang: Language) => void;
 }
 
-const LANGUAGES: { code: Language; label: string; full: string; native: string }[] = [
-  { code: 'en', label: 'EN', full: 'English', native: 'English' },
-  { code: 'de', label: 'DE', full: 'German', native: 'Deutsch' },
-  { code: 'es', label: 'ES', full: 'Spanish', native: 'Español' },
-  { code: 'fr', label: 'FR', full: 'French', native: 'Français' },
-  { code: 'ja', label: 'JA', full: 'Japanese', native: '日本語' },
-  { code: 'pt', label: 'PT', full: 'Portuguese', native: 'Português' },
-  { code: 'ru', label: 'RU', full: 'Russian', native: 'Русский' },
-  { code: 'uk', label: 'UK', full: 'Ukrainian', native: 'Українська' },
-  { code: 'zh', label: 'ZH', full: 'Chinese', native: '中文' }
+const LANGUAGES: { code: Language; label: string; full: string; native: string; flag: string }[] = [
+  { code: 'en', label: 'EN', full: 'English', native: 'English', flag: '🇺🇸' },
+  { code: 'de', label: 'DE', full: 'German', native: 'Deutsch', flag: '🇩🇪' },
+  { code: 'es', label: 'ES', full: 'Spanish', native: 'Español', flag: '🇪🇸' },
+  { code: 'fr', label: 'FR', full: 'French', native: 'Français', flag: '🇫🇷' },
+  { code: 'ja', label: 'JA', full: 'Japanese', native: '日本語', flag: '🇯🇵' },
+  { code: 'pt', label: 'PT', full: 'Portuguese', native: 'Português', flag: '🇵🇹' },
+  { code: 'ru', label: 'RU', full: 'Russian', native: 'Русский', flag: '🇷🇺' },
+  { code: 'uk', label: 'UK', full: 'Ukrainian', native: 'Українська', flag: '🇺🇦' },
+  { code: 'zh', label: 'ZH', full: 'Chinese', native: '中文', flag: '🇨🇳' }
 ];
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({ current, onSelect }) => {
@@ -43,12 +43,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ current, onSelect }
         aria-label="Change language"
         aria-expanded={isOpen}
       >
-        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-luna-purple/25 via-indigo-400/20 to-sky-300/35 dark:from-luna-purple/30 dark:via-indigo-400/20 dark:to-cyan-300/20 flex items-center justify-center text-slate-700 dark:text-slate-100 shadow-inner">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="2" y1="12" x2="22" y2="12" />
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-          </svg>
+        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-luna-purple/25 via-indigo-400/20 to-sky-300/35 dark:from-luna-purple/30 dark:via-indigo-400/20 dark:to-cyan-300/20 flex items-center justify-center text-base shadow-inner">
+          <span aria-hidden="true">{currentLang.flag}</span>
         </div>
         <span className="text-[10px] font-black tracking-[0.2em] text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white uppercase transition-colors">
           {currentLang.label}
@@ -74,9 +70,12 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ current, onSelect }
                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
-                <div className="flex flex-col">
+                <div className="flex items-center gap-3">
+                  <span className="text-base leading-none" aria-hidden="true">{lang.flag}</span>
+                  <div className="flex flex-col">
                   <span className="text-xs font-black uppercase tracking-widest">{lang.native}</span>
                   <span className="text-[9px] font-bold opacity-40 italic">{lang.full}</span>
+                  </div>
                 </div>
                 {current === lang.code && (
                   <div className="w-1.5 h-1.5 rounded-full bg-luna-purple shadow-[0_0_10px_rgba(109,40,217,0.5)]" />

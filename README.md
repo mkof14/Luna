@@ -23,6 +23,8 @@ View your app in AI Studio: https://ai.studio/apps/2982aa11-1f40-4a50-bc23-4f3bf
 
 - Current local mode is API-free by default (`VITE_ENABLE_AI=false`).
 - AI endpoints are intentionally disabled in the client build to avoid exposing credentials.
+- Public visual baseline for future pages:
+  - `/Users/mk/Desktop/Luna/docs/HOME_STYLE_BASELINE.md`
 
 ## Deploy to Vercel
 

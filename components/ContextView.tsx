@@ -10,7 +10,7 @@ export const ContextView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-16 animate-in fade-in duration-1000 pb-32">
-      <button onClick={onBack} className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-luna-purple transition-all">← Dashboard</button>
+      <button onClick={onBack} className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-luna-purple transition-all">← Home</button>
       
       <header className="space-y-6">
         <h2 className="text-5xl font-black tracking-tight uppercase">System Context</h2>

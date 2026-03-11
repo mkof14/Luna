@@ -8,6 +8,17 @@ interface HowItWorksViewProps {
 }
 
 export const HowItWorksView: React.FC<HowItWorksViewProps> = ({ lang, onBack }) => {
+  const loadingByLang: Record<Language, string> = {
+    en: 'Loading...',
+    ru: 'Загрузка...',
+    uk: 'Завантаження...',
+    es: 'Cargando...',
+    fr: 'Chargement...',
+    de: 'Lädt...',
+    zh: '加载中...',
+    ja: '読み込み中...',
+    pt: 'Carregando...',
+  };
   const [activeStep, setActiveStep] = useState(0);
   const [content, setContent] = useState<{
     copy: Record<Language, Copy>;
@@ -25,8 +36,8 @@ export const HowItWorksView: React.FC<HowItWorksViewProps> = ({ lang, onBack }) 
   }, []);
   if (!content) {
     return (
-      <section className="max-w-6xl mx-auto pb-20 p-6 md:p-8 animate-in fade-in duration-500">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Loading...</p>
+      <section className="max-w-6xl mx-auto pb-20 p-6 md:p-8 luna-page-shell luna-page-knowledge animate-in fade-in duration-500">
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{loadingByLang[lang] || loadingByLang.en}</p>
       </section>
     );
   }
@@ -98,7 +109,7 @@ export const HowItWorksView: React.FC<HowItWorksViewProps> = ({ lang, onBack }) 
   };
 
   return (
-    <section className="animate-in fade-in duration-500 space-y-8 relative">
+    <section className="luna-page-shell luna-page-knowledge animate-in fade-in duration-500 space-y-8 relative p-6 md:p-8">
       <div className="absolute -top-28 -left-24 w-96 h-96 rounded-full bg-luna-purple/25 blur-[140px] pointer-events-none" />
       <div className="absolute top-1/3 -right-24 w-96 h-96 rounded-full bg-luna-coral/20 blur-[140px] pointer-events-none" />
       <div className="absolute -bottom-24 left-1/4 w-[28rem] h-[28rem] rounded-full bg-luna-teal/20 blur-[140px] pointer-events-none" />

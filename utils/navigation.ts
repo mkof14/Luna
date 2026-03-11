@@ -95,7 +95,7 @@ export const buildSidebarGroups = (ui: NavigationUi, includeAdmin = false): NavG
         { id: 'faq', label: ui.navigation.faq, icon: '❓' },
         { id: 'contact', label: ui.navigation.contact, icon: '✉️' },
         { id: 'crisis', label: ui.navigation.crisis, icon: '🆘' },
-        { id: 'partner_faq', label: ui.navigation.partner || ui.navigation.partner_faq || 'Partner Support', icon: '🤝' },
+        { id: 'partner_faq', label: 'PARTNER FAQ', icon: '🤝' },
       ],
     },
   ];

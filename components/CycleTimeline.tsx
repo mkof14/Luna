@@ -170,8 +170,17 @@ const CycleTimeline: React.FC<CycleTimelineProps> = ({ currentDay, onDayChange, 
         <p className="text-sm md:text-base font-semibold text-slate-700 dark:text-slate-300 leading-relaxed">{lunaBalance.subtitle}</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {lunaBalance.points.map((point) => (
-            <div key={point} className="rounded-2xl border border-slate-200/80 dark:border-slate-700/70 bg-gradient-to-br from-[#fff9fd]/92 via-[#f3e9f8]/84 to-[#e5ecfa]/78 dark:from-slate-900/72 dark:to-slate-950/46 p-4 text-center shadow-[0_12px_28px_rgba(94,76,136,0.2)] dark:shadow-[0_10px_24px_rgba(0,0,0,0.36)]">
-              <p className="text-xs md:text-sm font-black uppercase tracking-[0.14em] text-slate-800 dark:text-slate-100">{point}</p>
+            <div
+              key={point}
+              className="relative overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-700/70 p-4 text-center shadow-[0_12px_28px_rgba(94,76,136,0.2)] dark:shadow-[0_10px_24px_rgba(0,0,0,0.36)]"
+              style={{
+                backgroundImage: "url('/images/voice-journal-bg.webp')",
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            >
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(140deg,rgba(255,248,255,0.72),rgba(240,230,248,0.58),rgba(222,232,247,0.52))] dark:bg-[linear-gradient(140deg,rgba(8,13,29,0.7),rgba(13,24,47,0.64),rgba(18,34,63,0.58))]" />
+              <p className="relative text-xs md:text-sm font-black uppercase tracking-[0.14em] text-slate-800 dark:text-slate-100">{point}</p>
             </div>
           ))}
         </div>
