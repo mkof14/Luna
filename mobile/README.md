@@ -9,6 +9,7 @@ Implemented now:
 - Placeholder screens for future phases
 - Today screen (implemented)
 - Voice Reflection screen (implemented)
+- Quick check-in screen (implemented)
 - Reflection Result screen (implemented)
 - Remote data layer with fallback (`today`, `reflection`, `story`)
 - Mobile API endpoints supported by backend:
@@ -28,7 +29,7 @@ Prepared placeholders:
 - You
 
 ## Current daily flow
-Onboarding -> Today -> Voice Reflection -> Reflection Result -> Back to Today / Rhythm
+Onboarding -> Today -> (Voice Reflection or Quick check-in) -> Reflection Result -> Back to Today / Rhythm
 
 ## Run
 1. `npm install`

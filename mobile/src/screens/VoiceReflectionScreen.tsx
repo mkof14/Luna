@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
@@ -9,10 +9,19 @@ export function VoiceReflectionScreen({
   onFinish,
 }: {
   onBack: () => void;
-  onFinish: () => void;
+  onFinish: (entryText: string) => void;
 }) {
   const [recording, setRecording] = useState(false);
   const [seconds, setSeconds] = useState(0);
+  const [note, setNote] = useState('');
+  const [selectedPrompt, setSelectedPrompt] = useState('');
+
+  const promptSuggestions = [
+    'What felt heavy today?',
+    'What felt easier than expected?',
+    'What is still on your mind?',
+    'How does your body feel tonight?',
+  ];
 
   useEffect(() => {
     if (!recording) return;
@@ -39,6 +48,7 @@ export function VoiceReflectionScreen({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.headerTitle}>Speak freely. Luna is listening.</Text>
+      <Text style={styles.headerSub}>There is no right way to say it. A few honest words are enough.</Text>
 
       <SurfaceCard style={styles.heroCard}>
         <Text style={styles.cardTitle}>Voice Reflection</Text>
@@ -54,13 +64,45 @@ export function VoiceReflectionScreen({
         </View>
         <Text style={styles.textMuted}>30–60 seconds is enough.</Text>
 
+        <View style={styles.promptWrap}>
+          <Text style={styles.promptLabel}>You can start with:</Text>
+          <View style={styles.promptRow}>
+            {promptSuggestions.map((prompt) => (
+              <LunaButton
+                key={prompt}
+                variant={selectedPrompt === prompt ? 'primary' : 'secondary'}
+                onPress={() => setSelectedPrompt(prompt)}
+              >
+                {prompt}
+              </LunaButton>
+            ))}
+          </View>
+        </View>
+
+        <TextInput
+          value={note}
+          onChangeText={setNote}
+          placeholder="Add a short line if you want..."
+          placeholderTextColor={colors.textMuted}
+          multiline
+          style={styles.input}
+        />
+
         <View style={styles.actionsRow}>
           {!recording ? (
             <LunaButton onPress={() => setRecording(true)}>Tap to record</LunaButton>
           ) : (
             <LunaButton variant="danger" onPress={() => setRecording(false)}>Stop</LunaButton>
           )}
-          <LunaButton variant="secondary" onPress={onFinish}>Finish</LunaButton>
+          <LunaButton
+            variant="secondary"
+            onPress={() => {
+              const candidate = note.trim() || selectedPrompt || 'You shared that the day felt full and emotionally heavy.';
+              onFinish(candidate);
+            }}
+          >
+            Finish
+          </LunaButton>
           <LunaButton variant="ghost" onPress={onBack}>Discard</LunaButton>
         </View>
       </SurfaceCard>
@@ -79,6 +121,11 @@ const styles = StyleSheet.create({
     lineHeight: 33,
     fontWeight: '700',
     color: colors.textPrimary,
+  },
+  headerSub: {
+    fontSize: 14,
+    lineHeight: 21,
+    color: colors.textSecondary,
   },
   heroCard: {
     gap: 12,
@@ -138,5 +185,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
+  },
+  promptWrap: {
+    gap: 8,
+  },
+  promptLabel: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    fontWeight: '600',
+  },
+  promptRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  input: {
+    minHeight: 92,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.cardStrong,
+    color: colors.textPrimary,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    textAlignVertical: 'top',
+    fontSize: 15,
+    lineHeight: 21,
   },
 });

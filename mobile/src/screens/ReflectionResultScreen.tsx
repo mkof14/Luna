@@ -9,6 +9,7 @@ export function ReflectionResultScreen({
   userName,
   reflection,
   context,
+  recentEntries,
   onSeeRhythm,
   onSave,
   onShare,
@@ -18,6 +19,7 @@ export function ReflectionResultScreen({
   userName: string;
   reflection: ReflectionPayload;
   context: ContextSignal;
+  recentEntries: Array<{ id: string; label: string; text: string }>;
   onSeeRhythm: () => void;
   onSave: () => void;
   onShare: () => void;
@@ -29,6 +31,7 @@ export function ReflectionResultScreen({
       <View style={styles.headerWrap}>
         <Text style={styles.greeting}>Good evening, {userName}</Text>
         <Text style={styles.subline}>Here is your reflection.</Text>
+        <Text style={styles.continuity}>{reflection.continuity}</Text>
       </View>
 
       <SurfaceCard>
@@ -61,6 +64,20 @@ export function ReflectionResultScreen({
         </Text>
       </SurfaceCard>
 
+      <SurfaceCard>
+        <Text style={styles.cardTitle}>Recent thread</Text>
+        {recentEntries.length === 0 ? (
+          <Text style={styles.text}>Your story with Luna is just beginning.</Text>
+        ) : (
+          recentEntries.slice(0, 4).map((entry) => (
+            <View key={entry.id} style={styles.timelineItem}>
+              <Text style={styles.timelineLabel}>{entry.label}</Text>
+              <Text style={styles.text}>{entry.text}</Text>
+            </View>
+          ))
+        )}
+      </SurfaceCard>
+
       <View style={styles.actionsRow}>
         <LunaButton variant="secondary" onPress={onSeeRhythm}>See your rhythm</LunaButton>
         <LunaButton variant="secondary" onPress={onSave}>Save reflection</LunaButton>
@@ -89,6 +106,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.textSecondary,
   },
+  continuity: {
+    fontSize: 14,
+    lineHeight: 21,
+    color: colors.textMuted,
+  },
   cardTitle: {
     fontSize: 18,
     color: colors.textPrimary,
@@ -101,5 +123,18 @@ const styles = StyleSheet.create({
   },
   actionsRow: {
     gap: 8,
+  },
+  timelineItem: {
+    paddingVertical: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  timelineLabel: {
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    color: colors.accentStrong,
+    fontWeight: '700',
+    marginBottom: 4,
   },
 });

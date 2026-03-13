@@ -15,6 +15,12 @@ And keep the website ready for real store badges/links.
   - `VITE_GOOGLE_PLAY_URL`
 - Mobile token auth + session flow is implemented (`/api/mobile/auth/*`).
 - Mobile API endpoints are aligned between local and production runtimes (`/api/mobile/*`).
+- Core daily flow MVP is implemented in mobile screens:
+  - Today with Luna
+  - Voice Reflection
+  - Quick check-in
+  - Reflection Result
+  - Basic rhythm context
 
 ## Phase 1 — Project identity and release config
 1. Set final app identifiers in `mobile/app.json`:

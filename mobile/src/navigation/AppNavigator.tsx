@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { BottomTabs } from '../components/BottomTabs';
+import { QuickCheckInScreen } from '../screens/QuickCheckInScreen';
 import { ReflectionResultScreen } from '../screens/ReflectionResultScreen';
 import { TodayScreen } from '../screens/TodayScreen';
 import { VoiceReflectionScreen } from '../screens/VoiceReflectionScreen';
@@ -29,22 +30,27 @@ export function AppNavigator() {
     setView({ type: 'voice' });
   }
 
-  function openResult() {
-    const entry = 'You shared that the day felt full and emotionally heavy.';
+  function openQuickCheckIn() {
+    setView({ type: 'quickCheckIn' });
+  }
+
+  function openResult(entry: string) {
     addReflection(entry);
     void syncReflection('voice', entry);
     setView({ type: 'result' });
   }
 
-  function handleQuickCheckIn() {
-    Alert.alert('Luna', 'Quick check-in: medium energy, sensitive mood, shorter sleep.');
-    const entry = 'Quick check-in captured: medium energy and sensitive mood.';
+  function handleQuickCheckIn(entry: string) {
     addReflection(entry);
     void syncReflection('quick_checkin', entry);
+    setView({ type: 'result' });
   }
 
   function handleWrite() {
-    Alert.alert('Luna', 'Write flow is the next step.');
+    const entry = 'Written note: today felt heavier than expected, and you asked for a calmer evening.';
+    addReflection(entry);
+    void syncReflection('write', entry);
+    setView({ type: 'result' });
   }
 
   function handleSkip() {
@@ -78,7 +84,7 @@ export function AppNavigator() {
           loading={loading}
           onRefresh={refresh}
           onSpeak={openVoice}
-          onQuickCheckIn={handleQuickCheckIn}
+          onQuickCheckIn={openQuickCheckIn}
           onWrite={handleWrite}
           onSkip={handleSkip}
         />
@@ -130,12 +136,17 @@ export function AppNavigator() {
     return <VoiceReflectionScreen onBack={() => openTab('today')} onFinish={openResult} />;
   }
 
+  if (view.type === 'quickCheckIn') {
+    return <QuickCheckInScreen onBack={() => openTab('today')} onSubmit={handleQuickCheckIn} />;
+  }
+
   if (view.type === 'result') {
     return (
       <ReflectionResultScreen
         userName={auth.session.name || today.userName}
         reflection={reflection}
         context={today.context}
+        recentEntries={thread}
         onSeeRhythm={() => openTab('rhythm')}
         onSave={handleSave}
         onShare={handleShare}

@@ -4,6 +4,7 @@ export type AppView =
   | { type: 'onboarding' }
   | { type: 'tabs'; tab: TabKey }
   | { type: 'voice' }
+  | { type: 'quickCheckIn' }
   | { type: 'result' };
 
 export type ContextSignal = {

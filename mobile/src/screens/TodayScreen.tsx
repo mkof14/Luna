@@ -46,13 +46,14 @@ export function TodayScreen({
 
       <SurfaceCard>
         <Text style={styles.cardTitle}>Today’s reflection</Text>
+        <Text style={styles.detail}>Choose one small action now.</Text>
         <View style={styles.actionsRow}>
           <LunaButton onPress={onSpeak}>Speak to Luna</LunaButton>
           <LunaButton variant="secondary" onPress={onQuickCheckIn}>Quick check-in</LunaButton>
-          {onRefresh ? (
-            <LunaButton variant="ghost" onPress={onRefresh}>{loading ? 'Refreshing...' : 'Refresh'}</LunaButton>
-          ) : null}
         </View>
+        {onRefresh ? (
+          <LunaButton variant="ghost" onPress={onRefresh}>{loading ? 'Refreshing...' : 'Refresh context'}</LunaButton>
+        ) : null}
       </SurfaceCard>
 
       <SurfaceCard>
