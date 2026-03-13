@@ -814,6 +814,64 @@ const start = async () => {
       return;
     }
 
+    if (method === 'GET' && url.pathname === '/api/mobile/today') {
+      const current = await getSessionUser(req, users);
+      const userName = current?.user?.name ? safeText(current.user.name, 80) : 'Anna';
+      send(
+        res,
+        200,
+        {
+          userName,
+          title: 'Today with Luna',
+          explanation: 'Today may feel a little slower. Sleep was shorter last night and your body is in the luteal phase.',
+          continuity: 'Yesterday you said work felt heavy.',
+          context: {
+            cycle: 'Day 17 · Luteal phase',
+            energy: 'Lower today',
+            mood: 'Sensitive',
+            sleep: '6h 20m',
+          },
+        },
+        headers,
+      );
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/mobile/reflection-result') {
+      send(
+        res,
+        200,
+        {
+          shortSummary: [
+            'You sounded a little tired today.',
+            'You mentioned pressure at work.',
+            'Your sleep was shorter than usual.',
+          ],
+          suggestion: ['Take a slower evening.', 'Try to rest a little earlier tonight.'],
+          continuity: 'Yesterday you said work felt heavy.',
+          pattern: 'Your energy often drops a couple of days before your cycle.',
+        },
+        headers,
+      );
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/mobile/story') {
+      send(
+        res,
+        200,
+        {
+          entries: [
+            { id: 'today', label: 'Today', text: 'Work felt demanding.' },
+            { id: 'yesterday', label: 'Yesterday', text: 'Energy felt calmer.' },
+            { id: 'three-days', label: '3 days ago', text: 'Sleep felt shorter.' },
+          ],
+        },
+        headers,
+      );
+      return;
+    }
+
     if (method === 'POST' && url.pathname === '/api/labs/extract-image') {
       if (!rateLimit(`labs-scan:${ip}`, 20, 60_000)) {
         send(res, 429, { error: 'Too many image scan attempts. Try again in a minute.' }, headers);

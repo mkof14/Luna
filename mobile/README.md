@@ -11,7 +11,11 @@ Implemented now:
 - Voice Reflection screen (implemented)
 - Reflection Result screen (implemented)
 - Remote data layer with fallback (`today`, `reflection`, `story`)
-- Push reminder scaffolding service (permission + schedule placeholders)
+- Mobile API endpoints supported by backend:
+  - `/api/mobile/today`
+  - `/api/mobile/reflection-result`
+  - `/api/mobile/story`
+- Push reminder integration via `expo-notifications` (permissions + daily local schedule)
 
 Prepared placeholders:
 - Onboarding (minimal entry)
