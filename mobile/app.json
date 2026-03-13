@@ -17,13 +17,13 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.luna.mobile",
+      "bundleIdentifier": "com.29.luna",
       "infoPlist": {
         "NSUserNotificationsUsageDescription": "Luna uses notifications for gentle evening reflection reminders."
       }
     },
     "android": {
-      "package": "com.luna.mobile",
+      "package": "com.29.luna",
       "adaptiveIcon": {
         "backgroundColor": "#f5eff7",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -47,8 +47,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "REPLACE_WITH_EAS_PROJECT_ID"
+        "projectId": "814bf5a6-408a-49ae-922b-1bab936b39f9"
       }
-    }
+    },
+    "owner": "mkof14"
   }
 }
