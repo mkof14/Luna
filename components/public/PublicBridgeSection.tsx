@@ -1,5 +1,6 @@
 import React from 'react';
 import { Language } from '../../constants';
+import { PUBLIC_BTN_PRIMARY, PUBLIC_BTN_PRIMARY_GLOW, PUBLIC_BTN_SECONDARY } from './publicButtonStyles';
 
 interface PublicBridgeSectionProps {
   onSignIn: () => void;
@@ -11,9 +12,9 @@ export const PublicBridgeSection: React.FC<PublicBridgeSectionProps> = ({
   lang,
 }) => {
   const bridgePublicByLang: Record<Language, { eyebrow: string; title: string; problemTitle: string; problemBody: string; helpsTitle: string; helps: [string, string, string]; unique: string; memberLinkTitle: string; memberLinkBody: string }> = {
-    en: { eyebrow: 'THE BRIDGE', title: 'Say Your State Clearly', problemTitle: 'Problem', problemBody: 'Sometimes it is hard to explain your state to a partner or even to yourself.', helpsTitle: 'Bridge helps', helps: ['formulate your state', 'explain it calmly', 'preserve respect in conversation'], unique: 'This is one of Luna’s unique functions.', memberLinkTitle: 'Connected to Member Logic', memberLinkBody: 'In the member zone, The Bridge runs the guided 3-question flow and forms a calm reflection message you can keep or share.' },
-    ru: { eyebrow: 'МОСТ', title: 'Ясно выразить свое состояние', problemTitle: 'Проблема', problemBody: 'Иногда трудно объяснить партнёру или себе своё состояние.', helpsTitle: 'Мост помогает', helps: ['сформулировать состояние', 'объяснить его спокойно', 'сохранить уважение в разговоре'], unique: 'Это одна из уникальных функций Luna.', memberLinkTitle: 'Связано с логикой зоны участника', memberLinkBody: 'В зоне участника Мост использует поток из 3 вопросов и формирует спокойное сообщение-рефлексию, которое можно сохранить или отправить.' },
-    uk: { eyebrow: 'МІСТ', title: 'Чітко сформулювати свій стан', problemTitle: 'Проблема', problemBody: 'Іноді важко пояснити партнеру або собі свій стан.', helpsTitle: 'Міст допомагає', helps: ['сформулювати стан', 'пояснити його спокійно', 'зберегти повагу в розмові'], unique: 'Це одна з унікальних функцій Luna.', memberLinkTitle: 'Повʼязано з логікою зони учасника', memberLinkBody: 'У зоні учасника Міст запускає сценарій із 3 питань та формує спокійне рефлексивне повідомлення, яке можна зберегти або надіслати.' },
+    en: { eyebrow: 'THE BRIDGE', title: 'Say Your State Clearly', problemTitle: 'Problem', problemBody: 'Sometimes it is hard to explain your state to a partner or even to yourself.', helpsTitle: 'Bridge helps', helps: ['formulate your state', 'explain it calmly', 'preserve respect in conversation'], unique: 'This is one of Luna’s unique functions.', memberLinkTitle: 'Connected to Member Logic', memberLinkBody: 'In the member zone, The Bridge runs the guided 3-question flow and forms a calm note you can keep or share.' },
+    ru: { eyebrow: 'МОСТ', title: 'Ясно выразить свое состояние', problemTitle: 'Проблема', problemBody: 'Иногда трудно объяснить партнёру или себе своё состояние.', helpsTitle: 'Мост помогает', helps: ['сформулировать состояние', 'объяснить его спокойно', 'сохранить уважение в разговоре'], unique: 'Это одна из уникальных функций Luna.', memberLinkTitle: 'Связано с логикой зоны участника', memberLinkBody: 'В зоне участника Мост использует поток из 3 вопросов и формирует спокойное сообщение-заметку, которое можно сохранить или отправить.' },
+    uk: { eyebrow: 'МІСТ', title: 'Чітко сформулювати свій стан', problemTitle: 'Проблема', problemBody: 'Іноді важко пояснити партнеру або собі свій стан.', helpsTitle: 'Міст допомагає', helps: ['сформулювати стан', 'пояснити його спокійно', 'зберегти повагу в розмові'], unique: 'Це одна з унікальних функцій Luna.', memberLinkTitle: 'Повʼязано з логікою зони учасника', memberLinkBody: 'У зоні учасника Міст запускає сценарій із 3 питань та формує спокійне повідомлення-нотатку, яке можна зберегти або надіслати.' },
     es: { eyebrow: 'PUENTE', title: 'Expresa tu estado con claridad', problemTitle: 'Problema', problemBody: 'A veces es difícil explicar tu estado a tu pareja o incluso a ti misma.', helpsTitle: 'El puente ayuda a', helps: ['formular tu estado', 'explicarlo con calma', 'preservar el respeto en la conversación'], unique: 'Esta es una de las funciones únicas de Luna.', memberLinkTitle: 'Conectado con la lógica de la zona de miembros', memberLinkBody: 'En la zona de miembros, el Puente ejecuta el flujo guiado de 3 preguntas y forma un mensaje de reflexión calmado para guardar o compartir.' },
     fr: { eyebrow: 'LE PONT', title: 'Exprimer votre état avec clarté', problemTitle: 'Problème', problemBody: "Parfois, il est difficile d'expliquer votre état à votre partenaire ou même à vous-même.", helpsTitle: 'Le Pont aide à', helps: ['formuler votre état', 'l’expliquer calmement', 'préserver le respect dans la conversation'], unique: 'C’est une des fonctions uniques de Luna.', memberLinkTitle: 'Connecté à la logique de la zone membre', memberLinkBody: 'Dans la zone membre, le Pont lance le flux guidé en 3 questions et crée un message de réflexion calme à conserver ou partager.' },
     de: { eyebrow: 'DIE BRÜCKE', title: 'Den eigenen Zustand klar ausdrücken', problemTitle: 'Problem', problemBody: 'Manchmal ist es schwer, den eigenen Zustand der Partnerperson oder sich selbst zu erklären.', helpsTitle: 'Die Brücke hilft dabei', helps: ['den Zustand zu formulieren', 'ihn ruhig zu erklären', 'Respekt im Gespräch zu bewahren'], unique: 'Das ist eine der einzigartigen Funktionen von Luna.', memberLinkTitle: 'Mit der Logik der Mitgliederzone verbunden', memberLinkBody: 'In der Mitgliederzone läuft die Brücke durch den geführten 3-Fragen-Flow und erstellt eine ruhige Reflexionsnachricht zum Behalten oder Teilen.' },
@@ -78,13 +79,14 @@ export const PublicBridgeSection: React.FC<PublicBridgeSectionProps> = ({
         <div className="flex flex-col items-start gap-4">
           <button
             onClick={onSignIn}
-            className="px-8 py-4 rounded-full bg-gradient-to-r from-luna-purple via-luna-coral to-luna-teal text-white text-[11px] font-black uppercase tracking-[0.22em] shadow-luna-deep hover:brightness-110 hover:scale-[1.03] active:scale-[0.98] transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-luna-purple"
+            className={`${PUBLIC_BTN_PRIMARY} px-8 py-4 text-[11px] tracking-[0.22em]`}
           >
-            {actions.enterMember}
+            <span className={PUBLIC_BTN_PRIMARY_GLOW} />
+            <span className="relative z-10">{actions.enterMember}</span>
           </button>
           <button
             onClick={onSignIn}
-            className="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-luna-purple transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-luna-purple rounded-md"
+            className={`${PUBLIC_BTN_SECONDARY} px-5 py-2.5 text-[11px] tracking-[0.14em]`}
           >
             {actions.memberSignIn}
           </button>

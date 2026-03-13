@@ -555,3 +555,21 @@ input[type='range'] {
 .luna-life-breathe {
   animation: luna-life-breathe 2.4s ease-in-out infinite;
 }
+
+@keyframes luna-soft-glow {
+  0%,
+  100% {
+    box-shadow: 0 10px 24px rgba(124, 88, 186, 0.26), 0 0 0 rgba(192, 132, 252, 0);
+  }
+  50% {
+    box-shadow: 0 14px 34px rgba(124, 88, 186, 0.34), 0 0 26px rgba(192, 132, 252, 0.28);
+  }
+}
+
+.luna-soft-glow {
+  animation: luna-soft-glow 3.2s ease-in-out infinite;
+}
+
+.dark .luna-soft-glow {
+  animation: luna-soft-glow 3.2s ease-in-out infinite;
+}

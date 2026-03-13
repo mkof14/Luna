@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mic, Square, Play, Save, X, Volume2, Sparkles, MessageSquare, VolumeX, AlertCircle, RefreshCw } from 'lucide-react';
+import { Mic, Square, Save, Share2, X, Sparkles, RefreshCw } from 'lucide-react';
 import { dataService } from '../services/dataService';
 import { generatePsychologistResponse } from '../services/geminiService';
 import { Language } from '../constants';
@@ -52,6 +52,300 @@ type SavedVoiceClip = {
 
 const VOICE_CLIPS_STORAGE_KEY = 'luna_voice_clips_v1';
 
+type VoiceReflectionUiCopy = {
+  listeningLine: string;
+  voiceTitle: string;
+  voiceSupport: string;
+  tapToRecord: string;
+  shortEnough: string;
+  promptsTitle: string;
+  prompt1: string;
+  prompt2: string;
+  prompt3: string;
+  prompt4: string;
+  reassurance: string;
+  recordingState: string;
+  finish: string;
+  discard: string;
+  reflectionReceived: string;
+  reflectionTitle: string;
+  reflectionFallback: string;
+  suggestionTitle: string;
+  suggestionText: string;
+  seeRhythm: string;
+  saveReflection: string;
+  shareReflection: string;
+  saving: string;
+  copied: string;
+  shareError: string;
+  previousDayLabel: string;
+  compareToday: string;
+};
+
+const voiceUiByLang: Record<Language, VoiceReflectionUiCopy> = {
+  en: {
+    listeningLine: 'Speak freely. Luna is listening.',
+    voiceTitle: 'Voice Note',
+    voiceSupport: 'Record a short note about how you feel and what happened during your day.',
+    tapToRecord: 'Tap to record',
+    shortEnough: '30–60 seconds is enough.',
+    promptsTitle: 'You can start with:',
+    prompt1: 'What felt heavy today?',
+    prompt2: 'What felt easier than expected?',
+    prompt3: 'What is still on your mind?',
+    prompt4: 'How does your body feel tonight?',
+    reassurance: 'There is no right way to say it. A few honest words are enough.',
+    recordingState: 'Recording',
+    finish: 'Finish',
+    discard: 'Discard',
+    reflectionReceived: 'Note received',
+    reflectionTitle: "Here's your note",
+    reflectionFallback: 'You sounded tired today. You mentioned pressure at work. You slept less than usual.',
+    suggestionTitle: 'Suggestion',
+    suggestionText: 'Take a slow evening and sleep earlier tonight.',
+    seeRhythm: 'See your rhythm',
+    saveReflection: 'Save note',
+    shareReflection: 'Share note',
+    saving: 'Saving...',
+    copied: 'Note copied.',
+    shareError: 'Could not share right now.',
+    previousDayLabel: 'Yesterday you shared',
+    compareToday: 'How does today feel compared to yesterday?',
+  },
+  ru: {
+    listeningLine: 'Говорите свободно. Luna слушает.',
+    voiceTitle: 'Голосовая заметка',
+    voiceSupport: 'Запишите короткую заметку о том, как вы себя чувствуете и что произошло за день.',
+    tapToRecord: 'Нажмите, чтобы записать',
+    shortEnough: 'Достаточно 30–60 секунд.',
+    promptsTitle: 'Можно начать с:',
+    prompt1: 'Что сегодня было тяжелым?',
+    prompt2: 'Что оказалось легче, чем ожидалось?',
+    prompt3: 'Что все еще не выходит из головы?',
+    prompt4: 'Как чувствует себя ваше тело сегодня вечером?',
+    reassurance: 'Здесь нет правильных слов. Достаточно нескольких честных фраз.',
+    recordingState: 'Запись',
+    finish: 'Завершить',
+    discard: 'Удалить',
+    reflectionReceived: 'Заметка получена',
+    reflectionTitle: 'Вот ваша заметка',
+    reflectionFallback: 'Вы звучали уставшей. Вы упомянули давление на работе. Вы спали меньше обычного.',
+    suggestionTitle: 'Рекомендация',
+    suggestionText: 'Сделайте спокойный вечер и постарайтесь лечь спать раньше.',
+    seeRhythm: 'Смотреть ритм',
+    saveReflection: 'Сохранить заметку',
+    shareReflection: 'Поделиться заметкой',
+    saving: 'Сохранение...',
+    copied: 'Заметка скопирована.',
+    shareError: 'Сейчас не удалось поделиться.',
+    previousDayLabel: 'Вчера вы говорили',
+    compareToday: 'Как сегодняшний день ощущается по сравнению со вчерашним?',
+  },
+  uk: {
+    listeningLine: 'Говоріть вільно. Luna слухає.',
+    voiceTitle: 'Голосова нотатка',
+    voiceSupport: 'Запишіть коротку нотатку про те, як ви почуваєтесь і що сталося протягом дня.',
+    tapToRecord: 'Натисніть, щоб записати',
+    shortEnough: '30–60 секунд достатньо.',
+    promptsTitle: 'Можна почати з:',
+    prompt1: 'Що сьогодні було важким?',
+    prompt2: 'Що виявилося легшим, ніж очікувалось?',
+    prompt3: 'Що досі не виходить з голови?',
+    prompt4: 'Як почувається ваше тіло сьогодні ввечері?',
+    reassurance: 'Тут немає правильних слів. Достатньо кількох чесних фраз.',
+    recordingState: 'Запис',
+    finish: 'Завершити',
+    discard: 'Скасувати',
+    reflectionReceived: 'Нотатку отримано',
+    reflectionTitle: 'Ось ваша нотатка',
+    reflectionFallback: 'Ви звучали втомлено. Ви згадали тиск на роботі. Ви спали менше звичного.',
+    suggestionTitle: 'Рекомендація',
+    suggestionText: 'Зробіть спокійний вечір і спробуйте лягти спати раніше.',
+    seeRhythm: 'Переглянути ритм',
+    saveReflection: 'Зберегти нотатку',
+    shareReflection: 'Поділитися нотаткою',
+    saving: 'Збереження...',
+    copied: 'Нотатку скопійовано.',
+    shareError: 'Зараз не вдалося поділитися.',
+    previousDayLabel: 'Учора ви казали',
+    compareToday: 'Як сьогоднішній день відчувається порівняно з учорашнім?',
+  },
+  es: {
+    listeningLine: 'Habla con libertad. Luna te está escuchando.',
+    voiceTitle: 'Nota de voz',
+    voiceSupport: 'Graba una breve nota sobre cómo te sientes y qué pasó durante tu día.',
+    tapToRecord: 'Toca para grabar',
+    shortEnough: '30–60 segundos son suficientes.',
+    promptsTitle: 'Puedes empezar con:',
+    prompt1: '¿Qué se sintió pesado hoy?',
+    prompt2: '¿Qué fue más fácil de lo esperado?',
+    prompt3: '¿Qué sigue en tu mente?',
+    prompt4: '¿Cómo se siente tu cuerpo esta noche?',
+    reassurance: 'No hay una forma correcta de decirlo. Unas palabras honestas son suficientes.',
+    recordingState: 'Grabando',
+    finish: 'Finalizar',
+    discard: 'Descartar',
+    reflectionReceived: 'Nota recibida',
+    reflectionTitle: 'Aquí está tu nota',
+    reflectionFallback: 'Hoy sonabas cansada. Mencionaste presión en el trabajo. Dormiste menos de lo habitual.',
+    suggestionTitle: 'Sugerencia',
+    suggestionText: 'Regálate una noche tranquila y duerme un poco antes.',
+    seeRhythm: 'Ver tu ritmo',
+    saveReflection: 'Guardar nota',
+    shareReflection: 'Compartir nota',
+    saving: 'Guardando...',
+    copied: 'Nota copiada.',
+    shareError: 'No se pudo compartir ahora.',
+    previousDayLabel: 'Yesterday you shared',
+    compareToday: 'How does today feel compared to yesterday?',
+  },
+  fr: {
+    listeningLine: 'Parlez librement. Luna vous écoute.',
+    voiceTitle: 'Note vocale',
+    voiceSupport: 'Enregistrez une courte note sur ce que vous ressentez et ce qui s’est passé aujourd’hui.',
+    tapToRecord: 'Touchez pour enregistrer',
+    shortEnough: '30 à 60 secondes suffisent.',
+    promptsTitle: 'Vous pouvez commencer par :',
+    prompt1: 'Qu’est-ce qui a été lourd aujourd’hui ?',
+    prompt2: 'Qu’est-ce qui a été plus simple que prévu ?',
+    prompt3: 'Qu’est-ce qui reste dans votre esprit ?',
+    prompt4: 'Comment votre corps se sent-il ce soir ?',
+    reassurance: 'Il n’y a pas de bonne façon de le dire. Quelques mots sincères suffisent.',
+    recordingState: 'Enregistrement',
+    finish: 'Terminer',
+    discard: 'Annuler',
+    reflectionReceived: 'Note reçue',
+    reflectionTitle: 'Voici votre note',
+    reflectionFallback: 'Vous sembliez fatiguée aujourd’hui. Vous avez mentionné une pression au travail. Vous avez moins dormi que d’habitude.',
+    suggestionTitle: 'Suggestion',
+    suggestionText: 'Accordez-vous une soirée plus lente et couchez-vous un peu plus tôt.',
+    seeRhythm: 'Voir votre rythme',
+    saveReflection: 'Enregistrer la note',
+    shareReflection: 'Partager la note',
+    saving: 'Enregistrement...',
+    copied: 'Note copiée.',
+    shareError: 'Partage impossible pour le moment.',
+    previousDayLabel: 'Yesterday you shared',
+    compareToday: 'How does today feel compared to yesterday?',
+  },
+  de: {
+    listeningLine: 'Sprich frei. Luna hört dir zu.',
+    voiceTitle: 'Sprachnotiz',
+    voiceSupport: 'Nimm eine kurze Notiz darüber auf, wie du dich fühlst und was heute passiert ist.',
+    tapToRecord: 'Tippen zum Aufnehmen',
+    shortEnough: '30–60 Sekunden reichen aus.',
+    promptsTitle: 'Du kannst so beginnen:',
+    prompt1: 'Was hat sich heute schwer angefühlt?',
+    prompt2: 'Was war leichter als erwartet?',
+    prompt3: 'Was beschäftigt dich noch?',
+    prompt4: 'Wie fühlt sich dein Körper heute Abend an?',
+    reassurance: 'Es gibt keinen richtigen Weg, es zu sagen. Ein paar ehrliche Worte reichen.',
+    recordingState: 'Aufnahme',
+    finish: 'Beenden',
+    discard: 'Verwerfen',
+    reflectionReceived: 'Notiz erhalten',
+    reflectionTitle: 'Hier ist deine Notiz',
+    reflectionFallback: 'Du klangst heute müde. Du hast Druck bei der Arbeit erwähnt. Du hast weniger geschlafen als sonst.',
+    suggestionTitle: 'Vorschlag',
+    suggestionText: 'Mach dir einen ruhigen Abend und geh heute etwas früher schlafen.',
+    seeRhythm: 'Deinen Rhythmus sehen',
+    saveReflection: 'Notiz speichern',
+    shareReflection: 'Notiz teilen',
+    saving: 'Speichern...',
+    copied: 'Notiz kopiert.',
+    shareError: 'Teilen ist gerade nicht möglich.',
+    previousDayLabel: 'Yesterday you shared',
+    compareToday: 'How does today feel compared to yesterday?',
+  },
+  zh: {
+    listeningLine: '请自然表达，Luna 正在倾听。',
+    voiceTitle: '语音笔记',
+    voiceSupport: '录一段简短笔记，说说你的感受和今天发生的事。',
+    tapToRecord: '点击开始录音',
+    shortEnough: '30–60 秒就够了。',
+    promptsTitle: '你可以这样开始：',
+    prompt1: '今天什么让你感到沉重？',
+    prompt2: '什么比预期更轻松？',
+    prompt3: '你现在还在想什么？',
+    prompt4: '今晚你的身体感觉如何？',
+    reassurance: '没有标准答案。几句真诚的话就足够。',
+    recordingState: '录音中',
+    finish: '完成',
+    discard: '丢弃',
+    reflectionReceived: '已收到笔记',
+    reflectionTitle: '这是你的笔记',
+    reflectionFallback: '你今天听起来有些疲惫。你提到工作上的压力。你的睡眠比平时少。',
+    suggestionTitle: '建议',
+    suggestionText: '今晚放慢节奏，尽量早点休息。',
+    seeRhythm: '查看你的节律',
+    saveReflection: '保存笔记',
+    shareReflection: '分享笔记',
+    saving: '保存中...',
+    copied: '笔记已复制。',
+    shareError: '暂时无法分享。',
+    previousDayLabel: 'Yesterday you shared',
+    compareToday: 'How does today feel compared to yesterday?',
+  },
+  ja: {
+    listeningLine: '自由に話してください。Luna はあなたの声を聴いています。',
+    voiceTitle: 'ボイスノート',
+    voiceSupport: '今日の気持ちや出来事について、短いメモを録音しましょう。',
+    tapToRecord: 'タップして録音',
+    shortEnough: '30〜60秒で十分です。',
+    promptsTitle: 'こんな始め方でも大丈夫です：',
+    prompt1: '今日は何が重く感じましたか？',
+    prompt2: '予想より楽だったことは？',
+    prompt3: 'まだ心に残っていることは？',
+    prompt4: '今夜、体はどんな感覚ですか？',
+    reassurance: '正しい言い方はありません。正直な言葉を少し話すだけで十分です。',
+    recordingState: '録音中',
+    finish: '完了',
+    discard: '破棄',
+    reflectionReceived: 'メモを受け取りました',
+    reflectionTitle: 'あなたのメモ',
+    reflectionFallback: '今日は疲れているように聞こえました。仕事のプレッシャーについて話していました。睡眠はいつもより短めでした。',
+    suggestionTitle: '提案',
+    suggestionText: '今夜はゆっくり過ごして、少し早めに休みましょう。',
+    seeRhythm: 'リズムを見る',
+    saveReflection: 'メモを保存',
+    shareReflection: 'メモを共有',
+    saving: '保存中...',
+    copied: 'メモをコピーしました。',
+    shareError: '今は共有できません。',
+    previousDayLabel: 'Yesterday you shared',
+    compareToday: 'How does today feel compared to yesterday?',
+  },
+  pt: {
+    listeningLine: 'Fale com liberdade. Luna está ouvindo você.',
+    voiceTitle: 'Nota de voz',
+    voiceSupport: 'Grave uma nota curta sobre como você se sente e o que aconteceu no seu dia.',
+    tapToRecord: 'Toque para gravar',
+    shortEnough: '30–60 segundos já são suficientes.',
+    promptsTitle: 'Você pode começar com:',
+    prompt1: 'O que pesou hoje?',
+    prompt2: 'O que foi mais fácil do que o esperado?',
+    prompt3: 'O que ainda está na sua mente?',
+    prompt4: 'Como seu corpo se sente esta noite?',
+    reassurance: 'Não existe jeito certo de dizer. Algumas palavras honestas já bastam.',
+    recordingState: 'Gravando',
+    finish: 'Finalizar',
+    discard: 'Descartar',
+    reflectionReceived: 'Nota recebida',
+    reflectionTitle: 'Aqui está sua nota',
+    reflectionFallback: 'Você soou cansada hoje. Você mencionou pressão no trabalho. Dormiu menos do que o normal.',
+    suggestionTitle: 'Sugestão',
+    suggestionText: 'Tenha uma noite mais tranquila e tente dormir um pouco mais cedo.',
+    seeRhythm: 'Ver seu ritmo',
+    saveReflection: 'Salvar nota',
+    shareReflection: 'Compartilhar nota',
+    saving: 'Salvando...',
+    copied: 'Nota copiada.',
+    shareError: 'Não foi possível compartilhar agora.',
+    previousDayLabel: 'Yesterday you shared',
+    compareToday: 'How does today feel compared to yesterday?',
+  },
+};
+
 declare global {
   interface Window {
     SpeechRecognition?: SpeechRecognitionConstructorLike;
@@ -62,7 +356,6 @@ declare global {
 
 export const AudioReflection: React.FC<{ onBack: () => void, lang?: Language }> = ({ onBack, lang = 'en' }) => {
   const [voiceContent, setVoiceContent] = useState<import('../utils/voiceReflectionContent').VoiceReflectionCopy | null>(null);
-  const [voiceExplanation, setVoiceExplanation] = useState<import('../utils/voiceReflectionContent').VoiceReflectionExplanation | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -70,7 +363,6 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: Language }> 
       if (!alive) return;
       const next = module.getVoiceReflectionContent(lang);
       setVoiceContent(next.copy);
-      setVoiceExplanation(next.explanation);
     });
     return () => {
       alive = false;
@@ -86,12 +378,12 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: Language }> 
     noSpeech: "I didn't catch that. Please try again.",
     unavailable: 'Luna is temporarily unavailable. Please try again.',
     back: 'Back to Journal',
-    reflectionLabel: 'Live Reflection',
+    reflectionLabel: 'Live Note',
     subtitle: 'Speak your state. Luna is here to listen, understand, and respond.',
     holdToSpeak: 'Tap to speak',
     stopListening: 'Stop Listening',
     lunaReflecting: 'Luna is reflecting...',
-    yourReflection: 'Your Reflection',
+    yourReflection: 'Your Note',
     lunaResponse: "Luna's Response",
     reflecting: 'Reflecting...',
     listenAgain: 'Listen Again',
@@ -99,12 +391,7 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: Language }> 
     redo: 'Redo',
     recording: 'Recording...',
   };
-  const explanation = voiceExplanation || {
-    title: 'Short explanation: Why voice matters.',
-    lead: 'Reason is simple:',
-    line1: 'People think faster than they write.',
-    line2: 'Voice Journal lets you capture your state immediately.',
-  };
+  const ui = voiceUiByLang[lang] || voiceUiByLang.en;
   const recognitionLangByUi: Record<Language, string> = { en: 'en-US', ru: 'ru-RU', uk: 'uk-UA', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', zh: 'zh-CN', ja: 'ja-JP', pt: 'pt-PT' };
   const recognitionLocales: Array<{ value: string; label: string }> = [
     { value: 'en-US', label: 'English (US)' },
@@ -125,6 +412,8 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: Language }> 
   const [audioLevel, setAudioLevel] = useState<number[]>(Array(12).fill(4));
   const [audioBase64, setAudioBase64] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [recordingStartedAt, setRecordingStartedAt] = useState<number | null>(null);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [statusMsg, setStatusMsg] = useState<string>("");
   const [displayedAiResponse, setDisplayedAiResponse] = useState("");
@@ -495,6 +784,7 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: Language }> 
         }
       }
       setIsRecording(true);
+      setRecordingStartedAt(Date.now());
     } catch (err) {
       console.error("Failed to start recording", err);
       setError(copy.micAccess);
@@ -504,6 +794,7 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: Language }> 
   const stopRecording = () => {
     if (!isRecordingRef.current) return;
     setIsRecording(false);
+    setRecordingStartedAt(null);
     isStoppingRecognitionRef.current = true;
     
     if (recognitionRef.current) {
@@ -696,7 +987,7 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: Language }> 
     }
     dataService.logEvent('AUDIO_REFLECTION', { text: transcription, ai_response: aiResponse });
     setIsSavingRecording(false);
-    onBack();
+    setStatusMsg(ui.copied);
   };
 
   const handleDeleteClip = (id: string) => {
@@ -717,6 +1008,254 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: Language }> 
     document.body.removeChild(link);
   };
 
+  const discardCurrentReflection = () => {
+    if (finalizeTimerRef.current) {
+      clearTimeout(finalizeTimerRef.current);
+      finalizeTimerRef.current = null;
+    }
+    didFinalizeRef.current = true;
+    isStoppingRecognitionRef.current = false;
+    recognitionActive.current = false;
+    if (recognitionRef.current) {
+      try { recognitionRef.current.abort(); } catch (_e) {}
+    }
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      try { mediaRecorderRef.current.stop(); } catch (_e) {}
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    if (audioContextRef.current) {
+      audioContextRef.current.close().catch(() => {});
+      audioContextRef.current = null;
+      analyserRef.current = null;
+    }
+    setIsRecording(false);
+    setRecordingStartedAt(null);
+    setRecordingSeconds(0);
+    setTranscription('');
+    setInterimTranscription('');
+    transcriptionRef.current = '';
+    interimRef.current = '';
+    setAiResponse('');
+    setDisplayedAiResponse('');
+    setError(null);
+    setSessionAudioDataUrl(null);
+    setStatusMsg('');
+    stopAudio();
+  };
+
+  const shareReflection = async () => {
+    const payload = aiResponse || displayedAiResponse || transcription;
+    if (!payload) return;
+    const text = `Luna note:\n${payload}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Luna Note', text });
+        return;
+      }
+      await navigator.clipboard.writeText(text);
+      setStatusMsg(ui.copied);
+    } catch {
+      setStatusMsg(ui.shareError);
+    }
+  };
+
+  const profileName = useMemo(() => {
+    try {
+      const state = dataService.projectState(dataService.getLog());
+      return state.profile?.name?.trim() || 'Anna';
+    } catch {
+      return 'Anna';
+    }
+  }, []);
+
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  }, []);
+
+  const projectedState = useMemo(() => {
+    try {
+      return dataService.projectState(dataService.getLog());
+    } catch {
+      return null;
+    }
+  }, [transcription, aiResponse]);
+
+  const currentDay = projectedState?.currentDay ?? 1;
+  const cycleLength = projectedState?.cycleLength ?? 28;
+  const lastCheckinMetrics = projectedState?.lastCheckin?.metrics || null;
+
+  const cyclePhaseLabel = useMemo(() => {
+    const day = Math.max(1, Math.min(currentDay, cycleLength));
+    if (day <= 5) return 'Menstrual phase';
+    if (day <= 13) return 'Follicular phase';
+    if (day <= 16) return 'Ovulatory phase';
+    return 'Luteal phase';
+  }, [currentDay, cycleLength]);
+
+  const contextLevel = (value?: number) => {
+    if (typeof value !== 'number') return 'Not set yet';
+    if (value < 34) return 'Low';
+    if (value < 67) return 'Medium';
+    return 'High';
+  };
+
+  const contextMood = (value?: number) => {
+    if (typeof value !== 'number') return 'Not set yet';
+    if (value < 34) return 'A little sensitive';
+    if (value < 67) return 'Steady';
+    return 'Open and social';
+  };
+
+  const contextSleep = (value?: number) => {
+    if (typeof value !== 'number') return 'Not set yet';
+    const totalMinutes = 240 + Math.round((Math.max(0, Math.min(100, value)) / 100) * 300);
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+    return `${h} hours ${m.toString().padStart(2, '0')} minutes`;
+  };
+
+  const heardLines = useMemo(() => {
+    const source = (aiResponse || transcription || '').trim();
+    const cleaned = source.replace(/\s+/g, ' ');
+    const sentences = cleaned
+      .split(/(?<=[.!?])\s+/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .slice(0, 3);
+    if (sentences.length >= 2) return sentences;
+    return [
+      'You sounded a little tired today.',
+      'You mentioned pressure at work.',
+      'You also said your sleep was shorter than usual.',
+    ];
+  }, [aiResponse, transcription]);
+
+  const patternLine = useMemo(() => {
+    try {
+      const log = dataService.getLog();
+      const meaningfulReflections = log.filter((event) => event.type === 'AUDIO_REFLECTION' || event.type === 'DAILY_CHECKIN').length;
+      if (meaningfulReflections >= 4) {
+        return 'Your energy often drops a couple of days before your cycle.';
+      }
+    } catch {
+      // Keep learning state fallback.
+    }
+    return 'Luna is still learning about you. The more you reflect, the clearer your rhythm becomes.';
+  }, [transcription, aiResponse]);
+
+  const previousDayLine = useMemo(() => {
+    const toDayKey = (iso: string) => new Date(iso).toISOString().slice(0, 10);
+    const todayKey = new Date().toISOString().slice(0, 10);
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayKey = yesterday.toISOString().slice(0, 10);
+
+    const describe = (event: { type: string; payload: unknown }) => {
+      if (event.type === 'DAILY_CHECKIN') {
+        const payload = event.payload as { metrics?: Record<string, number> };
+        const sleep = payload.metrics?.sleep ?? 50;
+        const energy = payload.metrics?.energy ?? 50;
+        if (sleep < 45) return 'you felt tired after a short sleep.';
+        if (energy < 45) return 'your energy felt lower.';
+        return 'your day felt more balanced.';
+      }
+      const payload = event.payload as { text?: string; transcript?: string };
+      const text = (payload?.text || payload?.transcript || '').toLowerCase();
+      if (/(work|office|deadline|meeting|job|pressure)/i.test(text)) return 'work felt demanding.';
+      if (/(sleep|tired|drained|insomnia|stress|overwhelmed)/i.test(text)) return 'you felt tired and needed rest.';
+      if (/(calm|steady|better|lighter)/i.test(text)) return 'you felt calmer.';
+      return 'you shared how your day felt.';
+    };
+
+    const timeline = dataService
+      .getLog()
+      .filter((event) => event.type === 'AUDIO_REFLECTION' || event.type === 'DAILY_CHECKIN')
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+    const yesterdayEvent = timeline.find((event) => toDayKey(event.timestamp) === yesterdayKey);
+    if (yesterdayEvent) return describe(yesterdayEvent);
+
+    const previousEvent = timeline.find((event) => toDayKey(event.timestamp) !== todayKey);
+    if (previousEvent) return describe(previousEvent);
+
+    return '';
+  }, [transcription, aiResponse]);
+
+  const recentThread = useMemo(() => {
+    const toDayStart = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+    const todayStart = toDayStart(new Date());
+
+    const formatDayLabel = (iso: string) => {
+      const date = new Date(iso);
+      const diffDays = Math.floor((todayStart - toDayStart(date)) / 86400000);
+      if (diffDays <= 0) return 'Today';
+      if (diffDays === 1) return 'Yesterday';
+      return `${diffDays} days ago`;
+    };
+
+    const normalizeLine = (raw: string) => {
+      const clean = raw.replace(/\s+/g, ' ').trim();
+      if (!clean) return '';
+      const firstSentence = clean.split(/(?<=[.!?])\s/)[0]?.trim() || clean;
+      return firstSentence.length > 80 ? `${firstSentence.slice(0, 77).trim()}...` : firstSentence;
+    };
+
+    const fromLog = (() => {
+      try {
+        return dataService
+          .getLog()
+          .filter((event) => event.type === 'AUDIO_REFLECTION')
+          .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+          .map((event) => {
+            const payload = event.payload as { text?: string; transcript?: string };
+            const line = normalizeLine(payload?.text || payload?.transcript || '');
+            return line
+              ? {
+                  id: event.id,
+                  dayLabel: formatDayLabel(event.timestamp),
+                  text: line,
+                }
+              : null;
+          })
+          .filter(Boolean) as Array<{ id: string; dayLabel: string; text: string }>;
+      } catch {
+        return [] as Array<{ id: string; dayLabel: string; text: string }>;
+      }
+    })();
+
+    const currentLine = normalizeLine(heardLines[0] || transcription || aiResponse || '');
+    const withCurrent = currentLine
+      ? [{ id: 'current', dayLabel: 'Today', text: currentLine }, ...fromLog.filter((entry) => entry.text !== currentLine)]
+      : fromLog;
+
+    return withCurrent.slice(0, 4);
+  }, [aiResponse, heardLines, transcription]);
+
+  const recordingTimerLabel = useMemo(() => {
+    const m = Math.floor(recordingSeconds / 60)
+      .toString()
+      .padStart(2, '0');
+    const s = (recordingSeconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }, [recordingSeconds]);
+
+  useEffect(() => {
+    if (!isRecording || !recordingStartedAt) {
+      setRecordingSeconds(0);
+      return;
+    }
+    const id = window.setInterval(() => {
+      setRecordingSeconds(Math.max(0, Math.floor((Date.now() - recordingStartedAt) / 1000)));
+    }, 250);
+    return () => window.clearInterval(id);
+  }, [isRecording, recordingStartedAt]);
+
   useEffect(() => {
     return () => {
       if (finalizeTimerRef.current) {
@@ -733,385 +1272,336 @@ export const AudioReflection: React.FC<{ onBack: () => void, lang?: Language }> 
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto luna-page-shell luna-page-voice space-y-8 p-6 md:p-8">
-      <motion.button 
+    <div className="max-w-4xl mx-auto luna-page-shell luna-page-voice space-y-6 p-6 md:p-8">
+      <motion.button
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
-        onClick={onBack} 
+        onClick={onBack}
         className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-luna-purple transition-all"
       >
         <X size={14} /> {copy.back}
       </motion.button>
-      
-      <div className="luna-vivid-surface p-8 md:p-16 rounded-[4rem] space-y-16 text-center relative overflow-hidden border border-white/40 dark:border-slate-700/70 shadow-[0_28px_80px_rgba(88,70,126,0.22)] dark:shadow-[0_32px_82px_rgba(0,0,0,0.56)]">
-        <div className="absolute -top-20 -left-20 w-72 h-72 bg-luna-purple/16 dark:bg-luna-purple/18 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-rose-500/14 dark:bg-sky-400/16 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 left-1/3 w-64 h-64 bg-luna-teal/12 dark:bg-sky-300/14 rounded-full blur-3xl" />
-        <motion.div
-          animate={{ x: [0, 30, 0], y: [0, -20, 0], opacity: [0.3, 0.55, 0.3] }}
-          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -top-24 right-[10%] w-80 h-80 rounded-full bg-gradient-to-br from-luna-purple/18 via-sky-300/18 to-rose-300/12 blur-[90px]"
-        />
-        <motion.div
-          animate={{ x: [0, -24, 0], y: [0, 18, 0], opacity: [0.22, 0.44, 0.22] }}
-          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -bottom-20 left-[8%] w-72 h-72 rounded-full bg-gradient-to-tr from-rose-300/20 via-luna-purple/16 to-cyan-300/14 blur-[95px]"
-        />
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.35),transparent_38%),radial-gradient(circle_at_80%_85%,rgba(255,255,255,0.2),transparent_40%)] dark:bg-[radial-gradient(circle_at_20%_20%,rgba(148,163,184,0.12),transparent_38%),radial-gradient(circle_at_80%_85%,rgba(148,163,184,0.1),transparent_40%)]" />
 
-        <header className="space-y-4 relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full luna-vivid-chip text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-200 mb-2">
-            <Volume2 size={12} /> {copy.reflectionLabel}
-          </div>
-          <h2 className="text-5xl font-black uppercase tracking-tighter leading-none text-slate-950 dark:text-white">
-            Voice <span className="text-luna-purple">Journal.</span>
-          </h2>
-          <p className="text-base font-medium text-slate-500 italic max-w-md mx-auto">
-            {copy.subtitle}
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-300">
-              Speech language
-            </p>
-            <select
-              value={speechLocale}
-              onChange={(e) => setSpeechLocale(e.target.value)}
-              className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.16em] bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 outline-none"
-            >
-              {recognitionLocales.map((locale) => (
-                <option key={locale.value} value={locale.value}>
-                  {locale.label}
-                </option>
-              ))}
-            </select>
-            <select
-              value={speechVoiceURI}
-              onChange={(e) => setSpeechVoiceURI(e.target.value)}
-              className="max-w-[260px] px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.08em] bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 outline-none"
-            >
-              <option value="">{bestLocaleVoice ? `Auto: ${bestLocaleVoice.name}` : 'Auto voice'}</option>
-              {localeVoices.map((voice) => (
-                <option key={voice.voiceURI} value={voice.voiceURI}>
-                  {voice.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </header>
+      <header className="space-y-1">
+        <p className="text-base font-semibold text-slate-700 dark:text-slate-200">{greeting}, {profileName}</p>
+        <p className="text-sm italic font-medium text-slate-500 dark:text-slate-300">{ui.listeningLine}</p>
+      </header>
 
-        <article className="relative z-10 max-w-3xl mx-auto rounded-[2.2rem] border border-slate-200/75 dark:border-slate-800/85 bg-gradient-to-br from-[#faeefa]/92 via-[#efe7f5]/88 to-[#e2eefb]/84 dark:from-[#0b1832]/94 dark:via-[#12264a]/92 dark:to-[#1a345f]/90 p-6 md:p-7 text-left shadow-[0_18px_42px_rgba(93,74,132,0.2)] dark:shadow-[0_20px_46px_rgba(0,0,0,0.46)]">
-          <p className="text-sm md:text-base font-black text-slate-800 dark:text-slate-100">{explanation.title}</p>
-          <p className="mt-3 text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200">{explanation.lead}</p>
-          <p className="mt-2 text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200">{explanation.line1}</p>
-          <p className="mt-2 text-sm md:text-base font-semibold text-slate-700 dark:text-slate-200">{explanation.line2}</p>
-        </article>
+      <main className="luna-vivid-surface p-8 md:p-10 rounded-[2.6rem] relative overflow-hidden border border-slate-200/70 dark:border-slate-700/55 shadow-[0_26px_70px_rgba(88,70,126,0.18)] dark:shadow-[0_30px_72px_rgba(0,0,0,0.5)]">
+        <div className="absolute -top-20 -left-20 w-72 h-72 bg-luna-purple/12 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-rose-400/12 rounded-full blur-3xl" />
 
-        <div className="flex flex-col items-center gap-12 py-10 relative z-10">
-          <div className="relative">
-            {!isRecording && (
-              <motion.div
-                animate={{ rotate: [0, 180, 360], opacity: [0.2, 0.45, 0.2] }}
-                transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
-                className="absolute -inset-5 rounded-full border border-luna-purple/35 dark:border-sky-300/30"
-              />
-            )}
-            <AnimatePresence>
+        <article className="relative z-10 mx-auto max-w-2xl rounded-[2rem] border border-slate-200/70 dark:border-slate-800/75 bg-white/78 dark:bg-slate-950/45 p-7 md:p-8 text-center shadow-[0_16px_36px_rgba(88,70,126,0.14)] dark:shadow-[0_18px_38px_rgba(0,0,0,0.42)]">
+          <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-slate-100">{ui.voiceTitle}</h2>
+          <p className="mt-3 text-base font-medium text-slate-600 dark:text-slate-300">{ui.voiceSupport}</p>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{ui.shortEnough}</p>
+
+          <div className="mt-8 flex flex-col items-center gap-4">
+            <div className="relative">
               {isRecording && (
-                <>
-                  <motion.div 
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1.8, opacity: 0.2 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    transition={{ repeat: Infinity, duration: 2, ease: "easeOut" }}
-                    className="absolute inset-0 bg-rose-500 rounded-full"
-                  />
-                  <motion.div 
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 2.2, opacity: 0.1 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    transition={{ repeat: Infinity, duration: 2, delay: 0.5, ease: "easeOut" }}
-                    className="absolute inset-0 bg-rose-500 rounded-full"
-                  />
-                </>
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0.24 }}
+                  animate={{ scale: 1.6, opacity: 0 }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: 'easeOut' }}
+                  className="absolute inset-0 rounded-full bg-rose-400"
+                />
               )}
-            </AnimatePresence>
-
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => {
-                if (isRecording) {
-                  stopRecording();
-                } else {
-                  startRecording();
-                }
-              }}
-              className={`relative w-40 h-40 rounded-full flex items-center justify-center text-4xl shadow-2xl transition-all duration-500 z-20 ${
-                isRecording 
-                ? 'bg-gradient-to-br from-rose-500 to-pink-500 text-white shadow-[0_0_42px_rgba(244,63,94,0.5)]' 
-                : 'bg-gradient-to-br from-slate-950 to-slate-800 dark:from-white dark:to-slate-200 text-white dark:text-slate-950'
-              }`}
-            >
-              {isRecording ? <Square size={48} fill="currentColor" /> : <Mic size={48} />}
-            </motion.button>
-          </div>
-
-          {/* Sound Wave Indicator */}
-          <div className="h-16 flex items-center justify-center gap-2 w-full max-w-xs">
-            {isPlaying && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-luna-purple mr-2"
+              <button
+                onClick={() => (isRecording ? stopRecording() : startRecording())}
+                className={`relative w-28 h-28 rounded-full flex items-center justify-center text-white transition-all ${
+                  isRecording ? 'bg-rose-500 hover:bg-rose-600 shadow-[0_0_32px_rgba(244,63,94,0.35)]' : 'bg-luna-purple hover:brightness-110 shadow-luna-deep'
+                }`}
               >
-                <Volume2 size={24} className="animate-pulse" />
-              </motion.div>
-            )}
-            <div className="flex items-center gap-1.5 h-12">
+                {isRecording ? <Square size={34} fill="currentColor" /> : <Mic size={34} />}
+              </button>
+            </div>
+            <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{isRecording ? copy.recording : ui.tapToRecord}</p>
+
+            <div className="h-12 flex items-center gap-1.5">
               {audioLevel.map((level, i) => (
-                <motion.div 
+                <motion.div
                   key={i}
-                  animate={{ height: level }}
-                  className={`w-1.5 rounded-full transition-colors duration-300 ${isRecording ? 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]' : (isPlaying ? '' : 'bg-slate-200 dark:bg-slate-800')}`}
-                  style={
-                    isPlaying
-                      ? {
-                          backgroundColor: speakingPalette[i % speakingPalette.length],
-                          boxShadow: `0 0 10px ${speakingPalette[i % speakingPalette.length]}99`,
-                        }
-                      : undefined
-                  }
-                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                  animate={{ height: isRecording || isPlaying ? level : 4 }}
+                  className={`w-1.5 rounded-full ${isRecording ? 'bg-rose-400' : 'bg-slate-300 dark:bg-slate-700'}`}
+                  transition={{ type: 'spring', stiffness: 280, damping: 16 }}
                 />
               ))}
             </div>
           </div>
+        </article>
 
-          <div className="space-y-4 w-full max-w-xl">
-            <p className={`text-[11px] font-black uppercase tracking-[0.3em] transition-colors ${isRecording ? 'text-rose-500' : 'text-slate-400'}`}>
-              {isRecording ? (statusMsg || copy.recording) : copy.holdToSpeak}
-            </p>
-            
-            {error && (
-              <div className="flex items-center gap-2 text-rose-500 text-[10px] font-bold uppercase tracking-widest bg-rose-50 dark:bg-rose-900/20 px-4 py-2 rounded-full">
-                <AlertCircle size={14} /> {error}
-              </div>
-            )}
-
-            {isPlaying && (
-              <button onClick={stopAudio} className="flex items-center gap-2 text-luna-purple text-[9px] font-black uppercase tracking-widest mx-auto mt-2">
-                <VolumeX size={12} /> {copy.stopListening}
-              </button>
-            )}
-
-            {(!!audioBase64 || !!aiResponse || isPlaying) && (
-              <div className="flex flex-wrap items-center justify-center gap-2 rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white/55 dark:bg-slate-900/45 backdrop-blur-md px-3 py-3 shadow-[0_12px_30px_rgba(88,70,126,0.12)] dark:shadow-[0_12px_30px_rgba(0,0,0,0.36)]">
-                <button
-                  onClick={() => setIsSpeakerMuted((prev) => !prev)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${isSpeakerMuted ? 'bg-slate-300 text-slate-600 dark:bg-slate-700 dark:text-slate-300' : 'bg-luna-purple/15 text-luna-purple dark:bg-luna-purple/25'}`}
-                >
-                  {isSpeakerMuted ? <VolumeX size={12} /> : <Volume2 size={12} />}
-                  {isSpeakerMuted ? 'Speaker Off' : 'Speaker On'}
-                </button>
-                <button
-                  onClick={() => setSpeakerMode((prev) => (prev === 'quiet' ? 'normal' : prev === 'normal' ? 'loud' : 'quiet'))}
-                  className="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-slate-200/80 text-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                >
-                  {speakerMode === 'quiet' ? 'Quiet' : speakerMode === 'normal' ? 'Normal' : 'Loud'}
-                </button>
-                {isPlaying && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-[10px] font-black uppercase tracking-widest text-luna-purple bg-luna-purple/10 border border-luna-purple/25">
-                    <span className="w-2 h-2 rounded-full bg-luna-purple animate-pulse" />
-                    Luna speaks
-                  </span>
-                )}
-              </div>
-            )}
+        <section className="relative z-10 mt-6 mx-auto max-w-2xl space-y-4 text-left">
+          <div className="rounded-[1.5rem] border border-slate-200/70 dark:border-slate-800/75 bg-white/72 dark:bg-slate-900/40 p-5">
+            <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{ui.promptsTitle}</p>
+            <div className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-300">
+              <p>• {ui.prompt1}</p>
+              <p>• {ui.prompt2}</p>
+              <p>• {ui.prompt3}</p>
+              <p>• {ui.prompt4}</p>
+            </div>
           </div>
-        </div>
+          <p className="text-sm italic text-slate-500 dark:text-slate-300">{ui.reassurance}</p>
+        </section>
 
         <AnimatePresence>
-          {(isRecording && (transcription || interimTranscription)) && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
+          {isRecording && (
+            <motion.section
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="max-w-xl mx-auto p-6 rounded-3xl border border-slate-200/75 dark:border-slate-800/85 bg-gradient-to-br from-[#f8edf8]/9 via-[#efe7f6]/86 to-[#e6eefb]/82 dark:from-[#0b1832]/90 dark:via-[#12264a]/88 dark:to-[#1a345f]/86 shadow-[0_12px_30px_rgba(88,70,126,0.16)] dark:shadow-[0_14px_34px_rgba(0,0,0,0.4)]"
+              exit={{ opacity: 0, y: 8 }}
+              className="relative z-10 mt-6 mx-auto max-w-2xl rounded-[1.6rem] border border-rose-200/70 dark:border-rose-800/65 bg-rose-50/70 dark:bg-rose-900/20 p-4"
             >
-              <p className="text-lg text-slate-500 dark:text-slate-400 italic">
-                {transcription} <span className="opacity-50">{interimTranscription}</span>
+              <div className="flex items-center justify-between gap-3">
+                <span className="inline-flex items-center gap-2 text-sm font-semibold text-rose-700 dark:text-rose-300">
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                  {ui.recordingState}
+                </span>
+                <span className="text-sm font-black text-rose-700 dark:text-rose-300">{recordingTimerLabel}</span>
+              </div>
+              <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
+                {(transcription || interimTranscription).trim() || copy.listening}
               </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {isAnalyzing && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="space-y-6 py-4"
-            >
-              <div className="flex justify-center gap-2">
-                {[0, 1, 2].map(i => (
-                  <motion.div 
-                    key={i}
-                    animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
-                    transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }}
-                    className="w-3 h-3 bg-luna-purple rounded-full"
-                  />
-                ))}
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                  onClick={stopRecording}
+                  className="flex-1 min-w-[160px] py-2.5 rounded-full bg-rose-500 text-white text-[11px] font-black uppercase tracking-[0.16em]"
+                >
+                  {ui.finish}
+                </button>
+                <button
+                  onClick={discardCurrentReflection}
+                  className="flex-1 min-w-[160px] py-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-200 text-[11px] font-black uppercase tracking-[0.16em]"
+                >
+                  {ui.discard}
+                </button>
               </div>
-              <div className="flex items-center justify-center gap-2 text-luna-purple">
-                <Sparkles size={16} className="animate-pulse" />
-                <p className="text-[10px] font-black uppercase tracking-[0.4em]">{copy.lunaReflecting}</p>
-              </div>
-            </motion.div>
+            </motion.section>
           )}
         </AnimatePresence>
 
         <AnimatePresence>
           {(transcription || isAnalyzing || error) && !isRecording && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              className="space-y-10 pt-10 border-t-2 border-slate-100/90 dark:border-slate-700/60"
+            <motion.section
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative z-10 mt-8 space-y-6 pt-7 border-t border-slate-200/70 dark:border-slate-700/60"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="relative p-8 rounded-[3rem] border-2 border-slate-200/75 dark:border-slate-800/85 bg-gradient-to-br from-[#f8edf8]/92 via-[#efe7f6]/88 to-[#e6eefb]/84 dark:from-[#0b1832]/90 dark:via-[#12264a]/88 dark:to-[#1a345f]/86 shadow-[0_14px_34px_rgba(88,70,126,0.16)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.42)] text-left">
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block mb-4">{copy.yourReflection}</span>
-                  <p className="italic text-lg leading-relaxed text-slate-600 dark:text-slate-400 font-medium">
-                    "{transcription || (error ? "..." : "...")}"
-                  </p>
-                </div>
-
-                <motion.div 
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="relative p-8 rounded-[3rem] border-2 border-luna-purple/25 bg-gradient-to-br from-[#f4e8f5]/92 via-[#ece6f2]/88 to-[#e2ecfa]/84 dark:from-[#0c1a34]/90 dark:via-[#13284c]/88 dark:to-[#1b3763]/86 shadow-[0_14px_34px_rgba(88,70,126,0.16)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.42)] text-left min-h-[120px] overflow-hidden"
-                >
-                  <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-luna-purple/20 blur-2xl" />
-                  <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-sky-300/20 blur-2xl" />
-                  <MessageSquare className="absolute -top-4 -right-4 text-luna-purple bg-white dark:bg-slate-900 rounded-full p-2 shadow-md" size={40} />
-                  <span className="text-[9px] font-black uppercase tracking-widest text-luna-purple block mb-4">{copy.lunaResponse}</span>
-                  {isAnalyzing ? (
-                    <div className="flex items-center gap-2 text-luna-purple py-4">
-                      <Sparkles size={16} className="animate-pulse" />
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em]">{copy.reflecting}</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <p className="text-lg leading-relaxed text-slate-800 dark:text-slate-200 font-bold">
-                        {displayedAiResponse || aiResponse || (error ? error : "...")}
-                      </p>
-                      {audioBase64 && !isPlaying && (
-                        <button 
-                          onClick={() => playAudio(audioBase64)}
-                          className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-luna-purple bg-luna-purple/10 px-4 py-2 rounded-full hover:bg-luna-purple/20 transition-all"
-                        >
-                          <Play size={12} fill="currentColor" /> {copy.listenAgain}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </motion.div>
+              <div className="space-y-1 text-left max-w-3xl mx-auto">
+                <p className="text-base font-semibold text-slate-700 dark:text-slate-200">{greeting}, {profileName}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-300">Here is your note.</p>
               </div>
 
-              {(!isAnalyzing && (transcription || error)) && (
-                <div className="flex flex-col sm:flex-row gap-4">
-                  {transcription && (
-                    <motion.button 
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => { void handleSave(); }}
-                      disabled={isSavingRecording}
-                      className="flex-1 py-6 bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-black uppercase tracking-[0.3em] rounded-full shadow-luna-deep flex items-center justify-center gap-3"
-                    >
-                      <Save size={18} /> {isSavingRecording ? 'Saving...' : copy.save}
-                    </motion.button>
-                  )}
-                  <motion.button 
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => {
-                      setTranscription("");
-                      setInterimTranscription("");
-                      transcriptionRef.current = "";
-                      interimRef.current = "";
-                      setAiResponse("");
-                      setDisplayedAiResponse("");
-                      setError(null);
-                      setSessionAudioDataUrl(null);
-                      stopAudio();
-                    }}
-                    className={`${transcription ? 'px-10' : 'flex-1'} py-6 bg-slate-100 dark:bg-slate-800 text-slate-500 font-black uppercase tracking-[0.3em] rounded-full hover:bg-rose-50 hover:text-rose-500 transition-colors`}
-                  >
-                    <RefreshCw size={18} className="mr-2" /> {copy.redo}
-                  </motion.button>
+              {isAnalyzing ? (
+                <div className="max-w-3xl mx-auto rounded-[1.8rem] border border-slate-200/70 dark:border-slate-800/75 bg-white/75 dark:bg-slate-900/45 p-6">
+                  <div className="flex justify-center gap-2">
+                    {[0, 1, 2].map((i) => (
+                      <motion.div
+                        key={i}
+                        animate={{ scale: [1, 1.5, 1], opacity: [0.28, 1, 0.28] }}
+                        transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }}
+                        className="w-2.5 h-2.5 bg-luna-purple rounded-full"
+                      />
+                    ))}
+                  </div>
+                  <div className="mt-3 flex items-center justify-center gap-2 text-luna-purple">
+                    <Sparkles size={16} className="animate-pulse" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em]">{copy.lunaReflecting}</p>
+                  </div>
                 </div>
+              ) : (
+                <article className="max-w-3xl mx-auto rounded-[1.8rem] border border-slate-200/70 dark:border-slate-800/75 bg-white/78 dark:bg-slate-900/45 p-6 text-left">
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-luna-purple mb-3">What Luna heard</p>
+                  <div className="space-y-3 text-base leading-relaxed text-slate-700 dark:text-slate-200">
+                    {heardLines.map((line, idx) => (
+                      <p key={`${line.slice(0, 18)}-${idx}`} className="font-medium">
+                        {line}
+                      </p>
+                    ))}
+                    {error && (
+                      <p className="text-rose-500 dark:text-rose-300">{error}</p>
+                    )}
+                  </div>
+                  {previousDayLine && (
+                    <div className="mt-4 rounded-xl bg-slate-100/80 dark:bg-slate-800/60 p-3">
+                      <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                        {ui.previousDayLabel}: {previousDayLine}
+                      </p>
+                      <p className="mt-1 text-xs font-medium text-slate-600 dark:text-slate-300">{ui.compareToday}</p>
+                    </div>
+                  )}
+                </article>
               )}
-            </motion.div>
+
+              {!isAnalyzing && (
+                <>
+                  <article className="max-w-3xl mx-auto rounded-[1.6rem] border border-luna-purple/25 bg-luna-purple/10 dark:bg-luna-purple/15 p-5 text-left">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">A small suggestion for tonight</p>
+                    <div className="mt-2 space-y-2 text-base text-slate-800 dark:text-slate-100">
+                      <p className="font-semibold">Take a slower evening.</p>
+                      <p className="font-medium">Try to rest a little earlier tonight.</p>
+                    </div>
+                  </article>
+
+                  <article className="max-w-3xl mx-auto rounded-[1.6rem] border border-slate-200/70 dark:border-slate-800/75 bg-white/70 dark:bg-slate-900/45 p-5 text-left">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Today</p>
+                    <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="rounded-xl bg-slate-100/85 dark:bg-slate-800/65 p-3">
+                        <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">Cycle</p>
+                        <p className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">Day {currentDay} · {cyclePhaseLabel}</p>
+                      </div>
+                      <div className="rounded-xl bg-slate-100/85 dark:bg-slate-800/65 p-3">
+                        <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">Energy</p>
+                        <p className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">{contextLevel(lastCheckinMetrics?.energy)}</p>
+                      </div>
+                      <div className="rounded-xl bg-slate-100/85 dark:bg-slate-800/65 p-3">
+                        <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">Mood</p>
+                        <p className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">{contextMood(lastCheckinMetrics?.mood)}</p>
+                      </div>
+                      <div className="rounded-xl bg-slate-100/85 dark:bg-slate-800/65 p-3">
+                        <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">Sleep</p>
+                        <p className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">{contextSleep(lastCheckinMetrics?.sleep)}</p>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article className="max-w-3xl mx-auto rounded-[1.6rem] border border-slate-200/70 dark:border-slate-800/75 bg-white/70 dark:bg-slate-900/45 p-5 text-left">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Something Luna is starting to notice</p>
+                    <p className="mt-2 text-base font-medium text-slate-700 dark:text-slate-200">{patternLine}</p>
+                  </article>
+
+                  <article className="max-w-3xl mx-auto rounded-[1.6rem] border border-slate-200/70 dark:border-slate-800/75 bg-white/70 dark:bg-slate-900/45 p-5 text-left">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Recent thread</p>
+                    {recentThread.length >= 2 ? (
+                      <div className="mt-3 space-y-3">
+                        {recentThread.map((entry) => (
+                          <div key={entry.id} className="rounded-xl bg-slate-100/85 dark:bg-slate-800/65 p-3">
+                            <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">{entry.dayLabel}</p>
+                            <p className="mt-1 text-sm font-medium text-slate-700 dark:text-slate-200">{entry.text}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-2 text-sm font-medium text-slate-700 dark:text-slate-200">
+                        Your story with Luna is just beginning.
+                      </p>
+                    )}
+                  </article>
+
+                  <div className="max-w-3xl mx-auto flex flex-col sm:flex-row gap-3">
+                    {transcription && (
+                      <button
+                        onClick={() => {
+                          void handleSave();
+                        }}
+                        disabled={isSavingRecording}
+                        className="flex-1 py-2.5 rounded-full border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900 text-slate-700 dark:text-slate-100 text-[10px] font-black uppercase tracking-[0.16em] hover:bg-slate-100 dark:hover:bg-slate-800 transition-all disabled:opacity-60"
+                      >
+                        <span className="inline-flex items-center justify-center gap-2">
+                          <Save size={14} /> {isSavingRecording ? ui.saving : 'Save note'}
+                        </span>
+                      </button>
+                    )}
+                    <button
+                      onClick={onBack}
+                      className="flex-1 py-2.5 rounded-full border border-luna-purple/35 bg-luna-purple/12 text-luna-purple text-[10px] font-black uppercase tracking-[0.16em] hover:bg-luna-purple/20 transition-all"
+                    >
+                      See your rhythm
+                    </button>
+                    <button
+                      onClick={() => {
+                        void shareReflection();
+                      }}
+                      className="flex-1 py-2.5 rounded-full border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900 text-slate-700 dark:text-slate-200 text-[10px] font-black uppercase tracking-[0.16em] hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                    >
+                      <span className="inline-flex items-center justify-center gap-2">
+                        <Share2 size={14} /> Share note
+                      </span>
+                    </button>
+                  </div>
+
+                  <div className="max-w-3xl mx-auto">
+                    <button
+                      onClick={discardCurrentReflection}
+                      className="py-2.5 px-4 rounded-full text-[10px] font-black uppercase tracking-[0.16em] text-slate-500 hover:text-rose-500 transition-colors"
+                    >
+                      <span className="inline-flex items-center gap-1.5">
+                        <RefreshCw size={12} />
+                        {copy.redo}
+                      </span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </motion.section>
           )}
         </AnimatePresence>
 
-        <section className="relative z-10 max-w-3xl mx-auto rounded-[2.2rem] border border-slate-200/75 dark:border-slate-800/85 bg-gradient-to-br from-[#f7ebf8]/92 via-[#eee7f4]/88 to-[#e2ebf9]/84 dark:from-[#0b1832]/94 dark:via-[#12264a]/92 dark:to-[#1a345f]/90 p-6 md:p-7 text-left shadow-[0_18px_42px_rgba(93,74,132,0.16)] dark:shadow-[0_20px_46px_rgba(0,0,0,0.44)] space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-luna-purple">Saved Voice Files</p>
-            {savedVoiceClips.length > 0 && (
-              <button
-                onClick={handleClearAllClips}
-                className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.18em] bg-slate-200/80 text-slate-700 dark:bg-slate-800 dark:text-slate-200"
+        <details className="relative z-10 mt-8 max-w-3xl mx-auto">
+          <summary className="cursor-pointer text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-luna-purple">
+            Voice settings & saved files
+          </summary>
+          <section className="mt-3 rounded-[1.4rem] border border-slate-200/70 dark:border-slate-800/75 bg-white/70 dark:bg-slate-900/45 p-4 space-y-4 text-left">
+            <div className="flex flex-wrap items-center gap-2">
+              <select
+                value={speechLocale}
+                onChange={(e) => setSpeechLocale(e.target.value)}
+                className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.16em] bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 outline-none"
               >
-                Clear all
-              </button>
-            )}
-          </div>
-          {sessionAudioDataUrl && (
-            <div className="rounded-2xl border border-luna-purple/25 bg-luna-purple/10 dark:bg-luna-purple/15 p-4 space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Current recording preview</p>
-              <audio controls src={sessionAudioDataUrl} className="w-full" />
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">
-                Click "{copy.save}" to store this voice file.
-              </p>
+                {recognitionLocales.map((locale) => (
+                  <option key={locale.value} value={locale.value}>
+                    {locale.label}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={speechVoiceURI}
+                onChange={(e) => setSpeechVoiceURI(e.target.value)}
+                className="max-w-[260px] px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.08em] bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 outline-none"
+              >
+                <option value="">{bestLocaleVoice ? `Auto: ${bestLocaleVoice.name}` : 'Auto voice'}</option>
+                {localeVoices.map((voice) => (
+                  <option key={voice.voiceURI} value={voice.voiceURI}>
+                    {voice.name}
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
-          {savedVoiceClips.length === 0 ? (
-            <p className="text-sm font-semibold text-slate-500 dark:text-slate-300">No saved files yet.</p>
-          ) : (
-            <div className="space-y-3 max-h-72 overflow-auto pr-1">
-              {savedVoiceClips.map((clip, index) => (
-                <article key={clip.id} className="rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white/70 dark:bg-slate-900/60 p-4 space-y-3">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-300">
-                      File {savedVoiceClips.length - index} • {new Date(clip.createdAt).toLocaleString()}
+            {savedVoiceClips.length > 0 && (
+              <div className="space-y-2 max-h-44 overflow-auto">
+                {savedVoiceClips.slice(0, 5).map((clip, index) => (
+                  <div key={clip.id} className="rounded-xl bg-slate-100/80 dark:bg-slate-800/80 p-3">
+                    <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">
+                      File {savedVoiceClips.length - index}
                     </p>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{clip.locale}</p>
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        onClick={() => handleDownloadClip(clip)}
+                        className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.16em] bg-luna-purple/15 text-luna-purple"
+                      >
+                        Download
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClip(clip.id)}
+                        className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.16em] bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                  <audio controls src={clip.audioDataUrl} className="w-full" />
-                  {clip.transcript && (
-                    <p className="text-sm font-medium italic text-slate-600 dark:text-slate-300">"{clip.transcript}"</p>
-                  )}
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => handleDownloadClip(clip)}
-                      className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.18em] bg-luna-purple/15 text-luna-purple"
-                    >
-                      Download
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClip(clip.id)}
-                      className="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.18em] bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
+                ))}
+                <button
+                  onClick={handleClearAllClips}
+                  className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.16em] bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-100"
+                >
+                  Clear all
+                </button>
+              </div>
+            )}
+          </section>
+        </details>
+      </main>
+
+      {statusMsg && <p className="text-center text-xs text-slate-500 dark:text-slate-300">{statusMsg}</p>}
     </div>
   );
 };

@@ -13,7 +13,7 @@ const en = {
     history: "My Journey",
     bridge: "The Bridge",
     creative: "Create",
-    reflections: "Voice Journal",
+    reflections: "Voice Note",
     voiceFiles: "My Voice Files",
     relationships: "Connection",
     family: "Home Seasons",
@@ -206,7 +206,7 @@ const en = {
         memoryTitle: "Rhythm Memory",
         memoryText: "Patterns become visible over days and weeks, helping you respond with less friction.",
         languageTitle: "Gentle Language",
-        languageText: "No alarmist tone. No pressure to optimize. Just clarity and grounded reflection."
+        languageText: "No alarmist tone. No pressure to optimize. Just clarity and grounded note."
       }
     },
     ritual: {
@@ -217,7 +217,7 @@ const en = {
       middayTitle: "Midday",
       middayText: "Re-check capacity and adjust plans with respect for your energy.",
       eveningTitle: "Evening",
-      eveningText: "Close the day with a short reflection to preserve signal, not noise.",
+      eveningText: "Close the day with a short note to preserve signal, not noise.",
       noteTitle: "Luna Note",
       noteMain: "This Home is public by design. It gives orientation without extracting attention.",
       noteSub: "Your private member zone is where personal data, check-ins, and deeper tools live."
@@ -228,7 +228,7 @@ const en = {
       cta: "Enter Member Zone",
       body: "Luna follows a local-first approach. The public page remains informational and open. Personal records and role-specific tools stay inside the authenticated member space."
     },
-    footerTagline: "Public Home for orientation, rhythm, and reflection.",
+    footerTagline: "Public Home for orientation, rhythm, and note.",
     footerCopy: "© 2026 LUNA • PUBLIC HOME"
   },
   shared: {
@@ -251,7 +251,7 @@ const ru = {
     history: "Мой путь",
     bridge: "Мост",
     creative: "Творчество",
-    reflections: "Голосовой дневник",
+    reflections: "Голосовая заметка",
     voiceFiles: "Мои голосовые файлы",
     relationships: "Связь",
     family: "Сезоны Дома",
@@ -428,7 +428,7 @@ const ru = {
       middayTitle: "День",
       middayText: "Проверьте ресурс и скорректируйте планы с уважением к энергии.",
       eveningTitle: "Вечер",
-      eveningText: "Закройте день короткой рефлексией, чтобы сохранять сигнал, а не шум.",
+      eveningText: "Закройте день короткой заметкой, чтобы сохранять сигнал, а не шум.",
       noteTitle: "Заметка Luna",
       noteMain: "Эта главная страница публичная по дизайну. Она дает ориентир без борьбы за внимание.",
       noteSub: "Личная зона — это ваши данные, отметки состояния и более глубокие инструменты."
@@ -439,7 +439,7 @@ const ru = {
       cta: "Войти в личную зону",
       body: "Luna следует local-first подходу. Публичная страница остается информационной и открытой. Личные записи и ролевые инструменты находятся внутри авторизованной зоны."
     },
-    footerTagline: "Публичная главная для ориентации, ритма и рефлексии.",
+    footerTagline: "Публичная главная для ориентации, ритма и заметок.",
     footerCopy: "© 2026 LUNA • ПУБЛИЧНАЯ ГЛАВНАЯ"
   },
   shared: {
@@ -460,7 +460,7 @@ export const UI_COPY = {
     }
   },
   reflection: {
-    guidance: "Thoughts for self-reflection"
+    guidance: "Thoughts for self-notes"
   }
 };
 
@@ -476,7 +476,7 @@ const uk: TranslationSchema = {
     history: 'Мій шлях',
     bridge: 'Міст',
     creative: 'Творчість',
-    reflections: 'Голосовий щоденник',
+    reflections: 'Голосова нотатка',
     voiceFiles: 'Мої голосові файли',
     relationships: "Зв'язок",
     family: 'Сезони Дому',
@@ -527,7 +527,7 @@ const uk: TranslationSchema = {
     heroTitleA: 'Щоденне',
     heroTitleB: 'Дзеркало.',
     heroSubtitle: 'Luna — спокійна публічна точка входу: спостерігайте ритм, розумійте стан і заходьте у приватний простір, коли будете готові.',
-    footerTagline: 'Публічна головна для орієнтації, ритму та рефлексії.',
+    footerTagline: 'Публічна головна для орієнтації, ритму та нотаток.',
     footerCopy: '© 2026 LUNA • ПУБЛІЧНА ГОЛОВНА'
   },
   shared: {
@@ -548,7 +548,7 @@ const es: TranslationSchema = {
     history: 'Mi camino',
     bridge: 'Puente',
     creative: 'Crear',
-    reflections: 'Diario de voz',
+    reflections: 'Nota de voz',
     voiceFiles: 'Mis archivos de voz',
     relationships: 'Conexión',
     family: 'Estaciones del hogar',
@@ -620,7 +620,7 @@ const fr: TranslationSchema = {
     history: 'Mon parcours',
     bridge: 'Pont',
     creative: 'Créer',
-    reflections: 'Journal vocal',
+    reflections: 'Note vocale',
     voiceFiles: 'Mes fichiers vocaux',
     relationships: 'Connexion',
     family: 'Saisons du foyer',
@@ -692,7 +692,7 @@ const de: TranslationSchema = {
     history: 'Mein Weg',
     bridge: 'Brücke',
     creative: 'Kreativ',
-    reflections: 'Sprachjournal',
+    reflections: 'Sprachnotiz',
     voiceFiles: 'Meine Sprachdateien',
     relationships: 'Verbindung',
     family: 'Jahreszeiten Zuhause',
@@ -764,7 +764,7 @@ const zh: TranslationSchema = {
     history: '我的旅程',
     bridge: '桥接',
     creative: '创作',
-    reflections: '语音日记',
+    reflections: '语音笔记',
     voiceFiles: '我的语音文件',
     relationships: '连接',
     family: '家庭季节',
@@ -836,7 +836,7 @@ const ja: TranslationSchema = {
     history: '私の記録',
     bridge: 'ブリッジ',
     creative: 'クリエイト',
-    reflections: '音声ジャーナル',
+    reflections: 'ボイスノート',
     voiceFiles: 'マイ音声ファイル',
     relationships: 'つながり',
     family: 'ホームシーズン',
@@ -908,7 +908,7 @@ const pt: TranslationSchema = {
     history: 'Minha jornada',
     bridge: 'Ponte',
     creative: 'Criar',
-    reflections: 'Diário de voz',
+    reflections: 'Nota de voz',
     voiceFiles: 'Meus arquivos de voz',
     relationships: 'Conexão',
     family: 'Estações da casa',

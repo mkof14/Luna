@@ -1,4 +1,5 @@
 import React from 'react';
+import { PUBLIC_BTN_PRIMARY, PUBLIC_BTN_PRIMARY_GLOW, PUBLIC_BTN_SECONDARY } from './publicButtonStyles';
 import { Language } from '../../constants';
 
 interface PublicPricingSectionProps {
@@ -121,13 +122,14 @@ export const PublicPricingSection: React.FC<PublicPricingSectionProps> = ({
             <div className="mt-8 flex flex-col md:flex-row gap-3 items-center">
               <button
                 onClick={onSignUp}
-                className="w-full md:w-auto px-8 py-4 rounded-full bg-luna-purple text-white text-[11px] font-black uppercase tracking-[0.2em] shadow-luna-rich hover:shadow-luna-deep hover:scale-[1.03] active:scale-[0.98] transition-all"
+                className={`${PUBLIC_BTN_PRIMARY} w-full md:w-auto px-8 py-4 text-[11px] tracking-[0.2em]`}
               >
-                {pricingCopy.cta}
+                <span className={PUBLIC_BTN_PRIMARY_GLOW} />
+                <span className="relative z-10">{pricingCopy.cta}</span>
               </button>
               <button
                 onClick={onStartTrial}
-                className="w-full md:w-auto px-8 py-4 rounded-full border border-emerald-400/40 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-emerald-100 dark:hover:bg-emerald-900/35 hover:scale-[1.03] active:scale-[0.98] transition-all"
+                className={`${PUBLIC_BTN_SECONDARY} w-full md:w-auto px-8 py-4 text-[11px] tracking-[0.2em] text-luna-purple`}
               >
                 {trialState?.status === 'active' ? pricingUi.continueTrial : pricingUi.startTrial}
               </button>

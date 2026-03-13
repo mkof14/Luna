@@ -68,7 +68,7 @@ export const MyVoiceFilesView: React.FC<{ lang: Language; onBack: () => void }> 
   const [copy, setCopy] = useState<import('../utils/voiceFilesContent').VoiceFilesCopy>({
     back: 'Back',
     title: 'My Voice Files',
-    subtitle: 'Saved recordings from Voice Journal. Play, search, filter, and manage your files.',
+    subtitle: 'Saved recordings from Voice Note. Play, search, filter, and manage your files.',
     search: 'Search transcript...',
     allLanguages: 'All languages',
     fromDate: 'From',

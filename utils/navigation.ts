@@ -2,6 +2,10 @@ import { Language, TranslationSchema } from '../constants';
 
 export type TabType =
   | 'dashboard'
+  | 'today_mirror'
+  | 'my_day'
+  | 'monthly_reflection'
+  | 'insights_paywall'
   | 'about'
   | 'cycle'
   | 'labs'
@@ -64,38 +68,51 @@ type NavigationUi = {
   navigation: NavigationLabels;
 };
 
-export const buildSidebarGroups = (ui: NavigationUi, includeAdmin = false): NavGroup[] => {
+export const buildSidebarGroups = (_ui: NavigationUi, includeAdmin = false): NavGroup[] => {
   const groups: NavGroup[] = [
     {
-      title: ui.navigation.healthHub || 'Health Hub',
+      title: 'Main',
       items: [
-        { id: 'dashboard', label: ui.navigation.home, icon: '🏠' },
-        { id: 'cycle', label: ui.navigation.cycle, icon: '🌊' },
-        { id: 'reflections', label: ui.navigation.reflections, icon: '🎙️' },
-        { id: 'voice_files', label: ui.navigation.voiceFiles || 'My Voice Files', icon: '🗂️' },
-        { id: 'labs', label: ui.navigation.labs, icon: '🔬' },
-        { id: 'meds', label: ui.navigation.meds, icon: '💊' },
+        { id: 'today_mirror', label: 'Today', icon: '☀️' },
+        { id: 'history', label: 'Your Story', icon: '📜' },
+        { id: 'cycle', label: 'Rhythm', icon: '🌊' },
+        { id: 'library', label: 'Knowledge', icon: '📚' },
+        { id: 'profile', label: 'You', icon: '👤' },
       ],
     },
     {
-      title: 'Insights & Connection',
+      title: 'Daily',
       items: [
-        { id: 'bridge', label: ui.navigation.bridge || 'The Bridge', icon: '🌉' },
-        { id: 'relationships', label: 'Relationships', icon: '💬' },
-        { id: 'library', label: ui.navigation.library, icon: '🏛️' },
-        { id: 'history', label: ui.navigation.history, icon: '📜' },
-        { id: 'creative', label: ui.navigation.creative, icon: '🎨' },
-        { id: 'family', label: ui.navigation.family, icon: '🏡' },
+        { id: 'my_day', label: 'My Day with Luna', icon: '🪞' },
+        { id: 'reflections', label: 'Voice Reflection', icon: '🎙️' },
+        { id: 'voice_files', label: 'My Voice Files', icon: '🗂️' },
       ],
     },
     {
-      title: 'Support & System',
+      title: 'Insights',
       items: [
-        { id: 'profile', label: ui.navigation.profile, icon: '👤' },
-        { id: 'faq', label: ui.navigation.faq, icon: '❓' },
-        { id: 'contact', label: ui.navigation.contact, icon: '✉️' },
-        { id: 'crisis', label: ui.navigation.crisis, icon: '🆘' },
-        { id: 'partner_faq', label: 'PARTNER FAQ', icon: '🤝' },
+        { id: 'dashboard', label: 'Member Home', icon: '🏠' },
+        { id: 'labs', label: 'Health Reports', icon: '📄' },
+        { id: 'monthly_reflection', label: 'Your month with Luna', icon: '🗓️' },
+        { id: 'insights_paywall', label: 'Unlock Insights', icon: '🔐' },
+      ],
+    },
+    {
+      title: 'Practice',
+      items: [
+        { id: 'bridge', label: 'The Bridge', icon: '🕊️' },
+        { id: 'relationships', label: 'Relationships', icon: '💞' },
+        { id: 'family', label: 'Family', icon: '🏡' },
+        { id: 'creative', label: 'Creative Studio', icon: '🎨' },
+        { id: 'meds', label: 'Medication Notes', icon: '💊' },
+        { id: 'crisis', label: 'Reset Room', icon: '🛟' },
+      ],
+    },
+    {
+      title: 'Help',
+      items: [
+        { id: 'faq', label: 'FAQ', icon: '❓' },
+        { id: 'partner_faq', label: 'Partner FAQ', icon: '🤝' },
       ],
     },
   ];
@@ -103,23 +120,27 @@ export const buildSidebarGroups = (ui: NavigationUi, includeAdmin = false): NavG
   if (includeAdmin) {
     groups.push({
       title: 'Administration',
-      items: [{ id: 'admin', label: ui.navigation.admin || 'Admin Console', icon: '🛠️' }],
+      items: [{ id: 'admin', label: _ui.navigation.admin || 'Admin Console', icon: '🛠️' }],
     });
   }
 
   return groups;
 };
 
-export const buildBottomNavItems = (ui: NavigationUi): NavItem[] => [
-  { id: 'dashboard', label: ui.navigation.home, icon: '🏠' },
-  { id: 'cycle', label: ui.navigation.cycle, icon: '🌊' },
-  { id: 'bridge', label: ui.navigation.bridge || 'Bridge', icon: '🌉' },
+export const buildBottomNavItems = (_ui: NavigationUi): NavItem[] => [
+  { id: 'today_mirror', label: 'Today', icon: '☀️' },
+  { id: 'history', label: 'Your Story', icon: '📜' },
+  { id: 'cycle', label: 'Rhythm', icon: '🌊' },
+  { id: 'library', label: 'Knowledge', icon: '📚' },
+  { id: 'profile', label: 'You', icon: '👤' },
 ];
 
-export const buildTopNavItems = (ui: NavigationUi): NavItem[] => [
-  { id: 'dashboard', label: ui.navigation.home, icon: '🏠' },
-  { id: 'cycle', label: ui.navigation.cycle, icon: '🌊' },
-  { id: 'bridge', label: ui.navigation.bridge || 'The Bridge', icon: '🌉' },
+export const buildTopNavItems = (_ui: NavigationUi): NavItem[] => [
+  { id: 'today_mirror', label: 'Today', icon: '☀️' },
+  { id: 'history', label: 'Your Story', icon: '📜' },
+  { id: 'cycle', label: 'Rhythm', icon: '🌊' },
+  { id: 'library', label: 'Knowledge', icon: '📚' },
+  { id: 'profile', label: 'You', icon: '👤' },
 ];
 
 export const getCheckinCta = (lang: Language) => (lang === 'ru' ? 'Отметиться' : 'Check-in');

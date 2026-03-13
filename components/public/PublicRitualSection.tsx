@@ -1,5 +1,6 @@
 import React from 'react';
 import { Language } from '../../constants';
+import { PUBLIC_BTN_PRIMARY, PUBLIC_BTN_PRIMARY_GLOW } from './publicButtonStyles';
 
 interface PublicRitualSectionProps {
   onSignIn: () => void;
@@ -14,9 +15,9 @@ export const PublicRitualSection: React.FC<PublicRitualSectionProps> = ({
     Language,
     { eyebrow: string; title: string; subtitle: string; morningTitle: string; morningBody: string; middayTitle: string; middayBody: string; eveningTitle: string; eveningBody: string }
   > = {
-    en: { eyebrow: 'RITUAL PATH', title: 'A PATH, NOT A TASK LIST', subtitle: 'A simple daily rhythm to protect attention and preserve signal.', morningTitle: 'MORNING', morningBody: 'Name your baseline before the world sets your pace.', middayTitle: 'MIDDAY', middayBody: 'Re-check capacity and adjust plans with respect for your energy.', eveningTitle: 'EVENING', eveningBody: 'Close the day with a short reflection to preserve signal, not noise.' },
-    ru: { eyebrow: 'RITUAL PATH', title: 'ПУТЬ, А НЕ СПИСОК ДЕЛ', subtitle: 'Простой ежедневный ритм, который защищает внимание и сохраняет сигнал состояния.', morningTitle: 'УТРО', morningBody: 'Назовите базовое состояние до того, как мир задаст темп.', middayTitle: 'ДЕНЬ', middayBody: 'Переоцените ресурс и скорректируйте планы с уважением к энергии.', eveningTitle: 'ВЕЧЕР', eveningBody: 'Закройте день короткой рефлексией, чтобы сохранить сигнал, а не шум.' },
-    uk: { eyebrow: 'RITUAL PATH', title: 'ШЛЯХ, А НЕ СПИСОК ЗАВДАНЬ', subtitle: 'Простий щоденний ритм для захисту уваги і збереження сигналу стану.', morningTitle: 'РАНОК', morningBody: 'Назвіть свій базовий стан до того, як світ задасть темп.', middayTitle: 'ДЕНЬ', middayBody: 'Переоцініть ресурс і скоригуйте плани відповідно до енергії.', eveningTitle: 'ВЕЧІР', eveningBody: 'Завершіть день короткою рефлексією, зберігаючи сигнал, а не шум.' },
+    en: { eyebrow: 'RITUAL PATH', title: 'A PATH, NOT A TASK LIST', subtitle: 'A simple daily rhythm to protect attention and preserve signal.', morningTitle: 'MORNING', morningBody: 'Name your baseline before the world sets your pace.', middayTitle: 'MIDDAY', middayBody: 'Re-check capacity and adjust plans with respect for your energy.', eveningTitle: 'EVENING', eveningBody: 'Close the day with a short note to preserve signal, not noise.' },
+    ru: { eyebrow: 'RITUAL PATH', title: 'ПУТЬ, А НЕ СПИСОК ДЕЛ', subtitle: 'Простой ежедневный ритм, который защищает внимание и сохраняет сигнал состояния.', morningTitle: 'УТРО', morningBody: 'Назовите базовое состояние до того, как мир задаст темп.', middayTitle: 'ДЕНЬ', middayBody: 'Переоцените ресурс и скорректируйте планы с уважением к энергии.', eveningTitle: 'ВЕЧЕР', eveningBody: 'Закройте день короткой заметкой, чтобы сохранить сигнал, а не шум.' },
+    uk: { eyebrow: 'RITUAL PATH', title: 'ШЛЯХ, А НЕ СПИСОК ЗАВДАНЬ', subtitle: 'Простий щоденний ритм для захисту уваги і збереження сигналу стану.', morningTitle: 'РАНОК', morningBody: 'Назвіть свій базовий стан до того, як світ задасть темп.', middayTitle: 'ДЕНЬ', middayBody: 'Переоцініть ресурс і скоригуйте плани відповідно до енергії.', eveningTitle: 'ВЕЧІР', eveningBody: 'Завершіть день короткою нотаткою, зберігаючи сигнал, а не шум.' },
     es: { eyebrow: 'RITUAL PATH', title: 'UN CAMINO, NO UNA LISTA', subtitle: 'Un ritmo diario simple para proteger tu atención y conservar la señal.', morningTitle: 'MANANA', morningBody: 'Nombra tu estado base antes de que el mundo marque tu ritmo.', middayTitle: 'MEDIODIA', middayBody: 'Revisa tu capacidad y ajusta planes con respeto a tu energia.', eveningTitle: 'NOCHE', eveningBody: 'Cierra el dia con una reflexion corta para preservar señal, no ruido.' },
     fr: { eyebrow: 'RITUAL PATH', title: 'UN CHEMIN, PAS UNE LISTE', subtitle: 'Un rythme quotidien simple pour proteger l attention et conserver le signal.', morningTitle: 'MATIN', morningBody: 'Nommez votre base avant que le monde impose son rythme.', middayTitle: 'MIDI', middayBody: 'Reevaluez votre capacite et ajustez vos plans selon votre energie.', eveningTitle: 'SOIR', eveningBody: 'Fermez la journee avec une courte reflexion pour garder le signal, pas le bruit.' },
     de: { eyebrow: 'RITUAL PATH', title: 'EIN PFAD, KEINE TO-DO-LISTE', subtitle: 'Ein einfacher Tagesrhythmus, der Aufmerksamkeit schützt und Signale bewahrt.', morningTitle: 'MORGEN', morningBody: 'Benenne deinen Basiszustand, bevor die Welt dein Tempo setzt.', middayTitle: 'MITTAG', middayBody: 'Prüfe Kapazität neu und passe Pläne energie-gerecht an.', eveningTitle: 'ABEND', eveningBody: 'Schließe den Tag mit kurzer Reflexion, um Signal statt Rauschen zu behalten.' },
@@ -73,15 +74,10 @@ export const PublicRitualSection: React.FC<PublicRitualSectionProps> = ({
         <div className="flex flex-col items-start gap-4">
           <button
             onClick={onSignIn}
-            className="px-8 py-4 rounded-full bg-gradient-to-r from-luna-purple via-luna-coral to-luna-teal text-white text-[11px] font-black uppercase tracking-[0.22em] shadow-luna-deep hover:brightness-110 hover:scale-[1.03] active:scale-[0.98] transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-luna-purple"
+            className={`${PUBLIC_BTN_PRIMARY} px-7 py-3 text-sm tracking-[0.08em]`}
           >
-            {shared.enterMember}
-          </button>
-          <button
-            onClick={onSignIn}
-            className="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-luna-purple transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-luna-purple rounded-md"
-          >
-            {shared.memberSignIn}
+            <span className={PUBLIC_BTN_PRIMARY_GLOW} />
+            <span className="relative z-10">{shared.enterMember}</span>
           </button>
         </div>
       </div>

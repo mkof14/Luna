@@ -36,7 +36,7 @@ export type VoiceFilesCopy = {
     en: {
       back: 'Back',
       title: 'My Voice Files',
-      subtitle: 'Saved recordings from Voice Journal. Play, search, filter, and manage your files.',
+      subtitle: 'Saved recordings from Voice Note. Play, search, filter, and manage your files.',
       search: 'Search transcript...',
       allLanguages: 'All languages',
       fromDate: 'From',
@@ -52,7 +52,7 @@ export type VoiceFilesCopy = {
     ru: {
       back: 'Назад',
       title: 'Мои голосовые файлы',
-      subtitle: 'Сохраненные записи из Voice Journal. Прослушивайте, ищите, фильтруйте и управляйте файлами.',
+      subtitle: 'Сохраненные записи из Voice Note. Прослушивайте, ищите, фильтруйте и управляйте файлами.',
       search: 'Поиск по тексту...',
       allLanguages: 'Все языки',
       fromDate: 'От',
@@ -68,7 +68,7 @@ export type VoiceFilesCopy = {
     uk: {
       back: 'Назад',
       title: 'Мої голосові файли',
-      subtitle: 'Збережені записи з Voice Journal. Прослуховуйте, шукайте, фільтруйте та керуйте файлами.',
+      subtitle: 'Збережені записи з Voice Note. Прослуховуйте, шукайте, фільтруйте та керуйте файлами.',
       search: 'Пошук за текстом...',
       allLanguages: 'Усі мови',
       fromDate: 'Від',
@@ -84,7 +84,7 @@ export type VoiceFilesCopy = {
     es: {
       back: 'Atrás',
       title: 'Mis archivos de voz',
-      subtitle: 'Grabaciones guardadas de Voice Journal. Reproduce, busca, filtra y gestiona tus archivos.',
+      subtitle: 'Grabaciones guardadas de Voice Note. Reproduce, busca, filtra y gestiona tus archivos.',
       search: 'Buscar en transcripción...',
       allLanguages: 'Todos los idiomas',
       fromDate: 'Desde',
@@ -100,7 +100,7 @@ export type VoiceFilesCopy = {
     fr: {
       back: 'Retour',
       title: 'Mes fichiers vocaux',
-      subtitle: 'Enregistrements sauvegardés du Voice Journal. Écoutez, recherchez, filtrez et gérez vos fichiers.',
+      subtitle: 'Enregistrements sauvegardés du Voice Note. Écoutez, recherchez, filtrez et gérez vos fichiers.',
       search: 'Rechercher dans la transcription...',
       allLanguages: 'Toutes les langues',
       fromDate: 'De',
@@ -116,7 +116,7 @@ export type VoiceFilesCopy = {
     de: {
       back: 'Zurück',
       title: 'Meine Sprachdateien',
-      subtitle: 'Gespeicherte Aufnahmen aus dem Voice Journal. Abspielen, suchen, filtern und verwalten.',
+      subtitle: 'Gespeicherte Aufnahmen aus dem Voice Note. Abspielen, suchen, filtern und verwalten.',
       search: 'Transkript durchsuchen...',
       allLanguages: 'Alle Sprachen',
       fromDate: 'Von',
@@ -132,7 +132,7 @@ export type VoiceFilesCopy = {
     zh: {
       back: '返回',
       title: '我的语音文件',
-      subtitle: '来自 Voice Journal 的已保存录音。可播放、搜索、筛选和管理文件。',
+      subtitle: '来自 Voice Note 的已保存录音。可播放、搜索、筛选和管理文件。',
       search: '搜索转写内容...',
       allLanguages: '全部语言',
       fromDate: '开始',
@@ -148,7 +148,7 @@ export type VoiceFilesCopy = {
     ja: {
       back: '戻る',
       title: 'マイ音声ファイル',
-      subtitle: 'Voice Journal で保存した録音です。再生、検索、フィルタ、管理ができます。',
+      subtitle: 'Voice Note で保存した録音です。再生、検索、フィルタ、管理ができます。',
       search: '文字起こしを検索...',
       allLanguages: 'すべての言語',
       fromDate: '開始',
@@ -164,7 +164,7 @@ export type VoiceFilesCopy = {
     pt: {
       back: 'Voltar',
       title: 'Meus arquivos de voz',
-      subtitle: 'Gravações salvas do Voice Journal. Reproduza, pesquise, filtre e gerencie seus arquivos.',
+      subtitle: 'Gravações salvas do Voice Note. Reproduza, pesquise, filtre e gerencie seus arquivos.',
       search: 'Buscar na transcrição...',
       allLanguages: 'Todos os idiomas',
       fromDate: 'De',
