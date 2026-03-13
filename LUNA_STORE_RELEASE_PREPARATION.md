@@ -72,6 +72,9 @@ Goal: Prepare Luna for future release to Apple App Store and Google Play.
 5. Confirm app permissions copy is clear and minimal.
 
 ## Phase E — Production builds and submit
+0. Run preflight first (inside `mobile/`):
+   - `npm run release:preflight`
+   - See `mobile/docs/RELEASE_DRY_RUN.md`
 1. Build iOS:
    - `npx eas build --platform ios --profile production`
 2. Build Android:

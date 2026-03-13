@@ -39,6 +39,10 @@ Onboarding -> Today -> Voice Reflection -> Reflection Result -> Back to Today / 
 - Copy `mobile/.env.production.example` -> `mobile/.env.production`
 - Set production API URL before release builds.
 
+## Pre-release check
+- `npm run release:preflight`
+- This checks EAS project id, production env file, and release config shape.
+
 ## Release readiness
 Configured in `app.json` / `eas.json` for future App Store and Google Play release.
 
@@ -47,6 +51,7 @@ Configured in `app.json` / `eas.json` for future App Store and Google Play relea
 - Requires repo secret: `EXPO_TOKEN`
 
 ## Release scripts
+- `npm run release:preflight`
 - `npm run build:ios`
 - `npm run build:android`
 - `npm run build:all`
