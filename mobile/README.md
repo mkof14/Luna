@@ -60,6 +60,9 @@ Configured in `app.json` / `eas.json` for future App Store and Google Play relea
 - `npm run submit:ios`
 - `npm run submit:android`
 
+Note:
+- Scripts use `npx eas-cli`, so global `eas` install is not required.
+
 ## Docs
 - `docs/RELEASE_DRY_RUN.md`
 - `docs/MOBILE_API_CONTRACT.md`
