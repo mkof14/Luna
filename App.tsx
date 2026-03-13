@@ -35,7 +35,7 @@ const App: React.FC = () => {
   const [showLive, setShowLive] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
   const [selectedHormone, setSelectedHormone] = useState<HormoneData | null>(null);
-  const [activeTab, setActiveTab] = useState<TabType>('dashboard');
+  const [activeTab, setActiveTab] = useState<TabType>('today_mirror');
   const [showSyncOverlay, setShowSyncOverlay] = useState(false);
   
   const [checkinData, setCheckinData] = useState<Record<string, number>>({ 
@@ -162,7 +162,7 @@ const App: React.FC = () => {
       .catch(() => undefined)
       .finally(() => {
         setSession(null);
-        setActiveTab('dashboard');
+        setActiveTab('today_mirror');
       });
   }, []);
 
@@ -205,6 +205,10 @@ const App: React.FC = () => {
               onSuccess={(nextSession) => {
                 setShowAuthModal(false);
                 setSession(nextSession);
+                const isAdmin =
+                  authService.hasPermission(nextSession, 'manage_services') ||
+                  authService.hasPermission(nextSession, 'manage_admin_roles');
+                setActiveTab(isAdmin ? 'admin' : 'today_mirror');
               }}
             />
           )}
@@ -224,8 +228,7 @@ const App: React.FC = () => {
           onComplete={() => {
             setLog(dataService.getLog());
             setHasCompletedOnboarding(true);
-            setActiveTab('dashboard');
-            setShowSyncOverlay(true);
+            setActiveTab('today_mirror');
           }}
         />
         <StandaloneWelcomeOverlay lang={lang} />

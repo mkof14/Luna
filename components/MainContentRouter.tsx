@@ -8,6 +8,7 @@ import { DashboardView } from './DashboardView';
 import { DEFAULT_CYCLE_LENGTH, DEFAULT_USER_AGE } from '../constants/appDefaults';
 import { authService } from '../services/authService';
 import { MemberPageHero } from './MemberPageHero';
+import { AdminPanelView } from './AdminPanelView';
 
 const LabsView = lazy(() => import('./LabsView').then((m) => ({ default: m.LabsView })));
 const MedicationsView = lazy(() => import('./MedicationsView').then((m) => ({ default: m.MedicationsView })));
@@ -25,10 +26,13 @@ const PrivacyPolicyView = lazy(() => import('./PrivacyPolicyView').then((m) => (
 const CrisisCenterView = lazy(() => import('./CrisisCenterView').then((m) => ({ default: m.CrisisCenterView })));
 const PartnerFAQView = lazy(() => import('./PartnerFAQView').then((m) => ({ default: m.PartnerFAQView })));
 const RelationshipsView = lazy(() => import('./RelationshipsView').then((m) => ({ default: m.RelationshipsView })));
-const AdminPanelView = lazy(() => import('./AdminPanelView').then((m) => ({ default: m.AdminPanelView })));
 const HowItWorksView = lazy(() => import('./HowItWorksView').then((m) => ({ default: m.HowItWorksView })));
 const LegalDocumentView = lazy(() => import('./LegalDocumentView').then((m) => ({ default: m.LegalDocumentView })));
 const AboutLunaView = lazy(() => import('./AboutLunaView').then((m) => ({ default: m.AboutLunaView })));
+const TodayMirrorView = lazy(() => import('./TodayMirrorView').then((m) => ({ default: m.TodayMirrorView })));
+const MyDayWithLunaView = lazy(() => import('./MyDayWithLunaView').then((m) => ({ default: m.MyDayWithLunaView })));
+const MonthlyReflectionView = lazy(() => import('./MonthlyReflectionView').then((m) => ({ default: m.MonthlyReflectionView })));
+const InsightsPaywallView = lazy(() => import('./InsightsPaywallView').then((m) => ({ default: m.InsightsPaywallView })));
 
 const LoadingFallback: React.FC<{ lang: Language }> = ({ lang }) => (
   <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4 animate-pulse">
@@ -50,10 +54,10 @@ const LoadingFallback: React.FC<{ lang: Language }> = ({ lang }) => (
 );
 
 class MemberContentErrorBoundary extends React.Component<
-  { lang: Language; onBackHome: () => void; children: React.ReactNode },
+  { lang: Language; onBackHome: () => void; resetKey: string; children: React.ReactNode },
   { hasError: boolean; message: string }
 > {
-  constructor(props: { lang: Language; onBackHome: () => void; children: React.ReactNode }) {
+  constructor(props: { lang: Language; onBackHome: () => void; resetKey: string; children: React.ReactNode }) {
     super(props);
     this.state = { hasError: false, message: '' };
   }
@@ -68,6 +72,38 @@ class MemberContentErrorBoundary extends React.Component<
   componentDidCatch(error: unknown) {
     console.error('Member content render error:', error);
   }
+
+  componentDidUpdate(prevProps: { resetKey: string; lang: Language }) {
+    // Reset the boundary when user navigates to another section or switches language.
+    if (this.state.hasError && (prevProps.resetKey !== this.props.resetKey || prevProps.lang !== this.props.lang)) {
+      this.setState({ hasError: false, message: '' });
+    }
+  }
+
+  private handleBackHome = () => {
+    this.setState({ hasError: false, message: '' }, () => {
+      this.props.onBackHome();
+    });
+  };
+
+  private handleHardReload = async () => {
+    try {
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((registration) => registration.unregister()));
+      }
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((key) => caches.delete(key)));
+      }
+    } catch {
+      // no-op: continue with hard reload
+    }
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('reload', String(Date.now()));
+    window.location.replace(url.toString());
+  };
 
   render() {
     if (!this.state.hasError) return this.props.children;
@@ -89,11 +125,16 @@ class MemberContentErrorBoundary extends React.Component<
       <section className="min-h-[50vh] flex flex-col items-center justify-center text-center space-y-5">
         <p className="text-xs font-black uppercase tracking-[0.4em] text-rose-400">{copy.title}</p>
         <p className="max-w-xl text-slate-500 font-semibold">{copy.body}</p>
+        {this.state.message && (
+          <p className="max-w-xl text-xs font-semibold text-rose-400/90 break-words">
+            {this.state.message}
+          </p>
+        )}
         <div className="flex flex-wrap gap-3 justify-center">
-          <button onClick={this.props.onBackHome} className="px-6 py-3 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-widest">
+          <button onClick={this.handleBackHome} className="px-6 py-3 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-widest">
             {copy.home}
           </button>
-          <button onClick={() => window.location.reload()} className="px-6 py-3 rounded-full border border-slate-300 dark:border-slate-700 text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-200">
+          <button onClick={this.handleHardReload} className="px-6 py-3 rounded-full border border-slate-300 dark:border-slate-700 text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-200">
             {copy.reload}
           </button>
         </div>
@@ -207,7 +248,7 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
       <div className="pointer-events-none absolute -top-16 left-10 w-72 h-72 rounded-full bg-[#f2ccda]/20 dark:bg-luna-purple/18 blur-[90px]" />
       <div className="pointer-events-none absolute top-1/3 right-0 w-96 h-96 rounded-full bg-[#d6dff7]/24 dark:bg-[#1e3a7a]/20 blur-[120px]" />
       <MemberPageHero activeTab={activeTab} lang={lang} ui={ui} />
-      <MemberContentErrorBoundary lang={lang} onBackHome={() => navigateTo('dashboard')}>
+      <MemberContentErrorBoundary lang={lang} resetKey={`${activeTab}:${lang}`} onBackHome={() => navigateTo('today_mirror')}>
       <Suspense fallback={<LoadingFallback lang={lang} />}>
         {activeTab === 'dashboard' && (
           <DashboardView
@@ -224,7 +265,39 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
             navigateTo={navigateTo}
           />
         )}
-        {activeTab === 'about' && <AboutLunaView lang={lang} mode="member" onBack={() => navigateTo('dashboard')} />}
+        {activeTab === 'today_mirror' && (
+          <TodayMirrorView
+            lang={lang}
+            currentPhase={currentPhase}
+            systemState={systemState}
+            events={log}
+            onSpeak={() => navigateTo('reflections')}
+            onQuickCheckin={() => setShowSyncOverlay(true)}
+            onOpenMyDay={() => navigateTo('my_day')}
+            onOpenMonthly={() => navigateTo('monthly_reflection')}
+          />
+        )}
+        {activeTab === 'my_day' && (
+          <MyDayWithLunaView
+            lang={lang}
+            currentPhase={currentPhase}
+            systemState={systemState}
+            events={log}
+            onSpeak={() => navigateTo('reflections')}
+            onBack={() => navigateTo('today_mirror')}
+          />
+        )}
+        {activeTab === 'monthly_reflection' && (
+          <MonthlyReflectionView
+            lang={lang}
+            currentPhase={currentPhase}
+            systemState={systemState}
+            events={log}
+            onBack={() => navigateTo('today_mirror')}
+          />
+        )}
+        {activeTab === 'insights_paywall' && <InsightsPaywallView lang={lang} onBack={() => navigateTo('today_mirror')} />}
+        {activeTab === 'about' && <AboutLunaView lang={lang} mode="member" onBack={() => navigateTo('today_mirror')} />}
         {activeTab === 'cycle' && (
           <CycleTimeline
             currentDay={systemState.currentDay}
@@ -234,15 +307,15 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
               setLog(dataService.getLog());
             }}
             isDetailed={true}
-            onBack={() => navigateTo('dashboard')}
+            onBack={() => navigateTo('today_mirror')}
           />
         )}
-        {activeTab === 'profile' && <ProfileView onBack={() => navigateTo('dashboard')} />}
-        {activeTab === 'bridge' && <BridgeView lang={lang} onBack={() => navigateTo('dashboard')} />}
-        {activeTab === 'relationships' && <RelationshipsView phase={currentPhase} lang={lang} onBack={() => navigateTo('dashboard')} />}
-        {activeTab === 'family' && <FamilyView phase={currentPhase} lang={lang} onBack={() => navigateTo('dashboard')} />}
-        {activeTab === 'reflections' && <AudioReflection onBack={() => navigateTo('dashboard')} lang={lang} />}
-        {activeTab === 'voice_files' && <MyVoiceFilesView onBack={() => navigateTo('dashboard')} lang={lang} />}
+        {activeTab === 'profile' && <ProfileView onBack={() => navigateTo('today_mirror')} />}
+        {activeTab === 'bridge' && <BridgeView lang={lang} onBack={() => navigateTo('today_mirror')} />}
+        {activeTab === 'relationships' && <RelationshipsView phase={currentPhase} lang={lang} onBack={() => navigateTo('today_mirror')} />}
+        {activeTab === 'family' && <FamilyView phase={currentPhase} lang={lang} onBack={() => navigateTo('today_mirror')} />}
+        {activeTab === 'reflections' && <AudioReflection onBack={() => navigateTo('today_mirror')} lang={lang} />}
+        {activeTab === 'voice_files' && <MyVoiceFilesView onBack={() => navigateTo('today_mirror')} lang={lang} />}
         {activeTab === 'creative' && <CreativeStudio />}
         {activeTab === 'labs' && (
           <LabsView
@@ -251,25 +324,25 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
             lang={lang}
             userId={session?.id}
             userName={session?.name}
-            onBack={() => navigateTo('dashboard')}
+            onBack={() => navigateTo('today_mirror')}
           />
         )}
-        {activeTab === 'meds' && <MedicationsView medications={systemState.medications} lang={lang} onBack={() => navigateTo('dashboard')} />}
-        {activeTab === 'history' && <HistoryView log={dataService.getLog()} lang={lang} onBack={() => navigateTo('dashboard')} />}
-        {activeTab === 'privacy' && <PrivacyPolicyView lang={lang} onBack={() => navigateTo('dashboard')} />}
-        {activeTab === 'terms' && <LegalDocumentView lang={lang} doc="terms" onBack={() => navigateTo('dashboard')} mode="member" />}
-        {activeTab === 'medical' && <LegalDocumentView lang={lang} doc="medical" onBack={() => navigateTo('dashboard')} mode="member" />}
-        {activeTab === 'cookies' && <LegalDocumentView lang={lang} doc="cookies" onBack={() => navigateTo('dashboard')} mode="member" />}
-        {activeTab === 'data_rights' && <LegalDocumentView lang={lang} doc="data_rights" onBack={() => navigateTo('dashboard')} mode="member" />}
-        {activeTab === 'library' && <HormoneLibraryView lang={lang} onBack={() => navigateTo('dashboard')} />}
-        {activeTab === 'faq' && <FAQView lang={lang} onBack={() => navigateTo('dashboard')} />}
-        {activeTab === 'partner_faq' && <PartnerFAQView lang={lang} onBack={() => navigateTo('dashboard')} />}
-        {activeTab === 'contact' && <ContactView ui={ui} lang={lang} onBack={() => navigateTo('dashboard')} />}
-        {activeTab === 'crisis' && <CrisisCenterView lang={lang} onBack={() => navigateTo('dashboard')} />}
-        {activeTab === 'how_it_works' && <HowItWorksView lang={lang} onBack={() => navigateTo('dashboard')} />}
+        {activeTab === 'meds' && <MedicationsView medications={systemState.medications} lang={lang} onBack={() => navigateTo('today_mirror')} />}
+        {activeTab === 'history' && <HistoryView log={dataService.getLog()} lang={lang} onBack={() => navigateTo('today_mirror')} />}
+        {activeTab === 'privacy' && <PrivacyPolicyView lang={lang} onBack={() => navigateTo('today_mirror')} />}
+        {activeTab === 'terms' && <LegalDocumentView lang={lang} doc="terms" onBack={() => navigateTo('today_mirror')} mode="member" />}
+        {activeTab === 'medical' && <LegalDocumentView lang={lang} doc="medical" onBack={() => navigateTo('today_mirror')} mode="member" />}
+        {activeTab === 'cookies' && <LegalDocumentView lang={lang} doc="cookies" onBack={() => navigateTo('today_mirror')} mode="member" />}
+        {activeTab === 'data_rights' && <LegalDocumentView lang={lang} doc="data_rights" onBack={() => navigateTo('today_mirror')} mode="member" />}
+        {activeTab === 'library' && <HormoneLibraryView lang={lang} onBack={() => navigateTo('today_mirror')} />}
+        {activeTab === 'faq' && <FAQView lang={lang} onBack={() => navigateTo('today_mirror')} />}
+        {activeTab === 'partner_faq' && <PartnerFAQView lang={lang} onBack={() => navigateTo('today_mirror')} />}
+        {activeTab === 'contact' && <ContactView ui={ui} lang={lang} onBack={() => navigateTo('today_mirror')} />}
+        {activeTab === 'crisis' && <CrisisCenterView lang={lang} onBack={() => navigateTo('today_mirror')} />}
+        {activeTab === 'how_it_works' && <HowItWorksView lang={lang} onBack={() => navigateTo('today_mirror')} />}
         {activeTab === 'admin' && (
           canAccessAdmin ? (
-            <AdminPanelView lang={lang} session={session} onBack={() => navigateTo('dashboard')} onLogout={onLogout} onRoleChange={onRoleChange} />
+            <AdminPanelView lang={lang} session={session} onBack={() => navigateTo('today_mirror')} onLogout={onLogout} onRoleChange={onRoleChange} />
           ) : (
             <section className="min-h-[50vh] flex flex-col items-center justify-center text-center space-y-5">
               <p className="text-xs font-black uppercase tracking-[0.4em] text-rose-400">{copy.accessRestricted}</p>
@@ -277,7 +350,7 @@ export const MainContentRouter: React.FC<MainContentRouterProps> = ({
               <p className="max-w-lg text-slate-500 font-semibold">
                 {copy.permissionBody}
               </p>
-              <button onClick={() => navigateTo('dashboard')} className="px-6 py-3 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-widest">
+              <button onClick={() => navigateTo('today_mirror')} className="px-6 py-3 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-widest">
                 {copy.backHome}
               </button>
             </section>

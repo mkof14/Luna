@@ -463,6 +463,10 @@ export const authService = {
 
   hasPermission(session: AuthSession | null, permission: AdminPermission): boolean {
     if (!session) return false;
-    return session.permissions.includes(permission);
+    const role = resolveRole(session.email);
+    const permissions = Array.isArray(session.permissions) && session.permissions.length > 0
+      ? session.permissions
+      : ROLE_PERMISSIONS[role];
+    return permissions.includes(permission);
   },
 };

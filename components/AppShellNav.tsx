@@ -135,7 +135,13 @@ export const AppShellNav: React.FC<AppShellNavProps> = ({
   };
   const quickStartCopy = quickStartHintByLang[lang] || quickStartHintByLang.en;
   const quickStartKey: 'dashboard' | 'cycle' | 'bridge' | 'other' =
-    activeTab === 'dashboard' || activeTab === 'cycle' || activeTab === 'bridge' ? activeTab : 'other';
+    activeTab === 'today_mirror'
+      ? 'dashboard'
+      : activeTab === 'cycle'
+        ? 'cycle'
+        : activeTab === 'history'
+          ? 'bridge'
+          : 'other';
 
   return (
     <>
@@ -187,7 +193,7 @@ export const AppShellNav: React.FC<AppShellNavProps> = ({
           <div className="flex items-center gap-6 md:gap-8 shrink-0">
             <button
               data-testid="nav-logo-dashboard"
-              onClick={() => navigateTo('dashboard')}
+              onClick={() => navigateTo('today_mirror')}
               className="flex items-center gap-0.5 hover:scale-105 active:scale-95 transition-transform"
             >
               <img src="/images/luna-logo-transparent.webp" alt="" aria-hidden="true" className="h-16 w-auto md:h-20 object-contain select-none pointer-events-none" />

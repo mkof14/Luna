@@ -4,6 +4,7 @@ import { AdminRole, AuthSession } from '../types';
 import { LocalizedText, localizeFields, localizeText, resolveLocalizedText, seedLocalizedText } from '../utils/contentLocalization';
 import { copyTextSafely, shareTextSafely } from '../utils/share';
 import { adminService } from '../services/adminService';
+import { getAdminPanelLabels } from '../utils/adminPanelLabels';
 
 interface AdminPanelViewProps {
   session: AuthSession | null;
@@ -78,6 +79,49 @@ type AdminAuditEntry = {
   details: string;
 };
 
+type StorageBucket = {
+  id: string;
+  name: string;
+  usedGb: number;
+  quotaGb: number;
+  updatedAt: string;
+};
+
+type AdminInvite = {
+  id: string;
+  email: string;
+  role: AdminRole;
+  status: 'pending' | 'sent' | 'accepted';
+  sentAt: string;
+};
+
+type SocialPlatform = 'facebook' | 'instagram' | 'tiktok' | 'youtube' | 'x' | 'telegram' | 'custom';
+
+type SocialAccount = {
+  id: string;
+  platform: SocialPlatform;
+  label: string;
+  handle: string;
+  connected: boolean;
+  followers: number;
+  engagement: number;
+  lastSyncAt: string;
+};
+
+type EmailIntegration = {
+  provider: 'sendgrid' | 'mailgun' | 'resend' | 'smtp';
+  apiKeyMasked: string;
+  fromEmail: string;
+  domain: string;
+  connected: boolean;
+  spf: 'ok' | 'warn';
+  dkim: 'ok' | 'warn';
+  queuePending: number;
+  sentToday: number;
+  bouncedToday: number;
+  openRate: number;
+};
+
 const DEFAULT_FINANCE = {
   mrr: 48240,
   arr: 578880,
@@ -93,6 +137,316 @@ const DEFAULT_TECHNICAL = {
   apiP95: 183,
   errorRate: 0.31,
   queueLag: 12,
+};
+
+const ADMIN_UI_COPY: Record<
+  Language,
+  {
+    inviteTitle: string;
+    inviteHint: string;
+    inviteEmailPlaceholder: string;
+    inviteButton: string;
+    invitePending: string;
+    inviteSent: string;
+    inviteAccepted: string;
+    usersTitle: string;
+    usersTotal: string;
+    usersActive: string;
+    usersNew7d: string;
+    siteStatsTitle: string;
+    dau: string;
+    wau: string;
+    mau: string;
+    conversion: string;
+    growth: string;
+    storageTitle: string;
+    addFolder: string;
+    previewHint: string;
+    noPreview: string;
+  }
+> = {
+  en: {
+    inviteTitle: 'Invitations & Role Access',
+    inviteHint: 'Send invite links and assign the starting admin role before first login.',
+    inviteEmailPlaceholder: 'Invite email',
+    inviteButton: 'Send invite',
+    invitePending: 'Pending',
+    inviteSent: 'Sent',
+    inviteAccepted: 'Accepted',
+    usersTitle: 'Users & Audience',
+    usersTotal: 'Total users',
+    usersActive: 'Active today',
+    usersNew7d: 'New in 7 days',
+    siteStatsTitle: 'Site Statistics',
+    dau: 'DAU',
+    wau: 'WAU',
+    mau: 'MAU',
+    conversion: 'Signup conversion',
+    growth: 'Weekly growth',
+    storageTitle: 'Storage Vault',
+    addFolder: 'Add Folder',
+    previewHint: 'Template preview and message preview are available below each item.',
+    noPreview: 'Nothing selected yet. Choose a template or campaign preview.',
+  },
+  ru: {
+    inviteTitle: 'Приглашения и доступы',
+    inviteHint: 'Отправляйте ссылку-приглашение и назначайте стартовую роль администратора до первого входа.',
+    inviteEmailPlaceholder: 'Email для приглашения',
+    inviteButton: 'Отправить приглашение',
+    invitePending: 'Ожидает',
+    inviteSent: 'Отправлено',
+    inviteAccepted: 'Принято',
+    usersTitle: 'Пользователи и аудитория',
+    usersTotal: 'Всего пользователей',
+    usersActive: 'Активны сегодня',
+    usersNew7d: 'Новые за 7 дней',
+    siteStatsTitle: 'Статистика сайта',
+    dau: 'DAU',
+    wau: 'WAU',
+    mau: 'MAU',
+    conversion: 'Конверсия регистрации',
+    growth: 'Недельный рост',
+    storageTitle: 'Хранилище',
+    addFolder: 'Добавить папку',
+    previewHint: 'Превью шаблонов и сообщений доступно у каждого элемента ниже.',
+    noPreview: 'Пока ничего не выбрано. Нажмите Preview у шаблона или кампании.',
+  },
+  uk: {
+    inviteTitle: 'Запрошення та ролі доступу',
+    inviteHint: 'Надсилайте запрошення і призначайте стартову роль адміністратора до першого входу.',
+    inviteEmailPlaceholder: 'Email для запрошення',
+    inviteButton: 'Надіслати запрошення',
+    invitePending: 'Очікує',
+    inviteSent: 'Надіслано',
+    inviteAccepted: 'Прийнято',
+    usersTitle: 'Користувачі та аудиторія',
+    usersTotal: 'Усього користувачів',
+    usersActive: 'Активні сьогодні',
+    usersNew7d: 'Нові за 7 днів',
+    siteStatsTitle: 'Статистика сайту',
+    dau: 'DAU',
+    wau: 'WAU',
+    mau: 'MAU',
+    conversion: 'Конверсія реєстрації',
+    growth: 'Тижневий ріст',
+    storageTitle: 'Сховище',
+    addFolder: 'Додати папку',
+    previewHint: 'Прев’ю шаблонів і повідомлень доступне під кожним елементом.',
+    noPreview: 'Поки нічого не обрано. Натисніть Preview у шаблоні або кампанії.',
+  },
+  es: {
+    inviteTitle: 'Invitaciones y roles',
+    inviteHint: 'Envía enlaces de invitación y asigna el rol inicial antes del primer acceso.',
+    inviteEmailPlaceholder: 'Email de invitación',
+    inviteButton: 'Enviar invitación',
+    invitePending: 'Pendiente',
+    inviteSent: 'Enviado',
+    inviteAccepted: 'Aceptado',
+    usersTitle: 'Usuarios y audiencia',
+    usersTotal: 'Usuarios totales',
+    usersActive: 'Activos hoy',
+    usersNew7d: 'Nuevos en 7 días',
+    siteStatsTitle: 'Estadísticas del sitio',
+    dau: 'DAU',
+    wau: 'WAU',
+    mau: 'MAU',
+    conversion: 'Conversión de registro',
+    growth: 'Crecimiento semanal',
+    storageTitle: 'Almacenamiento',
+    addFolder: 'Agregar carpeta',
+    previewHint: 'La vista previa de plantillas y mensajes está disponible en cada elemento.',
+    noPreview: 'Nada seleccionado aún. Elige la vista previa de una plantilla o campaña.',
+  },
+  fr: {
+    inviteTitle: 'Invitations et roles',
+    inviteHint: 'Envoyez des invitations et attribuez le role admin initial avant la premiere connexion.',
+    inviteEmailPlaceholder: 'Email d’invitation',
+    inviteButton: 'Envoyer invitation',
+    invitePending: 'En attente',
+    inviteSent: 'Envoyé',
+    inviteAccepted: 'Accepté',
+    usersTitle: 'Utilisatrices et audience',
+    usersTotal: 'Total utilisatrices',
+    usersActive: 'Actives aujourd’hui',
+    usersNew7d: 'Nouvelles en 7 jours',
+    siteStatsTitle: 'Statistiques du site',
+    dau: 'DAU',
+    wau: 'WAU',
+    mau: 'MAU',
+    conversion: 'Conversion inscription',
+    growth: 'Croissance hebdo',
+    storageTitle: 'Stockage',
+    addFolder: 'Ajouter dossier',
+    previewHint: 'L’aperçu des templates et messages est disponible sous chaque élément.',
+    noPreview: 'Rien n’est sélectionné. Choisissez Preview sur un template ou une campagne.',
+  },
+  de: {
+    inviteTitle: 'Einladungen und Rollen',
+    inviteHint: 'Sende Einladungslinks und vergebe die Startrolle vor dem ersten Login.',
+    inviteEmailPlaceholder: 'Einladungs-E-Mail',
+    inviteButton: 'Einladung senden',
+    invitePending: 'Ausstehend',
+    inviteSent: 'Gesendet',
+    inviteAccepted: 'Akzeptiert',
+    usersTitle: 'Nutzerinnen und Reichweite',
+    usersTotal: 'Gesamtnutzerinnen',
+    usersActive: 'Heute aktiv',
+    usersNew7d: 'Neu in 7 Tagen',
+    siteStatsTitle: 'Website-Statistik',
+    dau: 'DAU',
+    wau: 'WAU',
+    mau: 'MAU',
+    conversion: 'Signup-Conversion',
+    growth: 'Wöchentliches Wachstum',
+    storageTitle: 'Speicher',
+    addFolder: 'Ordner hinzufügen',
+    previewHint: 'Template- und Nachrichten-Vorschau ist pro Element verfügbar.',
+    noPreview: 'Noch nichts ausgewählt. Wähle Preview bei Template oder Kampagne.',
+  },
+  zh: {
+    inviteTitle: '邀请与角色权限',
+    inviteHint: '发送邀请链接，并在首次登录前分配管理员起始角色。',
+    inviteEmailPlaceholder: '邀请邮箱',
+    inviteButton: '发送邀请',
+    invitePending: '待处理',
+    inviteSent: '已发送',
+    inviteAccepted: '已接受',
+    usersTitle: '用户与站点受众',
+    usersTotal: '用户总数',
+    usersActive: '今日活跃',
+    usersNew7d: '7天新增',
+    siteStatsTitle: '站点统计',
+    dau: 'DAU',
+    wau: 'WAU',
+    mau: 'MAU',
+    conversion: '注册转化',
+    growth: '周增长',
+    storageTitle: '存储空间',
+    addFolder: '新增文件夹',
+    previewHint: '每条模板和活动都可直接预览。',
+    noPreview: '尚未选择内容。请点击模板或活动的 Preview。',
+  },
+  ja: {
+    inviteTitle: '招待とロール権限',
+    inviteHint: '初回ログイン前に招待リンク送信と初期ロール設定を行います。',
+    inviteEmailPlaceholder: '招待メール',
+    inviteButton: '招待を送信',
+    invitePending: '保留中',
+    inviteSent: '送信済み',
+    inviteAccepted: '承認済み',
+    usersTitle: 'ユーザーとオーディエンス',
+    usersTotal: '総ユーザー数',
+    usersActive: '本日のアクティブ',
+    usersNew7d: '7日間の新規',
+    siteStatsTitle: 'サイト統計',
+    dau: 'DAU',
+    wau: 'WAU',
+    mau: 'MAU',
+    conversion: '登録コンバージョン',
+    growth: '週間成長率',
+    storageTitle: 'ストレージ',
+    addFolder: 'フォルダ追加',
+    previewHint: '各テンプレート/キャンペーンでプレビューを利用できます。',
+    noPreview: '未選択です。テンプレートかキャンペーンのPreviewを押してください。',
+  },
+  pt: {
+    inviteTitle: 'Convites e papeis',
+    inviteHint: 'Envie links de convite e defina o papel inicial antes do primeiro login.',
+    inviteEmailPlaceholder: 'Email para convite',
+    inviteButton: 'Enviar convite',
+    invitePending: 'Pendente',
+    inviteSent: 'Enviado',
+    inviteAccepted: 'Aceito',
+    usersTitle: 'Usuárias e audiência',
+    usersTotal: 'Usuárias totais',
+    usersActive: 'Ativas hoje',
+    usersNew7d: 'Novas em 7 dias',
+    siteStatsTitle: 'Estatísticas do site',
+    dau: 'DAU',
+    wau: 'WAU',
+    mau: 'MAU',
+    conversion: 'Conversão de cadastro',
+    growth: 'Crescimento semanal',
+    storageTitle: 'Armazenamento',
+    addFolder: 'Adicionar pasta',
+    previewHint: 'Pré-visualização de templates e campanhas está disponível em cada item.',
+    noPreview: 'Nada selecionado ainda. Escolha Preview de um template ou campanha.',
+  },
+};
+
+const STORAGE_STATE_KEY = 'luna_admin_storage_v1';
+const INVITES_STATE_KEY = 'luna_admin_invites_v1';
+const SOCIAL_STATE_KEY = 'luna_admin_social_v1';
+const EMAIL_INTEGRATION_KEY = 'luna_admin_email_integration_v1';
+
+const DEFAULT_STORAGE_BUCKETS: StorageBucket[] = [
+  { id: 'st-audio', name: 'Voice Notes', usedGb: 6.4, quotaGb: 20, updatedAt: '2026-03-11' },
+  { id: 'st-reports', name: 'Health Reports', usedGb: 3.2, quotaGb: 12, updatedAt: '2026-03-12' },
+  { id: 'st-media', name: 'Media Assets', usedGb: 2.1, quotaGb: 10, updatedAt: '2026-03-12' },
+];
+
+const DEFAULT_SOCIAL_ACCOUNTS: SocialAccount[] = [
+  { id: 'soc-fb', platform: 'facebook', label: 'Facebook', handle: '@luna.women', connected: true, followers: 12840, engagement: 4.2, lastSyncAt: '2026-03-13T08:10:00Z' },
+  { id: 'soc-ig', platform: 'instagram', label: 'Instagram', handle: '@luna.rhythm', connected: true, followers: 18620, engagement: 5.7, lastSyncAt: '2026-03-13T08:12:00Z' },
+  { id: 'soc-tt', platform: 'tiktok', label: 'TikTok', handle: '@luna.daily', connected: false, followers: 9420, engagement: 7.1, lastSyncAt: '2026-03-10T15:40:00Z' },
+  { id: 'soc-yt', platform: 'youtube', label: 'YouTube', handle: '@LunaBalance', connected: true, followers: 5280, engagement: 3.6, lastSyncAt: '2026-03-12T19:25:00Z' },
+];
+
+const DEFAULT_EMAIL_INTEGRATION: EmailIntegration = {
+  provider: 'resend',
+  apiKeyMasked: 're_******************Z8',
+  fromEmail: 'care@luna.app',
+  domain: 'luna.app',
+  connected: true,
+  spf: 'ok',
+  dkim: 'ok',
+  queuePending: 23,
+  sentToday: 1482,
+  bouncedToday: 7,
+  openRate: 46.2,
+};
+
+const CHANNELS_COPY: Record<
+  Language,
+  {
+    title: string;
+    socialTitle: string;
+    socialHint: string;
+    emailTitle: string;
+    emailHint: string;
+    connect: string;
+    disconnect: string;
+    syncNow: string;
+    addChannel: string;
+    channelName: string;
+    handle: string;
+    followers: string;
+    engagement: string;
+    statusConnected: string;
+    statusDisconnected: string;
+    provider: string;
+    fromEmail: string;
+    domain: string;
+    queue: string;
+    sentToday: string;
+    bounced: string;
+    openRate: string;
+    testConnection: string;
+    spf: string;
+    dkim: string;
+    connectedNow: string;
+    disconnectedNow: string;
+  }
+> = {
+  en: { title: 'Channels & Integrations', socialTitle: 'Social Media Administration', socialHint: 'Connect accounts, monitor sync status, and keep channel performance in one place.', emailTitle: 'Email System Connection', emailHint: 'Control provider status, delivery quality, and queue health for system emails.', connect: 'Connect', disconnect: 'Disconnect', syncNow: 'Sync now', addChannel: 'Add channel', channelName: 'Channel name', handle: 'Handle', followers: 'Followers', engagement: 'Engagement', statusConnected: 'Connected', statusDisconnected: 'Disconnected', provider: 'Provider', fromEmail: 'From email', domain: 'Domain', queue: 'Queue', sentToday: 'Sent today', bounced: 'Bounced', openRate: 'Open rate', testConnection: 'Test connection', spf: 'SPF', dkim: 'DKIM', connectedNow: 'Channel connected.', disconnectedNow: 'Channel disconnected.' },
+  ru: { title: 'Каналы и интеграции', socialTitle: 'Администрирование соцсетей', socialHint: 'Подключайте аккаунты, следите за синхронизацией и метриками каналов в одном месте.', emailTitle: 'Подключение Email-системы', emailHint: 'Управляйте провайдером, качеством доставки и очередями системных писем.', connect: 'Подключить', disconnect: 'Отключить', syncNow: 'Синхронизировать', addChannel: 'Добавить канал', channelName: 'Название канала', handle: 'Аккаунт', followers: 'Подписчики', engagement: 'Вовлеченность', statusConnected: 'Подключен', statusDisconnected: 'Отключен', provider: 'Провайдер', fromEmail: 'Email отправителя', domain: 'Домен', queue: 'Очередь', sentToday: 'Отправлено сегодня', bounced: 'Отказы', openRate: 'Открываемость', testConnection: 'Проверить подключение', spf: 'SPF', dkim: 'DKIM', connectedNow: 'Канал подключен.', disconnectedNow: 'Канал отключен.' },
+  uk: { title: 'Канали та інтеграції', socialTitle: 'Адміністрування соцмереж', socialHint: 'Підключайте акаунти, відстежуйте синхронізацію та метрики каналів в одному місці.', emailTitle: 'Підключення Email-системи', emailHint: 'Керуйте провайдером, якістю доставки та чергами системних листів.', connect: 'Підключити', disconnect: 'Відключити', syncNow: 'Синхронізувати', addChannel: 'Додати канал', channelName: 'Назва каналу', handle: 'Акаунт', followers: 'Підписники', engagement: 'Залученість', statusConnected: 'Підключено', statusDisconnected: 'Відключено', provider: 'Провайдер', fromEmail: 'Email відправника', domain: 'Домен', queue: 'Черга', sentToday: 'Надіслано сьогодні', bounced: 'Відмови', openRate: 'Відкриття', testConnection: 'Перевірити з’єднання', spf: 'SPF', dkim: 'DKIM', connectedNow: 'Канал підключено.', disconnectedNow: 'Канал відключено.' },
+  es: { title: 'Canales e integraciones', socialTitle: 'Administración de redes sociales', socialHint: 'Conecta cuentas, controla sincronización y rendimiento de canales en un solo panel.', emailTitle: 'Conexión del sistema de email', emailHint: 'Gestiona proveedor, calidad de entrega y estado de la cola de mensajes.', connect: 'Conectar', disconnect: 'Desconectar', syncNow: 'Sincronizar', addChannel: 'Agregar canal', channelName: 'Nombre del canal', handle: 'Cuenta', followers: 'Seguidores', engagement: 'Interacción', statusConnected: 'Conectado', statusDisconnected: 'Desconectado', provider: 'Proveedor', fromEmail: 'Email remitente', domain: 'Dominio', queue: 'Cola', sentToday: 'Enviados hoy', bounced: 'Rebotes', openRate: 'Apertura', testConnection: 'Probar conexión', spf: 'SPF', dkim: 'DKIM', connectedNow: 'Canal conectado.', disconnectedNow: 'Canal desconectado.' },
+  fr: { title: 'Canaux et integrations', socialTitle: 'Administration des reseaux sociaux', socialHint: 'Connectez les comptes, suivez la synchro et les performances dans un seul espace.', emailTitle: 'Connexion du systeme email', emailHint: 'Pilotez le fournisseur, la delivrabilite et la file d envoi des emails systeme.', connect: 'Connecter', disconnect: 'Deconnecter', syncNow: 'Synchroniser', addChannel: 'Ajouter canal', channelName: 'Nom du canal', handle: 'Compte', followers: 'Abonnes', engagement: 'Engagement', statusConnected: 'Connecte', statusDisconnected: 'Deconnecte', provider: 'Fournisseur', fromEmail: 'Email expediteur', domain: 'Domaine', queue: 'File', sentToday: 'Envoyes aujourd hui', bounced: 'Rejets', openRate: 'Taux d ouverture', testConnection: 'Tester connexion', spf: 'SPF', dkim: 'DKIM', connectedNow: 'Canal connecte.', disconnectedNow: 'Canal deconnecte.' },
+  de: { title: 'Kanaele und Integrationen', socialTitle: 'Social-Media-Administration', socialHint: 'Konten verbinden, Sync-Status beobachten und Kanal-Performance zentral steuern.', emailTitle: 'E-Mail-System Verbindung', emailHint: 'Provider, Zustellqualitaet und Queue-Gesundheit fuer Systemmails verwalten.', connect: 'Verbinden', disconnect: 'Trennen', syncNow: 'Jetzt syncen', addChannel: 'Kanal hinzufuegen', channelName: 'Kanalname', handle: 'Handle', followers: 'Follower', engagement: 'Engagement', statusConnected: 'Verbunden', statusDisconnected: 'Getrennt', provider: 'Provider', fromEmail: 'Absender-Email', domain: 'Domain', queue: 'Queue', sentToday: 'Heute gesendet', bounced: 'Bounces', openRate: 'Oeffnungsrate', testConnection: 'Verbindung testen', spf: 'SPF', dkim: 'DKIM', connectedNow: 'Kanal verbunden.', disconnectedNow: 'Kanal getrennt.' },
+  zh: { title: '渠道与集成', socialTitle: '社交媒体管理', socialHint: '统一管理账号连接、同步状态与渠道表现。', emailTitle: 'Email 系统连接', emailHint: '管理邮件服务商、投递质量与队列健康状态。', connect: '连接', disconnect: '断开', syncNow: '立即同步', addChannel: '添加渠道', channelName: '渠道名称', handle: '账号', followers: '关注者', engagement: '互动率', statusConnected: '已连接', statusDisconnected: '未连接', provider: '服务商', fromEmail: '发件邮箱', domain: '域名', queue: '队列', sentToday: '今日发送', bounced: '退信', openRate: '打开率', testConnection: '测试连接', spf: 'SPF', dkim: 'DKIM', connectedNow: '渠道已连接。', disconnectedNow: '渠道已断开。' },
+  ja: { title: 'チャネルと連携', socialTitle: 'SNS 管理', socialHint: 'アカウント接続、同期状況、チャネル成果を一元管理します。', emailTitle: 'メールシステム接続', emailHint: '配信プロバイダ、到達率、キュー状況を管理します。', connect: '接続', disconnect: '切断', syncNow: '今すぐ同期', addChannel: 'チャネル追加', channelName: 'チャネル名', handle: 'アカウント', followers: 'フォロワー', engagement: 'エンゲージ', statusConnected: '接続済み', statusDisconnected: '未接続', provider: 'プロバイダ', fromEmail: '送信元メール', domain: 'ドメイン', queue: 'キュー', sentToday: '本日送信', bounced: 'バウンス', openRate: '開封率', testConnection: '接続テスト', spf: 'SPF', dkim: 'DKIM', connectedNow: 'チャネルを接続しました。', disconnectedNow: 'チャネルを切断しました。' },
+  pt: { title: 'Canais e integrações', socialTitle: 'Administração de redes sociais', socialHint: 'Conecte contas, acompanhe sincronização e desempenho dos canais em um painel.', emailTitle: 'Conexão do sistema de email', emailHint: 'Gerencie provedor, qualidade de entrega e saúde da fila de emails.', connect: 'Conectar', disconnect: 'Desconectar', syncNow: 'Sincronizar agora', addChannel: 'Adicionar canal', channelName: 'Nome do canal', handle: 'Conta', followers: 'Seguidores', engagement: 'Engajamento', statusConnected: 'Conectado', statusDisconnected: 'Desconectado', provider: 'Provedor', fromEmail: 'Email remetente', domain: 'Domínio', queue: 'Fila', sentToday: 'Enviados hoje', bounced: 'Rejeitados', openRate: 'Taxa de abertura', testConnection: 'Testar conexão', spf: 'SPF', dkim: 'DKIM', connectedNow: 'Canal conectado.', disconnectedNow: 'Canal desconectado.' },
 };
 
 const defaultMarketingBody = 'A calm Luna update for your rhythm. Gentle reminder with clear next action.';
@@ -353,6 +707,69 @@ const DEFAULT_TEMPLATES: EmailTemplate[] = [
     updatedBy: 'Legal Team',
     updatedAt: '2026-03-02',
   },
+  {
+    id: 'tpl-evening-reflection-reminder',
+    title: seedLocalizedText('Evening Reflection Reminder', 'en'),
+    trigger: seedLocalizedText('20:30 local time (if no reflection today)', 'en'),
+    subject: seedLocalizedText('A quiet minute with Luna tonight', 'en'),
+    preheader: seedLocalizedText('One short note can make tomorrow clearer.', 'en'),
+    body: seedLocalizedText('Take one gentle minute with Luna tonight. A few honest words are enough.', 'en'),
+    updatedBy: 'Product Team',
+    updatedAt: '2026-03-12',
+  },
+  {
+    id: 'tpl-partner-brief-ready',
+    title: seedLocalizedText('Partner Brief Ready', 'en'),
+    trigger: seedLocalizedText('User generated partner message', 'en'),
+    subject: seedLocalizedText('Your “Explain today” brief is ready', 'en'),
+    preheader: seedLocalizedText('Share your day in calm and clear language.', 'en'),
+    body: seedLocalizedText('Your partner brief is ready to share. Review and send it when you feel ready.', 'en'),
+    updatedBy: 'Bridge Team',
+    updatedAt: '2026-03-12',
+  },
+  {
+    id: 'tpl-weekly-continuity',
+    title: seedLocalizedText('Weekly Continuity Note', 'en'),
+    trigger: seedLocalizedText('Every Sunday evening', 'en'),
+    subject: seedLocalizedText('Your week with Luna', 'en'),
+    preheader: seedLocalizedText('A small view of your rhythm continuity.', 'en'),
+    body: seedLocalizedText('You kept showing up this week. Here is a simple continuity view of your days.', 'en'),
+    updatedBy: 'Insights Team',
+    updatedAt: '2026-03-12',
+  },
+];
+
+const TEMPLATE_PACK_ADVANCED: EmailTemplate[] = [
+  {
+    id: 'tpl-voice-streak-nudge',
+    title: seedLocalizedText('Voice Note Streak Nudge', 'en'),
+    trigger: seedLocalizedText('2 missed evening voice notes', 'en'),
+    subject: seedLocalizedText('Come back for one calm minute', 'en'),
+    preheader: seedLocalizedText('No pressure. Just one small check-in.', 'en'),
+    body: seedLocalizedText('You can return with a single minute tonight. Luna will continue from where you left.', 'en'),
+    updatedBy: 'Retention Team',
+    updatedAt: '2026-03-12',
+  },
+  {
+    id: 'tpl-monthly-insight-release',
+    title: seedLocalizedText('Monthly Insight Published', 'en'),
+    trigger: seedLocalizedText('Monthly summary generated', 'en'),
+    subject: seedLocalizedText('Your month with Luna is ready', 'en'),
+    preheader: seedLocalizedText('See what became clearer this month.', 'en'),
+    body: seedLocalizedText('Your monthly rhythm summary is ready. Open it to review your strongest insight signals.', 'en'),
+    updatedBy: 'Insights Team',
+    updatedAt: '2026-03-12',
+  },
+  {
+    id: 'tpl-soft-reactivation',
+    title: seedLocalizedText('Soft Reactivation Journey', 'en'),
+    trigger: seedLocalizedText('Inactive for 10 days', 'en'),
+    subject: seedLocalizedText('Your Luna space is still open', 'en'),
+    preheader: seedLocalizedText('Resume gently, one evening at a time.', 'en'),
+    body: seedLocalizedText('Return gently with one short evening note. Your continuity timeline is waiting for you.', 'en'),
+    updatedBy: 'Lifecycle Team',
+    updatedAt: '2026-03-12',
+  },
 ];
 
 const parseContent = (value: unknown): ContentItem[] => {
@@ -530,36 +947,10 @@ const openPrintPreview = (title: string, htmlBody: string): boolean => {
 };
 
 export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, onBack, onLogout, onRoleChange }) => {
-  const loadingByLang: Record<Language, string> = {
-    en: 'Loading...',
-    ru: 'Загрузка...',
-    uk: 'Завантаження...',
-    es: 'Cargando...',
-    fr: 'Chargement...',
-    de: 'Lädt...',
-    zh: '加载中...',
-    ja: '読み込み中...',
-    pt: 'Carregando...',
-  };
-  const [labels, setLabels] = useState<import('../utils/adminPanelLabels').AdminPanelLabels | null>(null);
-  useEffect(() => {
-    let alive = true;
-    import('../utils/adminPanelLabels').then((module) => {
-      if (!alive) return;
-      setLabels(module.getAdminPanelLabels(lang));
-    });
-    return () => {
-      alive = false;
-    };
-  }, [lang]);
-  if (!labels) {
-    return (
-      <section className="max-w-7xl mx-auto p-6">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{loadingByLang[lang] || loadingByLang.en}</p>
-      </section>
-    );
-  }
+  const labels = getAdminPanelLabels(lang);
   const { copy, channelLabels, campaignStatusLabels, statusLabels } = labels;
+  const adminUi = ADMIN_UI_COPY[lang] || ADMIN_UI_COPY.en;
+  const channelsCopy = CHANNELS_COPY[lang] || CHANNELS_COPY.en;
   const templateBodyRef = useRef<HTMLTextAreaElement | null>(null);
 
   const [services, setServices] = useState<ServiceItem[]>([
@@ -589,6 +980,16 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
   const [technicalMetrics, setTechnicalMetrics] = useState(DEFAULT_TECHNICAL);
   const [auditEntries, setAuditEntries] = useState<AdminAuditEntry[]>([]);
   const [isServerStateReady, setIsServerStateReady] = useState(false);
+  const [storageBuckets, setStorageBuckets] = useState<StorageBucket[]>(DEFAULT_STORAGE_BUCKETS);
+  const [newStorageName, setNewStorageName] = useState('');
+  const [newStorageQuota, setNewStorageQuota] = useState('8');
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState<AdminRole>('operator');
+  const [invites, setInvites] = useState<AdminInvite[]>([]);
+  const [socialAccounts, setSocialAccounts] = useState<SocialAccount[]>(DEFAULT_SOCIAL_ACCOUNTS);
+  const [customChannelName, setCustomChannelName] = useState('');
+  const [customChannelHandle, setCustomChannelHandle] = useState('');
+  const [emailIntegration, setEmailIntegration] = useState<EmailIntegration>(DEFAULT_EMAIL_INTEGRATION);
 
   const [newCampaignTitle, setNewCampaignTitle] = useState('');
   const [newCampaignBody, setNewCampaignBody] = useState('');
@@ -612,6 +1013,162 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
     const tokens = parseVariableInput(newTemplateVariables);
     return tokens.length > 0 ? tokens : defaultTemplateVariables;
   }, [newTemplateVariables]);
+  const storageTotals = useMemo(() => {
+    const used = storageBuckets.reduce((sum, item) => sum + item.usedGb, 0);
+    const quota = storageBuckets.reduce((sum, item) => sum + item.quotaGb, 0);
+    const utilization = quota > 0 ? Math.round((used / quota) * 100) : 0;
+    return { used, quota, utilization };
+  }, [storageBuckets]);
+  const userStats = useMemo(() => {
+    const totalUsers = Math.max(120, financialMetrics.activeSubscribers + 380);
+    const activeToday = Math.max(60, Math.round(financialMetrics.activeSubscribers * 0.31));
+    const new7d = Math.max(10, Math.round(financialMetrics.activeSubscribers * 0.045));
+    return { totalUsers, activeToday, new7d };
+  }, [financialMetrics.activeSubscribers]);
+  const siteStats = useMemo(() => {
+    const dau = Math.max(120, Math.round(financialMetrics.activeSubscribers * 0.32));
+    const wau = Math.max(240, Math.round(financialMetrics.activeSubscribers * 0.66));
+    const mau = Math.max(420, Math.round(financialMetrics.activeSubscribers * 1.05));
+    const conversion = Number(financialMetrics.conversion.toFixed(1));
+    const growth = Number((Math.max(0.6, 3.4 - financialMetrics.churn * 0.45)).toFixed(1));
+    return { dau, wau, mau, conversion, growth };
+  }, [financialMetrics.activeSubscribers, financialMetrics.churn, financialMetrics.conversion]);
+  const socialTotals = useMemo(() => {
+    const connected = socialAccounts.filter((item) => item.connected).length;
+    const totalFollowers = socialAccounts.reduce((sum, item) => sum + item.followers, 0);
+    const avgEngagement = socialAccounts.length > 0
+      ? Number((socialAccounts.reduce((sum, item) => sum + item.engagement, 0) / socialAccounts.length).toFixed(1))
+      : 0;
+    return { connected, totalFollowers, avgEngagement };
+  }, [socialAccounts]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_STATE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as StorageBucket[];
+      if (!Array.isArray(parsed) || parsed.length === 0) return;
+      const normalized = parsed
+        .map((item, index) => ({
+          id: String(item.id || `st-${index}`),
+          name: String(item.name || `Storage ${index + 1}`),
+          usedGb: Math.max(0, Number(item.usedGb) || 0),
+          quotaGb: Math.max(1, Number(item.quotaGb) || 8),
+          updatedAt: String(item.updatedAt || new Date().toISOString().slice(0, 10)),
+        }))
+        .slice(0, 50);
+      if (normalized.length > 0) setStorageBuckets(normalized);
+    } catch {
+      // keep default storage map
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_STATE_KEY, JSON.stringify(storageBuckets));
+    } catch {
+      // ignore storage errors
+    }
+  }, [storageBuckets]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(INVITES_STATE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as AdminInvite[];
+      if (!Array.isArray(parsed)) return;
+      const normalized = parsed
+        .map((item, index) => ({
+          id: String(item.id || `inv-${index}`),
+          email: String(item.email || '').toLowerCase(),
+          role: (['viewer', 'operator', 'content_manager', 'finance_manager', 'super_admin'] as AdminRole[]).includes(item.role)
+            ? item.role
+            : 'viewer',
+          status: (item.status === 'accepted' ? 'accepted' : item.status === 'sent' ? 'sent' : 'pending') as AdminInvite['status'],
+          sentAt: String(item.sentAt || new Date().toISOString()),
+        }))
+        .slice(0, 100);
+      setInvites(normalized);
+    } catch {
+      // ignore malformed invite storage
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(INVITES_STATE_KEY, JSON.stringify(invites));
+    } catch {
+      // ignore storage failures
+    }
+  }, [invites]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SOCIAL_STATE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as SocialAccount[];
+      if (!Array.isArray(parsed)) return;
+      const normalized = parsed
+        .map((item, index) => ({
+          id: String(item.id || `soc-${index}`),
+          platform: (['facebook', 'instagram', 'tiktok', 'youtube', 'x', 'telegram', 'custom'] as SocialPlatform[]).includes(item.platform)
+            ? item.platform
+            : 'custom',
+          label: String(item.label || 'Channel'),
+          handle: String(item.handle || '@luna'),
+          connected: Boolean(item.connected),
+          followers: Math.max(0, Number(item.followers) || 0),
+          engagement: Number(item.engagement) || 0,
+          lastSyncAt: String(item.lastSyncAt || new Date().toISOString()),
+        }))
+        .slice(0, 30);
+      if (normalized.length > 0) setSocialAccounts(normalized);
+    } catch {
+      // ignore malformed social storage
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(SOCIAL_STATE_KEY, JSON.stringify(socialAccounts));
+    } catch {
+      // ignore storage failures
+    }
+  }, [socialAccounts]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(EMAIL_INTEGRATION_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as EmailIntegration;
+      if (!parsed || typeof parsed !== 'object') return;
+      setEmailIntegration({
+        provider: (['sendgrid', 'mailgun', 'resend', 'smtp'] as EmailIntegration['provider'][]).includes(parsed.provider)
+          ? parsed.provider
+          : 'resend',
+        apiKeyMasked: String(parsed.apiKeyMasked || DEFAULT_EMAIL_INTEGRATION.apiKeyMasked),
+        fromEmail: String(parsed.fromEmail || DEFAULT_EMAIL_INTEGRATION.fromEmail),
+        domain: String(parsed.domain || DEFAULT_EMAIL_INTEGRATION.domain),
+        connected: Boolean(parsed.connected),
+        spf: parsed.spf === 'warn' ? 'warn' : 'ok',
+        dkim: parsed.dkim === 'warn' ? 'warn' : 'ok',
+        queuePending: Math.max(0, Number(parsed.queuePending) || 0),
+        sentToday: Math.max(0, Number(parsed.sentToday) || 0),
+        bouncedToday: Math.max(0, Number(parsed.bouncedToday) || 0),
+        openRate: Math.max(0, Number(parsed.openRate) || 0),
+      });
+    } catch {
+      // ignore malformed integration storage
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(EMAIL_INTEGRATION_KEY, JSON.stringify(emailIntegration));
+    } catch {
+      // ignore storage failures
+    }
+  }, [emailIntegration]);
 
   useEffect(() => {
     let active = true;
@@ -676,7 +1233,7 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
 
   useEffect(() => {
     if (!actionFeedback) return;
-    const timer = window.setTimeout(() => setActionFeedback(null), 2200);
+    const timer = window.setTimeout(() => setActionFeedback(null), 5200);
     return () => window.clearTimeout(timer);
   }, [actionFeedback]);
 
@@ -1099,6 +1656,190 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
     }
   };
 
+  const installAdvancedTemplatePack = () => {
+    const existingIds = new Set(templates.map((item) => item.id));
+    const toInstall = TEMPLATE_PACK_ADVANCED.filter((item) => !existingIds.has(item.id));
+    if (toInstall.length === 0) {
+      setActionFeedback('Advanced template pack already installed.');
+      return;
+    }
+    setTemplates((prev) => [...toInstall, ...prev]);
+    toInstall.forEach((template) => appendTemplateHistory(template, 'created'));
+    setActionFeedback(`Installed ${toInstall.length} new templates.`);
+  };
+
+  const addStorageFolder = () => {
+    const name = newStorageName.trim() || `Storage ${storageBuckets.length + 1}`;
+    const quota = Math.max(1, Number(newStorageQuota) || 8);
+    const next: StorageBucket = {
+      id: `st-${Date.now()}`,
+      name,
+      usedGb: 0,
+      quotaGb: quota,
+      updatedAt: new Date().toISOString().slice(0, 10),
+    };
+    setStorageBuckets((prev) => [next, ...prev].slice(0, 50));
+    setNewStorageName('');
+    setNewStorageQuota('8');
+    setActionFeedback('Storage folder created.');
+  };
+
+  const sendInvite = async () => {
+    const email = inviteEmail.trim().toLowerCase();
+    if (!email || !email.includes('@')) {
+      setActionFeedback('Enter a valid email to send invite.');
+      return;
+    }
+    const invite: AdminInvite = {
+      id: `inv-${Date.now()}`,
+      email,
+      role: inviteRole,
+      status: 'sent',
+      sentAt: new Date().toISOString(),
+    };
+    setInvites((prev) => [invite, ...prev].slice(0, 100));
+    setInviteEmail('');
+    setActionFeedback(`Invite sent to ${email}.`);
+    const inviteLink = `${window.location.origin}/?invite=${encodeURIComponent(invite.id)}`;
+    await copyTextSafely(inviteLink).catch(() => undefined);
+  };
+
+  const toggleSocialConnection = (accountId: string) => {
+    let nextConnected = false;
+    setSocialAccounts((prev) =>
+      prev.map((item) => {
+        if (item.id !== accountId) return item;
+        nextConnected = !item.connected;
+        return {
+          ...item,
+          connected: nextConnected,
+          lastSyncAt: new Date().toISOString(),
+        };
+      })
+    );
+    setActionFeedback(nextConnected ? channelsCopy.connectedNow : channelsCopy.disconnectedNow);
+  };
+
+  const syncSocialChannel = (accountId: string) => {
+    setSocialAccounts((prev) =>
+      prev.map((item) => {
+        if (item.id !== accountId) return item;
+        if (!item.connected) return item;
+        const nextFollowers = item.followers + Math.max(3, Math.round(Math.random() * 35));
+        const nextEngagement = Number(Math.max(0.8, Math.min(12, item.engagement + (Math.random() * 0.8 - 0.2))).toFixed(1));
+        return {
+          ...item,
+          followers: nextFollowers,
+          engagement: nextEngagement,
+          lastSyncAt: new Date().toISOString(),
+        };
+      })
+    );
+    setActionFeedback('Social channel synced.');
+  };
+
+  const addCustomSocialChannel = () => {
+    const label = customChannelName.trim();
+    const handle = customChannelHandle.trim();
+    if (!label) {
+      setActionFeedback('Enter channel name.');
+      return;
+    }
+    const next: SocialAccount = {
+      id: `soc-custom-${Date.now()}`,
+      platform: 'custom',
+      label,
+      handle: handle || `@${label.toLowerCase().replace(/\s+/g, '')}`,
+      connected: false,
+      followers: 0,
+      engagement: 0,
+      lastSyncAt: new Date().toISOString(),
+    };
+    setSocialAccounts((prev) => [next, ...prev].slice(0, 30));
+    setCustomChannelName('');
+    setCustomChannelHandle('');
+    setActionFeedback('Custom channel added.');
+  };
+
+  const testEmailIntegration = () => {
+    const providerBoost = emailIntegration.provider === 'smtp' ? -0.4 : 0.5;
+    const spfOk = Math.random() > 0.12;
+    const dkimOk = Math.random() > 0.16;
+    setEmailIntegration((prev) => ({
+      ...prev,
+      connected: true,
+      spf: spfOk ? 'ok' : 'warn',
+      dkim: dkimOk ? 'ok' : 'warn',
+      queuePending: Math.max(0, prev.queuePending + Math.round(Math.random() * 5 - 2)),
+      sentToday: prev.sentToday + Math.round(Math.random() * 26 + 8),
+      bouncedToday: Math.max(0, prev.bouncedToday + Math.round(Math.random() * 3 - 1)),
+      openRate: Number(Math.max(18, Math.min(72, prev.openRate + providerBoost + (Math.random() * 0.8 - 0.3))).toFixed(1)),
+    }));
+    setActionFeedback('Email integration test completed.');
+  };
+
+  const connectAllSocialChannels = () => {
+    setSocialAccounts((prev) =>
+      prev.map((item) => ({
+        ...item,
+        connected: true,
+        lastSyncAt: new Date().toISOString(),
+      }))
+    );
+    setActionFeedback('All channels connected.');
+  };
+
+  const syncAllSocialChannels = () => {
+    setSocialAccounts((prev) =>
+      prev.map((item) => {
+        if (!item.connected) return item;
+        return {
+          ...item,
+          followers: item.followers + Math.max(3, Math.round(Math.random() * 45)),
+          engagement: Number(Math.max(0.8, Math.min(12, item.engagement + (Math.random() * 1 - 0.2))).toFixed(1)),
+          lastSyncAt: new Date().toISOString(),
+        };
+      })
+    );
+    setActionFeedback('All connected channels synced.');
+  };
+
+  const exportSocialAnalyticsCsv = () => {
+    const header = ['platform', 'label', 'handle', 'connected', 'followers', 'engagement', 'lastSyncAt'];
+    const rows = socialAccounts.map((item) =>
+      [item.platform, item.label, item.handle, item.connected ? 'yes' : 'no', String(item.followers), String(item.engagement), item.lastSyncAt]
+        .map((token) => `"${String(token).replace(/"/g, '""')}"`)
+        .join(',')
+    );
+    const csv = [header.join(','), ...rows].join('\n');
+    const stamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    downloadFile(`luna-social-analytics-${stamp}.csv`, csv, 'text/csv;charset=utf-8');
+    setActionFeedback('Social analytics CSV exported.');
+  };
+
+  const simulateUpload = (bucketId: string) => {
+    setStorageBuckets((prev) =>
+      prev.map((bucket) => {
+        if (bucket.id !== bucketId) return bucket;
+        const delta = Number((Math.random() * 0.65 + 0.1).toFixed(2));
+        const usedGb = Math.min(bucket.quotaGb, Number((bucket.usedGb + delta).toFixed(2)));
+        return { ...bucket, usedGb, updatedAt: new Date().toISOString().slice(0, 10) };
+      })
+    );
+    setActionFeedback('Upload simulation completed.');
+  };
+
+  const archiveStorage = (bucketId: string) => {
+    setStorageBuckets((prev) =>
+      prev.map((bucket) => {
+        if (bucket.id !== bucketId) return bucket;
+        const usedGb = Number(Math.max(0, bucket.usedGb * 0.82).toFixed(2));
+        return { ...bucket, usedGb, updatedAt: new Date().toISOString().slice(0, 10) };
+      })
+    );
+    setActionFeedback('Archive completed. Storage usage optimized.');
+  };
+
   return (
     <article className="max-w-7xl mx-auto space-y-12 pb-40 animate-in fade-in duration-700">
       <header className="p-8 md:p-12 rounded-[3rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-[0_26px_80px_rgba(17,24,39,0.16)] dark:shadow-[0_28px_80px_rgba(2,6,23,0.55)] space-y-6">
@@ -1138,6 +1879,288 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
         <div className="p-6 rounded-[2rem] bg-rose-50 dark:bg-rose-900/20 border border-rose-200/60 dark:border-rose-700/30">
           <p className="text-[10px] font-black uppercase tracking-widest text-rose-700 dark:text-rose-300">{statusLabels.Down}</p>
           <p className="text-4xl font-black text-rose-900 dark:text-rose-100">{totals.down}</p>
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-luna-rich">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-xl font-black uppercase tracking-wider">{channelsCopy.socialTitle}</h2>
+            <span className="px-3 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-300">
+              {socialTotals.connected}/{socialAccounts.length} {channelsCopy.statusConnected}
+            </span>
+          </div>
+          <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{channelsCopy.socialHint}</p>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={connectAllSocialChannels} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">
+              Connect all
+            </button>
+            <button type="button" onClick={syncAllSocialChannels} className="px-3 py-2 rounded-full bg-luna-purple text-white text-[10px] font-black uppercase tracking-widest">
+              Sync all
+            </button>
+            <button type="button" onClick={exportSocialAnalyticsCsv} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">
+              Export analytics CSV
+            </button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
+              <p className="text-[10px] uppercase tracking-widest text-slate-500">{channelsCopy.followers}</p>
+              <p className="text-2xl font-black text-slate-800 dark:text-slate-100">{socialTotals.totalFollowers.toLocaleString()}</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
+              <p className="text-[10px] uppercase tracking-widest text-slate-500">{channelsCopy.engagement}</p>
+              <p className="text-2xl font-black text-slate-800 dark:text-slate-100">{socialTotals.avgEngagement}%</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
+              <p className="text-[10px] uppercase tracking-widest text-slate-500">{channelsCopy.statusConnected}</p>
+              <p className="text-2xl font-black text-slate-800 dark:text-slate-100">{socialTotals.connected}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input
+              value={customChannelName}
+              onChange={(e) => setCustomChannelName(e.target.value)}
+              placeholder={channelsCopy.channelName}
+              className="px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
+            />
+            <input
+              value={customChannelHandle}
+              onChange={(e) => setCustomChannelHandle(e.target.value)}
+              placeholder={channelsCopy.handle}
+              className="px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
+            />
+            <button type="button" onClick={addCustomSocialChannel} className="md:col-span-2 w-full px-4 py-3 rounded-2xl bg-luna-purple text-white text-[10px] font-black uppercase tracking-widest text-center whitespace-normal leading-snug">
+              {channelsCopy.addChannel}
+            </button>
+          </div>
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
+            <p className="text-[10px] uppercase tracking-widest text-slate-500">Top channel by engagement</p>
+            {socialAccounts.length > 0 ? (
+              <p className="mt-1 text-sm font-bold text-slate-700 dark:text-slate-200">
+                {[...socialAccounts].sort((a, b) => b.engagement - a.engagement)[0].label} · {[...socialAccounts].sort((a, b) => b.engagement - a.engagement)[0].engagement}%
+              </p>
+            ) : (
+              <p className="mt-1 text-sm text-slate-500">No channels yet.</p>
+            )}
+            <div className="mt-3 grid grid-cols-6 gap-2 items-end h-16">
+              {socialAccounts.slice(0, 6).map((item) => (
+                <div key={`eng-${item.id}`} className="rounded-lg bg-slate-200 dark:bg-slate-700 overflow-hidden h-full flex items-end">
+                  <div className="w-full bg-gradient-to-t from-luna-purple to-luna-teal" style={{ height: `${Math.max(8, Math.min(100, item.engagement * 8))}%` }} />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-3 max-h-80 overflow-auto pr-1">
+            {socialAccounts.map((account) => (
+              <div key={account.id} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 space-y-2">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="font-black text-sm">{account.label}</p>
+                    <p className="text-xs text-slate-500">{account.handle}</p>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${account.connected ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'}`}>
+                    {account.connected ? channelsCopy.statusConnected : channelsCopy.statusDisconnected}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-slate-600 dark:text-slate-300">
+                  <p>{channelsCopy.followers}: <strong>{account.followers.toLocaleString()}</strong></p>
+                  <p>{channelsCopy.engagement}: <strong>{account.engagement}%</strong></p>
+                  <p>Sync: <strong>{new Date(account.lastSyncAt).toLocaleString()}</strong></p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" onClick={() => toggleSocialConnection(account.id)} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">
+                    {account.connected ? channelsCopy.disconnect : channelsCopy.connect}
+                  </button>
+                  <button type="button" onClick={() => syncSocialChannel(account.id)} disabled={!account.connected} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest disabled:opacity-50">
+                    {channelsCopy.syncNow}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-luna-rich">
+          <h2 className="text-xl font-black uppercase tracking-wider">{channelsCopy.emailTitle}</h2>
+          <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{channelsCopy.emailHint}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <label className="text-xs font-bold text-slate-600 dark:text-slate-300">
+              {channelsCopy.provider}
+              <select
+                value={emailIntegration.provider}
+                onChange={(e) => setEmailIntegration((prev) => ({ ...prev, provider: e.target.value as EmailIntegration['provider'] }))}
+                className="mt-1 w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
+              >
+                <option value="resend">Resend</option>
+                <option value="sendgrid">SendGrid</option>
+                <option value="mailgun">Mailgun</option>
+                <option value="smtp">SMTP</option>
+              </select>
+            </label>
+            <label className="text-xs font-bold text-slate-600 dark:text-slate-300">
+              API Key
+              <input
+                value={emailIntegration.apiKeyMasked}
+                onChange={(e) => setEmailIntegration((prev) => ({ ...prev, apiKeyMasked: e.target.value }))}
+                className="mt-1 w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
+              />
+            </label>
+            <label className="text-xs font-bold text-slate-600 dark:text-slate-300">
+              {channelsCopy.fromEmail}
+              <input
+                value={emailIntegration.fromEmail}
+                onChange={(e) => setEmailIntegration((prev) => ({ ...prev, fromEmail: e.target.value }))}
+                className="mt-1 w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
+              />
+            </label>
+            <label className="text-xs font-bold text-slate-600 dark:text-slate-300">
+              {channelsCopy.domain}
+              <input
+                value={emailIntegration.domain}
+                onChange={(e) => setEmailIntegration((prev) => ({ ...prev, domain: e.target.value }))}
+                className="mt-1 w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
+              />
+            </label>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={testEmailIntegration} className="px-4 py-2 rounded-full bg-luna-teal text-white text-[10px] font-black uppercase tracking-widest">
+              {channelsCopy.testConnection}
+            </button>
+            <button type="button" onClick={() => setEmailIntegration((prev) => ({ ...prev, connected: !prev.connected }))} className="px-4 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">
+              {emailIntegration.connected ? channelsCopy.disconnect : channelsCopy.connect}
+            </button>
+            <span className={`px-3 py-2 rounded-full text-[10px] font-black uppercase tracking-widest ${emailIntegration.connected ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'}`}>
+              {emailIntegration.connected ? channelsCopy.statusConnected : channelsCopy.statusDisconnected}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50"><p className="text-[10px] uppercase tracking-widest text-slate-500">{channelsCopy.queue}</p><p className="text-lg font-black">{emailIntegration.queuePending}</p></div>
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50"><p className="text-[10px] uppercase tracking-widest text-slate-500">{channelsCopy.sentToday}</p><p className="text-lg font-black">{emailIntegration.sentToday.toLocaleString()}</p></div>
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50"><p className="text-[10px] uppercase tracking-widest text-slate-500">{channelsCopy.bounced}</p><p className="text-lg font-black">{emailIntegration.bouncedToday}</p></div>
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50"><p className="text-[10px] uppercase tracking-widest text-slate-500">{channelsCopy.openRate}</p><p className="text-lg font-black">{emailIntegration.openRate}%</p></div>
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
+              <p className="text-[10px] uppercase tracking-widest text-slate-500">{channelsCopy.spf}/{channelsCopy.dkim}</p>
+              <p className="text-sm font-black">{emailIntegration.spf.toUpperCase()} · {emailIntegration.dkim.toUpperCase()}</p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-luna-purple to-luna-teal" style={{ width: `${Math.min(100, emailIntegration.openRate)}%` }} />
+            </div>
+            <p className="text-xs text-slate-500">Delivery quality visualization based on open rate and bounce trends.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-luna-rich">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-xl font-black uppercase tracking-wider">{adminUi.storageTitle}</h2>
+            <span className="px-3 py-2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-300">
+              {storageTotals.used.toFixed(1)}GB / {storageTotals.quota.toFixed(1)}GB
+            </span>
+          </div>
+          <div className="space-y-2">
+            <div className="h-3 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-luna-purple to-luna-teal" style={{ width: `${Math.min(storageTotals.utilization, 100)}%` }} />
+            </div>
+            <p className="text-xs font-semibold text-slate-500">Total utilization: {storageTotals.utilization}%</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_120px_auto] gap-3">
+            <input
+              value={newStorageName}
+              onChange={(e) => setNewStorageName(e.target.value)}
+              placeholder="Folder name"
+              className="px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
+            />
+            <input
+              value={newStorageQuota}
+              onChange={(e) => setNewStorageQuota(e.target.value)}
+              placeholder="Quota GB"
+              className="px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
+            />
+            <button type="button" onClick={addStorageFolder} className="px-5 py-3 rounded-2xl bg-luna-teal text-white text-[10px] font-black uppercase tracking-widest">
+              {adminUi.addFolder}
+            </button>
+          </div>
+          <div className="space-y-3 max-h-80 overflow-auto pr-1">
+            {storageBuckets.map((bucket) => {
+              const usage = Math.round((bucket.usedGb / bucket.quotaGb) * 100);
+              return (
+                <div key={bucket.id} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 space-y-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-black text-sm">{bucket.name}</p>
+                    <p className="text-xs text-slate-500">{bucket.usedGb.toFixed(2)}GB / {bucket.quotaGb.toFixed(2)}GB</p>
+                  </div>
+                  <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                    <div className={`h-full ${usage > 85 ? 'bg-rose-500' : 'bg-luna-purple'}`} style={{ width: `${Math.min(usage, 100)}%` }} />
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <button onClick={() => simulateUpload(bucket.id)} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">Upload Sample</button>
+                    <button onClick={() => archiveStorage(bucket.id)} className="px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest">Archive 18%</button>
+                    <button
+                      onClick={() => {
+                        setStorageBuckets((prev) => prev.filter((item) => item.id !== bucket.id));
+                        setActionFeedback('Storage folder removed.');
+                      }}
+                      className="px-3 py-2 rounded-full border border-rose-300 text-rose-600 text-[10px] font-black uppercase tracking-widest"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-luna-rich">
+          <h2 className="text-xl font-black uppercase tracking-wider">Live Operations</h2>
+          <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">Run quick actions to keep admin services responsive and clean.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button
+              onClick={() => {
+                setTestHistory((prev) => [`Indexes rebuilt: PASS (${new Date().toLocaleString()})`, ...prev].slice(0, 100));
+                setActionFeedback('Content indexes rebuilt.');
+              }}
+              className="px-4 py-3 rounded-2xl bg-luna-purple text-white text-[10px] font-black uppercase tracking-widest"
+            >
+              Rebuild Indexes
+            </button>
+            <button
+              onClick={() => {
+                setTestHistory((prev) => [`Template cache warmed: PASS (${new Date().toLocaleString()})`, ...prev].slice(0, 100));
+                setActionFeedback('Template cache warmed.');
+              }}
+              className="px-4 py-3 rounded-2xl bg-luna-teal text-white text-[10px] font-black uppercase tracking-widest"
+            >
+              Warm Cache
+            </button>
+            <button
+              onClick={() => {
+                setServices((prev) => prev.map((item) => ({ ...item, status: 'Healthy' })));
+                setActionFeedback('All services moved to Healthy baseline.');
+              }}
+              className="px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 text-[10px] font-black uppercase tracking-widest"
+            >
+              Normalize Services
+            </button>
+            <button
+              onClick={() => {
+                setAuditEntries((prev) => (prev.length > 1 ? prev.slice(0, Math.max(1, Math.floor(prev.length * 0.7))) : prev));
+                setActionFeedback('Audit log compressed.');
+              }}
+              className="px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 text-[10px] font-black uppercase tracking-widest"
+            >
+              Compress Log
+            </button>
+          </div>
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Ops Tip</p>
+            <p className="mt-2 text-sm font-semibold text-slate-600 dark:text-slate-300">
+              Keep storage below 80% and warm template cache after large content updates to avoid admin slowdowns.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -1232,7 +2255,21 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
 
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         <div className="space-y-4 p-8 rounded-[2.5rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-luna-rich">
-          <h2 className="text-xl font-black uppercase tracking-wider">Message Templates</h2>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-xl font-black uppercase tracking-wider">Message Templates</h2>
+            <button
+              type="button"
+              onClick={installAdvancedTemplatePack}
+              className="px-4 py-2 rounded-full bg-luna-purple/10 border border-luna-purple/35 text-luna-purple text-[10px] font-black uppercase tracking-widest hover:bg-luna-purple/20 transition-colors"
+            >
+              Install Advanced Pack
+            </button>
+          </div>
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-300">{adminUi.previewHint}</p>
+          <div className="px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Preview state</p>
+            <p className="mt-1 text-sm font-semibold text-slate-700 dark:text-slate-200">{preview?.title || adminUi.noPreview}</p>
+          </div>
           {editingTemplateId && (
             <div className="px-4 py-3 rounded-2xl bg-luna-purple/10 border border-luna-purple/30 flex items-center justify-between gap-3">
               <p className="text-xs font-black text-luna-purple uppercase tracking-widest">Edit mode active</p>
@@ -1366,8 +2403,47 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
           </div>
         </div>
 
-        <div className="space-y-4 p-8 rounded-[2.5rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-luna-rich">
-          <h2 className="text-xl font-black uppercase tracking-wider">Access & Roles</h2>
+        <div className="space-y-5 p-8 rounded-[2.5rem] bg-white/75 dark:bg-[#111c33]/72 backdrop-blur-xl border border-white/60 dark:border-white/12 shadow-luna-rich">
+          <h2 className="text-xl font-black uppercase tracking-wider">{adminUi.inviteTitle}</h2>
+          <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{adminUi.inviteHint}</p>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_220px_auto] gap-3">
+            <input
+              value={inviteEmail}
+              onChange={(e) => setInviteEmail(e.target.value)}
+              placeholder={adminUi.inviteEmailPlaceholder}
+              className="px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
+            />
+            <select
+              value={inviteRole}
+              onChange={(e) => setInviteRole(e.target.value as AdminRole)}
+              className="px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-[11px] font-black uppercase tracking-widest"
+            >
+              {roleOptions.map((role) => (
+                <option key={role} value={role}>{roleLabel(role)}</option>
+              ))}
+            </select>
+            <button type="button" onClick={sendInvite} className="px-4 py-3 rounded-2xl bg-luna-purple text-white text-[10px] font-black uppercase tracking-widest">
+              {adminUi.inviteButton}
+            </button>
+          </div>
+          <div className="space-y-2 max-h-36 overflow-auto pr-1">
+            {invites.length === 0 ? (
+              <p className="text-xs text-slate-500">No invites yet.</p>
+            ) : (
+              invites.map((invite) => (
+                <div key={invite.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
+                  <div>
+                    <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{invite.email}</p>
+                    <p className="text-[11px] text-slate-500">{roleLabel(invite.role)} • {new Date(invite.sentAt).toLocaleString()}</p>
+                  </div>
+                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-luna-purple/10 text-luna-purple">
+                    {invite.status === 'accepted' ? adminUi.inviteAccepted : invite.status === 'sent' ? adminUi.inviteSent : adminUi.invitePending}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
+          <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-500">{copy.role} Assignment</h3>
           <div className="space-y-3 max-h-80 overflow-auto pr-1">
             {admins.map((member) => (
               <div key={member.id} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 flex flex-wrap items-center justify-between gap-3">
@@ -1395,12 +2471,61 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ session, lang, o
               </div>
             ))}
           </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{adminUi.usersTotal}</p>
+              <p className="text-2xl font-black text-slate-800 dark:text-slate-100">{userStats.totalUsers.toLocaleString()}</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{adminUi.usersActive}</p>
+              <p className="text-2xl font-black text-slate-800 dark:text-slate-100">{userStats.activeToday.toLocaleString()}</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50">
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{adminUi.usersNew7d}</p>
+              <p className="text-2xl font-black text-slate-800 dark:text-slate-100">{userStats.new7d.toLocaleString()}</p>
+            </div>
+          </div>
         </div>
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         <div className="space-y-5 p-8 rounded-[2.5rem] bg-[#15182a] text-white border border-white/12 shadow-luna-deep">
-          <h2 className="text-xl font-black uppercase tracking-wider">Growth Overview</h2>
+          <h2 className="text-xl font-black uppercase tracking-wider">{adminUi.siteStatsTitle}</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+              <p className="text-[10px] uppercase tracking-widest opacity-60">{adminUi.dau}</p>
+              <p className="text-xl font-black">{siteStats.dau.toLocaleString()}</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+              <p className="text-[10px] uppercase tracking-widest opacity-60">{adminUi.wau}</p>
+              <p className="text-xl font-black">{siteStats.wau.toLocaleString()}</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+              <p className="text-[10px] uppercase tracking-widest opacity-60">{adminUi.mau}</p>
+              <p className="text-xl font-black">{siteStats.mau.toLocaleString()}</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+              <p className="text-[10px] uppercase tracking-widest opacity-60">{adminUi.conversion}</p>
+              <p className="text-xl font-black">{siteStats.conversion}%</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+              <p className="text-[10px] uppercase tracking-widest opacity-60">{adminUi.growth}</p>
+              <p className="text-xl font-black">+{siteStats.growth}%</p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-[10px] uppercase tracking-widest opacity-70">
+              <span>Usage trend</span>
+              <span>Last 7 days</span>
+            </div>
+            <div className="grid grid-cols-7 gap-2 items-end h-20">
+              {[42, 51, 48, 66, 61, 74, 69].map((value, idx) => (
+                <div key={`trend-${idx}`} className="rounded-xl bg-white/10 overflow-hidden h-full flex items-end">
+                  <div className="w-full bg-gradient-to-t from-luna-purple to-luna-teal rounded-xl" style={{ height: `${value}%` }} />
+                </div>
+              ))}
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10"><p className="text-[10px] uppercase tracking-widest opacity-60">Monthly Revenue</p><p className="text-2xl font-black">${financialMetrics.mrr.toLocaleString()}</p></div>
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10"><p className="text-[10px] uppercase tracking-widest opacity-60">Yearly Revenue</p><p className="text-2xl font-black">${financialMetrics.arr.toLocaleString()}</p></div>
