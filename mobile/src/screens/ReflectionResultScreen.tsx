@@ -6,12 +6,14 @@ import { defaultContextSignal, defaultReflectionResult } from '../data/mockData'
 import { colors } from '../theme/tokens';
 
 export function ReflectionResultScreen({
+  userName,
   onSeeRhythm,
   onSave,
   onShare,
   onBackToday,
   hasPattern = true,
 }: {
+  userName: string;
   onSeeRhythm: () => void;
   onSave: () => void;
   onShare: () => void;
@@ -21,7 +23,7 @@ export function ReflectionResultScreen({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerWrap}>
-        <Text style={styles.greeting}>Good evening, Anna</Text>
+        <Text style={styles.greeting}>Good evening, {userName}</Text>
         <Text style={styles.subline}>Here is your reflection.</Text>
       </View>
 
@@ -40,10 +42,10 @@ export function ReflectionResultScreen({
 
       <SurfaceCard>
         <Text style={styles.cardTitle}>Today</Text>
-        <Text style={styles.text}>Cycle{"\n"}{defaultContextSignal.cycle}</Text>
-        <Text style={styles.text}>Energy{"\n"}{defaultContextSignal.energy}</Text>
-        <Text style={styles.text}>Mood{"\n"}{defaultContextSignal.mood}</Text>
-        <Text style={styles.text}>Sleep{"\n"}{defaultContextSignal.sleep}</Text>
+        <Text style={styles.text}>Cycle: {defaultContextSignal.cycle}</Text>
+        <Text style={styles.text}>Energy: {defaultContextSignal.energy}</Text>
+        <Text style={styles.text}>Mood: {defaultContextSignal.mood}</Text>
+        <Text style={styles.text}>Sleep: {defaultContextSignal.sleep}</Text>
       </SurfaceCard>
 
       <SurfaceCard>

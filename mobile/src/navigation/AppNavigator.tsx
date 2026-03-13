@@ -10,10 +10,11 @@ import { YouScreen } from '../screens/YouScreen';
 import { YourStoryScreen } from '../screens/YourStoryScreen';
 import { colors } from '../theme/tokens';
 import { AppView, TabKey } from '../types';
+import { useLunaState } from '../state/useLunaState';
 
 export function AppNavigator() {
   const [view, setView] = useState<AppView>({ type: 'onboarding' });
-  const [reflectionCount, setReflectionCount] = useState(0);
+  const { userName, reflectionCount, storyEntries, insightStage, addReflection } = useLunaState();
 
   function openTab(tab: TabKey) {
     setView({ type: 'tabs', tab });
@@ -24,20 +25,21 @@ export function AppNavigator() {
   }
 
   function openResult() {
-    setReflectionCount((count) => count + 1);
+    addReflection('You shared that the day felt full and emotionally heavy.');
     setView({ type: 'result' });
   }
 
   function handleQuickCheckIn() {
-    Alert.alert('Luna', 'Quick check-in is prepared for the next phase.');
+    Alert.alert('Luna', 'Quick check-in: medium energy, sensitive mood, shorter sleep.');
+    addReflection('Quick check-in captured: medium energy and sensitive mood.');
   }
 
   function handleWrite() {
-    Alert.alert('Luna', 'Write flow is prepared for the next phase.');
+    Alert.alert('Luna', 'Write flow is the next step.');
   }
 
   function handleSkip() {
-    Alert.alert('Luna', 'Skipped for today.');
+    Alert.alert('Luna', 'Skipped for today. You can return tonight.');
   }
 
   function handleSave() {
@@ -45,7 +47,7 @@ export function AppNavigator() {
   }
 
   function handleShare() {
-    Alert.alert('Luna', 'Share flow is prepared for the next phase.');
+    Alert.alert('Luna', 'Share flow is prepared for next phase.');
   }
 
   const activeTab = useMemo<TabKey>(() => {
@@ -61,18 +63,18 @@ export function AppNavigator() {
     }
 
     if (view.tab === 'story') {
-      return <YourStoryScreen />;
+      return <YourStoryScreen entries={storyEntries} />;
     }
 
     if (view.tab === 'rhythm') {
-      return <RhythmScreen />;
+      return <RhythmScreen stage={insightStage} />;
     }
 
-    return <YouScreen />;
-  }, [view]);
+    return <YouScreen dayOfMonth={new Date().getDate()} />;
+  }, [insightStage, storyEntries, view]);
 
   if (view.type === 'onboarding') {
-    return <OnboardingScreen onBegin={() => openTab('today')} />;
+    return <OnboardingScreen onBeginVoice={openVoice} onComplete={() => openTab('today')} />;
   }
 
   if (view.type === 'voice') {
@@ -82,6 +84,7 @@ export function AppNavigator() {
   if (view.type === 'result') {
     return (
       <ReflectionResultScreen
+        userName={userName}
         onSeeRhythm={() => openTab('rhythm')}
         onSave={handleSave}
         onShare={handleShare}
