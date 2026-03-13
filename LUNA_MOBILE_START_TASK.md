@@ -13,6 +13,8 @@ And keep the website ready for real store badges/links.
 - Website supports App Store / Google Play links via env vars:
   - `VITE_APP_STORE_URL`
   - `VITE_GOOGLE_PLAY_URL`
+- Mobile token auth + session flow is implemented (`/api/mobile/auth/*`).
+- Mobile API endpoints are aligned between local and production runtimes (`/api/mobile/*`).
 
 ## Phase 1 — Project identity and release config
 1. Set final app identifiers in `mobile/app.json`:

@@ -14,6 +14,7 @@ const CONTACTS_FILE = path.join(DATA_DIR, 'contact-submissions.json');
 const SESSIONS_FILE = path.join(DATA_DIR, 'sessions.json');
 const PRIVACY_REQUESTS_FILE = path.join(DATA_DIR, 'privacy-requests.json');
 const BILLING_STATE_FILE = path.join(DATA_DIR, 'billing-state.json');
+const MOBILE_REFLECTIONS_FILE = path.join(DATA_DIR, 'mobile-reflections.json');
 
 const SESSION_COOKIE = 'luna_sid';
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
@@ -134,6 +135,83 @@ const normalizeName = (email, fallback = 'Luna Member') => {
 };
 
 const safeText = (value, max = 5000) => String(value || '').replace(/[<>]/g, '').trim().slice(0, max);
+const safeId = (value, max = 120) => String(value || '').replace(/[^a-zA-Z0-9:_-]/g, '').trim().slice(0, max);
+
+const createMobileProfile = (name = 'Anna') => ({
+  name: safeText(name, 80) || 'Anna',
+  entries: [],
+  updatedAt: new Date().toISOString(),
+});
+
+const sanitizeMobileState = (raw) => {
+  if (!raw || typeof raw !== 'object') return { profiles: {} };
+  const profilesRaw = raw.profiles && typeof raw.profiles === 'object' ? raw.profiles : {};
+  const profiles = {};
+
+  for (const [key, value] of Object.entries(profilesRaw)) {
+    const profileKey = safeId(key, 160);
+    if (!profileKey || !value || typeof value !== 'object') continue;
+
+    const entriesRaw = Array.isArray(value.entries) ? value.entries : [];
+    const entries = entriesRaw
+      .map((item) => {
+        const id = safeText(item?.id, 120);
+        const at = safeText(item?.at, 64) || new Date().toISOString();
+        const mode = ['voice', 'quick_checkin', 'write'].includes(item?.mode) ? item.mode : 'voice';
+        const text = safeText(item?.text, 500);
+        if (!id || !text) return null;
+        return { id, at, mode, text };
+      })
+      .filter(Boolean)
+      .slice(0, 200);
+
+    profiles[profileKey] = {
+      name: safeText(value.name, 80) || 'Anna',
+      entries,
+      updatedAt: safeText(value.updatedAt, 64) || new Date().toISOString(),
+    };
+  }
+
+  return { profiles };
+};
+
+const mapStoryEntries = (entries = []) =>
+  entries.slice(0, 4).map((entry, index) => ({
+    id: entry.id,
+    label: index === 0 ? 'Today' : index === 1 ? 'Yesterday' : index === 2 ? '3 days ago' : 'Earlier',
+    text: entry.text,
+  }));
+
+const buildPatternByCount = (count) => {
+  if (count >= 30) {
+    return 'Your energy tends to dip before your cycle. Sleep affects mood during the week.';
+  }
+  if (count >= 7) {
+    return 'Your energy often drops a couple of days before your cycle.';
+  }
+  return 'Luna is still learning about you. The more you reflect, the clearer your rhythm becomes.';
+};
+
+const buildTodayExplanation = (count) => {
+  if (count >= 30) return 'Today may feel slower before your cycle. A calm evening can help you reset.';
+  if (count >= 7) return 'Today may feel a little slower. Sleep was shorter last night and your body is in the luteal phase.';
+  return 'Today may feel a little slower while Luna learns your rhythm day by day.';
+};
+
+const buildReflectionSummary = (lastEntryText) => {
+  if (!lastEntryText) {
+    return [
+      'You sounded a little tired today.',
+      'You mentioned pressure at work.',
+      'Your sleep was shorter than usual.',
+    ];
+  }
+  return [
+    'Luna heard your reflection today.',
+    lastEntryText,
+    'Your words suggest the day asked a lot from you.',
+  ];
+};
 
 const readJson = async (filePath, fallback) => {
   try {
@@ -457,12 +535,37 @@ const getSessionUser = async (req, users) => {
   return { token, user };
 };
 
+const getSessionByToken = (token, users) => {
+  if (!token) return null;
+  const session = sessions.get(token);
+  if (!session) return null;
+  if (session.expiresAt < Date.now()) {
+    sessions.delete(token);
+    return null;
+  }
+
+  const user = users.find((item) => item.id === session.userId);
+  if (!user) {
+    sessions.delete(token);
+    return null;
+  }
+
+  return { token, user };
+};
+
+const getMobileAuthUser = (req, users) => {
+  const auth = String(req.headers.authorization || '').trim();
+  if (!auth.toLowerCase().startsWith('bearer ')) return null;
+  const token = auth.slice('bearer '.length).trim();
+  return getSessionByToken(token, users);
+};
+
 const corsHeaders = (origin) => {
   if (!origin || !ALLOWED_ORIGINS.has(origin)) return {};
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Credentials': 'true',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-luna-mobile-id',
     'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
     Vary: 'Origin',
   };
@@ -797,6 +900,7 @@ const start = async () => {
   if (!Array.isArray(privacyRequests)) privacyRequests = [];
   let billingState = await readJson(BILLING_STATE_FILE, {});
   if (!billingState || typeof billingState !== 'object') billingState = {};
+  let mobileReflections = sanitizeMobileState(await readJson(MOBILE_REFLECTIONS_FILE, { profiles: {} }));
   const storedSessions = parseStoredSessions(await readJson(SESSIONS_FILE, []));
   for (const item of storedSessions) {
     sessions.set(item.token, { userId: item.userId, expiresAt: item.expiresAt });
@@ -809,6 +913,32 @@ const start = async () => {
   const saveSessions = async () => writeJson(SESSIONS_FILE, serializeSessions());
   const savePrivacyRequests = async () => writeJson(PRIVACY_REQUESTS_FILE, privacyRequests);
   const saveBillingState = async () => writeJson(BILLING_STATE_FILE, billingState);
+  const saveMobileReflections = async () => writeJson(MOBILE_REFLECTIONS_FILE, mobileReflections);
+
+  const resolveMobileProfile = async (req, ip) => {
+    const cookieSession = await getSessionUser(req, users);
+    const bearerSession = getMobileAuthUser(req, users);
+    const mobileAuth = cookieSession || bearerSession;
+    const mobileIdHeader = safeId(req.headers['x-luna-mobile-id'], 160);
+    const profileKey = mobileAuth?.user?.id
+      ? `user:${safeId(mobileAuth.user.id, 120)}`
+      : mobileIdHeader
+        ? `device:${mobileIdHeader}`
+        : `guest:${safeId(ip, 120)}`;
+
+    const defaultName = mobileAuth?.user?.name ? safeText(mobileAuth.user.name, 80) : 'Anna';
+    if (!mobileReflections.profiles[profileKey]) {
+      mobileReflections.profiles[profileKey] = createMobileProfile(defaultName);
+      await saveMobileReflections();
+    }
+
+    const profile = mobileReflections.profiles[profileKey];
+    if (!profile.name && defaultName) {
+      profile.name = defaultName;
+    }
+
+    return { profile, profileKey };
+  };
 
   let didBootstrapSuperAdmin = false;
   for (const email of SUPER_ADMIN_EMAILS) {
@@ -881,6 +1011,202 @@ const start = async () => {
       const verbose = ['1', 'true', 'yes'].includes(String(url.searchParams.get('verbose') || '').toLowerCase());
       const payload = await buildHealthPayload({ verbose });
       send(res, payload.ok ? 200 : 503, payload, headers);
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/mobile/auth/session') {
+      const current = getMobileAuthUser(req, users);
+      if (!current) {
+        send(res, 200, { session: null }, headers);
+        return;
+      }
+      send(res, 200, { session: buildSessionPayload(current.user) }, headers);
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/mobile/auth/signup') {
+      if (!rateLimit(`mobile-signup:${ip}`, 12, 60_000)) {
+        send(res, 429, { error: 'Too many signup attempts. Try again in a minute.' }, headers);
+        return;
+      }
+
+      try {
+        const body = await readBody(req);
+        const email = normalizeEmail(body.email);
+        const password = String(body.password || '');
+        const name = typeof body.name === 'string' && body.name.trim() ? safeText(body.name, 120) : normalizeName(email, 'Luna Member');
+
+        if (!email || !email.includes('@')) {
+          send(res, 400, { error: 'Provide a valid email.' }, headers);
+          return;
+        }
+        if (password.length < 8) {
+          send(res, 400, { error: 'Password must contain at least 8 characters.' }, headers);
+          return;
+        }
+        if (users.some((item) => item.email === email)) {
+          send(res, 409, { error: 'Account already exists. Please sign in.' }, headers);
+          return;
+        }
+
+        const user = {
+          id: randomBytes(12).toString('hex'),
+          email,
+          name,
+          passwordHash: hashPassword(password),
+          createdAt: new Date().toISOString(),
+          roleOverride: null,
+          lastProvider: 'password',
+          avatarUrl: undefined,
+        };
+        users = [user, ...users];
+        await saveUsers();
+
+        const token = createSession(user);
+        await saveSessions();
+        send(res, 200, { session: buildSessionPayload(user), token }, headers);
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Unable to sign up.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/mobile/auth/signin') {
+      if (!rateLimit(`mobile-signin:${ip}`, 24, 60_000)) {
+        send(res, 429, { error: 'Too many login attempts. Try again in a minute.' }, headers);
+        return;
+      }
+
+      try {
+        const body = await readBody(req);
+        const email = normalizeEmail(body.email);
+        const password = String(body.password || '');
+        const user = users.find((item) => item.email === email);
+        if (!user || !verifyPassword(password, user.passwordHash)) {
+          send(res, 401, { error: 'Invalid credentials.' }, headers);
+          return;
+        }
+
+        user.lastProvider = 'password';
+        const token = createSession(user);
+        await saveUsers();
+        await saveSessions();
+        send(res, 200, { session: buildSessionPayload(user), token }, headers);
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Unable to sign in.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/mobile/auth/logout') {
+      const current = getMobileAuthUser(req, users);
+      if (current) {
+        sessions.delete(current.token);
+        await saveSessions();
+      }
+      send(res, 200, { ok: true }, headers);
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/mobile/today') {
+      const { profile } = await resolveMobileProfile(req, ip);
+      const storyEntries = mapStoryEntries(profile.entries);
+      send(
+        res,
+        200,
+        {
+          userName: profile.name || 'Anna',
+          title: 'Today with Luna',
+          explanation: buildTodayExplanation(profile.entries.length),
+          continuity: storyEntries[1]?.text ? `Yesterday you said: ${storyEntries[1].text}` : 'Yesterday you said work felt heavy.',
+          context: {
+            cycle: 'Day 17 · Luteal phase',
+            energy: 'Lower today',
+            mood: 'Sensitive',
+            sleep: '6h 20m',
+          },
+        },
+        headers,
+      );
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/mobile/reflection-result') {
+      const { profile } = await resolveMobileProfile(req, ip);
+      const latest = profile.entries[0];
+      send(
+        res,
+        200,
+        {
+          shortSummary: buildReflectionSummary(latest?.text || ''),
+          suggestion: ['Take a slower evening.', 'Try to rest a little earlier tonight.'],
+          continuity: profile.entries[1]?.text ? `Yesterday you said: ${profile.entries[1].text}` : 'Yesterday you said work felt heavy.',
+          pattern: buildPatternByCount(profile.entries.length),
+        },
+        headers,
+      );
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/mobile/story') {
+      const { profile } = await resolveMobileProfile(req, ip);
+      send(
+        res,
+        200,
+        {
+          entries: mapStoryEntries(profile.entries),
+        },
+        headers,
+      );
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/mobile/reflection') {
+      if (!rateLimit(`mobile-reflection:${ip}`, 40, 60_000)) {
+        send(res, 429, { error: 'Too many reflection updates. Try again in a minute.' }, headers);
+        return;
+      }
+
+      try {
+        const body = await readBody(req);
+        const mode = ['voice', 'quick_checkin', 'write'].includes(body.mode) ? body.mode : 'voice';
+        const text = safeText(body.text || '', 500);
+        if (!text) {
+          send(res, 400, { error: 'Reflection text is required.' }, headers);
+          return;
+        }
+
+        const { profile } = await resolveMobileProfile(req, ip);
+        profile.entries = [
+          {
+            id: `mob-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            at: new Date().toISOString(),
+            mode,
+            text,
+          },
+          ...(Array.isArray(profile.entries) ? profile.entries : []),
+        ].slice(0, 200);
+        profile.updatedAt = new Date().toISOString();
+        await saveMobileReflections();
+
+        send(
+          res,
+          200,
+          {
+            ok: true,
+            entries: mapStoryEntries(profile.entries),
+            reflection: {
+              shortSummary: buildReflectionSummary(text),
+              suggestion: ['Take a slower evening.', 'Try to rest a little earlier tonight.'],
+              continuity: profile.entries[1]?.text ? `Yesterday you said: ${profile.entries[1].text}` : 'Yesterday you said work felt heavy.',
+              pattern: buildPatternByCount(profile.entries.length),
+            },
+          },
+          headers,
+        );
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Could not save reflection.' }, headers);
+      }
       return;
     }
 

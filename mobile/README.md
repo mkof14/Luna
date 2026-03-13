@@ -1,8 +1,8 @@
-# Luna Mobile (Phase 1)
+# Luna Mobile (Phase 2)
 
 Real native mobile app (Expo + React Native), prepared for iOS and Android release.
 
-## Phase 1 scope
+## Implemented scope
 Implemented now:
 - Expo app setup
 - Simple app navigation structure
@@ -19,6 +19,7 @@ Implemented now:
 - Session/device-aware backend persistence for story + reflection context
 - Push reminder integration via `expo-notifications` (permissions + daily local schedule)
 - Mobile auth/session via token-based endpoints (`/api/mobile/auth/*`) with secure token storage
+- Backend contract parity for local/prod APIs (`server/index.mjs` and `api/index.mjs`) on `/api/mobile/*`
 
 Prepared placeholders:
 - Onboarding (minimal entry)
@@ -57,6 +58,10 @@ Configured in `app.json` / `eas.json` for future App Store and Google Play relea
 - `npm run build:all`
 - `npm run submit:ios`
 - `npm run submit:android`
+
+## Docs
+- `docs/RELEASE_DRY_RUN.md`
+- `docs/MOBILE_API_CONTRACT.md`
 
 ## Website store badges
 Web project supports:
