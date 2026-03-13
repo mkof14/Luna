@@ -12,6 +12,7 @@ export function TodayScreen({
   explanation,
   continuity,
   context,
+  remoteError,
   loading,
   onRefresh,
   onSpeak,
@@ -24,6 +25,7 @@ export function TodayScreen({
   explanation: string;
   continuity: string;
   context: ContextSignal;
+  remoteError?: string;
   loading?: boolean;
   onRefresh?: () => void;
   onSpeak: () => void;
@@ -43,6 +45,12 @@ export function TodayScreen({
         <Text style={styles.sectionTitle}>{title}</Text>
         <Text style={styles.explainer}>{explanation}</Text>
       </View>
+
+      {remoteError ? (
+        <SurfaceCard style={styles.errorCard}>
+          <Text style={styles.errorText}>{remoteError}</Text>
+        </SurfaceCard>
+      ) : null}
 
       <SurfaceCard>
         <Text style={styles.cardTitle}>Today’s reflection</Text>
@@ -166,6 +174,16 @@ const styles = StyleSheet.create({
     marginTop: 3,
     fontSize: 14,
     color: colors.textPrimary,
+    fontWeight: '600',
+  },
+  errorCard: {
+    borderColor: '#e5c2cf',
+    backgroundColor: '#fff3f8',
+  },
+  errorText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#9d4d67',
     fontWeight: '600',
   },
 });

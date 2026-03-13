@@ -21,6 +21,11 @@ And keep the website ready for real store badges/links.
   - Quick check-in
   - Reflection Result
   - Basic rhythm context
+- Phase 4 foundation added:
+  - offline/error messaging in daily flow
+  - runtime logging hooks
+  - QA production checklist
+  - privacy/permissions notes
 
 ## Phase 1 — Project identity and release config
 1. Set final app identifiers in `mobile/app.json`:

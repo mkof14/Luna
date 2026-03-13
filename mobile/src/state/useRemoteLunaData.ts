@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { continuityMessage, defaultContextSignal, defaultReflectionResult, storyEntriesSeed } from '../data/mockData';
 import { fetchReflectionResult, fetchStoryThread, fetchTodayView, submitReflection, TodayViewPayload } from '../services/api';
+import { logError } from '../services/logger';
 import { ReflectionPayload, StoryEntry } from '../types';
 
 const fallbackToday: TodayViewPayload = {
@@ -16,11 +17,13 @@ export function useRemoteLunaData() {
   const [reflection, setReflection] = useState<ReflectionPayload>(defaultReflectionResult);
   const [thread, setThread] = useState<StoryEntry[]>(storyEntriesSeed);
   const [loading, setLoading] = useState(false);
+  const [remoteError, setRemoteError] = useState('');
 
   const [mobileId] = useState(() => `device-${Math.random().toString(36).slice(2, 10)}`);
 
   const loadRemoteData = useCallback(async () => {
     setLoading(true);
+    setRemoteError('');
     try {
       const [todayData, reflectionData, storyData] = await Promise.all([
         fetchTodayView(mobileId),
@@ -30,8 +33,9 @@ export function useRemoteLunaData() {
       setToday(todayData);
       setReflection(reflectionData);
       setThread(storyData.entries);
-    } catch {
-      // Keep local fallback data when backend is not connected yet.
+    } catch (error) {
+      logError('Failed to load remote mobile data', { error: error instanceof Error ? error.message : String(error) });
+      setRemoteError('Using offline snapshot right now. Pull to refresh when connection is back.');
     } finally {
       setLoading(false);
     }
@@ -67,7 +71,10 @@ export function useRemoteLunaData() {
         const payload = await submitReflection({ mobileId, mode, text });
         setThread(payload.entries);
         setReflection(payload.reflection);
-      } catch {
+        setRemoteError('');
+      } catch (error) {
+        logError('Failed to sync reflection', { mode, error: error instanceof Error ? error.message : String(error) });
+        setRemoteError('Saved locally. We will sync this when connection is back.');
         prependStoryEntry(text);
       }
     },
@@ -80,11 +87,12 @@ export function useRemoteLunaData() {
       reflection,
       thread,
       loading,
+      remoteError,
       refresh: loadRemoteData,
       prependStoryEntry,
       syncReflection,
     }),
-    [today, reflection, thread, loading, loadRemoteData, prependStoryEntry, syncReflection],
+    [today, reflection, thread, loading, remoteError, loadRemoteData, prependStoryEntry, syncReflection],
   );
 
   return value;

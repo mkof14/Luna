@@ -63,6 +63,8 @@ Configured in `app.json` / `eas.json` for future App Store and Google Play relea
 ## Docs
 - `docs/RELEASE_DRY_RUN.md`
 - `docs/MOBILE_API_CONTRACT.md`
+- `docs/QA_PRODUCTION_READINESS.md`
+- `docs/PRIVACY_PERMISSIONS.md`
 
 ## Website store badges
 Web project supports:

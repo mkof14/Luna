@@ -20,7 +20,7 @@ export function AppNavigator() {
   const auth = useMobileAuth();
   const [view, setView] = useState<AppView>({ type: 'onboarding' });
   const { reflectionCount, insightStage, addReflection } = useLunaState();
-  const { today, reflection, thread, loading, refresh, syncReflection } = useRemoteLunaData();
+  const { today, reflection, thread, loading, remoteError, refresh, syncReflection } = useRemoteLunaData();
 
   function openTab(tab: TabKey) {
     setView({ type: 'tabs', tab });
@@ -81,6 +81,7 @@ export function AppNavigator() {
           explanation={today.explanation}
           continuity={today.continuity}
           context={today.context}
+          remoteError={remoteError}
           loading={loading}
           onRefresh={refresh}
           onSpeak={openVoice}
@@ -100,7 +101,7 @@ export function AppNavigator() {
     }
 
     return <YouScreen dayOfMonth={new Date().getDate()} onSignOut={auth.signOut} />;
-  }, [view, today, loading, refresh, thread, insightStage, auth.signOut]);
+  }, [view, today, remoteError, loading, refresh, thread, insightStage, auth.signOut]);
 
   if (auth.loading) {
     return <AuthScreen onSignIn={auth.signIn} onSignUp={auth.signUp} error="" />;

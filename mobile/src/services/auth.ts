@@ -1,6 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
 import { env, hasApiBaseUrl } from '../config/env';
 import { setMobileAuthToken } from './api';
+import { logError, logInfo, logWarn } from './logger';
 
 const TOKEN_KEY = 'luna_mobile_token';
 
@@ -50,8 +51,10 @@ export async function restoreMobileSession(): Promise<MobileSession | null> {
 
   try {
     const data = await requestAuth('/api/mobile/auth/session', undefined, 'GET');
+    logInfo('Session restored');
     return data?.session || null;
   } catch {
+    logWarn('Session restore failed. Clearing local token.');
     await SecureStore.deleteItemAsync(TOKEN_KEY);
     setMobileAuthToken('');
     return null;
@@ -59,23 +62,37 @@ export async function restoreMobileSession(): Promise<MobileSession | null> {
 }
 
 export async function signInMobile(email: string, password: string): Promise<MobileSession> {
-  const data = (await requestAuth('/api/mobile/auth/signin', { email, password })) as AuthResponse;
-  await SecureStore.setItemAsync(TOKEN_KEY, data.token);
-  setMobileAuthToken(data.token);
-  return data.session;
+  try {
+    const data = (await requestAuth('/api/mobile/auth/signin', { email, password })) as AuthResponse;
+    await SecureStore.setItemAsync(TOKEN_KEY, data.token);
+    setMobileAuthToken(data.token);
+    logInfo('Signed in', { email });
+    return data.session;
+  } catch (error) {
+    logError('Sign in failed', { email, error: error instanceof Error ? error.message : String(error) });
+    throw error;
+  }
 }
 
 export async function signUpMobile(name: string, email: string, password: string): Promise<MobileSession> {
-  const data = (await requestAuth('/api/mobile/auth/signup', { name, email, password })) as AuthResponse;
-  await SecureStore.setItemAsync(TOKEN_KEY, data.token);
-  setMobileAuthToken(data.token);
-  return data.session;
+  try {
+    const data = (await requestAuth('/api/mobile/auth/signup', { name, email, password })) as AuthResponse;
+    await SecureStore.setItemAsync(TOKEN_KEY, data.token);
+    setMobileAuthToken(data.token);
+    logInfo('Signed up', { email });
+    return data.session;
+  } catch (error) {
+    logError('Sign up failed', { email, error: error instanceof Error ? error.message : String(error) });
+    throw error;
+  }
 }
 
 export async function signOutMobile(): Promise<void> {
   try {
     await requestAuth('/api/mobile/auth/logout', {});
+    logInfo('Signed out');
   } catch {
+    logWarn('Logout request failed. Clearing local token anyway.');
     // ignore network failure on logout
   }
   await SecureStore.deleteItemAsync(TOKEN_KEY);
