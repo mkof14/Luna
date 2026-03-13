@@ -70,7 +70,7 @@ export function AppNavigator() {
     if (view.tab === 'today') {
       return (
         <TodayScreen
-          userName={today.userName}
+          userName={auth.session?.name || today.userName}
           title={today.title}
           explanation={today.explanation}
           continuity={today.continuity}

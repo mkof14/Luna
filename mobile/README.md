@@ -35,12 +35,23 @@ Onboarding -> Today -> Voice Reflection -> Reflection Result -> Back to Today / 
 3. `npm run start`
 4. `npm run ios` / `npm run android`
 
+## Production env
+- Copy `mobile/.env.production.example` -> `mobile/.env.production`
+- Set production API URL before release builds.
+
 ## Release readiness
 Configured in `app.json` / `eas.json` for future App Store and Google Play release.
 
 ## CI build pipeline
 - GitHub Actions workflow: `.github/workflows/mobile-eas-build.yml`
 - Requires repo secret: `EXPO_TOKEN`
+
+## Release scripts
+- `npm run build:ios`
+- `npm run build:android`
+- `npm run build:all`
+- `npm run submit:ios`
+- `npm run submit:android`
 
 ## Website store badges
 Web project supports:
