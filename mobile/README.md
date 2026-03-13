@@ -15,6 +15,8 @@ Implemented now:
   - `/api/mobile/today`
   - `/api/mobile/reflection-result`
   - `/api/mobile/story`
+  - `/api/mobile/reflection` (POST)
+- Session/device-aware backend persistence for story + reflection context
 - Push reminder integration via `expo-notifications` (permissions + daily local schedule)
 
 Prepared placeholders:

@@ -14,15 +14,33 @@ export type StoryThreadPayload = {
   entries: StoryEntry[];
 };
 
-async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
+export type SubmitReflectionInput = {
+  mobileId: string;
+  mode: 'voice' | 'quick_checkin' | 'write';
+  text: string;
+};
+
+export type SubmitReflectionPayload = {
+  ok: boolean;
+  entries: StoryEntry[];
+  reflection: ReflectionPayload;
+};
+
+async function requestJson<T>(path: string, init?: RequestInit, mobileId?: string): Promise<T> {
   if (!hasApiBaseUrl) {
     throw new Error('Missing EXPO_PUBLIC_API_BASE_URL');
   }
 
+  const headers = new Headers(init?.headers || {});
+  headers.set('Accept', 'application/json');
+  if (mobileId) {
+    headers.set('x-luna-mobile-id', mobileId);
+  }
+
   const response = await fetch(`${env.apiBaseUrl}${path}`, {
     method: 'GET',
-    headers: { Accept: 'application/json' },
     ...init,
+    headers,
   });
 
   if (!response.ok) {
@@ -32,7 +50,7 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
   return (await response.json()) as T;
 }
 
-export async function fetchTodayView(): Promise<TodayViewPayload> {
+export async function fetchTodayView(mobileId?: string): Promise<TodayViewPayload> {
   if (!hasApiBaseUrl) {
     return {
       userName: 'Anna',
@@ -43,21 +61,44 @@ export async function fetchTodayView(): Promise<TodayViewPayload> {
     };
   }
 
-  return requestJson<TodayViewPayload>('/api/mobile/today');
+  return requestJson<TodayViewPayload>('/api/mobile/today', undefined, mobileId);
 }
 
-export async function fetchReflectionResult(): Promise<ReflectionPayload> {
+export async function fetchReflectionResult(mobileId?: string): Promise<ReflectionPayload> {
   if (!hasApiBaseUrl) {
     return defaultReflectionResult;
   }
 
-  return requestJson<ReflectionPayload>('/api/mobile/reflection-result');
+  return requestJson<ReflectionPayload>('/api/mobile/reflection-result', undefined, mobileId);
 }
 
-export async function fetchStoryThread(): Promise<StoryThreadPayload> {
+export async function fetchStoryThread(mobileId?: string): Promise<StoryThreadPayload> {
   if (!hasApiBaseUrl) {
     return { entries: storyEntriesSeed };
   }
 
-  return requestJson<StoryThreadPayload>('/api/mobile/story');
+  return requestJson<StoryThreadPayload>('/api/mobile/story', undefined, mobileId);
+}
+
+export async function submitReflection(input: SubmitReflectionInput): Promise<SubmitReflectionPayload> {
+  if (!hasApiBaseUrl) {
+    return {
+      ok: true,
+      entries: storyEntriesSeed,
+      reflection: defaultReflectionResult,
+    };
+  }
+
+  return requestJson<SubmitReflectionPayload>(
+    '/api/mobile/reflection',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        mode: input.mode,
+        text: input.text,
+      }),
+    },
+    input.mobileId,
+  );
 }

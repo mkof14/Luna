@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { continuityMessage, defaultContextSignal, defaultReflectionResult, storyEntriesSeed } from '../data/mockData';
-import { fetchReflectionResult, fetchStoryThread, fetchTodayView, TodayViewPayload } from '../services/api';
+import { fetchReflectionResult, fetchStoryThread, fetchTodayView, submitReflection, TodayViewPayload } from '../services/api';
 import { ReflectionPayload, StoryEntry } from '../types';
 
 const fallbackToday: TodayViewPayload = {
@@ -17,13 +17,15 @@ export function useRemoteLunaData() {
   const [thread, setThread] = useState<StoryEntry[]>(storyEntriesSeed);
   const [loading, setLoading] = useState(false);
 
+  const [mobileId] = useState(() => `device-${Math.random().toString(36).slice(2, 10)}`);
+
   const loadRemoteData = useCallback(async () => {
     setLoading(true);
     try {
       const [todayData, reflectionData, storyData] = await Promise.all([
-        fetchTodayView(),
-        fetchReflectionResult(),
-        fetchStoryThread(),
+        fetchTodayView(mobileId),
+        fetchReflectionResult(mobileId),
+        fetchStoryThread(mobileId),
       ]);
       setToday(todayData);
       setReflection(reflectionData);
@@ -33,7 +35,7 @@ export function useRemoteLunaData() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [mobileId]);
 
   useEffect(() => {
     void loadRemoteData();
@@ -59,6 +61,19 @@ export function useRemoteLunaData() {
     });
   }, []);
 
+  const syncReflection = useCallback(
+    async (mode: 'voice' | 'quick_checkin' | 'write', text: string) => {
+      try {
+        const payload = await submitReflection({ mobileId, mode, text });
+        setThread(payload.entries);
+        setReflection(payload.reflection);
+      } catch {
+        prependStoryEntry(text);
+      }
+    },
+    [mobileId, prependStoryEntry],
+  );
+
   const value = useMemo(
     () => ({
       today,
@@ -67,8 +82,9 @@ export function useRemoteLunaData() {
       loading,
       refresh: loadRemoteData,
       prependStoryEntry,
+      syncReflection,
     }),
-    [today, reflection, thread, loading, loadRemoteData, prependStoryEntry],
+    [today, reflection, thread, loading, loadRemoteData, prependStoryEntry, syncReflection],
   );
 
   return value;

@@ -16,7 +16,7 @@ import { useRemoteLunaData } from '../state/useRemoteLunaData';
 export function AppNavigator() {
   const [view, setView] = useState<AppView>({ type: 'onboarding' });
   const { reflectionCount, insightStage, addReflection } = useLunaState();
-  const { today, reflection, thread, loading, refresh, prependStoryEntry } = useRemoteLunaData();
+  const { today, reflection, thread, loading, refresh, syncReflection } = useRemoteLunaData();
 
   function openTab(tab: TabKey) {
     setView({ type: 'tabs', tab });
@@ -29,7 +29,7 @@ export function AppNavigator() {
   function openResult() {
     const entry = 'You shared that the day felt full and emotionally heavy.';
     addReflection(entry);
-    prependStoryEntry(entry);
+    void syncReflection('voice', entry);
     setView({ type: 'result' });
   }
 
@@ -37,7 +37,7 @@ export function AppNavigator() {
     Alert.alert('Luna', 'Quick check-in: medium energy, sensitive mood, shorter sleep.');
     const entry = 'Quick check-in captured: medium energy and sensitive mood.';
     addReflection(entry);
-    prependStoryEntry(entry);
+    void syncReflection('quick_checkin', entry);
   }
 
   function handleWrite() {
@@ -91,7 +91,7 @@ export function AppNavigator() {
     }
 
     return <YouScreen dayOfMonth={new Date().getDate()} />;
-  }, [view, today, loading, refresh, handleQuickCheckIn, handleWrite, handleSkip, thread, insightStage]);
+  }, [view, today, loading, refresh, thread, insightStage]);
 
   if (view.type === 'onboarding') {
     return <OnboardingScreen onBeginVoice={openVoice} onComplete={() => openTab('today')} />;
