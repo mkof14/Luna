@@ -2065,6 +2065,8 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
             <button onClick={() => setActivePage('ritual')} className={`text-[1.02rem] transition-colors ${theme === 'dark' ? (activePage === 'ritual' ? 'text-violet-100' : 'text-violet-100/70 hover:text-violet-100') : (activePage === 'ritual' ? 'text-slate-900' : 'text-slate-600 hover:text-slate-900')}`}>{publicHomeNavLabels.ritual}</button>
             <span className={`${theme === 'dark' ? 'text-violet-100/35' : 'text-slate-400'}`}>·</span>
             <button onClick={() => setActivePage('map')} className={`text-[1.02rem] transition-colors ${theme === 'dark' ? (activePage === 'map' ? 'text-violet-100' : 'text-violet-100/70 hover:text-violet-100') : (activePage === 'map' ? 'text-slate-900' : 'text-slate-600 hover:text-slate-900')}`}>{publicHomeNavLabels.map}</button>
+            <span className={`${theme === 'dark' ? 'text-violet-100/35' : 'text-slate-400'}`}>·</span>
+            <button onClick={() => setActivePage('pricing')} className={`text-[1.02rem] transition-colors ${theme === 'dark' ? (activePage === 'pricing' ? 'text-violet-100' : 'text-violet-100/70 hover:text-violet-100') : (activePage === 'pricing' ? 'text-slate-900' : 'text-slate-600 hover:text-slate-900')}`}>{pricingLabelByLang[lang] || 'Pricing'}</button>
           </nav>
           <div className="hidden md:flex items-center gap-2">
             <LanguageSelector current={lang} onSelect={setLang} />
