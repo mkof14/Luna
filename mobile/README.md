@@ -10,6 +10,8 @@ Implemented now:
 - Today screen (implemented)
 - Voice Reflection screen (implemented)
 - Reflection Result screen (implemented)
+- Remote data layer with fallback (`today`, `reflection`, `story`)
+- Push reminder scaffolding service (permission + schedule placeholders)
 
 Prepared placeholders:
 - Onboarding (minimal entry)

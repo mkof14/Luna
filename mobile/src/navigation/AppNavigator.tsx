@@ -11,10 +11,12 @@ import { YourStoryScreen } from '../screens/YourStoryScreen';
 import { colors } from '../theme/tokens';
 import { AppView, TabKey } from '../types';
 import { useLunaState } from '../state/useLunaState';
+import { useRemoteLunaData } from '../state/useRemoteLunaData';
 
 export function AppNavigator() {
   const [view, setView] = useState<AppView>({ type: 'onboarding' });
-  const { userName, reflectionCount, storyEntries, insightStage, addReflection } = useLunaState();
+  const { reflectionCount, insightStage, addReflection } = useLunaState();
+  const { today, reflection, thread, loading, refresh, prependStoryEntry } = useRemoteLunaData();
 
   function openTab(tab: TabKey) {
     setView({ type: 'tabs', tab });
@@ -25,13 +27,17 @@ export function AppNavigator() {
   }
 
   function openResult() {
-    addReflection('You shared that the day felt full and emotionally heavy.');
+    const entry = 'You shared that the day felt full and emotionally heavy.';
+    addReflection(entry);
+    prependStoryEntry(entry);
     setView({ type: 'result' });
   }
 
   function handleQuickCheckIn() {
     Alert.alert('Luna', 'Quick check-in: medium energy, sensitive mood, shorter sleep.');
-    addReflection('Quick check-in captured: medium energy and sensitive mood.');
+    const entry = 'Quick check-in captured: medium energy and sensitive mood.';
+    addReflection(entry);
+    prependStoryEntry(entry);
   }
 
   function handleWrite() {
@@ -59,11 +65,25 @@ export function AppNavigator() {
     if (view.type !== 'tabs') return null;
 
     if (view.tab === 'today') {
-      return <TodayScreen onSpeak={openVoice} onQuickCheckIn={handleQuickCheckIn} onWrite={handleWrite} onSkip={handleSkip} />;
+      return (
+        <TodayScreen
+          userName={today.userName}
+          title={today.title}
+          explanation={today.explanation}
+          continuity={today.continuity}
+          context={today.context}
+          loading={loading}
+          onRefresh={refresh}
+          onSpeak={openVoice}
+          onQuickCheckIn={handleQuickCheckIn}
+          onWrite={handleWrite}
+          onSkip={handleSkip}
+        />
+      );
     }
 
     if (view.tab === 'story') {
-      return <YourStoryScreen entries={storyEntries} />;
+      return <YourStoryScreen entries={thread} />;
     }
 
     if (view.tab === 'rhythm') {
@@ -71,7 +91,7 @@ export function AppNavigator() {
     }
 
     return <YouScreen dayOfMonth={new Date().getDate()} />;
-  }, [insightStage, storyEntries, view]);
+  }, [view, today, loading, refresh, handleQuickCheckIn, handleWrite, handleSkip, thread, insightStage]);
 
   if (view.type === 'onboarding') {
     return <OnboardingScreen onBeginVoice={openVoice} onComplete={() => openTab('today')} />;
@@ -84,7 +104,9 @@ export function AppNavigator() {
   if (view.type === 'result') {
     return (
       <ReflectionResultScreen
-        userName={userName}
+        userName={today.userName}
+        reflection={reflection}
+        context={today.context}
         onSeeRhythm={() => openTab('rhythm')}
         onSave={handleSave}
         onShare={handleShare}

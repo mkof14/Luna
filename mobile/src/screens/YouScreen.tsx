@@ -1,13 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { getReminderPreview } from '../features/reminders';
 import { freeFeatures, paidFeatures } from '../features/subscription';
+import {
+  getReminderPermissionState,
+  requestReminderPermission,
+  scheduleEveningReflectionReminder,
+  type ReminderPermissionState,
+} from '../services/notifications';
 import { colors } from '../theme/tokens';
 
 export function YouScreen({ dayOfMonth }: { dayOfMonth: number }) {
   const reminder = getReminderPreview(dayOfMonth);
+  const [permission, setPermission] = useState<ReminderPermissionState>('undetermined');
+
+  useEffect(() => {
+    void (async () => {
+      const state = await getReminderPermissionState();
+      setPermission(state);
+    })();
+  }, []);
+
+  async function enableReminders() {
+    const state = await requestReminderPermission();
+    setPermission(state);
+    if (state === 'granted') {
+      await scheduleEveningReflectionReminder();
+    }
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -21,6 +43,8 @@ export function YouScreen({ dayOfMonth }: { dayOfMonth: number }) {
       <SurfaceCard>
         <Text style={styles.cardTitle}>Reminder preview</Text>
         <Text style={styles.text}>{reminder}</Text>
+        <Text style={styles.meta}>Push permission: {permission}</Text>
+        <LunaButton variant="secondary" onPress={enableReminders}>Enable evening reminders</LunaButton>
       </SurfaceCard>
 
       <SurfaceCard>
@@ -62,6 +86,10 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     color: colors.textSecondary,
+  },
+  meta: {
+    fontSize: 12,
+    color: colors.textMuted,
   },
   stack: {
     gap: 4,

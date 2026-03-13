@@ -2,11 +2,13 @@ import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
 import { SurfaceCard } from '../components/SurfaceCard';
-import { defaultContextSignal, defaultReflectionResult } from '../data/mockData';
 import { colors } from '../theme/tokens';
+import { ContextSignal, ReflectionPayload } from '../types';
 
 export function ReflectionResultScreen({
   userName,
+  reflection,
+  context,
   onSeeRhythm,
   onSave,
   onShare,
@@ -14,6 +16,8 @@ export function ReflectionResultScreen({
   hasPattern = true,
 }: {
   userName: string;
+  reflection: ReflectionPayload;
+  context: ContextSignal;
   onSeeRhythm: () => void;
   onSave: () => void;
   onShare: () => void;
@@ -28,31 +32,31 @@ export function ReflectionResultScreen({
       </View>
 
       <SurfaceCard>
-        {defaultReflectionResult.shortSummary.map((line) => (
+        {reflection.shortSummary.map((line) => (
           <Text key={line} style={styles.text}>{line}</Text>
         ))}
       </SurfaceCard>
 
       <SurfaceCard>
         <Text style={styles.cardTitle}>A small suggestion for tonight</Text>
-        {defaultReflectionResult.suggestion.map((line) => (
+        {reflection.suggestion.map((line) => (
           <Text key={line} style={styles.text}>{line}</Text>
         ))}
       </SurfaceCard>
 
       <SurfaceCard>
         <Text style={styles.cardTitle}>Today</Text>
-        <Text style={styles.text}>Cycle: {defaultContextSignal.cycle}</Text>
-        <Text style={styles.text}>Energy: {defaultContextSignal.energy}</Text>
-        <Text style={styles.text}>Mood: {defaultContextSignal.mood}</Text>
-        <Text style={styles.text}>Sleep: {defaultContextSignal.sleep}</Text>
+        <Text style={styles.text}>Cycle: {context.cycle}</Text>
+        <Text style={styles.text}>Energy: {context.energy}</Text>
+        <Text style={styles.text}>Mood: {context.mood}</Text>
+        <Text style={styles.text}>Sleep: {context.sleep}</Text>
       </SurfaceCard>
 
       <SurfaceCard>
         <Text style={styles.cardTitle}>Something Luna is starting to notice</Text>
         <Text style={styles.text}>
           {hasPattern
-            ? defaultReflectionResult.pattern
+            ? reflection.pattern
             : 'Luna is still learning about you. The more you reflect, the clearer your rhythm becomes.'}
         </Text>
       </SurfaceCard>

@@ -1,30 +1,63 @@
 import { env, hasApiBaseUrl } from '../config/env';
+import { continuityMessage, defaultContextSignal, defaultReflectionResult, storyEntriesSeed } from '../data/mockData';
+import { ContextSignal, ReflectionPayload, StoryEntry } from '../types';
 
-export type DailyMirrorPayload = {
-  cycleSummary: string;
-  energy: string;
-  mood: string;
-  sleep: string;
+export type TodayViewPayload = {
+  userName: string;
+  title: string;
+  explanation: string;
+  continuity: string;
+  context: ContextSignal;
 };
 
-export async function fetchDailyMirror(): Promise<DailyMirrorPayload> {
+export type StoryThreadPayload = {
+  entries: StoryEntry[];
+};
+
+async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
   if (!hasApiBaseUrl) {
-    return {
-      cycleSummary: 'Day 17 · Luteal phase',
-      energy: 'Lower today',
-      mood: 'Sensitive',
-      sleep: '6h 20m',
-    };
+    throw new Error('Missing EXPO_PUBLIC_API_BASE_URL');
   }
 
-  const response = await fetch(`${env.apiBaseUrl}/api/mobile/today-mirror`, {
+  const response = await fetch(`${env.apiBaseUrl}${path}`, {
     method: 'GET',
     headers: { Accept: 'application/json' },
+    ...init,
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to load today mirror: ${response.status}`);
+    throw new Error(`Request failed: ${response.status}`);
   }
 
-  return (await response.json()) as DailyMirrorPayload;
+  return (await response.json()) as T;
+}
+
+export async function fetchTodayView(): Promise<TodayViewPayload> {
+  if (!hasApiBaseUrl) {
+    return {
+      userName: 'Anna',
+      title: 'Today with Luna',
+      explanation: 'Today may feel a little slower. Sleep was shorter last night and your body is in the luteal phase.',
+      continuity: continuityMessage,
+      context: defaultContextSignal,
+    };
+  }
+
+  return requestJson<TodayViewPayload>('/api/mobile/today');
+}
+
+export async function fetchReflectionResult(): Promise<ReflectionPayload> {
+  if (!hasApiBaseUrl) {
+    return defaultReflectionResult;
+  }
+
+  return requestJson<ReflectionPayload>('/api/mobile/reflection-result');
+}
+
+export async function fetchStoryThread(): Promise<StoryThreadPayload> {
+  if (!hasApiBaseUrl) {
+    return { entries: storyEntriesSeed };
+  }
+
+  return requestJson<StoryThreadPayload>('/api/mobile/story');
 }

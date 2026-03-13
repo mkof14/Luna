@@ -2,15 +2,30 @@ import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
 import { SurfaceCard } from '../components/SurfaceCard';
-import { continuityMessage, defaultContextSignal, eveningQuestions } from '../data/mockData';
+import { eveningQuestions } from '../data/mockData';
 import { colors } from '../theme/tokens';
+import { ContextSignal } from '../types';
 
 export function TodayScreen({
+  userName,
+  title,
+  explanation,
+  continuity,
+  context,
+  loading,
+  onRefresh,
   onSpeak,
   onQuickCheckIn,
   onWrite,
   onSkip,
 }: {
+  userName: string;
+  title: string;
+  explanation: string;
+  continuity: string;
+  context: ContextSignal;
+  loading?: boolean;
+  onRefresh?: () => void;
   onSpeak: () => void;
   onQuickCheckIn: () => void;
   onWrite: () => void;
@@ -24,12 +39,9 @@ export function TodayScreen({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerWrap}>
-        <Text style={styles.greeting}>Good evening, Anna</Text>
-        <Text style={styles.sectionTitle}>Today with Luna</Text>
-        <Text style={styles.explainer}>
-          Today may feel a little slower.{"\n"}
-          Sleep was shorter last night and your body is in the luteal phase.
-        </Text>
+        <Text style={styles.greeting}>Good evening, {userName}</Text>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        <Text style={styles.explainer}>{explanation}</Text>
       </View>
 
       <SurfaceCard>
@@ -37,6 +49,9 @@ export function TodayScreen({
         <View style={styles.actionsRow}>
           <LunaButton onPress={onSpeak}>Speak to Luna</LunaButton>
           <LunaButton variant="secondary" onPress={onQuickCheckIn}>Quick check-in</LunaButton>
+          {onRefresh ? (
+            <LunaButton variant="ghost" onPress={onRefresh}>{loading ? 'Refreshing...' : 'Refresh'}</LunaButton>
+          ) : null}
         </View>
       </SurfaceCard>
 
@@ -45,26 +60,26 @@ export function TodayScreen({
         <View style={styles.signalGrid}>
           <View style={styles.signalPill}>
             <Text style={styles.signalLabel}>Cycle</Text>
-            <Text style={styles.signalValue}>{defaultContextSignal.cycle}</Text>
+            <Text style={styles.signalValue}>{context.cycle}</Text>
           </View>
           <View style={styles.signalPill}>
             <Text style={styles.signalLabel}>Energy</Text>
-            <Text style={styles.signalValue}>{defaultContextSignal.energy}</Text>
+            <Text style={styles.signalValue}>{context.energy}</Text>
           </View>
           <View style={styles.signalPill}>
             <Text style={styles.signalLabel}>Mood</Text>
-            <Text style={styles.signalValue}>{defaultContextSignal.mood}</Text>
+            <Text style={styles.signalValue}>{context.mood}</Text>
           </View>
           <View style={styles.signalPill}>
             <Text style={styles.signalLabel}>Sleep</Text>
-            <Text style={styles.signalValue}>{defaultContextSignal.sleep}</Text>
+            <Text style={styles.signalValue}>{context.sleep}</Text>
           </View>
         </View>
       </SurfaceCard>
 
       <SurfaceCard>
         <Text style={styles.cardTitle}>Continuity</Text>
-        <Text style={styles.detail}>{continuityMessage}</Text>
+        <Text style={styles.detail}>{continuity}</Text>
         <Text style={styles.detailStrong}>How does today feel compared to yesterday?</Text>
       </SurfaceCard>
 
