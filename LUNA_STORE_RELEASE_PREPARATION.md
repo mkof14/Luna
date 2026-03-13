@@ -75,6 +75,9 @@ Goal: Prepare Luna for future release to Apple App Store and Google Play.
 0. Run preflight first (inside `mobile/`):
    - `npm run release:preflight`
    - See `mobile/docs/RELEASE_DRY_RUN.md`
+   - Finalize metadata/assets check:
+     - `mobile/docs/STORE_LISTING_TEMPLATE.md`
+     - `mobile/docs/STORE_ASSETS_CHECKLIST.md`
 1. Build iOS:
    - `npx eas build --platform ios --profile production`
 2. Build Android:
@@ -83,6 +86,8 @@ Goal: Prepare Luna for future release to Apple App Store and Google Play.
    - `npx eas submit --platform ios --profile production`
 4. Submit Android:
    - `npx eas submit --platform android --profile production`
+5. Optional GitHub Actions submit workflow:
+   - `.github/workflows/mobile-eas-submit.yml`
 
 ## Phase F — Website store button activation
 After store pages are live:

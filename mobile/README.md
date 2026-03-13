@@ -65,6 +65,8 @@ Configured in `app.json` / `eas.json` for future App Store and Google Play relea
 - `docs/MOBILE_API_CONTRACT.md`
 - `docs/QA_PRODUCTION_READINESS.md`
 - `docs/PRIVACY_PERMISSIONS.md`
+- `docs/STORE_LISTING_TEMPLATE.md`
+- `docs/STORE_ASSETS_CHECKLIST.md`
 
 ## Website store badges
 Web project supports:

@@ -8,6 +8,12 @@ npm run release:preflight
 npm run typecheck
 ```
 
+Confirm supporting docs are ready:
+- `docs/QA_PRODUCTION_READINESS.md`
+- `docs/PRIVACY_PERMISSIONS.md`
+- `docs/STORE_LISTING_TEMPLATE.md`
+- `docs/STORE_ASSETS_CHECKLIST.md`
+
 ## 2) EAS auth check
 
 ```bash

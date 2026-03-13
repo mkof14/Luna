@@ -21,17 +21,28 @@ if (app?.expo) {
   const bundleId = app.expo?.ios?.bundleIdentifier || '';
   const androidPackage = app.expo?.android?.package || '';
   const projectId = app.expo?.extra?.eas?.projectId || '';
+  const appName = app.expo?.name || '';
+  const appSlug = app.expo?.slug || '';
+  const appScheme = app.expo?.scheme || '';
 
   if (!bundleId || bundleId === 'com.luna.mobile') {
     warnings.push('iOS bundleIdentifier is still default (com.luna.mobile).');
+  } else if (!/^[a-zA-Z0-9]+(\.[a-zA-Z0-9_-]+)+$/.test(bundleId)) {
+    failures.push('iOS bundleIdentifier format looks invalid.');
   }
 
   if (!androidPackage || androidPackage === 'com.luna.mobile') {
     warnings.push('Android package is still default (com.luna.mobile).');
+  } else if (!/^[a-zA-Z0-9]+(\.[a-zA-Z0-9_]+)+$/.test(androidPackage)) {
+    failures.push('Android package format looks invalid.');
   }
 
   if (!projectId || String(projectId).includes('REPLACE_WITH_EAS_PROJECT_ID')) {
     failures.push('EAS projectId is missing in app.json (expo.extra.eas.projectId).');
+  }
+
+  if (!appName || !appSlug || !appScheme) {
+    failures.push('Missing one of required app identity fields: expo.name, expo.slug, expo.scheme.');
   }
 } else {
   failures.push('Missing expo config in app.json.');
@@ -39,6 +50,9 @@ if (app?.expo) {
 
 if (!eas?.build?.production) {
   failures.push('Missing production profile in eas.json.');
+}
+if (!eas?.submit?.production) {
+  failures.push('Missing production submit profile in eas.json.');
 }
 
 const envProdPath = path.join(root, '.env.production');

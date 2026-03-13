@@ -1,0 +1,65 @@
+name: Mobile EAS Submit
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Submit platform
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - ios
+          - android
+      profile:
+        description: EAS submit profile
+        required: true
+        default: production
+        type: choice
+        options:
+          - production
+
+jobs:
+  eas-submit:
+    runs-on: ubuntu-latest
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      ASC_APP_ID: ${{ secrets.ASC_APP_ID }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Expo and EAS
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Preflight
+        run: npm run release:preflight
+
+      - name: Submit iOS
+        if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'ios' }}
+        run: npx eas submit --platform ios --profile ${{ github.event.inputs.profile }} --non-interactive
+
+      - name: Submit Android
+        if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'android' }}
+        run: npx eas submit --platform android --profile ${{ github.event.inputs.profile }} --non-interactive

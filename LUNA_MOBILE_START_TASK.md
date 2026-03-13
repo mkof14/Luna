@@ -26,6 +26,9 @@ And keep the website ready for real store badges/links.
   - runtime logging hooks
   - QA production checklist
   - privacy/permissions notes
+- Phase 5 preparation added:
+  - GitHub Actions submit workflow for EAS (`mobile-eas-submit.yml`)
+  - Store metadata and assets templates/checklists
 
 ## Phase 1 — Project identity and release config
 1. Set final app identifiers in `mobile/app.json`:
