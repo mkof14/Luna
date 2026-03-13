@@ -18,6 +18,7 @@ Implemented now:
   - `/api/mobile/reflection` (POST)
 - Session/device-aware backend persistence for story + reflection context
 - Push reminder integration via `expo-notifications` (permissions + daily local schedule)
+- Mobile auth/session via token-based endpoints (`/api/mobile/auth/*`) with secure token storage
 
 Prepared placeholders:
 - Onboarding (minimal entry)
@@ -36,6 +37,10 @@ Onboarding -> Today -> Voice Reflection -> Reflection Result -> Back to Today / 
 
 ## Release readiness
 Configured in `app.json` / `eas.json` for future App Store and Google Play release.
+
+## CI build pipeline
+- GitHub Actions workflow: `.github/workflows/mobile-eas-build.yml`
+- Requires repo secret: `EXPO_TOKEN`
 
 ## Website store badges
 Web project supports:

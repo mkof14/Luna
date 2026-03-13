@@ -12,7 +12,7 @@ import {
 } from '../services/notifications';
 import { colors } from '../theme/tokens';
 
-export function YouScreen({ dayOfMonth }: { dayOfMonth: number }) {
+export function YouScreen({ dayOfMonth, onSignOut }: { dayOfMonth: number; onSignOut: () => Promise<void> }) {
   const reminder = getReminderPreview(dayOfMonth);
   const [permission, setPermission] = useState<ReminderPermissionState>('undetermined');
 
@@ -54,6 +54,11 @@ export function YouScreen({ dayOfMonth }: { dayOfMonth: number }) {
         <Text style={styles.blockTitle}>Paid later</Text>
         <View style={styles.stack}>{paidFeatures.map((item) => <Text key={item} style={styles.text}>• {item}</Text>)}</View>
         <LunaButton variant="secondary" onPress={() => {}}>Unlock deeper insights</LunaButton>
+      </SurfaceCard>
+
+      <SurfaceCard>
+        <Text style={styles.cardTitle}>Account</Text>
+        <LunaButton variant="ghost" onPress={() => void onSignOut()}>Sign out</LunaButton>
       </SurfaceCard>
     </ScrollView>
   );

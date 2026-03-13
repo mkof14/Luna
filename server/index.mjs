@@ -501,12 +501,37 @@ const getSessionUser = async (req, users) => {
   return { token, user };
 };
 
+const getSessionByToken = (token, users) => {
+  if (!token) return null;
+  const session = sessions.get(token);
+  if (!session) return null;
+  if (session.expiresAt < Date.now()) {
+    sessions.delete(token);
+    return null;
+  }
+
+  const user = users.find((item) => item.id === session.userId);
+  if (!user) {
+    sessions.delete(token);
+    return null;
+  }
+
+  return { token, user };
+};
+
+const getMobileAuthUser = (req, users) => {
+  const auth = String(req.headers.authorization || '').trim();
+  if (!auth.toLowerCase().startsWith('bearer ')) return null;
+  const token = auth.slice('bearer '.length).trim();
+  return getSessionByToken(token, users);
+};
+
 const corsHeaders = (origin) => {
   if (!origin || !ALLOWED_ORIGINS.has(origin)) return {};
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Credentials': 'true',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-luna-mobile-id',
     'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
     Vary: 'Origin',
   };
@@ -820,15 +845,17 @@ const start = async () => {
   const saveMobileReflections = async () => writeJson(MOBILE_REFLECTIONS_FILE, mobileReflections);
 
   const resolveMobileProfile = async (req, ip) => {
-    const current = await getSessionUser(req, users);
+    const cookieSession = await getSessionUser(req, users);
+    const bearerSession = getMobileAuthUser(req, users);
+    const mobileAuth = cookieSession || bearerSession;
     const mobileIdHeader = safeId(req.headers['x-luna-mobile-id'], 160);
-    const profileKey = current?.user?.id
-      ? `user:${safeId(current.user.id, 120)}`
+    const profileKey = mobileAuth?.user?.id
+      ? `user:${safeId(mobileAuth.user.id, 120)}`
       : mobileIdHeader
         ? `device:${mobileIdHeader}`
         : `guest:${safeId(ip, 120)}`;
 
-    const defaultName = current?.user?.name ? safeText(current.user.name, 80) : 'Anna';
+    const defaultName = mobileAuth?.user?.name ? safeText(mobileAuth.user.name, 80) : 'Anna';
     if (!mobileReflections.profiles[profileKey]) {
       mobileReflections.profiles[profileKey] = createMobileProfile(defaultName);
       await saveMobileReflections();
@@ -914,6 +941,100 @@ const start = async () => {
       const verbose = ['1', 'true', 'yes'].includes(String(url.searchParams.get('verbose') || '').toLowerCase());
       const payload = await buildHealthPayload({ verbose });
       send(res, payload.ok ? 200 : 503, payload, headers);
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/mobile/auth/session') {
+      const current = getMobileAuthUser(req, users);
+      if (!current) {
+        send(res, 200, { session: null }, headers);
+        return;
+      }
+      send(res, 200, { session: buildSessionPayload(current.user) }, headers);
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/mobile/auth/signup') {
+      if (!rateLimit(`mobile-signup:${ip}`, 12, 60_000)) {
+        send(res, 429, { error: 'Too many signup attempts. Try again in a minute.' }, headers);
+        return;
+      }
+
+      try {
+        const body = await readBody(req);
+        const email = normalizeEmail(body.email);
+        const password = String(body.password || '');
+        const name = typeof body.name === 'string' && body.name.trim() ? safeText(body.name, 120) : normalizeName(email, 'Luna Member');
+
+        if (!email || !email.includes('@')) {
+          send(res, 400, { error: 'Provide a valid email.' }, headers);
+          return;
+        }
+        if (password.length < 8) {
+          send(res, 400, { error: 'Password must contain at least 8 characters.' }, headers);
+          return;
+        }
+        if (users.some((item) => item.email === email)) {
+          send(res, 409, { error: 'Account already exists. Please sign in.' }, headers);
+          return;
+        }
+
+        const user = {
+          id: randomBytes(12).toString('hex'),
+          email,
+          name,
+          passwordHash: hashPassword(password),
+          createdAt: new Date().toISOString(),
+          roleOverride: null,
+          lastProvider: 'password',
+          avatarUrl: undefined,
+        };
+        users = [user, ...users];
+        await saveUsers();
+
+        const token = createSession(user);
+        await saveSessions();
+        send(res, 200, { session: buildSessionPayload(user), token }, headers);
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Unable to sign up.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/mobile/auth/signin') {
+      if (!rateLimit(`mobile-signin:${ip}`, 24, 60_000)) {
+        send(res, 429, { error: 'Too many login attempts. Try again in a minute.' }, headers);
+        return;
+      }
+
+      try {
+        const body = await readBody(req);
+        const email = normalizeEmail(body.email);
+        const password = String(body.password || '');
+        const user = users.find((item) => item.email === email);
+        if (!user || !verifyPassword(password, user.passwordHash)) {
+          send(res, 401, { error: 'Invalid credentials.' }, headers);
+          return;
+        }
+
+        user.lastProvider = 'password';
+        const token = createSession(user);
+        await saveUsers();
+        await saveSessions();
+        send(res, 200, { session: buildSessionPayload(user), token }, headers);
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Unable to sign in.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/mobile/auth/logout') {
+      const current = getMobileAuthUser(req, users);
+      if (current) {
+        sessions.delete(current.token);
+        await saveSessions();
+      }
+      send(res, 200, { ok: true }, headers);
       return;
     }
 

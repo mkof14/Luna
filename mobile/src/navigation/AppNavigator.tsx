@@ -8,12 +8,15 @@ import { OnboardingScreen } from '../screens/OnboardingScreen';
 import { RhythmScreen } from '../screens/RhythmScreen';
 import { YouScreen } from '../screens/YouScreen';
 import { YourStoryScreen } from '../screens/YourStoryScreen';
+import { AuthScreen } from '../screens/AuthScreen';
 import { colors } from '../theme/tokens';
 import { AppView, TabKey } from '../types';
 import { useLunaState } from '../state/useLunaState';
 import { useRemoteLunaData } from '../state/useRemoteLunaData';
+import { useMobileAuth } from '../state/useMobileAuth';
 
 export function AppNavigator() {
+  const auth = useMobileAuth();
   const [view, setView] = useState<AppView>({ type: 'onboarding' });
   const { reflectionCount, insightStage, addReflection } = useLunaState();
   const { today, reflection, thread, loading, refresh, syncReflection } = useRemoteLunaData();
@@ -90,8 +93,34 @@ export function AppNavigator() {
       return <RhythmScreen stage={insightStage} />;
     }
 
-    return <YouScreen dayOfMonth={new Date().getDate()} />;
-  }, [view, today, loading, refresh, thread, insightStage]);
+    return <YouScreen dayOfMonth={new Date().getDate()} onSignOut={auth.signOut} />;
+  }, [view, today, loading, refresh, thread, insightStage, auth.signOut]);
+
+  if (auth.loading) {
+    return <AuthScreen onSignIn={auth.signIn} onSignUp={auth.signUp} error="" />;
+  }
+
+  if (!auth.session) {
+    return (
+      <AuthScreen
+        onSignIn={async (email, password) => {
+          try {
+            await auth.signIn(email, password);
+          } catch (error) {
+            auth.setError(error instanceof Error ? error.message : 'Sign in failed.');
+          }
+        }}
+        onSignUp={async (name, email, password) => {
+          try {
+            await auth.signUp(name, email, password);
+          } catch (error) {
+            auth.setError(error instanceof Error ? error.message : 'Sign up failed.');
+          }
+        }}
+        error={auth.error}
+      />
+    );
+  }
 
   if (view.type === 'onboarding') {
     return <OnboardingScreen onBeginVoice={openVoice} onComplete={() => openTab('today')} />;
@@ -104,7 +133,7 @@ export function AppNavigator() {
   if (view.type === 'result') {
     return (
       <ReflectionResultScreen
-        userName={today.userName}
+        userName={auth.session.name || today.userName}
         reflection={reflection}
         context={today.context}
         onSeeRhythm={() => openTab('rhythm')}

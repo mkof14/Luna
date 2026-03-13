@@ -2,6 +2,12 @@ import { env, hasApiBaseUrl } from '../config/env';
 import { continuityMessage, defaultContextSignal, defaultReflectionResult, storyEntriesSeed } from '../data/mockData';
 import { ContextSignal, ReflectionPayload, StoryEntry } from '../types';
 
+let mobileAuthToken = '';
+
+export const setMobileAuthToken = (token: string) => {
+  mobileAuthToken = String(token || '').trim();
+};
+
 export type TodayViewPayload = {
   userName: string;
   title: string;
@@ -35,6 +41,9 @@ async function requestJson<T>(path: string, init?: RequestInit, mobileId?: strin
   headers.set('Accept', 'application/json');
   if (mobileId) {
     headers.set('x-luna-mobile-id', mobileId);
+  }
+  if (mobileAuthToken) {
+    headers.set('Authorization', `Bearer ${mobileAuthToken}`);
   }
 
   const response = await fetch(`${env.apiBaseUrl}${path}`, {
