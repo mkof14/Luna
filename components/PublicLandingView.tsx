@@ -1,9 +1,10 @@
 import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
-import { Facebook, Instagram, Mic, Music2, Youtube } from 'lucide-react';
+import { Facebook, Heart, Instagram, Lock, MapPin, Mic, Music2, Sparkles, Youtube } from 'lucide-react';
 import { Logo } from './Logo';
 import { Language, TranslationSchema } from '../constants';
 import LanguageSelector from './LanguageSelector';
 import ThemeToggle from './ThemeToggle';
+import { PUBLIC_BTN_PRIMARY, PUBLIC_BTN_PRIMARY_GLOW, PUBLIC_BTN_SECONDARY } from './public/publicButtonStyles';
 
 const HowItWorksView = lazy(() => import('./HowItWorksView').then((m) => ({ default: m.HowItWorksView })));
 const LegalDocumentView = lazy(() => import('./LegalDocumentView').then((m) => ({ default: m.LegalDocumentView })));
@@ -282,7 +283,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       memberAccess: 'Luna Member Access',
       featurePrivate: '✓ Full member zone with private check-ins',
       featureBodyMap: '✓ Body rhythm map and daily guidance',
-      featureBridge: '✓ Partner bridge and reflection tools',
+      featureBridge: '✓ Partner bridge and note tools',
       featureAdmin: '✓ Admin-secured access and role logic',
       continueTrial: 'Continue Trial',
       startTrial: 'Start Trial • 7 Days',
@@ -306,7 +307,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       memberAccess: 'Доступ в зону участника Luna',
       featurePrivate: '✓ Полная зона участника с приватными отметками',
       featureBodyMap: '✓ Карта ритмов тела и ежедневные подсказки',
-      featureBridge: '✓ Мост с партнером и инструменты рефлексии',
+      featureBridge: '✓ Мост с партнером и инструменты заметок',
       featureAdmin: '✓ Защищенный админ-доступ и роли',
       continueTrial: 'Продолжить Trial',
       startTrial: 'Начать Trial • 7 Дней',
@@ -330,7 +331,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       memberAccess: 'Доступ до зони учасника Luna',
       featurePrivate: '✓ Повна зона учасника з приватними відмітками',
       featureBodyMap: '✓ Карта ритмів тіла і щоденні підказки',
-      featureBridge: '✓ Міст для партнера та інструменти рефлексії',
+      featureBridge: '✓ Міст для партнера та інструменти нотаток',
       featureAdmin: '✓ Захищений адмін-доступ і ролі',
       continueTrial: 'Продовжити Trial',
       startTrial: 'Почати Trial • 7 Днів',
@@ -619,10 +620,10 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     heroCta: 'Try Luna',
     heroSub: 'Private. Calm. Personal.',
     explainTitle: 'Short Explanation',
-    explainParagraphs: ['Luna helps understand body state through data and reflection.', 'Open member tools to continue your journey.'],
+    explainParagraphs: ['Luna helps understand body state through data and notes.', 'Open member tools to continue your journey.'],
     flowTitle: 'How Luna Works',
     flowItems: [{ title: 'Body', text: 'Rhythms and markers' }, { title: 'Senses', text: 'Observations and notes' }, { title: 'Words', text: 'Clear communication' }],
-    sections: [{ title: 'Luna Balance', body: 'Visual rhythm map.' }, { title: 'Voice Journal', body: 'Structured voice reflection.' }],
+    sections: [{ title: 'Luna Balance', body: 'Visual rhythm map.' }, { title: 'Voice Note', body: 'Structured voice notes.' }],
     differenceTitle: 'Why Luna Is Different',
     differenceList: ['body', 'state', 'clarity'],
     differenceBody: 'Luna links signals into a clear picture.',
@@ -1099,7 +1100,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       whyPoint2: 'Pressure.',
       whyPoint3: 'Emotional overload.',
       whyPoint4: 'Unclear signals from the body.',
-      whyOutro: 'Luna helps make these states clearer through observation, reflection, and patterns that appear over time.',
+      whyOutro: 'Luna helps make these states clearer through observation, notes, and patterns that appear over time.',
       bodyCardTitle: 'Your\nBody',
       bodyCardText: 'physiological rhythms and markers',
       sensesCardTitle: 'Your\nSenses',
@@ -1115,9 +1116,9 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       patternLabel: 'Pattern noticed',
       patternText1: 'Energy often drops two days before your cycle begins.',
       patternText2: 'Short sleep tends to affect emotional sensitivity the next day.',
-      voiceTitle: 'Голосовой дневник',
+      voiceTitle: 'Голосовая заметка',
       voiceText1: 'Sometimes it is easier to speak than write.',
-      voiceText2: 'Record a short voice reflection about how you feel and what happened during your day.',
+      voiceText2: 'Record a short voice note about how you feel and what happened during your day.',
       voiceText3: 'Over time these moments become part of your personal story.',
       record: 'Record',
       bridgeTitle: 'Мост',
@@ -1140,7 +1141,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       whyPoint2: 'Напряжение.',
       whyPoint3: 'Эмоциональная перегрузка.',
       whyPoint4: 'Неясные сигналы от тела.',
-      whyOutro: 'Luna помогает сделать эти состояния понятнее через наблюдение, рефлексию и паттерны, которые проявляются со временем.',
+      whyOutro: 'Luna помогает сделать эти состояния понятнее через наблюдение, заметки и паттерны, которые проявляются со временем.',
       bodyCardTitle: 'Ваше\nтело',
       bodyCardText: 'физиологические ритмы и маркеры',
       sensesCardTitle: 'Ваши\nощущения',
@@ -1156,7 +1157,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       patternLabel: 'Обнаружен паттерн',
       patternText1: 'Энергия часто падает за два дня до начала цикла.',
       patternText2: 'Короткий сон на следующий день повышает эмоциональную чувствительность.',
-      voiceTitle: 'Voice Journal',
+      voiceTitle: 'Voice Note',
       voiceText1: 'Иногда проще сказать, чем написать.',
       voiceText2: 'Запишите короткую голосовую заметку о том, как вы себя чувствуете и что произошло за день.',
       voiceText3: 'Со временем эти моменты становятся частью вашей личной истории.',
@@ -1181,7 +1182,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       whyPoint2: 'Напруга.',
       whyPoint3: 'Емоційне перевантаження.',
       whyPoint4: 'Нечіткі сигнали тіла.',
-      whyOutro: 'Luna допомагає зробити ці стани зрозумілішими через спостереження, рефлексію та патерни, що проявляються з часом.',
+      whyOutro: 'Luna допомагає зробити ці стани зрозумілішими через спостереження, нотатки та патерни, що проявляються з часом.',
       bodyCardTitle: 'Ваше\nтіло',
       bodyCardText: 'фізіологічні ритми та маркери',
       sensesCardTitle: 'Ваші\nвідчуття',
@@ -1197,9 +1198,9 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       patternLabel: 'Помічений патерн',
       patternText1: 'Енергія часто знижується за два дні до початку циклу.',
       patternText2: 'Короткий сон зазвичай підвищує емоційну чутливість наступного дня.',
-      voiceTitle: 'Голосовий щоденник',
+      voiceTitle: 'Голосова нотатка',
       voiceText1: 'Іноді легше сказати, ніж написати.',
-      voiceText2: 'Запишіть коротку голосову рефлексію про те, як ви почуваєтесь і що відбулося протягом дня.',
+      voiceText2: 'Запишіть коротку голосову нотатку про те, як ви почуваєтесь і що відбулося протягом дня.',
       voiceText3: 'З часом ці моменти стають частиною вашої особистої історії.',
       record: 'Запис',
       bridgeTitle: 'Міст',
@@ -1238,7 +1239,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       patternLabel: 'Patrón detectado',
       patternText1: 'La energía suele bajar dos días antes de que inicie tu ciclo.',
       patternText2: 'Dormir poco suele aumentar la sensibilidad emocional al día siguiente.',
-      voiceTitle: 'Diario de voz',
+      voiceTitle: 'Nota de voz',
       voiceText1: 'A veces es más fácil hablar que escribir.',
       voiceText2: 'Graba una breve reflexión de voz sobre cómo te sientes y qué ocurrió durante el día.',
       voiceText3: 'Con el tiempo, estos momentos se convierten en parte de tu historia personal.',
@@ -1279,7 +1280,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       patternLabel: 'Tendance observee',
       patternText1: 'L energie baisse souvent deux jours avant le debut du cycle.',
       patternText2: 'Un sommeil court tend a augmenter la sensibilite emotionnelle le lendemain.',
-      voiceTitle: 'Journal vocal',
+      voiceTitle: 'Note vocale',
       voiceText1: 'Parfois, il est plus facile de parler que d ecrire.',
       voiceText2: 'Enregistrez une courte note vocale sur votre ressenti et ce qui s est passe dans la journee.',
       voiceText3: 'Avec le temps, ces moments deviennent une partie de votre histoire personnelle.',
@@ -1320,7 +1321,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       patternLabel: 'Muster erkannt',
       patternText1: 'Die Energie sinkt oft zwei Tage vor Beginn des Zyklus.',
       patternText2: 'Kurzer Schlaf erhoeht am naechsten Tag haeufig die emotionale Sensitivitaet.',
-      voiceTitle: 'Sprachjournal',
+      voiceTitle: 'Sprachnotiz',
       voiceText1: 'Manchmal ist Sprechen leichter als Schreiben.',
       voiceText2: 'Nehmen Sie eine kurze Sprachreflexion auf: wie Sie sich fuehlen und was im Tagesverlauf passiert ist.',
       voiceText3: 'Mit der Zeit werden diese Momente Teil Ihrer persoenlichen Geschichte.',
@@ -1361,7 +1362,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       patternLabel: '发现规律',
       patternText1: '通常在周期开始前两天，能量会下降。',
       patternText2: '睡眠不足通常会在次日提高情绪敏感度。',
-      voiceTitle: '语音日记',
+      voiceTitle: '语音笔记',
       voiceText1: '有时说出来比写下来更容易。',
       voiceText2: '记录一段简短语音，描述你的感受和当天发生的事情。',
       voiceText3: '随着时间推移，这些片段会成为你个人故事的一部分。',
@@ -1402,7 +1403,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       patternLabel: 'パターンを検出',
       patternText1: '周期が始まる2日前に、エネルギーが下がることがよくあります。',
       patternText2: '睡眠が短いと、翌日の感情の敏感さが高まる傾向があります。',
-      voiceTitle: 'ボイスジャーナル',
+      voiceTitle: 'ボイスノート',
       voiceText1: '書くより、話すほうが楽なときがあります。',
       voiceText2: '今日の出来事と気分について、短い音声リフレクションを録音してください。',
       voiceText3: '時間がたつほど、これらの瞬間はあなたの物語の一部になります。',
@@ -1443,7 +1444,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       patternLabel: 'Padrao identificado',
       patternText1: 'A energia costuma cair dois dias antes do inicio do ciclo.',
       patternText2: 'Sono curto tende a aumentar a sensibilidade emocional no dia seguinte.',
-      voiceTitle: 'Diario de voz',
+      voiceTitle: 'Nota de voz',
       voiceText1: 'As vezes e mais facil falar do que escrever.',
       voiceText2: 'Grave uma breve reflexao em voz sobre como voce se sente e o que aconteceu durante o dia.',
       voiceText3: 'Com o tempo, esses momentos se tornam parte da sua historia pessoal.',
@@ -1459,6 +1460,465 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
     }
   };
   const homeRefCopy = homeRefCopyByLang[lang]?.heroTitle ? homeRefCopyByLang[lang] : homeRefCopyByLang.en;
+  const dailyCompanionByLang: Partial<Record<
+    Language,
+    {
+      heroTitle: string;
+      heroSubtitle: string;
+      primaryCta: string;
+      secondaryCta: string;
+      whatTitle: string;
+      whatBody: string;
+      ritualTitle: string;
+      ritualSubtitle: string;
+      stepSpeak: string;
+      stepCheckin: string;
+      stepRhythm: string;
+      stepPattern: string;
+      patternTitle: string;
+      patternCardLabel: string;
+      patternOne: string;
+      patternTwo: string;
+      finalTitle: string;
+      finalCta: string;
+    }
+  >> = {
+    en: {
+      heroTitle: 'Your daily emotional mirror',
+      heroSubtitle: 'Understand yourself through body, senses, and words.',
+      primaryCta: "Start today's note",
+      secondaryCta: 'See how Luna works',
+      whatTitle: 'A simple daily structure',
+      whatBody: 'Luna helps you understand your day with calm and clarity.',
+      ritualTitle: 'A small daily ritual',
+      ritualSubtitle: 'A clear flow you can repeat in under a minute.',
+      stepSpeak: 'Speak to Luna',
+      stepCheckin: 'Quick check-in',
+      stepRhythm: 'See your rhythm',
+      stepPattern: 'Discover patterns',
+      patternTitle: 'Pattern preview',
+      patternCardLabel: 'Pattern noticed',
+      patternOne: 'Energy drops two days before cycle',
+      patternTwo: 'Sleep under 6h affects emotional sensitivity',
+      finalTitle: 'Begin observing your rhythm',
+      finalCta: 'Create your Luna space',
+    },
+    ru: {
+      heroTitle: 'Ваше ежедневное эмоциональное зеркало',
+      heroSubtitle: 'Понимайте себя через тело, ощущения и слова.',
+      primaryCta: 'Начать сегодняшнюю заметку',
+      secondaryCta: 'Как работает Luna',
+      whatTitle: 'Простая ежедневная структура',
+      whatBody: 'Luna помогает понять день спокойно и без перегрузки.',
+      ritualTitle: 'Небольшой ежедневный ритуал',
+      ritualSubtitle: 'Простой поток, который легко повторять каждый день.',
+      stepSpeak: 'Поговорить с Luna',
+      stepCheckin: 'Быстрый check-in',
+      stepRhythm: 'Увидеть ритм',
+      stepPattern: 'Замечать паттерны',
+      patternTitle: 'Превью паттернов',
+      patternCardLabel: 'Паттерн замечен',
+      patternOne: 'Энергия снижается за два дня до цикла',
+      patternTwo: 'Сон меньше 6 часов усиливает эмоциональную чувствительность',
+      finalTitle: 'Начните наблюдать свой ритм',
+      finalCta: 'Создать пространство Luna',
+    },
+    uk: {
+      heroTitle: 'Ваше щоденне емоційне дзеркало',
+      heroSubtitle: 'Розумійте себе через тіло, відчуття і слова.',
+      primaryCta: 'Почати сьогоднішню нотатку',
+      secondaryCta: 'Як працює Luna',
+      whatTitle: 'Проста щоденна структура',
+      whatBody: 'Luna допомагає спокійно зрозуміти свій день.',
+      ritualTitle: 'Невеликий щоденний ритуал',
+      ritualSubtitle: 'Короткий щоденний потік без перевантаження.',
+      stepSpeak: 'Поговорити з Luna',
+      stepCheckin: 'Швидкий check-in',
+      stepRhythm: 'Побачити ритм',
+      stepPattern: 'Помічати патерни',
+      patternTitle: 'Попередній перегляд патернів',
+      patternCardLabel: 'Патерн помічено',
+      patternOne: 'Енергія знижується за два дні до циклу',
+      patternTwo: 'Сон менше 6 годин підвищує емоційну чутливість',
+      finalTitle: 'Почніть спостерігати свій ритм',
+      finalCta: 'Створити свій простір Luna',
+    },
+    es: {
+      heroTitle: 'Tu espejo emocional diario',
+      heroSubtitle: 'Comprendete a traves del cuerpo, los sentidos y las palabras.',
+      primaryCta: 'Empezar la nota de hoy',
+      secondaryCta: 'Ver como funciona Luna',
+      whatTitle: 'Una estructura diaria simple',
+      whatBody: 'Luna te ayuda a entender tu dia con calma y claridad.',
+      ritualTitle: 'Un pequeno ritual diario',
+      ritualSubtitle: 'Un flujo claro que puedes repetir en menos de un minuto.',
+      stepSpeak: 'Hablar con Luna',
+      stepCheckin: 'Check-in rapido',
+      stepRhythm: 'Ver tu ritmo',
+      stepPattern: 'Descubrir patrones',
+      patternTitle: 'Vista previa de patrones',
+      patternCardLabel: 'Patron detectado',
+      patternOne: 'La energia baja dos dias antes del ciclo',
+      patternTwo: 'Dormir menos de 6 h aumenta la sensibilidad emocional',
+      finalTitle: 'Comienza a observar tu ritmo',
+      finalCta: 'Crear tu espacio Luna',
+    },
+    fr: {
+      heroTitle: 'Votre miroir emotionnel quotidien',
+      heroSubtitle: 'Comprenez-vous a travers le corps, les sensations et les mots.',
+      primaryCta: "Commencer la note d'aujourd'hui",
+      secondaryCta: 'Voir comment Luna fonctionne',
+      whatTitle: 'Une structure quotidienne simple',
+      whatBody: 'Luna vous aide a comprendre votre journee avec calme et clarte.',
+      ritualTitle: 'Un petit rituel quotidien',
+      ritualSubtitle: 'Un flux clair a repeter en moins d une minute.',
+      stepSpeak: 'Parler avec Luna',
+      stepCheckin: 'Check-in rapide',
+      stepRhythm: 'Voir votre rythme',
+      stepPattern: 'Decouvrir des tendances',
+      patternTitle: 'Apercu des tendances',
+      patternCardLabel: 'Tendance remarquee',
+      patternOne: 'L energie baisse deux jours avant le cycle',
+      patternTwo: 'Moins de 6 h de sommeil augmente la sensibilite emotionnelle',
+      finalTitle: 'Commencez a observer votre rythme',
+      finalCta: 'Creer votre espace Luna',
+    },
+    de: {
+      heroTitle: 'Dein taeglicher emotionaler Spiegel',
+      heroSubtitle: 'Verstehe dich ueber Koerper, Sinne und Worte.',
+      primaryCta: 'Heutige Notiz starten',
+      secondaryCta: 'So funktioniert Luna',
+      whatTitle: 'Eine einfache Tagesstruktur',
+      whatBody: 'Luna hilft dir, deinen Tag ruhig und klar zu verstehen.',
+      ritualTitle: 'Ein kleines taegliches Ritual',
+      ritualSubtitle: 'Ein klarer Ablauf, den du in unter einer Minute wiederholst.',
+      stepSpeak: 'Mit Luna sprechen',
+      stepCheckin: 'Schneller Check-in',
+      stepRhythm: 'Deinen Rhythmus sehen',
+      stepPattern: 'Muster erkennen',
+      patternTitle: 'Muster-Vorschau',
+      patternCardLabel: 'Muster erkannt',
+      patternOne: 'Die Energie sinkt zwei Tage vor dem Zyklus',
+      patternTwo: 'Weniger als 6 h Schlaf erhoehen die emotionale Sensibilitaet',
+      finalTitle: 'Beginne, deinen Rhythmus zu beobachten',
+      finalCta: 'Deinen Luna-Raum erstellen',
+    },
+    zh: {
+      heroTitle: '你的每日情绪镜像',
+      heroSubtitle: '通过身体、感受与表达，更理解自己。',
+      primaryCta: '开始今天的记录',
+      secondaryCta: '了解 Luna 如何工作',
+      whatTitle: '简单的每日结构',
+      whatBody: 'Luna 帮助你以平静与清晰理解一天。',
+      ritualTitle: '一个小小的每日仪式',
+      ritualSubtitle: '不到一分钟即可完成的清晰流程。',
+      stepSpeak: '与 Luna 对话',
+      stepCheckin: '快速 check-in',
+      stepRhythm: '查看你的节律',
+      stepPattern: '发现规律',
+      patternTitle: '规律预览',
+      patternCardLabel: '发现规律',
+      patternOne: '能量会在周期前两天下降',
+      patternTwo: '睡眠少于 6 小时会提高情绪敏感度',
+      finalTitle: '开始观察你的节律',
+      finalCta: '创建你的 Luna 空间',
+    },
+    ja: {
+      heroTitle: 'あなたの毎日の感情ミラー',
+      heroSubtitle: 'からだ、感覚、ことばを通して自分を理解する。',
+      primaryCta: '今日のメモを始める',
+      secondaryCta: 'Luna の仕組みを見る',
+      whatTitle: 'シンプルな毎日の構成',
+      whatBody: 'Luna は一日を穏やかに分かりやすく整えます。',
+      ritualTitle: '小さな毎日のリチュアル',
+      ritualSubtitle: '1分以内で繰り返せる明確な流れ。',
+      stepSpeak: 'Luna と話す',
+      stepCheckin: 'クイック check-in',
+      stepRhythm: 'リズムを見る',
+      stepPattern: 'パターンを見つける',
+      patternTitle: 'パターンプレビュー',
+      patternCardLabel: 'パターンを確認',
+      patternOne: 'エネルギーは周期の2日前に下がりやすい',
+      patternTwo: '睡眠 6 時間未満で感情の敏感さが上がりやすい',
+      finalTitle: 'あなたのリズムを観察しよう',
+      finalCta: 'Luna スペースを作成',
+    },
+    pt: {
+      heroTitle: 'Seu espelho emocional diario',
+      heroSubtitle: 'Entenda-se por meio do corpo, dos sentidos e das palavras.',
+      primaryCta: 'Iniciar a nota de hoje',
+      secondaryCta: 'Ver como Luna funciona',
+      whatTitle: 'Uma estrutura diaria simples',
+      whatBody: 'A Luna ajuda voce a entender seu dia com calma e clareza.',
+      ritualTitle: 'Um pequeno ritual diario',
+      ritualSubtitle: 'Um fluxo claro para repetir em menos de um minuto.',
+      stepSpeak: 'Falar com a Luna',
+      stepCheckin: 'Check-in rapido',
+      stepRhythm: 'Ver seu ritmo',
+      stepPattern: 'Descobrir padroes',
+      patternTitle: 'Previa de padroes',
+      patternCardLabel: 'Padrao identificado',
+      patternOne: 'A energia cai dois dias antes do ciclo',
+      patternTwo: 'Dormir menos de 6h aumenta a sensibilidade emocional',
+      finalTitle: 'Comece a observar seu ritmo',
+      finalCta: 'Criar seu espaco Luna',
+    },
+  };
+  const dailyCompanionCopy = dailyCompanionByLang[lang] || dailyCompanionByLang.en!;
+  const homeActionByLang: Partial<
+    Record<
+      Language,
+      {
+        talkLine: string;
+        actions: Array<{ label: string; sub: string }>;
+        servicesTitle: string;
+        servicesSubtitle: string;
+        services: Array<{ title: string; body: string }>;
+      }
+    >
+  > = {
+    en: {
+      talkLine: 'You can speak with Luna by voice any day.',
+      actions: [
+        { label: 'Start Note', sub: 'Talk with Luna now' },
+        { label: 'Check-In', sub: '30 sec emotional check-in' },
+        { label: 'See Insights', sub: 'Get a gentle daily response' },
+        { label: 'Body Map', sub: 'See your rhythm visually' },
+      ],
+      servicesTitle: 'What Luna includes',
+      servicesSubtitle: 'Core services available after sign in.',
+      services: [
+        { title: 'Voice Note', body: 'Record how your day felt and get a calm note.' },
+        { title: 'Daily Mirror', body: 'See today context from cycle, sleep, and check-ins.' },
+        { title: 'Pattern Preview', body: 'Notice simple recurring signals over time.' },
+        { title: 'My Health Reports', body: 'Upload labs/tests and generate structured reports.' },
+      ],
+    },
+    ru: {
+      talkLine: 'С Luna можно говорить голосом каждый день.',
+      actions: [
+        { label: 'Начать Заметку', sub: 'Поговорить с Luna сейчас' },
+        { label: 'Check-In', sub: 'Эмоциональный check-in за 30 сек' },
+        { label: 'Смотреть Инсайты', sub: 'Получить мягкую ежедневную обратную связь' },
+        { label: 'Карта Тела', sub: 'Увидеть ритм визуально' },
+      ],
+      servicesTitle: 'Что включает Luna',
+      servicesSubtitle: 'Основные функции и сервисы после входа.',
+      services: [
+        { title: 'Voice Note', body: 'Записывайте состояние голосом и получайте спокойную заметку.' },
+        { title: 'Daily Mirror', body: 'Контекст дня из цикла, сна и check-in.' },
+        { title: 'Pattern Preview', body: 'Отслеживание повторяющихся сигналов во времени.' },
+        { title: 'My Health Reports', body: 'Загрузка анализов/тестов и генерация структурированного отчета.' },
+      ],
+    },
+    uk: {
+      talkLine: 'З Luna можна говорити голосом щодня.',
+      actions: [
+        { label: 'Почати Нотатку', sub: 'Поговорити з Luna зараз' },
+        { label: 'Check-In', sub: 'Емоційний check-in за 30 сек' },
+        { label: 'Дивитись Інсайти', sub: 'Отримати м’який щоденний відгук' },
+        { label: 'Мапа Тіла', sub: 'Побачити ритм візуально' },
+      ],
+      servicesTitle: 'Що включає Luna',
+      servicesSubtitle: 'Ключові функції та сервіси після входу.',
+      services: [
+        { title: 'Voice Note', body: 'Записуйте стан голосом і отримуйте спокійну нотатку.' },
+        { title: 'Daily Mirror', body: 'Контекст дня з циклу, сну та check-in.' },
+        { title: 'Pattern Preview', body: 'Відстеження повторюваних сигналів у часі.' },
+        { title: 'My Health Reports', body: 'Завантаження аналізів/тестів і генерація структурованого звіту.' },
+      ],
+    },
+    es: {
+      talkLine: 'Puedes hablar con Luna por voz cada dia.',
+      actions: [
+        { label: 'Iniciar Nota', sub: 'Hablar con Luna ahora' },
+        { label: 'Check-In', sub: 'Check-in emocional en 30 seg' },
+        { label: 'Ver Insights', sub: 'Recibir una respuesta diaria suave' },
+        { label: 'Mapa Corporal', sub: 'Ver tu ritmo de forma visual' },
+      ],
+      servicesTitle: 'Que incluye Luna',
+      servicesSubtitle: 'Funciones y servicios principales despues de iniciar sesion.',
+      services: [
+        { title: 'Voice Note', body: 'Graba como te sentiste hoy y recibe una nota tranquila.' },
+        { title: 'Daily Mirror', body: 'Mira el contexto de hoy desde ciclo, sueno y check-ins.' },
+        { title: 'Pattern Preview', body: 'Detecta senales repetidas con el paso del tiempo.' },
+        { title: 'My Health Reports', body: 'Sube analisis/pruebas y genera reportes estructurados.' },
+      ],
+    },
+    fr: {
+      talkLine: 'Vous pouvez parler avec Luna a voix haute chaque jour.',
+      actions: [
+        { label: 'Demarrer Note', sub: 'Parler avec Luna maintenant' },
+        { label: 'Check-In', sub: 'Check-in emotionnel en 30 sec' },
+        { label: 'Voir Insights', sub: 'Obtenir un retour quotidien en douceur' },
+        { label: 'Carte du Corps', sub: 'Voir votre rythme visuellement' },
+      ],
+      servicesTitle: 'Ce que Luna inclut',
+      servicesSubtitle: 'Fonctions et services essentiels apres connexion.',
+      services: [
+        { title: 'Voice Note', body: 'Enregistrez votre etat du jour et recevez une note calme.' },
+        { title: 'Daily Mirror', body: 'Contexte du jour via cycle, sommeil et check-ins.' },
+        { title: 'Pattern Preview', body: 'Reperez les signaux recurrents au fil du temps.' },
+        { title: 'My Health Reports', body: 'Importez analyses/tests et generez des rapports structures.' },
+      ],
+    },
+    de: {
+      talkLine: 'Du kannst jeden Tag per Stimme mit Luna sprechen.',
+      actions: [
+        { label: 'Notiz Starten', sub: 'Jetzt mit Luna sprechen' },
+        { label: 'Check-In', sub: 'Emotionaler Check-in in 30 Sek' },
+        { label: 'Insights Sehen', sub: 'Sanfte taegliche Rueckmeldung erhalten' },
+        { label: 'Koerperkarte', sub: 'Deinen Rhythmus visuell sehen' },
+      ],
+      servicesTitle: 'Was Luna beinhaltet',
+      servicesSubtitle: 'Wichtige Funktionen und Services nach dem Login.',
+      services: [
+        { title: 'Voice Note', body: 'Nimm deinen Tag per Stimme auf und erhalte eine ruhige Notiz.' },
+        { title: 'Daily Mirror', body: 'Tageskontext aus Zyklus, Schlaf und Check-ins.' },
+        { title: 'Pattern Preview', body: 'Einfache wiederkehrende Signale ueber Zeit erkennen.' },
+        { title: 'My Health Reports', body: 'Analysen/Tests hochladen und strukturierte Berichte erstellen.' },
+      ],
+    },
+    zh: {
+      talkLine: '你每天都可以用语音与 Luna 对话。',
+      actions: [
+        { label: '开始记录', sub: '现在就和 Luna 说说话' },
+        { label: '快速 Check-In', sub: '30 秒情绪 check-in' },
+        { label: '查看洞察', sub: '获得温和的每日反馈' },
+        { label: '身体地图', sub: '可视化查看你的节律' },
+      ],
+      servicesTitle: 'Luna 包含的内容',
+      servicesSubtitle: '登录后可用的核心功能与服务。',
+      services: [
+        { title: 'Voice Note', body: '语音记录你的一天，并获得平静总结。' },
+        { title: 'Daily Mirror', body: '结合周期、睡眠与 check-in 查看今日状态。' },
+        { title: 'Pattern Preview', body: '逐步发现重复出现的信号。' },
+        { title: 'My Health Reports', body: '上传化验/测试并生成结构化报告。' },
+      ],
+    },
+    ja: {
+      talkLine: '毎日、Luna に声で話しかけられます。',
+      actions: [
+        { label: 'メモ開始', sub: '今すぐ Luna と話す' },
+        { label: 'クイック Check-In', sub: '30秒の感情 check-in' },
+        { label: 'インサイトを見る', sub: 'やさしい毎日のフィードバックを受け取る' },
+        { label: 'ボディマップ', sub: 'リズムを視覚的に確認する' },
+      ],
+      servicesTitle: 'Luna に含まれる機能',
+      servicesSubtitle: 'サインイン後に使える主な機能とサービス。',
+      services: [
+        { title: 'Voice Note', body: '一日の気持ちを音声で記録し、穏やかなメモを受け取る。' },
+        { title: 'Daily Mirror', body: '周期・睡眠・check-inから今日の文脈を確認。' },
+        { title: 'Pattern Preview', body: '時間とともに繰り返しのサインに気づく。' },
+        { title: 'My Health Reports', body: '検査データをアップロードして構造化レポートを作成。' },
+      ],
+    },
+    pt: {
+      talkLine: 'Voce pode falar com a Luna por voz todos os dias.',
+      actions: [
+        { label: 'Iniciar Nota', sub: 'Falar com a Luna agora' },
+        { label: 'Check-In', sub: 'Check-in emocional em 30 seg' },
+        { label: 'Ver Insights', sub: 'Receber um retorno diario suave' },
+        { label: 'Mapa Corporal', sub: 'Ver seu ritmo de forma visual' },
+      ],
+      servicesTitle: 'O que a Luna inclui',
+      servicesSubtitle: 'Funcoes e servicos principais apos entrar.',
+      services: [
+        { title: 'Voice Note', body: 'Grave como seu dia foi e receba uma nota calma.' },
+        { title: 'Daily Mirror', body: 'Veja o contexto de hoje por ciclo, sono e check-ins.' },
+        { title: 'Pattern Preview', body: 'Perceba sinais recorrentes ao longo do tempo.' },
+        { title: 'My Health Reports', body: 'Envie exames/testes e gere relatorios estruturados.' },
+      ],
+    },
+  };
+  const homeActionCopy = homeActionByLang[lang] || homeActionByLang.en!;
+  const homeEyebrowByLang: Partial<Record<Language, string>> = {
+    en: 'Luna Home',
+    ru: 'Главная Luna',
+    uk: 'Головна Luna',
+    es: 'Inicio Luna',
+    fr: 'Accueil Luna',
+    de: 'Luna Start',
+    zh: 'Luna 首页',
+    ja: 'Luna ホーム',
+    pt: 'Inicio Luna',
+  };
+  const homePatternNoteByLang: Partial<Record<Language, string>> = {
+    en: 'Observational examples from daily use.',
+    ru: 'Наблюдательные примеры из ежедневного использования.',
+    uk: 'Приклади спостережень із щоденного використання.',
+    es: 'Ejemplos observacionales del uso diario.',
+    fr: 'Exemples d observation issus de l usage quotidien.',
+    de: 'Beobachtungsbeispiele aus dem taeglichen Gebrauch.',
+    zh: '来自日常使用的观察示例。',
+    ja: '日々の利用から得られた観察例です。',
+    pt: 'Exemplos observacionais do uso diario.',
+  };
+  const homePillarsByLang: Partial<
+    Record<
+      Language,
+      Array<{ title: string; text: string }>
+    >
+  > = {
+    en: [
+      { title: 'Your Body', text: 'body rhythms and inner signals' },
+      { title: 'Your Senses', text: 'moments, feelings, and emotional tone' },
+      { title: 'Your Words', text: 'voice notes and gentle thoughts' },
+    ],
+    ru: [
+      { title: 'Ваше Тело', text: 'ритмы тела и внутренние сигналы' },
+      { title: 'Ваши Ощущения', text: 'моменты, чувства и эмоциональный фон' },
+      { title: 'Ваши Слова', text: 'голосовые отражения и мягкие мысли' },
+    ],
+    uk: [
+      { title: 'Ваше Тіло', text: 'ритми тіла та внутрішні сигнали' },
+      { title: 'Ваші Відчуття', text: 'моменти, почуття та емоційний тон' },
+      { title: 'Ваші Слова', text: 'голосові нотатки та м’які думки' },
+    ],
+    es: [
+      { title: 'Tu Cuerpo', text: 'ritmos del cuerpo y senales internas' },
+      { title: 'Tus Sentidos', text: 'momentos, emociones y tono del dia' },
+      { title: 'Tus Palabras', text: 'reflexiones por voz y pensamientos suaves' },
+    ],
+    fr: [
+      { title: 'Votre Corps', text: 'rythmes du corps et signaux interieurs' },
+      { title: 'Vos Sens', text: 'moments, ressentis et tonalite emotionnelle' },
+      { title: 'Vos Mots', text: 'reflexions vocales et pensees en douceur' },
+    ],
+    de: [
+      { title: 'Dein Koerper', text: 'Koerperrhythmen und innere Signale' },
+      { title: 'Deine Sinne', text: 'Momente, Gefuehle und emotionale Stimmung' },
+      { title: 'Deine Worte', text: 'Sprachreflexionen und sanfte Gedanken' },
+    ],
+    zh: [
+      { title: '你的身体', text: '身体节律与内在信号' },
+      { title: '你的感受', text: '一天中的时刻、感受与情绪' },
+      { title: '你的表达', text: '语音反思与温柔想法' },
+    ],
+    ja: [
+      { title: 'あなたの体', text: '体のリズムと内側のサイン' },
+      { title: 'あなたの感覚', text: 'その日の出来事、感情、雰囲気' },
+      { title: 'あなたの言葉', text: '音声リフレクションとやさしい思考' },
+    ],
+    pt: [
+      { title: 'Seu Corpo', text: 'ritmos do corpo e sinais internos' },
+      { title: 'Seus Sentidos', text: 'momentos, sentimentos e tom emocional' },
+      { title: 'Suas Palavras', text: 'reflexoes por voz e pensamentos suaves' },
+    ],
+  };
+  const homePillars = homePillarsByLang[lang] || homePillarsByLang.en!;
+  const homeFeatureChipLabelsByLang: Partial<Record<Language, string[]>> = {
+    en: ['Voice recording', 'Gentle insights', 'Body Map rhythm', 'Notes history'],
+    ru: ['Голосовая запись', 'Мягкие инсайты', 'Body Map ритма', 'История отражений'],
+    uk: ['Голосовий запис', 'М’які інсайти', 'Body Map ритму', 'Історія нотаток'],
+    es: ['Grabacion de voz', 'Insights suaves', 'Ritmo en Body Map', 'Historial de reflexiones'],
+    fr: ['Enregistrement vocal', 'Insights doux', 'Rythme dans Body Map', 'Historique des reflexions'],
+    de: ['Sprachaufnahme', 'Sanfte Insights', 'Rhythmus in Body Map', 'Reflexionsverlauf'],
+    zh: ['语音记录', '温和洞察', 'Body Map 节律', '反思历史'],
+    ja: ['音声記録', 'やさしいインサイト', 'Body Map リズム', 'リフレクション履歴'],
+    pt: ['Gravacao por voz', 'Insights suaves', 'Ritmo no Body Map', 'Historico de reflexoes'],
+  };
+  const homeFeatureChipLabels = homeFeatureChipLabelsByLang[lang] || homeFeatureChipLabelsByLang.en!;
   const publicHomeNavLabelsByLang: Record<Language, { home: string; ritual: string; map: string; adminLogin: string }> = {
     en: { home: 'Home', ritual: 'Ritual Path', map: 'Body Map', adminLogin: 'Admin Login' },
     ru: { home: 'Главная', ritual: 'Ритуальный путь', map: 'Карта тела', adminLogin: 'Вход Админ' },
@@ -1576,10 +2036,12 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
       <div className={`absolute top-1/3 -right-24 w-[32rem] h-[32rem] rounded-full blur-[138px] ${activePage === 'home' ? (theme === 'dark' ? 'bg-indigo-500/28' : 'bg-[#f6f5f9]/86') : 'bg-luna-teal/20'}`} />
       <div className={`absolute -bottom-20 left-1/3 w-[28rem] h-[28rem] rounded-full blur-[138px] ${activePage === 'home' ? (theme === 'dark' ? 'bg-fuchsia-500/24' : 'bg-[#edeaf3]/84') : 'bg-luna-coral/20'}`} />
 
+      <div className={`${activePage === 'home' ? (theme === 'dark' ? 'relative z-30 h-2 bg-gradient-to-r from-[#12152f] via-[#1a2041] to-[#131733]' : 'relative z-30 h-2 bg-gradient-to-r from-[#f0ecf6] via-[#ece7f4] to-[#f1edf7]') : 'relative z-30 h-2 bg-slate-200/70 dark:bg-slate-900/60'}`} />
+
       <header className={`${activePage === 'home' ? (theme === 'dark' ? 'relative z-30 border-b border-white/10 bg-[#0b0d1f]/82 backdrop-blur-md' : 'relative z-30 border-b border-[#d8d1e2] bg-[#f6f4fa]/88 backdrop-blur-md') : 'sticky top-0 z-30 border-b border-slate-300/70 dark:border-slate-700/70 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl'}`}>
         <div className="max-w-[1160px] mx-auto px-4 md:px-6 h-14 md:h-14 flex items-center justify-between gap-4">
           <button type="button" onClick={() => setActivePage('home')} className={`flex items-center gap-0.5 ${theme === 'dark' ? 'text-violet-100/95' : 'text-[#402c35]'}`}>
-            <img src="/images/luna-logo-transparent.webp" alt="" aria-hidden="true" className="h-24 w-auto md:h-28 object-contain select-none pointer-events-none" />
+            <img src="/images/luna-logo-transparent.webp" alt="" aria-hidden="true" className="h-[5.4rem] w-auto md:h-[6.3rem] object-contain select-none pointer-events-none" />
             <Logo size="sm" className="cursor-default text-5xl leading-none" />
           </button>
           <nav className="hidden md:flex items-center gap-4">
@@ -1616,812 +2078,247 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
         )}
 
         {activePage === 'home' && (
-          <section className={`luna-home-ref ${theme === 'dark' ? 'theme-dark' : 'theme-light'} animate-in fade-in slide-in-from-bottom-8 duration-500`}>
-            <style>
-              {`
-                .luna-home-ref {
-                  --bg:#f3f2f6;
-                  --panel: rgba(246, 245, 249, 0.96);
-                  --panel-2: rgba(250, 249, 252, 0.99);
-                  --line: rgba(197, 190, 211, 0.44);
-                  --line-soft: rgba(197, 190, 211, 0.22);
-                  --text:#2f273a;
-                  --heading:#2b2337;
-                  --muted:#5b536a;
-                  --button1:#cc2d71;
-                  --button2:#e24286;
-                  --shadow: 0 14px 24px rgba(126, 118, 143, .10);
-                  --radius-xl: 32px;
-                  --radius-lg: 26px;
-                  --radius-md: 20px;
-                  color: var(--text);
-                }
-                .luna-home-ref * { box-sizing: border-box; }
-                .luna-home-ref .ref-wrap {
-                  position: relative;
-                  width: min(100%, 1024px);
-                  margin: 0 auto;
-                  padding: 8px 14px 72px;
-                  z-index: 1;
-                  background:
-                    radial-gradient(980px 680px at 78% 18%, rgba(255,255,255,.68), transparent 64%),
-                    radial-gradient(860px 620px at 14% 58%, rgba(244,241,248,.62), transparent 62%),
-                    radial-gradient(760px 520px at 74% 80%, rgba(235,231,242,.40), transparent 64%),
-                    linear-gradient(180deg, #f7f6fa 0%, #f2f1f7 56%, #efedf4 100%);
-                  border-radius: 0;
-                  overflow: visible;
-                }
-                .luna-home-ref .ref-wrap::before {
-                  content:none;
-                }
-                .luna-home-ref .ref-wrap::after {
-                  content:"";
-                  position: absolute;
-                  inset: 0;
-                  pointer-events:none;
-                  background:
-                    radial-gradient(780px 390px at 52% 8%, rgba(255,255,255,.80), transparent 58%),
-                    radial-gradient(980px 560px at 54% 100%, rgba(165,155,186,.18), transparent 62%),
-                    repeating-linear-gradient(
-                      0deg,
-                      rgba(255,255,255,.02) 0px,
-                      rgba(255,255,255,.02) 2px,
-                      rgba(0,0,0,0) 2px,
-                      rgba(0,0,0,0) 4px
-                    );
-                  opacity: .78;
-                }
-                .luna-home-ref .ref-inner { position: relative; z-index: 2; }
-                .luna-home-ref .panel {
-                  position: relative;
-                  border-radius: var(--radius-xl);
-                  border: none;
-                  background: linear-gradient(180deg, rgba(250,249,252,.86), rgba(244,242,248,.78));
-                  border: 1px solid rgba(201, 194, 215, .24);
-                  box-shadow: 0 10px 20px rgba(126, 118, 143, .08);
-                  overflow: hidden;
-                }
-                .luna-home-ref .panel::before {
-                  content:"";
-                  position:absolute; inset:0;
-                  pointer-events:none;
-                  background:
-                    radial-gradient(560px 240px at 64% 20%, rgba(230,224,240,.36), transparent 55%);
-                }
-                .luna-home-ref h1,
-                .luna-home-ref h2 {
-                  margin: 0;
-                  font-family: Georgia, "Times New Roman", serif;
-                  font-weight: 500;
-                  letter-spacing: -.03em;
-                  color: var(--heading);
-                  text-rendering: optimizeLegibility;
-                }
-                .luna-home-ref h1 {
-                  font-size: 41px;
-                  line-height: 1.02;
-                  max-width: 520px;
-                  margin-bottom: 10px;
-                }
-                .luna-home-ref h2 {
-                  font-size: 33px;
-                  line-height: 1.08;
-                  margin-bottom: 18px;
-                }
-                .luna-home-ref .body {
-                  font-size: 17px;
-                  line-height: 1.58;
-                  color: rgba(62,54,79,.92);
-                }
-                .luna-home-ref .hero-lead-row {
-                  display: flex;
-                  align-items: center;
-                  justify-content: space-between;
-                  gap: 20px;
-                  max-width: 740px;
-                }
-                .luna-home-ref .hero-lead-row .body {
-                  max-width: 560px;
-                }
-                .luna-home-ref .cta {
-                  display:inline-flex;
-                  align-items:center;
-                  justify-content:center;
-                  height: 48px;
-                  min-width: 118px;
-                  border-radius: 999px;
-                  border: 1px solid rgba(255,255,255,.34);
-                  background: linear-gradient(180deg, rgba(215,92,145,.56), rgba(188,58,119,.52));
-                  color: #fff7fb;
-                  font-size: 15px;
-                  font-weight: 500;
-                  text-decoration: none;
-                  backdrop-filter: blur(3px);
-                  box-shadow: 0 8px 18px rgba(151, 47, 96, .18), inset 0 1px 0 rgba(255,255,255,.22);
-                  transition: transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
-                }
-                .luna-home-ref .cta:hover {
-                  transform: translateY(-1px);
-                  background: linear-gradient(180deg, rgba(228,94,151,.82), rgba(198,48,114,.76));
-                  border-color: rgba(255,255,255,.52);
-                  box-shadow: 0 12px 24px rgba(133, 41, 86, .28), inset 0 1px 0 rgba(255,255,255,.30);
-                }
-                .luna-home-ref .hero {
-                  display:grid;
-                  grid-template-columns: minmax(0, 1.16fr) minmax(272px, .84fr);
-                  gap: 14px;
-                  padding: 16px 24px 12px;
-                  min-height: 208px;
-                  margin-bottom: 24px;
-                  background:
-                    radial-gradient(120% 120% at 78% 18%, rgba(242,239,248,.46), transparent 58%),
-                    radial-gradient(80% 100% at 24% 74%, rgba(237,234,244,.40), transparent 56%),
-                    linear-gradient(180deg, rgba(250,249,252,.98), rgba(243,241,248,.96));
-                }
-                .luna-home-ref .hero-copy { max-width: 520px; z-index: 1; }
-                .luna-home-ref .hero-media {
-                  position: relative;
-                  height: 230px;
-                  min-height: 230px;
-                  border-radius: 24px;
-                  overflow: hidden;
-                  align-self: stretch;
-                  background:
-                    radial-gradient(90% 90% at 65% 30%, rgba(255, 214, 234, .26), transparent 56%),
-                    linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.03));
-                  box-shadow: inset 0 0 0 1px rgba(255,255,255,.22);
-                }
-                .luna-home-ref .hero-media img {
-                  width: 100%;
-                  height: 100%;
-                  object-fit: cover;
-                  object-position: center;
-                  display: block;
-                  opacity: .9;
-                  filter: saturate(.92) contrast(.94) brightness(.94);
-                }
-                .luna-home-ref .hero-media::after {
-                  content:"";
-                  position:absolute;
-                  inset:0;
-                  pointer-events:none;
-                  background:
-                    radial-gradient(78% 62% at 20% 28%, rgba(246,236,251,.24), transparent 58%),
-                    linear-gradient(90deg, rgba(243,239,250,.18), rgba(243,239,250,0) 34%),
-                    linear-gradient(180deg, rgba(32,22,57,.06), rgba(32,22,57,.16));
-                }
-                .luna-home-ref .sub {
-                  margin-top: 10px;
-                  font-size: 18px;
-                  color: rgba(86,77,106,.86);
-                  letter-spacing: .01em;
-                }
-                .luna-home-ref .hero-visual {
-                  min-height: 280px;
-                  border-radius: 22px;
-                  border: none;
-                  background:
-                    radial-gradient(120% 120% at 75% 40%, rgba(255,200,170,.18), transparent 38%),
-                    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
-                  overflow: hidden;
-                  position: relative;
-                  box-shadow: none;
-                }
-                .luna-home-ref .hero-visual img {
-                  width:100%; height:100%; object-fit: cover; display:block; opacity:.86; filter: saturate(.92) brightness(.95);
-                }
-                .luna-home-ref .hero-visual::after {
-                  content:"";
-                  position:absolute; inset:0;
-                  background:
-                    radial-gradient(480px 220px at 26% 82%, rgba(250,197,232,.14), transparent 46%),
-                    linear-gradient(90deg, rgba(28,22,55,.12), rgba(28,22,55,0));
-                }
-                .luna-home-ref .why {
-                  display:grid;
-                  grid-template-columns: 1.1fr .95fr;
-                  gap: 30px;
-                  padding: 34px 34px 30px;
-                  min-height: 360px;
-                  margin-bottom: 32px;
-                  background:
-                    linear-gradient(180deg, rgba(248,246,252,.70), rgba(240,236,248,.78)),
-                    radial-gradient(110% 100% at 82% 10%, rgba(203,188,228,.24), transparent 58%),
-                    url('/images/bg1.webp') center / cover no-repeat;
-                  position: relative;
-                }
-                .luna-home-ref .why h2 {
-                  font-family: Georgia, "Times New Roman", serif;
-                  font-size: clamp(26px, 2.2vw, 42px);
-                  line-height: 1.04;
-                  margin-bottom: 14px;
-                  letter-spacing: -.01em;
-                  color: var(--heading);
-                }
-                .luna-home-ref .why::before {
-                  content: none;
-                }
-                .luna-home-ref .why::after {
-                  content: none;
-                }
-                .luna-home-ref .why > div { position: relative; z-index: 1; }
-                .luna-home-ref .why .body {
-                  max-width: 520px;
-                  font-size: clamp(13px, 1.12vw, 19px);
-                  line-height: 1.42;
-                  color: rgba(68,60,86,.92);
-                }
-                .luna-home-ref .mini-grid {
-                  display:grid;
-                  grid-template-columns: repeat(3, 1fr);
-                  gap: 12px;
-                  align-items:stretch;
-                  padding-top: 2px;
-                }
-                .luna-home-ref .mini-card {
-                  border-radius: 16px;
-                  border: 1px solid rgba(203,196,217,.34);
-                  padding: 16px 14px 14px;
-                  min-height: 172px;
-                  height: 172px;
-                  background: linear-gradient(180deg, rgba(251,250,253,.98), rgba(245,243,248,.96));
-                  box-shadow: inset 0 0 0 1px rgba(255,255,255,.62);
-                  display: flex;
-                  flex-direction: column;
-                  justify-content: flex-start;
-                }
-                .luna-home-ref .mini-card .title {
-                  font-family: Georgia, "Times New Roman", serif;
-                  font-size: clamp(22px, 1.7vw, 34px);
-                  line-height: .96;
-                  margin-bottom: 10px;
-                  color: var(--heading);
-                  min-height: 46px;
-                }
-                .luna-home-ref .mini-card .txt {
-                  font-size: clamp(12px, .95vw, 16px);
-                  line-height: 1.28;
-                  color: rgba(79,70,98,.9);
-                  min-height: 64px;
-                }
-                .luna-home-ref .mini-note {
-                  grid-column: 1 / -1;
-                  font-size: clamp(13px, 1.08vw, 20px);
-                  line-height: 1.34;
-                  color: rgba(83,74,103,.9);
-                  margin-top: 0;
-                  max-width: 640px;
-                }
-                .luna-home-ref .two-col { display:grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 34px; }
-                .luna-home-ref .block { padding: 30px 28px 24px; min-height: 280px; }
-                .luna-home-ref .block h2 { font-size: 31px; margin-bottom: 14px; }
-                .luna-home-ref .two-col > .panel.block:first-child {
-                  background:
-                    radial-gradient(85% 90% at 20% 75%, rgba(236,232,244,.30), transparent 60%),
-                    linear-gradient(180deg, rgba(250,249,252,.98), rgba(244,241,248,.95));
-                }
-                .luna-home-ref .two-col > .panel.block:last-child {
-                  background:
-                    radial-gradient(90% 90% at 82% 16%, rgba(232,227,241,.30), transparent 60%),
-                    linear-gradient(180deg, rgba(250,249,252,.98), rgba(244,241,248,.95));
-                }
-                .luna-home-ref .timeline-box {
-                  margin-top: 22px;
-                  border-radius: 18px;
-                  border: none;
-                  min-height: 180px;
-                  padding: 16px 18px 14px;
-                  position: relative;
-                  overflow: hidden;
-                  background:
-                    radial-gradient(540px 180px at 50% 24%, rgba(209,196,230,.32), transparent 62%),
-                    linear-gradient(180deg, rgba(235,231,244,.94), rgba(224,219,237,.96));
-                }
-                .luna-home-ref .timeline-head {
-                  display: grid;
-                  grid-template-columns: repeat(3, 1fr);
-                  align-items: center;
-                  text-align: center;
-                  margin-bottom: 14px;
-                  font-size: 20px;
-                  color: rgba(73,64,97,.92);
-                }
-                .luna-home-ref .timeline-head .today {
-                  font-weight: 700;
-                  color: rgba(63,54,88,.98);
-                }
-                .luna-home-ref .timeline-track-wrap {
-                  position: relative;
-                  padding: 10px 6px 20px;
-                }
-                .luna-home-ref .timeline-track {
-                  width: 100%;
-                  height: 8px;
-                  border-radius: 999px;
-                  background: linear-gradient(90deg, #8dcab8 0%, #a8c79d 34%, #cfb27a 66%, #f09642 100%);
-                  box-shadow:
-                    inset 0 1px 0 rgba(255,255,255,.44),
-                    0 6px 14px rgba(130,113,150,.20);
-                }
-                .luna-home-ref .timeline-dot {
-                  position: absolute;
-                  top: 14px;
-                  transform: translate(-50%, -50%);
-                  border-radius: 999px;
-                  background: rgba(255,255,255,.95);
-                }
-                .luna-home-ref .timeline-dot.previous {
-                  left: 12%;
-                  width: 10px;
-                  height: 10px;
-                  box-shadow: 0 0 0 2px rgba(141,198,184,.34);
-                }
-                .luna-home-ref .timeline-dot.today {
-                  left: 50%;
-                  width: 16px;
-                  height: 16px;
-                  background: #fff8f8;
-                  box-shadow:
-                    0 0 0 5px rgba(240,149,105,.24),
-                    0 0 0 2px rgba(230,112,74,.92),
-                    0 0 18px rgba(232,125,83,.46);
-                }
-                .luna-home-ref .timeline-dot.next {
-                  left: 88%;
-                  width: 10px;
-                  height: 10px;
-                  box-shadow: 0 0 0 2px rgba(241,158,79,.30);
-                }
-                .luna-home-ref .wave-labels {
-                  position: static;
-                  display:grid;
-                  grid-template-columns: repeat(3, 1fr);
-                  align-items:center;
-                  text-align:center;
-                  margin-top: 10px;
-                  font-size: 16px;
-                  color: rgba(83,72,103,.9);
-                }
-                .luna-home-ref .pattern-wrap { display:grid; grid-template-columns: 1fr 1fr; gap:18px; margin-top: 22px; }
-                .luna-home-ref .pattern-card {
-                  border-radius: 18px;
-                  border: none;
-                  min-height: 145px;
-                  padding: 14px 18px 18px;
-                  background: linear-gradient(180deg, rgba(249,247,253,.95), rgba(241,237,248,.92));
-                  box-shadow: none;
-                }
-                .luna-home-ref .pattern-label { font-size:17px; line-height:1.2; color: var(--heading); margin-bottom:12px; }
-                .luna-home-ref .pattern-text { font-size:16px; line-height:1.55; color: rgba(78,69,98,.92); }
-                .luna-home-ref .voice-grid { display:grid; grid-template-columns: 1fr 1fr; gap:24px; margin-bottom: 34px; }
-                .luna-home-ref .voice-block, .luna-home-ref .bridge-block { min-height:278px; padding:22px 20px 18px; }
-                .luna-home-ref .voice-block {
-                  position: relative;
-                  display: grid;
-                  grid-template-columns: minmax(0, 1fr) 170px;
-                  gap: 16px;
-                  align-items: center;
-                  padding: 24px 22px 20px;
-                  background:
-                    linear-gradient(180deg, rgba(245,241,250,.72), rgba(236,231,245,.80)),
-                    radial-gradient(95% 88% at 80% 18%, rgba(188,170,216,.22), transparent 62%),
-                    url('/images/voice-journal-bg.webp') center / cover no-repeat;
-                }
-                .luna-home-ref .voice-body, .luna-home-ref .bridge-body { font-size:16px; line-height:1.62; color: rgba(78,69,98,.92); max-width: 380px; }
-                .luna-home-ref .voice-block .voice-body {
-                  max-width: none;
-                  width: 100%;
-                  min-width: 0;
-                  padding-right: 0;
-                  padding-bottom: 0;
-                }
-                .luna-home-ref .voice-actions {
-                  position: static;
-                  display:flex;
-                  flex-direction: column;
-                  align-items:center;
-                  justify-content:center;
-                  gap:0;
-                  margin-top:0;
-                  padding-right:0;
-                }
-                .luna-home-ref .voice-actions .cta {
-                  min-width: 146px;
-                  height: 52px;
-                  font-size: 32px;
-                  line-height: 1;
-                  background: linear-gradient(180deg, rgba(199,147,166,.38), rgba(171,121,143,.34));
-                  border-color: rgba(255,255,255,.22);
-                  box-shadow: 0 6px 16px rgba(0,0,0,.16), inset 0 0 0 1px rgba(255,255,255,.08);
-                }
-                .luna-home-ref .voice-actions .cta:hover {
-                  background: linear-gradient(180deg, rgba(128,22,38,.82), rgba(88,14,26,.84));
-                  box-shadow: 0 8px 20px rgba(58,7,16,.45), inset 0 0 0 1px rgba(255,180,190,.18);
-                }
-                .luna-home-ref .bridge-block {
-                  display: block;
-                  overflow: hidden;
-                  background:
-                    linear-gradient(180deg, rgba(245,241,250,.72), rgba(236,231,245,.80)),
-                    radial-gradient(90% 90% at 86% 16%, rgba(188,170,216,.22), transparent 62%),
-                    url('/images/voice-journal-bg.webp') center / cover no-repeat;
-                }
-                .luna-home-ref .bridge-block .bridge-body {
-                  max-width: none;
-                  width: 100%;
-                }
-                .luna-home-ref .reset {
-                  min-height: 280px;
-                  padding: 30px 30px 34px;
-                  display:flex;
-                  flex-direction:column;
-                  margin-bottom: 40px;
-                  background:
-                    linear-gradient(180deg, rgba(250,249,252,.54), rgba(244,241,248,.62)),
-                    radial-gradient(900px 220px at 52% 22%, rgba(236,229,244,.24), transparent 48%),
-                    url('/images/BG3.jpg') center / cover no-repeat;
-                }
-                .luna-home-ref .reset h2 { font-size: 30px; margin-bottom: 30px; }
-                .luna-home-ref .reset-center {
-                  flex:1;
-                  display:flex;
-                  flex-direction:column;
-                  justify-content:center;
-                  align-items:center;
-                  text-align:center;
-                  gap:26px;
-                }
-                .luna-home-ref .reset-title {
-                  font-family: Georgia, "Times New Roman", serif;
-                  font-size: 34px;
-                  line-height: 1.1;
-                  color: var(--heading);
-                  letter-spacing: -.02em;
-                }
-                .luna-home-ref .cta-large { min-width: 284px; }
-                .luna-home-ref.theme-light .panel {
-                  box-shadow:
-                    0 14px 26px rgba(111, 98, 139, .12),
-                    0 2px 0 rgba(255,255,255,.72) inset,
-                    0 -2px 0 rgba(194,182,216,.20) inset;
-                  border: 1px solid rgba(177, 163, 205, .22);
-                }
-                .luna-home-ref.theme-light .panel::after {
-                  content: "";
-                  position: absolute;
-                  inset: 0;
-                  pointer-events: none;
-                  border-radius: inherit;
-                  background:
-                    linear-gradient(120deg, rgba(255,255,255,.24), transparent 40%),
-                    linear-gradient(300deg, rgba(183,165,216,.12), transparent 46%),
-                    radial-gradient(120% 70% at 50% 120%, rgba(128,114,160,.08), transparent 64%);
-                }
-                .luna-home-ref.theme-light .hero {
-                  box-shadow:
-                    0 28px 48px rgba(118, 102, 149, .22),
-                    0 0 0 1px rgba(185,170,214,.30) inset;
-                  background:
-                    radial-gradient(110% 120% at 86% 16%, rgba(205,186,235,.46), transparent 56%),
-                    radial-gradient(92% 100% at 20% 80%, rgba(226,214,243,.42), transparent 58%),
-                    linear-gradient(180deg, rgba(248,246,252,.96), rgba(239,234,247,.97));
-                }
-                .luna-home-ref.theme-light .why {
-                  box-shadow:
-                    0 24px 40px rgba(118, 103, 149, .18),
-                    0 0 0 1px rgba(180,166,208,.30) inset;
-                  background:
-                    linear-gradient(180deg, rgba(248,246,252,.70), rgba(239,234,247,.78)),
-                    radial-gradient(120% 95% at 86% 12%, rgba(201,180,230,.34), transparent 56%),
-                    radial-gradient(80% 85% at 12% 82%, rgba(223,213,242,.26), transparent 58%),
-                    url('/images/bg1.webp') center / cover no-repeat;
-                }
-                .luna-home-ref.theme-light .mini-card {
-                  box-shadow:
-                    0 14px 22px rgba(118, 103, 149, .16),
-                    0 1px 0 rgba(255,255,255,.7) inset,
-                    0 -1px 0 rgba(187,174,214,.30) inset;
-                  border: 1px solid rgba(173,157,202,.34);
-                }
-                .luna-home-ref.theme-light .two-col > .panel.block:first-child,
-                .luna-home-ref.theme-light .two-col > .panel.block:last-child {
-                  box-shadow:
-                    0 18px 30px rgba(118, 103, 149, .16),
-                    0 0 0 1px rgba(182,167,210,.24) inset;
-                }
-                .luna-home-ref.theme-light .pattern-card {
-                  box-shadow:
-                    0 16px 24px rgba(118, 103, 149, .16),
-                    0 0 0 1px rgba(179,164,207,.28) inset;
-                  border: 1px solid rgba(179,164,207,.28);
-                }
-                .luna-home-ref.theme-light .voice-block,
-                .luna-home-ref.theme-light .bridge-block {
-                  box-shadow:
-                    0 22px 34px rgba(118, 103, 149, .18),
-                    0 0 0 1px rgba(179,164,207,.30) inset;
-                }
-                .luna-home-ref.theme-light .reset {
-                  box-shadow:
-                    0 28px 46px rgba(118, 103, 149, .20),
-                    0 0 0 1px rgba(179,164,207,.32) inset;
-                  background:
-                    linear-gradient(180deg, rgba(249,247,253,.56), rgba(241,236,248,.64)),
-                    radial-gradient(92% 64% at 50% 20%, rgba(209,186,234,.34), transparent 52%),
-                    radial-gradient(84% 58% at 50% 82%, rgba(194,179,226,.22), transparent 52%),
-                    url('/images/BG3.jpg') center / cover no-repeat;
-                }
-                .luna-home-ref.theme-dark {
-                  --text: #efe7ff;
-                  --muted: #c9b9e7;
-                  --shadow: 0 18px 46px rgba(0,0,0,.45);
-                  color: var(--text);
-                }
-                .luna-home-ref.theme-dark .ref-wrap {
-                  background:
-                    radial-gradient(920px 640px at 74% 16%, rgba(173,117,176,.22), transparent 56%),
-                    radial-gradient(780px 560px at 18% 52%, rgba(116,123,201,.22), transparent 52%),
-                    radial-gradient(620px 480px at 74% 78%, rgba(196,129,156,.18), transparent 50%),
-                    linear-gradient(180deg, #080b20 0%, #0b1028 52%, #0a1024 100%);
-                }
-                .luna-home-ref.theme-dark .ref-wrap::after {
-                  background:
-                    radial-gradient(720px 340px at 48% 8%, rgba(255,255,255,.10), transparent 58%),
-                    radial-gradient(1000px 600px at 50% 100%, rgba(141,110,199,.18), transparent 60%);
-                  opacity: .9;
-                }
-                .luna-home-ref.theme-dark .panel {
-                  background: linear-gradient(180deg, rgba(28,24,56,.86), rgba(16,18,43,.88));
-                  border: 1px solid rgba(178,154,214,.20);
-                }
-                .luna-home-ref.theme-dark .panel::before {
-                  background: radial-gradient(560px 240px at 64% 20%, rgba(168,134,208,.18), transparent 55%);
-                }
-                .luna-home-ref.theme-dark h1,
-                .luna-home-ref.theme-dark h2,
-                .luna-home-ref.theme-dark .mini-card .title,
-                .luna-home-ref.theme-dark .pattern-label,
-                .luna-home-ref.theme-dark .reset-title {
-                  color: #f2eaff;
-                }
-                .luna-home-ref.theme-dark .body,
-                .luna-home-ref.theme-dark .why .body,
-                .luna-home-ref.theme-dark .mini-card .txt,
-                .luna-home-ref.theme-dark .mini-note,
-                .luna-home-ref.theme-dark .pattern-text,
-                .luna-home-ref.theme-dark .voice-body,
-                .luna-home-ref.theme-dark .bridge-body,
-                .luna-home-ref.theme-dark .wave-labels,
-                .luna-home-ref.theme-dark .sub {
-                  color: rgba(228,217,246,.9);
-                }
-                .luna-home-ref.theme-dark .hero {
-                  background:
-                    radial-gradient(120% 120% at 78% 18%, rgba(128,92,155,.26), transparent 58%),
-                    radial-gradient(80% 100% at 24% 74%, rgba(101,113,188,.24), transparent 56%),
-                    linear-gradient(180deg, rgba(21,18,48,.78), rgba(14,16,40,.84));
-                }
-                .luna-home-ref.theme-dark .why {
-                  background:
-                    linear-gradient(180deg, rgba(21,18,47,.76), rgba(12,14,35,.84)),
-                    radial-gradient(110% 100% at 82% 10%, rgba(131,101,176,.16), transparent 58%),
-                    url('/images/bg1.webp') center / cover no-repeat;
-                }
-                .luna-home-ref.theme-dark .mini-card,
-                .luna-home-ref.theme-dark .pattern-card {
-                  background: linear-gradient(180deg, rgba(39,31,77,.72), rgba(19,20,52,.76));
-                  border-color: rgba(178,154,214,.20);
-                }
-                .luna-home-ref.theme-dark .two-col > .panel.block:first-child {
-                  background:
-                    radial-gradient(85% 90% at 20% 75%, rgba(104,96,188,.22), transparent 60%),
-                    linear-gradient(180deg, rgba(27,23,56,.86), rgba(14,16,40,.9));
-                }
-                .luna-home-ref.theme-dark .two-col > .panel.block:last-child {
-                  background:
-                    radial-gradient(90% 90% at 82% 16%, rgba(156,108,156,.24), transparent 60%),
-                    linear-gradient(180deg, rgba(27,23,56,.86), rgba(14,16,40,.9));
-                }
-                .luna-home-ref.theme-dark .timeline-box {
-                  background:
-                    radial-gradient(600px 140px at 50% 55%, rgba(130,100,195,.22), transparent 55%),
-                    linear-gradient(180deg, rgba(19,16,56,.56), rgba(9,10,35,.62));
-                }
-                .luna-home-ref.theme-dark .timeline-visual {
-                  display: none;
-                }
-                .luna-home-ref.theme-dark .timeline-box {
-                  background:
-                    radial-gradient(620px 180px at 50% 20%, rgba(98,80,152,.28), transparent 62%),
-                    linear-gradient(180deg, rgba(30,26,62,.86), rgba(17,18,45,.90));
-                }
-                .luna-home-ref.theme-dark .timeline-head {
-                  color: rgba(228,217,246,.88);
-                }
-                .luna-home-ref.theme-dark .timeline-head .today {
-                  color: rgba(244,236,255,.98);
-                }
-                .luna-home-ref.theme-dark .timeline-track {
-                  background: linear-gradient(90deg, #63b8a1 0%, #8cbf85 34%, #c39e62 66%, #eb7f35 100%);
-                  box-shadow:
-                    inset 0 1px 0 rgba(255,255,255,.20),
-                    0 6px 14px rgba(0,0,0,.28);
-                }
-                .luna-home-ref.theme-dark .timeline-dot.previous {
-                  box-shadow: 0 0 0 2px rgba(111,184,164,.28);
-                }
-                .luna-home-ref.theme-dark .timeline-dot.today {
-                  box-shadow:
-                    0 0 0 5px rgba(236,131,73,.20),
-                    0 0 0 2px rgba(247,154,107,.95),
-                    0 0 16px rgba(233,123,66,.42);
-                }
-                .luna-home-ref.theme-dark .timeline-dot.next {
-                  box-shadow: 0 0 0 2px rgba(237,138,72,.26);
-                }
-                .luna-home-ref.theme-dark .voice-block {
-                  background:
-                    linear-gradient(180deg, rgba(18,17,44,.74), rgba(11,13,34,.84)),
-                    radial-gradient(95% 88% at 80% 18%, rgba(132,96,170,.16), transparent 62%),
-                    url('/images/voice-journal-bg.webp') center / cover no-repeat;
-                }
-                .luna-home-ref.theme-dark .bridge-block {
-                  background:
-                    linear-gradient(180deg, rgba(18,17,44,.74), rgba(11,13,34,.84)),
-                    radial-gradient(90% 90% at 86% 16%, rgba(132,96,170,.16), transparent 62%),
-                    url('/images/voice-journal-bg.webp') center / cover no-repeat;
-                }
-                .luna-home-ref.theme-dark .reset {
-                  background:
-                    linear-gradient(180deg, rgba(23,20,49,.72), rgba(14,16,41,.82)),
-                    radial-gradient(900px 220px at 52% 24%, rgba(178,122,176,.20), transparent 50%),
-                    url('/images/BG3.jpg') center / cover no-repeat;
-                }
-                .luna-home-ref.theme-dark .cta {
-                  background: linear-gradient(180deg, rgba(174,121,192,.42), rgba(138,96,164,.36));
-                  color: #f4ecff;
-                  border-color: rgba(233,215,255,.22);
-                  box-shadow: 0 8px 16px rgba(0,0,0,.26), inset 0 0 0 1px rgba(255,255,255,.10);
-                }
-                .luna-home-ref.theme-dark .cta:hover {
-                  background: linear-gradient(180deg, rgba(188,132,206,.62), rgba(150,104,176,.52));
-                  border-color: rgba(241,226,255,.34);
-                }
-                @media (max-width: 860px) {
-                  .luna-home-ref .ref-wrap { padding: 8px 10px 44px; }
-                  .luna-home-ref .hero, .luna-home-ref .why, .luna-home-ref .two-col, .luna-home-ref .voice-grid { grid-template-columns: 1fr; }
-                  .luna-home-ref h1 { font-size: 38px; }
-                  .luna-home-ref .hero { min-height: 0; padding: 18px 14px 12px; }
-                  .luna-home-ref .hero-lead-row { flex-direction: column; align-items: flex-start; }
-                  .luna-home-ref .hero-media { height: 207px; min-height: 207px; }
-                  .luna-home-ref .mini-grid { grid-template-columns: 1fr; }
-                  .luna-home-ref .pattern-wrap { grid-template-columns: 1fr; }
-                  .luna-home-ref .voice-block { grid-template-columns: 1fr; }
-                  .luna-home-ref .voice-block .voice-body { width: 100%; }
-                  .luna-home-ref .voice-actions {
-                    position: static;
-                    margin-top: 16px;
-                    align-items: flex-end;
-                  }
-                }
-              `}
-            </style>
-            <div className="ref-wrap">
-              <div className="ref-inner">
-                <section className="panel hero">
-                  <div className="hero-copy">
-                    <h1>{homeRefCopy.heroTitle}</h1>
-                    <div className="hero-lead-row">
-                      <div className="body">{homeRefCopy.heroBody}</div>
-                      <button type="button" onClick={onSignIn} className="cta">{homeRefCopy.heroCta}</button>
+          <section className="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-500">
+            <section className="relative overflow-hidden rounded-[3rem] border border-slate-200/70 dark:border-[#2a4670] shadow-luna-rich">
+              <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_85%_15%,rgba(241,184,223,0.34),transparent_60%),radial-gradient(100%_100%_at_5%_95%,rgba(172,182,246,0.32),transparent_62%),linear-gradient(145deg,#fcf4f8_0%,#f2eef8_44%,#eceefb_100%)] dark:bg-[radial-gradient(120%_90%_at_85%_15%,rgba(214,114,185,0.25),transparent_56%),radial-gradient(100%_100%_at_5%_95%,rgba(108,124,209,0.23),transparent_60%),linear-gradient(145deg,#121831_0%,#121f43_40%,#1a2f56_100%)]" />
+              <div className="relative z-10 p-6 md:p-10 lg:p-12">
+                <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 md:gap-10 items-center">
+                  <div className="space-y-6">
+                    <p className="text-[10px] font-black uppercase tracking-[0.34em] text-luna-purple">{homeEyebrowByLang[lang] || homeEyebrowByLang.en}</p>
+                    <h1 className="text-[clamp(2.3rem,4.9vw,5rem)] leading-[0.96] tracking-tight font-black text-slate-900 dark:text-slate-100">
+                      {dailyCompanionCopy.heroTitle}
+                    </h1>
+                    <p className="max-w-xl text-[1.02rem] md:text-[1.12rem] font-medium text-slate-700 dark:text-slate-200/90 leading-relaxed">
+                      {dailyCompanionCopy.heroSubtitle}
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      <button
+                        type="button"
+                        onClick={onSignIn}
+                        className={`${PUBLIC_BTN_PRIMARY} px-7 py-3 text-sm tracking-[0.08em]`}
+                      >
+                        <span className={PUBLIC_BTN_PRIMARY_GLOW} />
+                        <span className="relative z-10">{dailyCompanionCopy.primaryCta}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActivePage('how_it_works')}
+                        className={`${PUBLIC_BTN_SECONDARY} px-7 py-3 text-sm tracking-[0.08em]`}
+                      >
+                        {dailyCompanionCopy.secondaryCta}
+                      </button>
                     </div>
-                    <div className="sub">{homeRefCopy.heroSub}</div>
                   </div>
-                  <div className="hero-media" aria-hidden="true">
-                    <img src="/images/F1.jpg" alt="" loading="lazy" decoding="async" />
-                  </div>
-                </section>
 
-                <section className="panel why">
-                  <div>
-                    <h2>{homeRefCopy.whyTitle}</h2>
-                    <div className="body">
-                      {homeRefCopy.whyIntro}<br /><br />
-                      {homeRefCopy.whyPoint1}<br />
-                      {homeRefCopy.whyPoint2}<br />
-                      {homeRefCopy.whyPoint3}<br />
-                      {homeRefCopy.whyPoint4}<br /><br />
-                      {homeRefCopy.whyOutro}
+                  <div className="relative">
+                    <div className="absolute -inset-5 rounded-[2.4rem] bg-gradient-to-b from-fuchsia-300/22 via-violet-300/16 to-transparent dark:from-fuchsia-500/15 dark:via-indigo-500/18 blur-2xl" />
+                    <div className="relative rounded-[2.2rem] overflow-hidden border border-white/45 dark:border-white/10 shadow-[0_24px_60px_rgba(40,24,84,0.28)]">
+                      <img
+                        src="/images/face_image.webp"
+                        alt="Luna daily note mood"
+                        loading="eager"
+                        fetchPriority="high"
+                        decoding="async"
+                        className="w-full h-[420px] object-cover object-[58%_38%] saturate-[0.92] contrast-[0.93] brightness-[0.95]"
+                      />
+                      <div className="absolute inset-0 bg-[linear-gradient(165deg,rgba(250,227,241,0.18)_0%,rgba(188,154,222,0.14)_42%,rgba(34,42,86,0.42)_100%)]" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#171c3c]/44 via-transparent to-transparent" />
                     </div>
                   </div>
-                  <div className="mini-grid">
-                    <div className="mini-card">
-                      <div className="title">{homeRefCopy.bodyCardTitle.split('\n')[0]}<br />{homeRefCopy.bodyCardTitle.split('\n')[1]}</div>
-                      <div className="txt">{homeRefCopy.bodyCardText}</div>
-                    </div>
-                    <div className="mini-card">
-                      <div className="title">{homeRefCopy.sensesCardTitle.split('\n')[0]}<br />{homeRefCopy.sensesCardTitle.split('\n')[1]}</div>
-                      <div className="txt">{homeRefCopy.sensesCardText}</div>
-                    </div>
-                    <div className="mini-card">
-                      <div className="title">{homeRefCopy.wordsCardTitle.split('\n')[0]}<br />{homeRefCopy.wordsCardTitle.split('\n')[1]}</div>
-                      <div className="txt">{homeRefCopy.wordsCardText}</div>
-                    </div>
-                    <div className="mini-note">{homeRefCopy.miniNote}</div>
-                  </div>
-                </section>
-
-                <div className="two-col">
-                  <section className="panel block">
-                    <h2>{homeRefCopy.rhythmTitle}</h2>
-                    <div className="timeline-box">
-                      <div className="timeline-head">
-                        <span>{homeRefCopy.previous}</span>
-                        <span className="today">{homeRefCopy.today}</span>
-                        <span>{homeRefCopy.nextPhase}</span>
-                      </div>
-                      <div className="timeline-track-wrap" aria-hidden="true">
-                        <div className="timeline-track" />
-                        <span className="timeline-dot previous" />
-                        <span className="timeline-dot today" />
-                        <span className="timeline-dot next" />
-                      </div>
-                    </div>
-                  </section>
-
-                  <section className="panel block">
-                    <h2>{homeRefCopy.patternsTitle}</h2>
-                    <div className="pattern-wrap">
-                      <div className="pattern-card">
-                        <div className="pattern-label">{homeRefCopy.patternLabel}</div>
-                        <div className="pattern-text">{homeRefCopy.patternText1}</div>
-                      </div>
-                      <div className="pattern-card">
-                        <div className="pattern-label">{homeRefCopy.patternLabel}</div>
-                        <div className="pattern-text">{homeRefCopy.patternText2}</div>
-                      </div>
-                    </div>
-                  </section>
                 </div>
 
-                <div className="voice-grid">
-                  <section className="panel voice-block">
-                    <div>
-                      <h2>{homeRefCopy.voiceTitle}</h2>
-                      <div className="voice-body">
-                        {homeRefCopy.voiceText1}<br /><br />
-                        {homeRefCopy.voiceText2}<br /><br />
-                        {homeRefCopy.voiceText3}
-                      </div>
-                    </div>
-                    <div className="voice-actions">
-                      <button type="button" onClick={onSignIn} className="cta">{homeRefCopy.record}</button>
-                    </div>
-                  </section>
-
-                  <section className="panel bridge-block">
-                    <h2>{homeRefCopy.bridgeTitle}</h2>
-                    <div className="bridge-body">
-                      {homeRefCopy.bridgeText1}<br /><br />
-                      {homeRefCopy.bridgeText2}<br /><br />
-                      {homeRefCopy.bridgeText3}<br />
-                      {homeRefCopy.bridgeText4}
-                    </div>
-                  </section>
-                </div>
-
-                <section className="panel reset">
-                  <h2>{homeRefCopy.resetHeading}</h2>
-                  <div className="reset-center">
-                    <div className="reset-title">{homeRefCopy.resetTitle}</div>
-                    <button type="button" onClick={onSignIn} className="cta cta-large">{homeRefCopy.resetCta}</button>
+                <div className="mt-6 rounded-[1.8rem] border border-white/55 dark:border-white/14 bg-white/68 dark:bg-[#132a53]/52 backdrop-blur p-3 md:p-4">
+                  <p className="px-2 pb-2 inline-flex items-center gap-2 text-xs font-semibold text-[#704a90] dark:text-[#d2c3f3]">
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-br from-[#f3cde4] to-[#e3d8ff] dark:from-[#604285] dark:to-[#4a4f86] text-luna-purple">
+                      <Mic size={11} />
+                    </span>
+                    {homeActionCopy.talkLine}
+                  </p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+                    {[
+                      {
+                        icon: Sparkles,
+                        ...homeActionCopy.actions[0],
+                        onClick: onSignIn,
+                        tone: 'from-[#f8dce9] via-[#f0ddfa] to-[#e5e0ff] dark:from-[#4f3a6f] dark:via-[#3f4278] dark:to-[#304f84]',
+                        iconTone: 'from-[#ffe8f3] to-[#ecdfff] dark:from-[#6b4e8f] dark:to-[#515990]',
+                      },
+                      {
+                        icon: Heart,
+                        ...homeActionCopy.actions[1],
+                        onClick: onSignIn,
+                        tone: 'from-[#fbe4ea] via-[#f3e4f9] to-[#ebddff] dark:from-[#5d3d67] dark:via-[#4a3f73] dark:to-[#3a4f7e]',
+                        iconTone: 'from-[#ffeef3] to-[#f1e3ff] dark:from-[#714b77] dark:to-[#575198]',
+                      },
+                      {
+                        icon: Mic,
+                        ...homeActionCopy.actions[2],
+                        onClick: onSignIn,
+                        tone: 'from-[#f4e8ff] via-[#e8e8ff] to-[#dcecff] dark:from-[#513969] dark:via-[#3f4678] dark:to-[#2f5385]',
+                        iconTone: 'from-[#f9eeff] to-[#e5edff] dark:from-[#68488f] dark:to-[#4a5f99]',
+                      },
+                      {
+                        icon: MapPin,
+                        ...homeActionCopy.actions[3],
+                        onClick: () => setActivePage('map'),
+                        tone: 'from-[#fae5f2] via-[#f3e9ff] to-[#e8e8ff] dark:from-[#5f426e] dark:via-[#4b4679] dark:to-[#3d4f86]',
+                        iconTone: 'from-[#ffeef8] to-[#ece8ff] dark:from-[#764f86] dark:to-[#57589a]',
+                      },
+                    ].map((item, index) => (
+                      <button
+                        key={`${item.label}-${index}`}
+                        onClick={item.onClick}
+                        className={`rounded-[1.2rem] border border-white/50 dark:border-white/12 bg-gradient-to-br ${item.tone} p-3 text-center shadow-[0_10px_24px_rgba(152,112,194,0.16)] dark:shadow-[0_12px_26px_rgba(16,24,54,0.38)] hover:-translate-y-0.5 transition-all`}
+                      >
+                        <span className={`mx-auto inline-flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br ${item.iconTone} text-luna-purple shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]`}>
+                          <item.icon size={16} />
+                        </span>
+                        <p className="mt-2 text-[12px] md:text-[13px] font-black uppercase tracking-[0.08em] text-slate-700 dark:text-slate-100">{item.label}</p>
+                        <p className="mt-1 text-[11px] md:text-[11.5px] font-semibold text-slate-600 dark:text-slate-200/90 leading-snug">{item.sub}</p>
+                      </button>
+                    ))}
                   </div>
-                </section>
+                  <div className="mt-3 rounded-[1.1rem] border border-white/45 dark:border-white/10 bg-white/52 dark:bg-[#14254a]/55 px-3 py-2.5">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      {[
+                        { icon: Mic, label: homeFeatureChipLabels[0] || homeFeatureChipLabelsByLang.en![0] },
+                        { icon: Sparkles, label: homeFeatureChipLabels[1] || homeFeatureChipLabelsByLang.en![1] },
+                        { icon: MapPin, label: homeFeatureChipLabels[2] || homeFeatureChipLabelsByLang.en![2] },
+                        { icon: Music2, label: homeFeatureChipLabels[3] || homeFeatureChipLabelsByLang.en![3] },
+                      ].map((item) => (
+                        <div key={item.label} className="rounded-xl border border-white/40 dark:border-white/10 bg-white/60 dark:bg-[#102043]/60 px-2.5 py-2 text-center">
+                          <span className="mx-auto inline-flex items-center justify-center w-6 h-6 rounded-full bg-luna-purple/16 text-luna-purple">
+                            <item.icon size={12} />
+                          </span>
+                          <p className="mt-1 text-[10px] font-semibold text-slate-700 dark:text-slate-200 leading-tight">{item.label}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            </section>
+
+            <section className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-6">
+              <article className="rounded-[2.2rem] border border-slate-200/70 dark:border-[#2a4670] bg-white/76 dark:bg-[#0d1f45]/86 shadow-luna-rich p-7 md:p-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {[
+                    {
+                      title: homePillars[0]?.title || homePillarsByLang.en![0].title,
+                      text: homePillars[0]?.text || homePillarsByLang.en![0].text,
+                      tone: 'text-[#8b3f92] dark:text-[#d9a2ff]',
+                      icon: Lock,
+                    },
+                    {
+                      title: homePillars[1]?.title || homePillarsByLang.en![1].title,
+                      text: homePillars[1]?.text || homePillarsByLang.en![1].text,
+                      tone: 'text-[#6a58b6] dark:text-[#b7b6ff]',
+                      icon: Heart,
+                    },
+                    {
+                      title: homePillars[2]?.title || homePillarsByLang.en![2].title,
+                      text: homePillars[2]?.text || homePillarsByLang.en![2].text,
+                      tone: 'text-[#9b4e78] dark:text-[#f0b3d5]',
+                      icon: Mic,
+                    },
+                  ].map((item) => (
+                    <article
+                      key={item.title}
+                      className="rounded-[1.3rem] border border-white/60 dark:border-white/14 bg-[linear-gradient(165deg,rgba(255,255,255,0.86),rgba(245,236,255,0.72))] dark:bg-[linear-gradient(165deg,rgba(31,49,92,0.68),rgba(22,39,78,0.52))] backdrop-blur px-4 py-4 shadow-[0_12px_28px_rgba(143,104,191,0.18),inset_0_1px_0_rgba(255,255,255,0.62)] dark:shadow-[0_12px_28px_rgba(20,29,58,0.42),inset_0_1px_0_rgba(255,255,255,0.08)] transition-all hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(143,104,191,0.24),inset_0_1px_0_rgba(255,255,255,0.62)]"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-luna-purple/14 text-luna-purple">
+                          <item.icon size={14} />
+                        </span>
+                        <p className={`text-[14px] md:text-[16px] font-black uppercase tracking-[0.12em] ${item.tone}`}>{item.title}</p>
+                      </div>
+                      <p className="mt-2 text-[12px] font-semibold leading-relaxed text-slate-700 dark:text-slate-200/95">{item.text}</p>
+                    </article>
+                  ))}
+                </div>
+              </article>
+
+              <article className="rounded-[2.2rem] border border-slate-200/70 dark:border-[#2a4670] bg-white/76 dark:bg-[#0d1f45]/86 shadow-luna-rich p-7 md:p-8">
+                <h2 className="text-3xl md:text-[2.2rem] font-black tracking-tight text-slate-900 dark:text-slate-100">{dailyCompanionCopy.patternTitle}</h2>
+                <p className="mt-2 text-sm font-medium text-slate-600 dark:text-slate-300">{homePatternNoteByLang[lang] || homePatternNoteByLang.en}</p>
+                <div className="mt-4 space-y-3">
+                  <article className="rounded-[1.25rem] border border-slate-200/80 dark:border-[#2a4670] bg-slate-50/86 dark:bg-[#11284f]/76 p-4 transition-all hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(125,93,173,0.22)]">
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-luna-purple">{dailyCompanionCopy.patternCardLabel}</p>
+                    <p className="mt-2 text-sm font-semibold text-slate-800 dark:text-slate-100">{dailyCompanionCopy.patternOne}</p>
+                  </article>
+                  <article className="rounded-[1.25rem] border border-slate-200/80 dark:border-[#2a4670] bg-slate-50/86 dark:bg-[#11284f]/76 p-4 transition-all hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(125,93,173,0.22)]">
+                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-luna-purple">{dailyCompanionCopy.patternCardLabel}</p>
+                    <p className="mt-2 text-sm font-semibold text-slate-800 dark:text-slate-100">{dailyCompanionCopy.patternTwo}</p>
+                  </article>
+                </div>
+              </article>
+            </section>
+
+            <section className="relative overflow-hidden rounded-[2.2rem] border border-slate-200/70 dark:border-[#2a4670] bg-white/76 dark:bg-[#0d1f45]/86 shadow-luna-rich p-7 md:p-8">
+              <div className="absolute inset-0 bg-[radial-gradient(90%_120%_at_8%_10%,rgba(248,196,225,0.26),transparent_58%),radial-gradient(70%_100%_at_92%_0%,rgba(197,182,255,0.24),transparent_60%),linear-gradient(145deg,rgba(255,255,255,0.36),rgba(245,239,255,0.28))] dark:bg-[radial-gradient(90%_120%_at_8%_10%,rgba(157,106,184,0.18),transparent_60%),radial-gradient(70%_100%_at_92%_0%,rgba(92,113,177,0.16),transparent_62%),linear-gradient(145deg,rgba(20,35,70,0.38),rgba(17,31,62,0.26))]" />
+              <div className="relative z-10">
+              <h2 className="text-[1.7rem] md:text-[2rem] font-black tracking-tight text-slate-900 dark:text-slate-100">{homeActionCopy.servicesTitle}</h2>
+              <p className="mt-1 text-[0.95rem] font-semibold text-slate-700 dark:text-slate-300">{homeActionCopy.servicesSubtitle}</p>
+              <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3">
+                {homeActionCopy.services.map((service, index) => (
+                  <article
+                    key={service.title}
+                    className={`rounded-[1.2rem] border border-white/55 dark:border-white/12 p-4 shadow-[0_10px_24px_rgba(147,107,187,0.16)] dark:shadow-[0_12px_24px_rgba(13,22,48,0.38)] ${
+                      index % 2 === 0
+                        ? 'bg-[linear-gradient(160deg,rgba(255,255,255,0.88),rgba(246,238,255,0.72))] dark:bg-[linear-gradient(160deg,rgba(28,46,86,0.68),rgba(21,39,76,0.56))]'
+                        : 'bg-[linear-gradient(160deg,rgba(255,249,253,0.88),rgba(240,241,255,0.72))] dark:bg-[linear-gradient(160deg,rgba(32,44,82,0.7),rgba(20,37,72,0.56))]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      {[
+                        { icon: Mic, iconTone: 'from-[#ffe0ef] to-[#eddcff] dark:from-[#6a4f89] dark:to-[#5a5a97]', titleTone: 'text-[#9a397a] dark:text-[#f0b7dc]' },
+                        { icon: Heart, iconTone: 'from-[#ffe8e9] to-[#f0e1ff] dark:from-[#6d4c7b] dark:to-[#5d5b99]', titleTone: 'text-[#7f4eb2] dark:text-[#cdc1ff]' },
+                        { icon: Sparkles, iconTone: 'from-[#f7e4ff] to-[#e2ecff] dark:from-[#624c8b] dark:to-[#4f659f]', titleTone: 'text-[#5f54b5] dark:text-[#bac7ff]' },
+                        { icon: MapPin, iconTone: 'from-[#ffeaf4] to-[#ece7ff] dark:from-[#6f4d84] dark:to-[#5b5d95]', titleTone: 'text-[#a14f7e] dark:text-[#efbdd8]' },
+                      ][index] && (() => {
+                        const iconMeta = [
+                          { icon: Mic, iconTone: 'from-[#ffe0ef] to-[#eddcff] dark:from-[#6a4f89] dark:to-[#5a5a97]', titleTone: 'text-[#9a397a] dark:text-[#f0b7dc]' },
+                          { icon: Heart, iconTone: 'from-[#ffe8e9] to-[#f0e1ff] dark:from-[#6d4c7b] dark:to-[#5d5b99]', titleTone: 'text-[#7f4eb2] dark:text-[#cdc1ff]' },
+                          { icon: Sparkles, iconTone: 'from-[#f7e4ff] to-[#e2ecff] dark:from-[#624c8b] dark:to-[#4f659f]', titleTone: 'text-[#5f54b5] dark:text-[#bac7ff]' },
+                          { icon: MapPin, iconTone: 'from-[#ffeaf4] to-[#ece7ff] dark:from-[#6f4d84] dark:to-[#5b5d95]', titleTone: 'text-[#a14f7e] dark:text-[#efbdd8]' },
+                        ][index];
+                        const Icon = iconMeta.icon;
+                        return (
+                          <>
+                            <span className={`inline-flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br ${iconMeta.iconTone} text-luna-purple shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]`}>
+                              <Icon size={16} />
+                            </span>
+                            <p className={`text-[13px] md:text-[14px] font-black uppercase tracking-[0.12em] ${iconMeta.titleTone}`}>{service.title}</p>
+                          </>
+                        );
+                      })()}
+                    </div>
+                    <p className="mt-2 text-[0.95rem] font-medium leading-relaxed text-slate-700 dark:text-slate-200">{service.body}</p>
+                  </article>
+                ))}
+              </div>
+              </div>
+            </section>
+
+            <section className="relative overflow-hidden rounded-[2.8rem] border border-slate-200/70 dark:border-[#2a4670] shadow-luna-rich p-9 md:p-12 text-center">
+              <div className="absolute inset-0 bg-[radial-gradient(90%_120%_at_0%_100%,rgba(174,161,223,0.28),transparent_58%),radial-gradient(80%_100%_at_100%_0%,rgba(244,176,208,0.24),transparent_62%),linear-gradient(145deg,#f9f2f8_0%,#f1eef9_44%,#eef0fa_100%)] dark:bg-[radial-gradient(90%_120%_at_0%_100%,rgba(120,102,184,0.27),transparent_60%),radial-gradient(80%_100%_at_100%_0%,rgba(185,101,149,0.2),transparent_62%),linear-gradient(145deg,#141a35_0%,#17234a_45%,#1d315b_100%)]" />
+              <div className="relative z-10">
+                <h2 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-100">{dailyCompanionCopy.finalTitle}</h2>
+                <p className="mt-3 text-base font-medium text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">{dailyCompanionCopy.whatBody}</p>
+                <div className="mt-7">
+                  <button
+                    type="button"
+                    onClick={onSignIn}
+                    className={`${PUBLIC_BTN_PRIMARY} px-8 py-3 text-sm tracking-[0.08em]`}
+                  >
+                    <span className={PUBLIC_BTN_PRIMARY_GLOW} />
+                    <span className="relative z-10">{dailyCompanionCopy.finalCta}</span>
+                  </button>
+                </div>
+              </div>
+            </section>
           </section>
         )}
-
         {activePage === 'map' && (
           <Suspense fallback={lazyFallback}>
             <PublicMapSection
@@ -2461,7 +2358,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
               <h3 className="text-[11px] font-black uppercase tracking-[0.6em] text-slate-600 dark:text-slate-500">{ui.publicHome.privacy.title}</h3>
               <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">{ui.publicHome.privacy.subtitle}</p>
             </div>
-            <button onClick={onSignIn} className="px-4 py-2 rounded-full border border-luna-purple/30 text-[10px] font-black uppercase tracking-widest text-luna-purple hover:bg-luna-purple/10 hover:border-luna-purple/60 hover:scale-[1.03] active:scale-[0.98] transition-all">{ui.publicHome.privacy.cta}</button>
+            <button onClick={onSignIn} className={`${PUBLIC_BTN_SECONDARY} px-4 py-2 text-[10px] tracking-widest text-luna-purple`}>{ui.publicHome.privacy.cta}</button>
           </div>
           <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 p-6">
             <p className="text-slate-700 dark:text-slate-300 font-semibold leading-relaxed max-w-4xl">
@@ -2625,7 +2522,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
                     }
                     setInstallFeedback(installActions.noPrompt);
                   }}
-                  className="mt-2 px-3 py-2 rounded-xl border border-luna-purple/40 bg-luna-purple/10 text-[10px] font-black uppercase tracking-[0.14em] text-luna-purple hover:bg-luna-purple/20 transition-colors"
+                  className={`${PUBLIC_BTN_SECONDARY} mt-2 px-3 py-2 text-[10px] tracking-[0.14em] text-luna-purple`}
                 >
                   {installGuideModal.openPrompt}
                 </button>
@@ -2634,7 +2531,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
             <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{installGuideModal.fallback}</p>
             {installFeedback && <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{installFeedback}</p>}
             <div className="pt-2">
-              <button onClick={() => setShowInstallGuideModal(false)} className="px-4 py-2 rounded-full border border-slate-300 dark:border-slate-700 text-[10px] font-black uppercase tracking-[0.16em] text-slate-600 dark:text-slate-300">
+              <button onClick={() => setShowInstallGuideModal(false)} className={`${PUBLIC_BTN_SECONDARY} px-4 py-2 text-[10px] tracking-[0.16em] text-slate-600 dark:text-slate-300`}>
                 {installGuideModal.close}
               </button>
             </div>

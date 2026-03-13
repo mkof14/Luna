@@ -9,6 +9,13 @@ test('onboarding and first check-in flow works', async ({ page }) => {
   await expect(page.getByTestId('onboarding-begin')).toBeVisible();
   await page.getByTestId('onboarding-begin').click();
 
+  await page.getByRole('button', { name: /understand my emotions/i }).click();
+  await page.getByRole('button', { name: /^next$/i }).click();
+  await page.getByRole('button', { name: /^next$/i }).click();
+  await page.getByRole('button', { name: /^next$/i }).click();
+  await page.getByRole('button', { name: /^skip$/i }).click();
+  await page.getByRole('button', { name: /go to today/i }).click();
+
   await expect(page.getByTestId('dashboard-checkin-start')).toBeVisible();
   const checkinSave = page.getByTestId('checkin-save');
   const alreadyOpen = await checkinSave.isVisible().catch(() => false);

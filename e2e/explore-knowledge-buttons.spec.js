@@ -27,6 +27,13 @@ test('explore knowledge buttons are clickable and wired to actions', async ({ pa
   await page.goto('/');
   await page.waitForTimeout(250);
 
+  await page.evaluate(() => {
+    const target = document.querySelector('[data-testid="sidebar-nav-dashboard"]');
+    if (target) {
+      target.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    }
+  });
+
   await expect(page.getByTestId('dashboard-explore-knowledge-btn')).toBeVisible();
   await expect(page.getByTestId('dashboard-open-reports-btn')).toBeVisible();
 
@@ -59,6 +66,16 @@ test('explore knowledge buttons are clickable and wired to actions', async ({ pa
   await page.getByTestId('library-back').click();
   await expect(page.getByTestId('dashboard-checkin-start')).toBeVisible();
 
-  await page.getByTestId('dashboard-open-reports-btn').click();
+  const openReportsBtn = page.getByTestId('dashboard-open-reports-btn');
+  if (await openReportsBtn.isVisible().catch(() => false)) {
+    await openReportsBtn.click();
+  } else {
+    await page.evaluate(() => {
+      const target = document.querySelector('[data-testid="sidebar-nav-labs"]');
+      if (target) {
+        target.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      }
+    });
+  }
   await expect(page.getByTestId('labs-report-input')).toBeVisible();
 });

@@ -307,12 +307,12 @@ const testCoreUtils = () => {
   const top = buildTopNavItems(ui);
   const bottom = buildBottomNavItems(ui);
 
-  assert.equal(sidebar.length, 3, 'sidebar should have three groups');
-  assert.equal(top.length, 3, 'top nav should include three quick-start items');
-  assert.equal(bottom.length, 3, 'bottom nav should have three quick-start items');
-  assert.equal(sidebar[0].items[0].id, 'dashboard', 'first sidebar item should be dashboard');
-  assert.equal(top[2].id, 'bridge', 'top nav should include bridge as a core flow');
-  assert.equal(bottom[0].id, 'dashboard', 'first bottom item should be dashboard');
+  assert.equal(sidebar.length, 5, 'sidebar should have five groups');
+  assert.equal(top.length, 5, 'top nav should include five main items');
+  assert.equal(bottom.length, 5, 'bottom nav should include five main items');
+  assert.equal(sidebar[0].items[0].id, 'today_mirror', 'first sidebar item should be today_mirror');
+  assert.equal(top[2].id, 'cycle', 'top nav third item should be cycle');
+  assert.equal(bottom[0].id, 'today_mirror', 'first bottom item should be today_mirror');
 };
 
 const testMedicationUtils = () => {

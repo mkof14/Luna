@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { dataService } from '../services/dataService';
 import { Logo } from './Logo';
 import { Language } from '../constants';
+import { Mic, PenLine, SkipForward } from 'lucide-react';
 
 interface OnboardingGateProps {
   lang: Language;
@@ -9,101 +10,263 @@ interface OnboardingGateProps {
 }
 
 export const OnboardingGate: React.FC<OnboardingGateProps> = ({ lang, onComplete }) => {
-  const copyByLang: Record<Language, {
-    title: string;
-    subtitle: string;
-    begin: string;
-    flowLabel: string;
-    steps: [string, string, string];
-  }> = {
+  const copyByLang: Partial<Record<
+    Language,
+    {
+      welcome: string;
+      welcomeBody: string;
+      begin: string;
+      broughtYou: string;
+      reasons: [string, string, string, string];
+      next: string;
+      signalsTitle: string;
+      signalsBody: string;
+      body: string;
+      senses: string;
+      words: string;
+      dailyTitle: string;
+      dailyBody: string;
+      reflectionTitle: string;
+      reflectionQuestion: string;
+      speak: string;
+      write: string;
+      skip: string;
+      writePlaceholder: string;
+      continue: string;
+      thankYou: string;
+      moveToMain: string;
+    }
+  >> = {
     en: {
-      title: 'Your Physiological Sanctuary.',
-      subtitle: 'Data stays local. Insights stay personal.',
-      begin: 'Begin Quick Start',
-      flowLabel: '3-Step Flow',
-      steps: ['1. Home check-in', '2. Cycle context', '3. Bridge message'],
+      welcome: 'Welcome to Luna',
+      welcomeBody: 'A quiet place to understand how your body and emotions move together.',
+      begin: 'Begin',
+      broughtYou: 'What brought you to Luna?',
+      reasons: ['Understand my emotions', 'Track my cycle', 'Reflect on my days', 'Understand my body'],
+      next: 'Next',
+      signalsTitle: 'Three gentle signals',
+      signalsBody: 'Luna helps you read your day through three simple lenses.',
+      body: 'Body',
+      senses: 'Senses',
+      words: 'Words',
+      dailyTitle: 'A daily rhythm works best',
+      dailyBody: 'Luna works best with short daily reflections. A minute a day is enough to see your rhythm more clearly over time.',
+      reflectionTitle: 'First reflection',
+      reflectionQuestion: 'How does today feel so far?',
+      speak: 'Speak',
+      write: 'Write',
+      skip: 'Skip',
+      writePlaceholder: 'Write a few words...',
+      continue: 'Continue',
+      thankYou: 'Thank you for sharing.',
+      moveToMain: 'Go to Today',
     },
     ru: {
-      title: 'Ваше физиологическое пространство.',
-      subtitle: 'Данные остаются локально. Инсайты остаются личными.',
-      begin: 'Начать Быстрый Старт',
-      flowLabel: 'Маршрут из 3 шагов',
-      steps: ['1. Check-in на Home', '2. Контекст цикла', '3. Сообщение в Bridge'],
+      welcome: 'Добро пожаловать в Luna',
+      welcomeBody: 'Тихое пространство, чтобы понять, как тело и эмоции двигаются вместе.',
+      begin: 'Начать',
+      broughtYou: 'Что привело вас в Luna?',
+      reasons: ['Лучше понимать эмоции', 'Отслеживать цикл', 'Рефлексировать день', 'Понимать своё тело'],
+      next: 'Далее',
+      signalsTitle: 'Три мягких сигнала',
+      signalsBody: 'Luna помогает читать ваш день через три простых слоя.',
+      body: 'Тело',
+      senses: 'Ощущения',
+      words: 'Слова',
+      dailyTitle: 'Лучше всего работает ежедневный ритм',
+      dailyBody: 'Luna работает лучше с короткой ежедневной рефлексией. Одной минуты в день достаточно, чтобы яснее видеть свой ритм.',
+      reflectionTitle: 'Первая рефлексия',
+      reflectionQuestion: 'Как ощущается сегодняшний день?',
+      speak: 'Сказать',
+      write: 'Написать',
+      skip: 'Пропустить',
+      writePlaceholder: 'Напишите пару слов...',
+      continue: 'Продолжить',
+      thankYou: 'Спасибо, что поделились.',
+      moveToMain: 'Перейти в Today',
     },
     uk: {
-      title: 'Ваш фізіологічний простір.',
-      subtitle: 'Дані залишаються локально. Інсайти залишаються особистими.',
-      begin: 'Почати Швидкий Старт',
-      flowLabel: 'Маршрут із 3 кроків',
-      steps: ['1. Check-in на Home', '2. Контекст циклу', '3. Повідомлення в Bridge'],
-    },
-    es: {
-      title: 'Tu santuario fisiologico.',
-      subtitle: 'Los datos quedan locales. Los insights son personales.',
-      begin: 'Iniciar Flujo Rapido',
-      flowLabel: 'Flujo de 3 pasos',
-      steps: ['1. Check-in en Home', '2. Contexto del ciclo', '3. Mensaje en Bridge'],
-    },
-    fr: {
-      title: 'Votre sanctuaire physiologique.',
-      subtitle: 'Donnees locales. Insights personnels.',
-      begin: 'Demarrer Le Flux Rapide',
-      flowLabel: 'Parcours en 3 etapes',
-      steps: ['1. Check-in sur Home', '2. Contexte du cycle', '3. Message dans Bridge'],
-    },
-    de: {
-      title: 'Dein physiologischer Schutzraum.',
-      subtitle: 'Daten bleiben lokal. Einsichten bleiben persoenlich.',
-      begin: 'Schnellstart Beginnen',
-      flowLabel: '3-Schritte-Flow',
-      steps: ['1. Check-in im Home', '2. Zykluskontext', '3. Nachricht in Bridge'],
-    },
-    zh: {
-      title: '你的生理节律空间。',
-      subtitle: '数据本地保存，洞察只属于你。',
-      begin: '开始快速流程',
-      flowLabel: '三步流程',
-      steps: ['1. Home check-in', '2. 周期上下文', '3. Bridge 表达'],
-    },
-    ja: {
-      title: 'あなたの生理リズム空間。',
-      subtitle: 'データはローカル、洞察はあなたのもの。',
-      begin: 'クイックスタート開始',
-      flowLabel: '3ステップ導線',
-      steps: ['1. Home でチェックイン', '2. サイクル文脈', '3. Bridge メッセージ'],
-    },
-    pt: {
-      title: 'Seu santuario fisiologico.',
-      subtitle: 'Dados locais. Insights pessoais.',
-      begin: 'Iniciar Fluxo Rapido',
-      flowLabel: 'Fluxo de 3 passos',
-      steps: ['1. Check-in no Home', '2. Contexto do ciclo', '3. Mensagem no Bridge'],
+      welcome: 'Ласкаво просимо до Luna',
+      welcomeBody: 'Тихий простір, щоб зрозуміти, як тіло та емоції рухаються разом.',
+      begin: 'Почати',
+      broughtYou: 'Що привело вас до Luna?',
+      reasons: ['Краще розуміти емоції', 'Відстежувати цикл', 'Рефлексувати день', 'Розуміти своє тіло'],
+      next: 'Далі',
+      signalsTitle: 'Три м’які сигнали',
+      signalsBody: 'Luna допомагає читати ваш день через три прості шари.',
+      body: 'Тіло',
+      senses: 'Відчуття',
+      words: 'Слова',
+      dailyTitle: 'Найкраще працює щоденний ритм',
+      dailyBody: 'Luna працює найкраще з короткою щоденною рефлексією. Однієї хвилини на день достатньо, щоб краще бачити свій ритм.',
+      reflectionTitle: 'Перша рефлексія',
+      reflectionQuestion: 'Як відчувається цей день зараз?',
+      speak: 'Сказати',
+      write: 'Написати',
+      skip: 'Пропустити',
+      writePlaceholder: 'Напишіть кілька слів...',
+      continue: 'Продовжити',
+      thankYou: 'Дякуємо, що поділилися.',
+      moveToMain: 'Перейти в Today',
     },
   };
-  const copy = copyByLang[lang] || copyByLang.en;
+  const defaultCopy = copyByLang.en!;
+  const copy = copyByLang[lang] || defaultCopy;
+  const [step, setStep] = useState<number>(1);
+  const [selectedReason, setSelectedReason] = useState<string>('');
+  const [mode, setMode] = useState<'none' | 'speak' | 'write' | 'skip'>('none');
+  const [writeText, setWriteText] = useState<string>('');
 
-  const handleBegin = () => {
+  const canGoNextStep2 = useMemo(() => selectedReason.length > 0, [selectedReason]);
+
+  const finishOnboarding = () => {
     dataService.logEvent('ONBOARDING_COMPLETE', {});
     onComplete();
   };
 
+  const handleReflectionAction = (nextMode: 'speak' | 'write' | 'skip') => {
+    setMode(nextMode);
+    if (nextMode === 'speak') {
+      dataService.logEvent('AUDIO_REFLECTION', {
+        source: 'onboarding',
+        mode: 'speak',
+        text: 'Spoke during onboarding reflection.',
+        question: copy.reflectionQuestion,
+      });
+      setStep(6);
+    }
+    if (nextMode === 'skip') {
+      setStep(6);
+    }
+  };
+
+  const saveWrittenReflection = () => {
+    if (!writeText.trim()) return;
+    dataService.logEvent('AUDIO_REFLECTION', {
+      source: 'onboarding',
+      mode: 'write',
+      text: writeText.trim(),
+      question: copy.reflectionQuestion,
+    });
+    setStep(6);
+  };
+
   return (
-    <div className="fixed inset-0 bg-slate-200 dark:bg-slate-950 flex items-center justify-center p-8 z-[200]">
-      <article className="max-w-xl w-full p-12 bg-white dark:bg-slate-900 shadow-luna-deep rounded-[4rem] text-center animate-in zoom-in duration-700 border-2 border-slate-300 dark:border-slate-800">
-        <header className="mb-10"><Logo size="lg" /></header>
-        <h1 className="text-4xl font-black tracking-tight mb-4 text-slate-950 dark:text-slate-100 leading-tight">{copy.title}</h1>
-        <p className="text-slate-600 dark:text-slate-400 font-medium italic mb-6">{copy.subtitle}</p>
-        <div className="mb-10 rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 p-5 text-left">
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-luna-purple mb-3">{copy.flowLabel}</p>
-          <ul className="space-y-2 text-sm font-semibold text-slate-600 dark:text-slate-300">
-            <li>{copy.steps[0]}</li>
-            <li>{copy.steps[1]}</li>
-            <li>{copy.steps[2]}</li>
-          </ul>
-        </div>
-        <button data-testid="onboarding-begin" onClick={handleBegin} className="w-full py-6 bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-black text-xl rounded-full shadow-2xl hover:scale-[1.02] transition-transform active:scale-95">
-          {copy.begin}
-        </button>
+    <div className="fixed inset-0 bg-slate-950/55 backdrop-blur-sm flex items-center justify-center p-8 z-[200]">
+      <article className="max-w-2xl w-full p-8 md:p-10 bg-white/95 dark:bg-slate-900/95 shadow-luna-deep rounded-[3rem] border border-slate-200/80 dark:border-slate-700/80">
+        <header className="mb-8 flex items-center justify-between gap-4">
+          <Logo size="md" />
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-luna-purple">Step {step}/6</p>
+        </header>
+
+        {step === 1 && (
+          <div className="space-y-7">
+            <h1 className="text-4xl font-black tracking-tight text-slate-950 dark:text-slate-100 leading-tight">{copy.welcome}</h1>
+            <p className="text-lg font-medium text-slate-600 dark:text-slate-300 max-w-xl">{copy.welcomeBody}</p>
+            <button data-testid="onboarding-begin" onClick={() => setStep(2)} className="px-8 py-3 rounded-full bg-luna-purple text-white font-black text-sm uppercase tracking-[0.14em]">
+              {copy.begin}
+            </button>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="space-y-6">
+            <h2 className="text-3xl font-black tracking-tight text-slate-950 dark:text-slate-100">{copy.broughtYou}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {copy.reasons.map((reason) => (
+                <button
+                  key={reason}
+                  onClick={() => setSelectedReason(reason)}
+                  className={`text-left rounded-2xl border p-4 font-semibold transition-colors ${
+                    selectedReason === reason
+                      ? 'border-luna-purple bg-luna-purple/10 text-slate-900 dark:text-slate-100'
+                      : 'border-slate-200/80 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 text-slate-700 dark:text-slate-200'
+                  }`}
+                >
+                  {reason}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setStep(3)}
+              disabled={!canGoNextStep2}
+              className="px-8 py-3 rounded-full bg-luna-purple text-white font-black text-sm uppercase tracking-[0.14em] disabled:opacity-45"
+            >
+              {copy.next}
+            </button>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="space-y-6">
+            <h2 className="text-3xl font-black tracking-tight text-slate-950 dark:text-slate-100">{copy.signalsTitle}</h2>
+            <p className="text-base font-medium text-slate-600 dark:text-slate-300">{copy.signalsBody}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[copy.body, copy.senses, copy.words].map((item) => (
+                <article key={item} className="rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 p-4">
+                  <p className="text-lg font-black text-slate-900 dark:text-slate-100">{item}</p>
+                </article>
+              ))}
+            </div>
+            <button onClick={() => setStep(4)} className="px-8 py-3 rounded-full bg-luna-purple text-white font-black text-sm uppercase tracking-[0.14em]">
+              {copy.next}
+            </button>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="space-y-6">
+            <h2 className="text-3xl font-black tracking-tight text-slate-950 dark:text-slate-100">{copy.dailyTitle}</h2>
+            <p className="text-base font-medium text-slate-600 dark:text-slate-300 max-w-xl">{copy.dailyBody}</p>
+            <button onClick={() => setStep(5)} className="px-8 py-3 rounded-full bg-luna-purple text-white font-black text-sm uppercase tracking-[0.14em]">
+              {copy.next}
+            </button>
+          </div>
+        )}
+
+        {step === 5 && (
+          <div className="space-y-6">
+            <h2 className="text-3xl font-black tracking-tight text-slate-950 dark:text-slate-100">{copy.reflectionTitle}</h2>
+            <p className="text-xl font-semibold text-slate-800 dark:text-slate-100">{copy.reflectionQuestion}</p>
+            <div className="flex flex-wrap gap-2">
+              <button onClick={() => handleReflectionAction('speak')} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-luna-purple text-white text-[11px] font-black uppercase tracking-[0.14em]">
+                <Mic size={14} /> {copy.speak}
+              </button>
+              <button onClick={() => handleReflectionAction('write')} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-slate-300/80 dark:border-slate-600 text-[11px] font-black uppercase tracking-[0.14em] text-slate-700 dark:text-slate-200">
+                <PenLine size={14} /> {copy.write}
+              </button>
+              <button onClick={() => handleReflectionAction('skip')} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-200/80 dark:bg-slate-700/70 text-[11px] font-black uppercase tracking-[0.14em] text-slate-700 dark:text-slate-200">
+                <SkipForward size={14} /> {copy.skip}
+              </button>
+            </div>
+            {mode === 'write' && (
+              <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/50 p-4 space-y-3">
+                <textarea
+                  value={writeText}
+                  onChange={(e) => setWriteText(e.target.value)}
+                  placeholder={copy.writePlaceholder}
+                  className="w-full min-h-[104px] resize-none rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-white/85 dark:bg-slate-900/70 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 outline-none"
+                />
+                <button
+                  onClick={saveWrittenReflection}
+                  disabled={!writeText.trim()}
+                  className="px-6 py-2 rounded-full bg-luna-purple text-white text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
+                >
+                  {copy.continue}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {step === 6 && (
+          <div className="space-y-7">
+            <h2 className="text-3xl font-black tracking-tight text-slate-950 dark:text-slate-100">{copy.thankYou}</h2>
+            <button onClick={finishOnboarding} className="px-8 py-3 rounded-full bg-luna-purple text-white font-black text-sm uppercase tracking-[0.14em]">
+              {copy.moveToMain}
+            </button>
+          </div>
+        )}
       </article>
     </div>
   );

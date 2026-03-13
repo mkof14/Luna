@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Mic, Sparkles, Activity, PenLine, SkipForward } from 'lucide-react';
 import { Language, TranslationSchema } from '../constants';
 import { CyclePhase, HealthEvent, HormoneData, RuleOutput } from '../types';
 import HormoneGauge from './HormoneGauge';
-import { DailyStatePanel } from './DailyStatePanel';
 import { FuelCompass } from './FuelCompass';
 import { TabType } from '../utils/navigation';
 import { dataService } from '../services/dataService';
@@ -73,8 +73,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       notifyGranted: 'Notifications enabled',
       notifyBlocked: 'Notifications blocked in browser settings',
       testNow: 'Test Notification',
-      dueNow: 'Reminder due now',
-      startNow: 'Start Check-in',
+      dueNow: 'A gentle reminder for tonight',
+      startNow: 'Open Luna',
       nextReminder: 'Next reminder',
       noData: 'No weekly activity yet. Start with one check-in.',
     },
@@ -94,8 +94,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       notifyGranted: 'Уведомления включены',
       notifyBlocked: 'Уведомления заблокированы в настройках браузера',
       testNow: 'Тест уведомления',
-      dueNow: 'Время напоминания',
-      startNow: 'Начать Check-in',
+      dueNow: 'Мягкое напоминание на вечер',
+      startNow: 'Открыть Luna',
       nextReminder: 'Следующее напоминание',
       noData: 'Пока нет активности за неделю. Начните с одного check-in.',
     },
@@ -115,8 +115,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       notifyGranted: 'Сповіщення увімкнено',
       notifyBlocked: 'Сповіщення заблоковані в налаштуваннях браузера',
       testNow: 'Тест сповіщення',
-      dueNow: 'Час нагадування',
-      startNow: 'Почати Check-in',
+      dueNow: "М'яке нагадування на вечір",
+      startNow: 'Відкрити Luna',
       nextReminder: 'Наступне нагадування',
       noData: 'Ще немає активності за тиждень. Почніть з одного check-in.',
     },
@@ -136,8 +136,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       notifyGranted: 'Notificaciones activadas',
       notifyBlocked: 'Notificaciones bloqueadas en el navegador',
       testNow: 'Probar notificación',
-      dueNow: 'Recordatorio pendiente ahora',
-      startNow: 'Iniciar Check-in',
+      dueNow: 'Un recordatorio suave para esta noche',
+      startNow: 'Abrir Luna',
       nextReminder: 'Siguiente recordatorio',
       noData: 'Aún no hay actividad semanal. Empieza con un check-in.',
     },
@@ -157,8 +157,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       notifyGranted: 'Notifications activées',
       notifyBlocked: 'Notifications bloquées dans le navigateur',
       testNow: 'Tester la notification',
-      dueNow: 'Rappel à faire maintenant',
-      startNow: 'Démarrer le Check-in',
+      dueNow: 'Un rappel doux pour ce soir',
+      startNow: 'Ouvrir Luna',
       nextReminder: 'Prochain rappel',
       noData: 'Aucune activité cette semaine. Commencez par un check-in.',
     },
@@ -178,8 +178,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       notifyGranted: 'Benachrichtigungen aktiviert',
       notifyBlocked: 'Benachrichtigungen im Browser blockiert',
       testNow: 'Testbenachrichtigung',
-      dueNow: 'Erinnerung jetzt fällig',
-      startNow: 'Check-in starten',
+      dueNow: 'Eine sanfte Erinnerung für heute Abend',
+      startNow: 'Luna öffnen',
       nextReminder: 'Nächste Erinnerung',
       noData: 'Noch keine Wochenaktivität. Starte mit einem Check-in.',
     },
@@ -199,8 +199,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       notifyGranted: '通知已开启',
       notifyBlocked: '浏览器设置中通知被阻止',
       testNow: '测试通知',
-      dueNow: '现在到提醒时间',
-      startNow: '开始 Check-in',
+      dueNow: '今晚的温柔提醒',
+      startNow: '打开 Luna',
       nextReminder: '下次提醒',
       noData: '本周暂无活动，先做一次 check-in。',
     },
@@ -220,8 +220,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       notifyGranted: '通知は有効です',
       notifyBlocked: 'ブラウザ設定で通知がブロックされています',
       testNow: '通知テスト',
-      dueNow: '通知時刻です',
-      startNow: 'Check-in を開始',
+      dueNow: '今夜のやさしいリマインダー',
+      startNow: 'Luna を開く',
       nextReminder: '次の通知',
       noData: '今週の活動がまだありません。check-inから開始してください。',
     },
@@ -241,8 +241,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       notifyGranted: 'Notificações ativadas',
       notifyBlocked: 'Notificações bloqueadas no navegador',
       testNow: 'Testar notificação',
-      dueNow: 'Lembrete para agora',
-      startNow: 'Iniciar Check-in',
+      dueNow: 'Um lembrete suave para esta noite',
+      startNow: 'Abrir Luna',
       nextReminder: 'Próximo lembrete',
       noData: 'Ainda sem atividade semanal. Comece com um check-in.',
     },
@@ -371,6 +371,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   };
   const billingCopy = billingCopyByLang[lang] || billingCopyByLang.en;
   const REMINDER_STORAGE_KEY = 'luna_daily_reminder_v1';
+  const EVENING_SKIP_STORAGE_KEY = 'luna_evening_reflection_skip_v1';
 
   const [reminderEnabled, setReminderEnabled] = useState<boolean>(() => {
     try {
@@ -461,6 +462,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     return { checkins, voiceNotes, activeDays: activeDayKeys.size };
   }, [events]);
 
+  const todayDateKey = useMemo(() => new Date().toISOString().split('T')[0], [tick]);
+
   const nextReminderLabel = useMemo(() => {
     const [hh, mm] = reminderTime.split(':').map(Number);
     const next = new Date();
@@ -477,6 +480,195 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     const now = new Date();
     return now.getHours() === hh && now.getMinutes() === mm;
   }, [reminderEnabled, reminderTime, tick]);
+
+  const gentleReminderMessagesByLang: Record<Language, string[]> = {
+    en: [
+      'A quiet moment with Luna tonight.',
+      'How did today feel for you?',
+      'Take a minute to reflect.',
+    ],
+    ru: [
+      'Тихий момент с Luna этим вечером.',
+      'Как вы прожили этот день?',
+      'Уделите минуту мягкой рефлексии.',
+    ],
+    uk: [
+      'Тиха мить з Luna цього вечора.',
+      'Як ви прожили цей день?',
+      'Приділіть хвилину спокійній рефлексії.',
+    ],
+    es: [
+      'A quiet moment with Luna tonight.',
+      'How did today feel for you?',
+      'Take a minute to reflect.',
+    ],
+    fr: [
+      'A quiet moment with Luna tonight.',
+      'How did today feel for you?',
+      'Take a minute to reflect.',
+    ],
+    de: [
+      'A quiet moment with Luna tonight.',
+      'How did today feel for you?',
+      'Take a minute to reflect.',
+    ],
+    zh: [
+      'A quiet moment with Luna tonight.',
+      'How did today feel for you?',
+      'Take a minute to reflect.',
+    ],
+    ja: [
+      'A quiet moment with Luna tonight.',
+      'How did today feel for you?',
+      'Take a minute to reflect.',
+    ],
+    pt: [
+      'A quiet moment with Luna tonight.',
+      'How did today feel for you?',
+      'Take a minute to reflect.',
+    ],
+  };
+
+  const gentleReminderMessage = useMemo(() => {
+    const pool = gentleReminderMessagesByLang[lang] || gentleReminderMessagesByLang.en;
+    const daySeed = new Date().getDate() + new Date().getMonth() * 31;
+    return pool[daySeed % pool.length];
+  }, [lang, tick]);
+
+  const eveningCopyByLang: Record<
+    Language,
+    {
+      title: string;
+      prompt: string;
+      speak: string;
+      write: string;
+      skip: string;
+      writePlaceholder: string;
+      save: string;
+      saved: string;
+      responseTitle: string;
+      patternTitle: string;
+      learning: string;
+      skipped: string;
+      questions: string[];
+    }
+  > = {
+    en: {
+      title: 'A small reflection for tonight',
+      prompt: 'What stayed with you today?',
+      speak: 'Speak',
+      write: 'Write',
+      skip: 'Skip today',
+      writePlaceholder: 'A few words are enough...',
+      save: 'Save reflection',
+      saved: 'Saved for tonight.',
+      responseTitle: 'Luna heard you',
+      patternTitle: 'Something Luna is starting to notice',
+      learning: 'Luna is still learning about you. The more you reflect, the clearer your rhythm becomes.',
+      skipped: 'You skipped tonight. Luna will be here tomorrow.',
+      questions: [
+        'What stayed with you today?',
+        'What felt the heaviest today?',
+        'What is still on your mind tonight?',
+        'What gave you a little energy today?',
+      ],
+    },
+    ru: {
+      title: 'Небольшая рефлексия на вечер',
+      prompt: 'Что осталось с вами после этого дня?',
+      speak: 'Сказать',
+      write: 'Написать',
+      skip: 'Пропустить сегодня',
+      writePlaceholder: 'Достаточно нескольких слов...',
+      save: 'Сохранить рефлексию',
+      saved: 'Сохранено на сегодня.',
+      responseTitle: 'Luna вас услышала',
+      patternTitle: 'Luna начинает замечать',
+      learning: 'Luna все еще изучает ваш ритм. Чем чаще вы рефлексируете, тем яснее становится картина.',
+      skipped: 'Вы пропустили сегодня. Luna будет рядом завтра.',
+      questions: [
+        'Что осталось с вами после этого дня?',
+        'Что сегодня ощущалось самым тяжелым?',
+        'О чем вы все еще думаете этим вечером?',
+        'Что дало вам немного энергии сегодня?',
+      ],
+    },
+    uk: {
+      title: 'Невелика рефлексія на вечір',
+      prompt: 'Що залишилось з вами після цього дня?',
+      speak: 'Сказати',
+      write: 'Написати',
+      skip: 'Пропустити сьогодні',
+      writePlaceholder: 'Кількох слів достатньо...',
+      save: 'Зберегти рефлексію',
+      saved: 'Збережено на сьогодні.',
+      responseTitle: 'Luna вас почула',
+      patternTitle: 'Luna починає помічати',
+      learning: 'Luna ще вивчає ваш ритм. Чим частіше ви рефлексуєте, тим чіткішою стає картина.',
+      skipped: 'Ви пропустили сьогодні. Luna буде поруч завтра.',
+      questions: [
+        'Що залишилось з вами після цього дня?',
+        'Що сьогодні відчувалось найважчим?',
+        'Що досі у вас на думці цього вечора?',
+        'Що дало вам трохи енергії сьогодні?',
+      ],
+    },
+    es: { title: 'A small reflection for tonight', prompt: 'What stayed with you today?', speak: 'Speak', write: 'Write', skip: 'Skip today', writePlaceholder: 'A few words are enough...', save: 'Save reflection', saved: 'Saved for tonight.', responseTitle: 'Luna heard you', patternTitle: 'Something Luna is starting to notice', learning: 'Luna is still learning about you. The more you reflect, the clearer your rhythm becomes.', skipped: 'You skipped tonight. Luna will be here tomorrow.', questions: ['What stayed with you today?', 'What felt the heaviest today?', 'What is still on your mind tonight?', 'What gave you a little energy today?'] },
+    fr: { title: 'A small reflection for tonight', prompt: 'What stayed with you today?', speak: 'Speak', write: 'Write', skip: 'Skip today', writePlaceholder: 'A few words are enough...', save: 'Save reflection', saved: 'Saved for tonight.', responseTitle: 'Luna heard you', patternTitle: 'Something Luna is starting to notice', learning: 'Luna is still learning about you. The more you reflect, the clearer your rhythm becomes.', skipped: 'You skipped tonight. Luna will be here tomorrow.', questions: ['What stayed with you today?', 'What felt the heaviest today?', 'What is still on your mind tonight?', 'What gave you a little energy today?'] },
+    de: { title: 'A small reflection for tonight', prompt: 'What stayed with you today?', speak: 'Speak', write: 'Write', skip: 'Skip today', writePlaceholder: 'A few words are enough...', save: 'Save reflection', saved: 'Saved for tonight.', responseTitle: 'Luna heard you', patternTitle: 'Something Luna is starting to notice', learning: 'Luna is still learning about you. The more you reflect, the clearer your rhythm becomes.', skipped: 'You skipped tonight. Luna will be here tomorrow.', questions: ['What stayed with you today?', 'What felt the heaviest today?', 'What is still on your mind tonight?', 'What gave you a little energy today?'] },
+    zh: { title: 'A small reflection for tonight', prompt: 'What stayed with you today?', speak: 'Speak', write: 'Write', skip: 'Skip today', writePlaceholder: 'A few words are enough...', save: 'Save reflection', saved: 'Saved for tonight.', responseTitle: 'Luna heard you', patternTitle: 'Something Luna is starting to notice', learning: 'Luna is still learning about you. The more you reflect, the clearer your rhythm becomes.', skipped: 'You skipped tonight. Luna will be here tomorrow.', questions: ['What stayed with you today?', 'What felt the heaviest today?', 'What is still on your mind tonight?', 'What gave you a little energy today?'] },
+    ja: { title: 'A small reflection for tonight', prompt: 'What stayed with you today?', speak: 'Speak', write: 'Write', skip: 'Skip today', writePlaceholder: 'A few words are enough...', save: 'Save reflection', saved: 'Saved for tonight.', responseTitle: 'Luna heard you', patternTitle: 'Something Luna is starting to notice', learning: 'Luna is still learning about you. The more you reflect, the clearer your rhythm becomes.', skipped: 'You skipped tonight. Luna will be here tomorrow.', questions: ['What stayed with you today?', 'What felt the heaviest today?', 'What is still on your mind tonight?', 'What gave you a little energy today?'] },
+    pt: { title: 'A small reflection for tonight', prompt: 'What stayed with you today?', speak: 'Speak', write: 'Write', skip: 'Skip today', writePlaceholder: 'A few words are enough...', save: 'Save reflection', saved: 'Saved for tonight.', responseTitle: 'Luna heard you', patternTitle: 'Something Luna is starting to notice', learning: 'Luna is still learning about you. The more you reflect, the clearer your rhythm becomes.', skipped: 'You skipped tonight. Luna will be here tomorrow.', questions: ['What stayed with you today?', 'What felt the heaviest today?', 'What is still on your mind tonight?', 'What gave you a little energy today?'] },
+  };
+  const eveningCopy = eveningCopyByLang[lang] || eveningCopyByLang.en;
+
+  const [eveningWriteOpen, setEveningWriteOpen] = useState(false);
+  const [eveningText, setEveningText] = useState('');
+  const [eveningStatus, setEveningStatus] = useState<string>('');
+
+  const eveningQuestion = useMemo(() => {
+    const idx = Math.abs(todayDateKey.split('-').join('').split('').reduce((sum, ch) => sum + Number(ch), 0));
+    return eveningCopy.questions[idx % eveningCopy.questions.length] || eveningCopy.prompt;
+  }, [eveningCopy.prompt, eveningCopy.questions, todayDateKey]);
+
+  const getEveningPattern = (allEvents: HealthEvent[]) => {
+    const relevant = allEvents.filter((event) => event.type === 'AUDIO_REFLECTION' || event.type === 'DAILY_CHECKIN');
+    if (relevant.length < 5) return eveningCopy.learning;
+    return 'Work days tend to feel heavier when sleep is shorter.';
+  };
+
+  const buildEveningResponse = (text: string) => {
+    const normalized = text.toLowerCase();
+    if (!normalized.trim()) {
+      return 'Thank you for pausing tonight. Even a short check-in matters.';
+    }
+    if (/(work|office|deadline|meeting|job|pressure)/i.test(normalized)) {
+      return 'You mentioned pressure at work today. It sounds like the day asked a lot from you.';
+    }
+    if (/(tired|exhausted|drained|sleep|insomnia|heavy|stress|sad|anxious|overwhelmed)/i.test(normalized)) {
+      return 'You sounded a little tired today. Your body may be asking for a softer evening.';
+    }
+    return 'I hear you. You moved through a lot today, and you still made space to reflect.';
+  };
+
+  const handleEveningSave = () => {
+    dataService.logEvent('AUDIO_REFLECTION', {
+      text: eveningText.trim(),
+      source: 'member_evening_reflection',
+      question: eveningQuestion,
+    });
+    setEveningStatus(eveningCopy.saved);
+    setEveningWriteOpen(false);
+    localStorage.removeItem(EVENING_SKIP_STORAGE_KEY);
+    setTick(Date.now());
+  };
+
+  const handleEveningSkip = () => {
+    localStorage.setItem(EVENING_SKIP_STORAGE_KEY, JSON.stringify({ date: todayDateKey }));
+    setEveningWriteOpen(false);
+    setEveningText('');
+    setEveningStatus(eveningCopy.skipped);
+  };
 
   useEffect(() => {
     const timer = window.setInterval(() => setTick(Date.now()), 30000);
@@ -525,7 +717,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const sendTestNotification = () => {
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
     new Notification('Luna', {
-      body: `${retentionCopy.reminderTitle}: ${retentionCopy.startNow}`,
+      body: gentleReminderMessage,
     });
   };
 
@@ -557,44 +749,560 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     }
   };
 
+  const premiumActive = useMemo(() => ['active', 'trialing'].includes((billing.status || '').toLowerCase()), [billing.status]);
+  const canUsePaidInsights = billingEnabled && premiumActive;
+
+  const paywallCopyByLang: Partial<Record<Language, { locked: string; lineA: string; lineB: string; unlock: string; close: string; inPlan: string; featurePattern: string; featureMonthly: string; featureHistory: string; featureVoice: string }>> = {
+    en: {
+      locked: 'Locked',
+      lineA: 'Luna is starting to see patterns in your life.',
+      lineB: 'Unlock deeper insights to understand your rhythm over time.',
+      unlock: 'Unlock insights',
+      close: 'Not now',
+      inPlan: 'Included in Insights',
+      featurePattern: 'Pattern discovery',
+      featureMonthly: 'Monthly reflection',
+      featureHistory: 'Full reflection history',
+      featureVoice: 'Deeper voice insight',
+    },
+    ru: {
+      locked: 'Закрыто',
+      lineA: 'Luna начинает видеть паттерны в вашей жизни.',
+      lineB: 'Откройте глубокие инсайты, чтобы лучше понимать свой ритм во времени.',
+      unlock: 'Unlock insights',
+      close: 'Позже',
+      inPlan: 'Входит в Insights',
+      featurePattern: 'Pattern discovery',
+      featureMonthly: 'Monthly reflection',
+      featureHistory: 'Full reflection history',
+      featureVoice: 'Deeper voice insight',
+    },
+    uk: {
+      locked: 'Закрито',
+      lineA: 'Luna починає бачити патерни у вашому житті.',
+      lineB: 'Відкрийте глибші інсайти, щоб краще розуміти свій ритм з часом.',
+      unlock: 'Unlock insights',
+      close: 'Пізніше',
+      inPlan: 'Входить до Insights',
+      featurePattern: 'Pattern discovery',
+      featureMonthly: 'Monthly reflection',
+      featureHistory: 'Full reflection history',
+      featureVoice: 'Deeper voice insight',
+    },
+  };
+  const defaultPaywallCopy = paywallCopyByLang.en!;
+  const paywallCopy = paywallCopyByLang[lang] || defaultPaywallCopy;
+
+  const openSoftPaywall = () => navigateTo('insights_paywall');
+
+  const projectedState = useMemo(() => dataService.projectState(events), [events]);
+  const dailyMirrorCopyByLang: Record<
+    Language,
+    {
+      dayMorning: string;
+      dayAfternoon: string;
+      dayEvening: string;
+      reflectionTitle: string;
+      reflectionSub: string;
+      dailyAction: string;
+      speakTitle: string;
+      speakSub: string;
+      quickAction: string;
+      quickTitle: string;
+      quickSub: string;
+      rhythmTitle: string;
+      rhythmSub: string;
+      cycle: string;
+      energy: string;
+      mood: string;
+      sleep: string;
+      levelLow: string;
+      levelMedium: string;
+      levelHigh: string;
+      learning: string;
+      phaseSuffix: string;
+      insightsTitle: string;
+      learnTitle: string;
+      learnSub: string;
+      patternTitle: string;
+      patternOneA: string;
+      patternOneB: string;
+      patternTwoA: string;
+      patternTwoB: string;
+      disclaimer: string;
+      moreTools: string;
+    }
+  > = {
+    en: { dayMorning: 'Good morning', dayAfternoon: 'Good afternoon', dayEvening: 'Good evening', reflectionTitle: "Today's reflection", reflectionSub: 'Speak or check in. Luna reflects and helps you see your rhythm.', dailyAction: 'Daily action', speakTitle: 'Speak to Luna', speakSub: 'Tap to record', quickAction: 'Quick action', quickTitle: 'Quick check-in', quickSub: '30 sec today check-in', rhythmTitle: 'Your Rhythm', rhythmSub: 'A calm snapshot for today.', cycle: 'Cycle', energy: 'Energy', mood: 'Mood', sleep: 'Sleep', levelLow: 'Low', levelMedium: 'Medium', levelHigh: 'High', learning: 'Learning', phaseSuffix: 'phase', insightsTitle: 'Luna Insights', learnTitle: 'Luna is learning about you.', learnSub: 'Discovery coming soon.', patternTitle: 'Pattern preview', patternOneA: 'Energy drops', patternOneB: '2 days before cycle', patternTwoA: 'Sleep < 6h', patternTwoB: 'affects sensitivity', disclaimer: 'Observational guidance only. Not medical advice.', moreTools: 'More tools' },
+    ru: { dayMorning: 'Доброе утро', dayAfternoon: 'Добрый день', dayEvening: 'Добрый вечер', reflectionTitle: 'Сегодняшняя рефлексия', reflectionSub: 'Скажите голосом или сделайте check-in. Luna поможет увидеть ваш ритм.', dailyAction: 'Ежедневное действие', speakTitle: 'Поговорить с Luna', speakSub: 'Нажмите для записи', quickAction: 'Быстрое действие', quickTitle: 'Быстрый check-in', quickSub: '30 секунд сегодня', rhythmTitle: 'Ваш ритм', rhythmSub: 'Спокойный срез на сегодня.', cycle: 'Цикл', energy: 'Энергия', mood: 'Настроение', sleep: 'Сон', levelLow: 'Низкий', levelMedium: 'Средний', levelHigh: 'Высокий', learning: 'Изучаем', phaseSuffix: 'фаза', insightsTitle: 'Инсайты Luna', learnTitle: 'Luna изучает ваш ритм.', learnSub: 'Наблюдения скоро появятся.', patternTitle: 'Превью паттернов', patternOneA: 'Энергия снижается', patternOneB: 'за 2 дня до цикла', patternTwoA: 'Сон < 6 ч', patternTwoB: 'повышает чувствительность', disclaimer: 'Наблюдательные подсказки. Не медицинский совет.', moreTools: 'Дополнительные инструменты' },
+    uk: { dayMorning: 'Доброго ранку', dayAfternoon: 'Добрий день', dayEvening: 'Добрий вечір', reflectionTitle: 'Сьогоднішня рефлексія', reflectionSub: 'Скажіть голосом або зробіть check-in. Luna допоможе побачити ваш ритм.', dailyAction: 'Щоденна дія', speakTitle: 'Поговорити з Luna', speakSub: 'Натисніть для запису', quickAction: 'Швидка дія', quickTitle: 'Швидкий check-in', quickSub: '30 секунд сьогодні', rhythmTitle: 'Ваш ритм', rhythmSub: 'Спокійний зріз на сьогодні.', cycle: 'Цикл', energy: 'Енергія', mood: 'Настрій', sleep: 'Сон', levelLow: 'Низький', levelMedium: 'Середній', levelHigh: 'Високий', learning: 'Вивчаємо', phaseSuffix: 'фаза', insightsTitle: 'Інсайти Luna', learnTitle: 'Luna вивчає ваш ритм.', learnSub: 'Спостереження скоро зʼявляться.', patternTitle: 'Попередній перегляд патернів', patternOneA: 'Енергія знижується', patternOneB: 'за 2 дні до циклу', patternTwoA: 'Сон < 6 год', patternTwoB: 'підвищує чутливість', disclaimer: 'Лише спостережні підказки. Не медична порада.', moreTools: 'Додаткові інструменти' },
+    es: { dayMorning: 'Buenos días', dayAfternoon: 'Buenas tardes', dayEvening: 'Buenas noches', reflectionTitle: 'Reflexión de hoy', reflectionSub: 'Habla o haz check-in. Luna refleja y te ayuda a ver tu ritmo.', dailyAction: 'Acción diaria', speakTitle: 'Habla con Luna', speakSub: 'Toca para grabar', quickAction: 'Acción rápida', quickTitle: 'Check-in rápido', quickSub: '30 seg hoy', rhythmTitle: 'Tu ritmo', rhythmSub: 'Una vista tranquila de hoy.', cycle: 'Ciclo', energy: 'Energía', mood: 'Estado de ánimo', sleep: 'Sueño', levelLow: 'Bajo', levelMedium: 'Medio', levelHigh: 'Alto', learning: 'Aprendiendo', phaseSuffix: 'fase', insightsTitle: 'Insights de Luna', learnTitle: 'Luna está aprendiendo sobre ti.', learnSub: 'Pronto habrá descubrimientos.', patternTitle: 'Vista previa de patrones', patternOneA: 'La energía baja', patternOneB: '2 días antes del ciclo', patternTwoA: 'Sueño < 6h', patternTwoB: 'afecta la sensibilidad', disclaimer: 'Guía observacional. No es consejo médico.', moreTools: 'Más herramientas' },
+    fr: { dayMorning: 'Bonjour', dayAfternoon: 'Bon après-midi', dayEvening: 'Bonsoir', reflectionTitle: "Réflexion d'aujourd'hui", reflectionSub: 'Parlez ou faites un check-in. Luna reflète et vous aide à voir votre rythme.', dailyAction: 'Action quotidienne', speakTitle: 'Parler à Luna', speakSub: 'Touchez pour enregistrer', quickAction: 'Action rapide', quickTitle: 'Check-in rapide', quickSub: "30 s aujourd'hui", rhythmTitle: 'Votre rythme', rhythmSub: "Une vue calme pour aujourd'hui.", cycle: 'Cycle', energy: 'Énergie', mood: 'Humeur', sleep: 'Sommeil', levelLow: 'Bas', levelMedium: 'Moyen', levelHigh: 'Élevé', learning: 'En apprentissage', phaseSuffix: 'phase', insightsTitle: 'Insights Luna', learnTitle: 'Luna apprend à vous connaître.', learnSub: 'Découvertes à venir.', patternTitle: 'Aperçu des patterns', patternOneA: "L'énergie baisse", patternOneB: '2 jours avant le cycle', patternTwoA: 'Sommeil < 6h', patternTwoB: 'augmente la sensibilité', disclaimer: 'Indications observatoires uniquement. Pas un avis médical.', moreTools: 'Plus d’outils' },
+    de: { dayMorning: 'Guten Morgen', dayAfternoon: 'Guten Tag', dayEvening: 'Guten Abend', reflectionTitle: 'Reflexion von heute', reflectionSub: 'Sprich oder mache einen Check-in. Luna spiegelt und zeigt deinen Rhythmus.', dailyAction: 'Tagesaktion', speakTitle: 'Mit Luna sprechen', speakSub: 'Tippen zum Aufnehmen', quickAction: 'Schnellaktion', quickTitle: 'Schneller Check-in', quickSub: '30 Sek. heute', rhythmTitle: 'Dein Rhythmus', rhythmSub: 'Ein ruhiger Überblick für heute.', cycle: 'Zyklus', energy: 'Energie', mood: 'Stimmung', sleep: 'Schlaf', levelLow: 'Niedrig', levelMedium: 'Mittel', levelHigh: 'Hoch', learning: 'Lernstatus', phaseSuffix: 'Phase', insightsTitle: 'Luna Insights', learnTitle: 'Luna lernt dich kennen.', learnSub: 'Erkenntnisse kommen bald.', patternTitle: 'Pattern-Vorschau', patternOneA: 'Energie sinkt', patternOneB: '2 Tage vor Zyklus', patternTwoA: 'Schlaf < 6h', patternTwoB: 'erhöht Sensitivität', disclaimer: 'Nur beobachtende Hinweise. Kein medizinischer Rat.', moreTools: 'Weitere Tools' },
+    zh: { dayMorning: '早上好', dayAfternoon: '下午好', dayEvening: '晚上好', reflectionTitle: '今日反思', reflectionSub: '说一说或做一次 check-in。Luna 会帮助你看见自己的节律。', dailyAction: '每日动作', speakTitle: '和 Luna 说说', speakSub: '点击开始录音', quickAction: '快速动作', quickTitle: '快速 check-in', quickSub: '今日 30 秒', rhythmTitle: '你的节律', rhythmSub: '今天的平静快照。', cycle: '周期', energy: '能量', mood: '情绪', sleep: '睡眠', levelLow: '低', levelMedium: '中', levelHigh: '高', learning: '学习中', phaseSuffix: '阶段', insightsTitle: 'Luna 洞察', learnTitle: 'Luna 正在了解你。', learnSub: '即将发现更多规律。', patternTitle: '规律预览', patternOneA: '能量下降', patternOneB: '周期前 2 天', patternTwoA: '睡眠 < 6小时', patternTwoB: '影响情绪敏感度', disclaimer: '仅为观察性提示，不构成医疗建议。', moreTools: '更多工具' },
+    ja: { dayMorning: 'おはようございます', dayAfternoon: 'こんにちは', dayEvening: 'こんばんは', reflectionTitle: '今日のリフレクション', reflectionSub: '話すか check-in するだけ。Luna があなたのリズムを映します。', dailyAction: 'デイリーアクション', speakTitle: 'Luna に話す', speakSub: 'タップして録音', quickAction: 'クイックアクション', quickTitle: 'クイック check-in', quickSub: '今日30秒', rhythmTitle: 'あなたのリズム', rhythmSub: '今日の落ち着いたスナップショット。', cycle: 'サイクル', energy: 'エネルギー', mood: '気分', sleep: '睡眠', levelLow: '低い', levelMedium: '中くらい', levelHigh: '高い', learning: '学習中', phaseSuffix: 'フェーズ', insightsTitle: 'Luna インサイト', learnTitle: 'Luna があなたを学習中です。', learnSub: '発見はもうすぐ。', patternTitle: 'パターンプレビュー', patternOneA: 'エネルギー低下', patternOneB: '周期の2日前', patternTwoA: '睡眠 < 6時間', patternTwoB: '感受性に影響', disclaimer: '観察に基づくガイドです。医療助言ではありません。', moreTools: 'その他のツール' },
+    pt: { dayMorning: 'Bom dia', dayAfternoon: 'Boa tarde', dayEvening: 'Boa noite', reflectionTitle: 'Reflexão de hoje', reflectionSub: 'Fale ou faça check-in. A Luna reflete e mostra seu ritmo.', dailyAction: 'Ação diária', speakTitle: 'Fale com Luna', speakSub: 'Toque para gravar', quickAction: 'Ação rápida', quickTitle: 'Check-in rápido', quickSub: '30 seg hoje', rhythmTitle: 'Seu ritmo', rhythmSub: 'Um retrato calmo de hoje.', cycle: 'Ciclo', energy: 'Energia', mood: 'Humor', sleep: 'Sono', levelLow: 'Baixo', levelMedium: 'Médio', levelHigh: 'Alto', learning: 'Aprendendo', phaseSuffix: 'fase', insightsTitle: 'Insights Luna', learnTitle: 'A Luna está aprendendo sobre você.', learnSub: 'Novas descobertas em breve.', patternTitle: 'Prévia de padrões', patternOneA: 'Energia cai', patternOneB: '2 dias antes do ciclo', patternTwoA: 'Sono < 6h', patternTwoB: 'afeta sensibilidade', disclaimer: 'Apenas orientação observacional. Não é conselho médico.', moreTools: 'Mais ferramentas' },
+  };
+  const dm = dailyMirrorCopyByLang[lang] || dailyMirrorCopyByLang.en;
+  const todayMirrorCopyByLang: Record<Language, { open: string }> = {
+    en: { open: 'Open Today' },
+    ru: { open: 'Открыть Today' },
+    uk: { open: 'Відкрити Today' },
+    es: { open: 'Open Today' },
+    fr: { open: 'Open Today' },
+    de: { open: 'Open Today' },
+    zh: { open: 'Open Today' },
+    ja: { open: 'Open Today' },
+    pt: { open: 'Open Today' },
+  };
+  const todayMirrorCta = todayMirrorCopyByLang[lang] || todayMirrorCopyByLang.en;
+
+  const profileName = useMemo(() => projectedState.profile?.name?.trim() || 'Anna', [projectedState]);
+
+  const dayPart = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return dm.dayMorning;
+    if (hour < 18) return dm.dayAfternoon;
+    return dm.dayEvening;
+  }, [dm.dayAfternoon, dm.dayEvening, dm.dayMorning, tick]);
+
+  const latestCheckin = useMemo(() => projectedState.lastCheckin?.metrics || null, [projectedState]);
+
+  const levelLabel = (value: number | undefined) => {
+    if (typeof value !== 'number') return dm.learning;
+    if (value < 34) return dm.levelLow;
+    if (value < 67) return dm.levelMedium;
+    return dm.levelHigh;
+  };
+
+  const rhythmItems = [
+    { label: dm.cycle, value: `Day ${projectedState.currentDay} · ${currentPhase} ${dm.phaseSuffix}` },
+    { label: dm.energy, value: levelLabel(latestCheckin?.energy) },
+    { label: dm.mood, value: levelLabel(latestCheckin?.mood) },
+    { label: dm.sleep, value: levelLabel(latestCheckin?.sleep) },
+  ];
+
+  const insightLines = ruleOutput.insights.slice(0, 3).map((item) => item.text).filter(Boolean);
+  const todayWithLunaCopyByLang: Partial<Record<
+    Language,
+    {
+      title: string;
+      slower: string;
+      steadier: string;
+      sleepShortWithPhase: (phase: string) => string;
+      sleepSteadyWithPhase: (phase: string) => string;
+      reflectionPressure: string;
+      reflectionTired: string;
+      reflectionCalm: string;
+      reflectionGeneral: string;
+    }
+  >> = {
+    en: {
+      title: 'Today with Luna',
+      slower: 'Today may feel a little slower.',
+      steadier: 'Today may feel a little steadier.',
+      sleepShortWithPhase: (phase) => `Your sleep was shorter last night, and your body is in the ${phase} phase.`,
+      sleepSteadyWithPhase: (phase) => `Your sleep looked steadier last night, and your body is in the ${phase} phase.`,
+      reflectionPressure: 'You recently mentioned pressure, so a gentler pace may help today.',
+      reflectionTired: 'You recently sounded tired, so a softer rhythm may feel better today.',
+      reflectionCalm: 'You recently sounded calmer, and that can support a more balanced day.',
+      reflectionGeneral: 'Take this day gently and notice what your body asks for.',
+    },
+    ru: {
+      title: 'Сегодня с Luna',
+      slower: 'Сегодня день может ощущаться немного медленнее.',
+      steadier: 'Сегодня день может ощущаться немного ровнее.',
+      sleepShortWithPhase: (phase) => `Сон был короче прошлой ночью, и ваше тело сейчас в фазе ${phase}.`,
+      sleepSteadyWithPhase: (phase) => `Сон был более ровным прошлой ночью, и ваше тело сейчас в фазе ${phase}.`,
+      reflectionPressure: 'Вы недавно упоминали давление, поэтому сегодня может помочь более мягкий темп.',
+      reflectionTired: 'Недавно вы звучали уставшей, поэтому сегодня может подойти более спокойный ритм.',
+      reflectionCalm: 'Недавно вы звучали спокойнее, и это может поддержать более сбалансированный день.',
+      reflectionGeneral: 'Проведите этот день бережно и замечайте, что просит ваше тело.',
+    },
+    uk: {
+      title: 'Сьогодні з Luna',
+      slower: 'Сьогодні день може відчуватися трохи повільнішим.',
+      steadier: 'Сьогодні день може відчуватися трохи рівнішим.',
+      sleepShortWithPhase: (phase) => `Сон був коротшим минулої ночі, а ваше тіло зараз у фазі ${phase}.`,
+      sleepSteadyWithPhase: (phase) => `Сон був рівнішим минулої ночі, а ваше тіло зараз у фазі ${phase}.`,
+      reflectionPressure: 'Ви нещодавно згадували тиск, тож сьогодні може допомогти м’якший темп.',
+      reflectionTired: 'Нещодавно ви звучали втомлено, тож сьогодні може підійти спокійніший ритм.',
+      reflectionCalm: 'Нещодавно ви звучали спокійніше, і це може підтримати більш збалансований день.',
+      reflectionGeneral: 'Проведіть цей день дбайливо й помічайте, чого просить ваше тіло.',
+    },
+  };
+  const defaultTodayWithLuna = todayWithLunaCopyByLang.en!;
+  const todayWithLuna = todayWithLunaCopyByLang[lang] || defaultTodayWithLuna;
+  const latestVoiceReflectionText = useMemo(() => {
+    const latestVoice = events
+      .filter((event) => event.type === 'AUDIO_REFLECTION')
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
+    if (!latestVoice) return '';
+    const payload = latestVoice.payload as { text?: string };
+    return (payload.text || '').toLowerCase();
+  }, [events]);
+  const todayWithLunaTopLine = useMemo(() => {
+    const sleepScore = latestCheckin?.sleep ?? 50;
+    if (sleepScore < 45 || currentPhase === CyclePhase.LUTEAL || currentPhase === CyclePhase.MENSTRUAL) {
+      return todayWithLuna.slower;
+    }
+    return todayWithLuna.steadier;
+  }, [currentPhase, latestCheckin?.sleep, todayWithLuna.slower, todayWithLuna.steadier]);
+  const todayWithLunaSleepLine = useMemo(() => {
+    const sleepScore = latestCheckin?.sleep ?? 50;
+    const phase = currentPhase.toLowerCase();
+    return sleepScore < 45 ? todayWithLuna.sleepShortWithPhase(phase) : todayWithLuna.sleepSteadyWithPhase(phase);
+  }, [currentPhase, latestCheckin?.sleep, todayWithLuna]);
+  const todayWithLunaReflectionLine = useMemo(() => {
+    if (!latestVoiceReflectionText.trim()) return todayWithLuna.reflectionGeneral;
+    if (/(work|office|deadline|meeting|job|pressure)/i.test(latestVoiceReflectionText)) return todayWithLuna.reflectionPressure;
+    if (/(tired|drained|exhausted|sleep|insomnia|overwhelmed|stress)/i.test(latestVoiceReflectionText)) return todayWithLuna.reflectionTired;
+    if (/(calm|steady|better|lighter|clear)/i.test(latestVoiceReflectionText)) return todayWithLuna.reflectionCalm;
+    return todayWithLuna.reflectionGeneral;
+  }, [latestVoiceReflectionText, todayWithLuna]);
+  const latestReflectionEvent = useMemo(() => {
+    const todayEvents = events
+      .filter((event) => event.timestamp.startsWith(todayDateKey) && (event.type === 'AUDIO_REFLECTION' || event.type === 'DAILY_CHECKIN'))
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    return todayEvents[0] || null;
+  }, [events, todayDateKey]);
+
+  const resultHeard = useMemo(() => {
+    if (!latestReflectionEvent) return '';
+    if (latestReflectionEvent.type === 'AUDIO_REFLECTION') {
+      const payload = latestReflectionEvent.payload as { text?: string };
+      return buildEveningResponse(payload?.text || '');
+    }
+    const payload = latestReflectionEvent.payload as { metrics?: Record<string, number> };
+    const mood = payload.metrics?.mood ?? 50;
+    const energy = payload.metrics?.energy ?? 50;
+    if (mood < 35) return 'The day felt a little sensitive emotionally.';
+    if (energy < 35) return 'You seemed low on energy today.';
+    return 'You checked in with a steady signal today.';
+  }, [latestReflectionEvent]);
+
+  const resultSuggestion = useMemo(() => {
+    if (!latestReflectionEvent) return '';
+    if (latestReflectionEvent.type === 'DAILY_CHECKIN') {
+      const payload = latestReflectionEvent.payload as { metrics?: Record<string, number> };
+      const sleep = payload.metrics?.sleep ?? 50;
+      if (sleep < 45) return 'Tonight may feel better with a slower pace and earlier rest.';
+      return 'A calm evening routine can help keep this balance tomorrow.';
+    }
+    return 'A softer evening may help your body settle after today.';
+  }, [latestReflectionEvent]);
+
+  const resultPattern = useMemo(() => {
+    if (!latestReflectionEvent) return '';
+    return getEveningPattern(events);
+  }, [events, latestReflectionEvent]);
+
+  const weeklyInsight = useMemo(() => {
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - 6);
+    weekStart.setHours(0, 0, 0, 0);
+    const weekEvents = events.filter((event) => new Date(event.timestamp).getTime() >= weekStart.getTime());
+    const reflections = weekEvents.filter((event) => event.type === 'AUDIO_REFLECTION').length;
+    const checkins = weekEvents.filter((event) => event.type === 'DAILY_CHECKIN');
+    if (reflections + checkins.length < 5) return '';
+    if (reflections >= 3) return 'Evenings felt calmer on days when you reflected.';
+    return 'Your week looked more steady when sleep was more consistent.';
+  }, [events]);
+
+  const recentStory = useMemo(() => {
+    const dayStart = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+    const nowStart = dayStart(new Date());
+    const dayLabel = (iso: string) => {
+      const diff = Math.floor((nowStart - dayStart(new Date(iso))) / 86400000);
+      if (diff <= 0) return 'Today';
+      if (diff === 1) return 'Yesterday';
+      return `${diff} days ago`;
+    };
+
+    const voiceLine = (text?: string) => {
+      const t = (text || '').toLowerCase();
+      if (!t.trim()) return 'You took a quiet moment to reflect.';
+      if (/(work|office|deadline|meeting|job|pressure)/i.test(t)) return 'Work felt demanding.';
+      if (/(sleep|tired|drained|insomnia)/i.test(t)) return 'Sleep felt shorter.';
+      if (/(calm|steady|lighter|better)/i.test(t)) return 'Energy felt calmer.';
+      return 'You shared how the day felt.';
+    };
+
+    const checkinLine = (metrics?: Record<string, number>) => {
+      const sleep = metrics?.sleep ?? 50;
+      const energy = metrics?.energy ?? 50;
+      if (sleep < 45) return 'Sleep felt shorter.';
+      if (energy < 45) return 'Energy felt lower.';
+      return 'Energy felt calmer.';
+    };
+
+    return events
+      .filter((event) => event.type === 'AUDIO_REFLECTION' || event.type === 'DAILY_CHECKIN')
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, 4)
+      .map((event) => {
+        if (event.type === 'DAILY_CHECKIN') {
+          const payload = event.payload as { metrics?: Record<string, number> };
+          return { id: event.id, day: dayLabel(event.timestamp), text: checkinLine(payload.metrics) };
+        }
+        const payload = event.payload as { text?: string };
+        return { id: event.id, day: dayLabel(event.timestamp), text: voiceLine(payload.text) };
+      });
+  }, [events]);
+
   return (
-    <section className="luna-page-shell luna-page-bodymap luna-page-focus luna-focus-bodymap space-y-24 animate-in fade-in slide-in-from-bottom-8 duration-1000 p-8 md:p-10">
-      <div className="flex flex-col lg:flex-row items-center gap-16">
-        <div className="flex-1 space-y-8 text-center lg:text-left">
-          <div className="space-y-4">
-            <h1 className="text-5xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-slate-950 dark:text-white">
-              Daily <br /> <span className="text-luna-purple">Mirror.</span>
-            </h1>
-            {ruleOutput.archetype && (
-              <div
-                className="inline-flex items-center gap-3 px-6 py-2 rounded-full shadow-luna-rich border-2 bg-white dark:bg-[#0b1836]"
-                style={{ borderColor: ruleOutput.archetype.color }}
+    <section className="relative overflow-hidden luna-page-shell luna-page-bodymap luna-page-focus luna-focus-bodymap space-y-24 animate-in fade-in slide-in-from-bottom-8 duration-1000 p-8 md:p-10 bg-[radial-gradient(130%_110%_at_10%_0%,rgba(255,255,255,0.66),rgba(245,240,252,0.5)_46%,rgba(240,236,248,0.42)_100%)] dark:bg-[radial-gradient(130%_110%_at_10%_0%,rgba(88,86,156,0.3),rgba(12,25,53,0.85)_46%,rgba(7,17,38,0.97)_100%)]">
+      <div className="pointer-events-none absolute -top-20 -left-12 w-72 h-72 rounded-full bg-fuchsia-300/25 dark:bg-fuchsia-500/18 blur-[95px]" />
+      <div className="pointer-events-none absolute top-[22rem] -right-16 w-80 h-80 rounded-full bg-indigo-300/24 dark:bg-indigo-500/18 blur-[110px]" />
+      <div className="pointer-events-none absolute bottom-32 left-1/3 w-72 h-72 rounded-full bg-rose-200/26 dark:bg-rose-500/16 blur-[100px]" />
+      <div className="pointer-events-none absolute top-[44%] left-[36%] w-96 h-96 rounded-full bg-violet-300/18 dark:bg-violet-500/14 blur-[130px]" />
+      <div className="space-y-10">
+        <article className="relative min-h-[56vh] rounded-[2.8rem] border border-white/45 dark:border-[#3d5a89] bg-[radial-gradient(120%_90%_at_8%_0%,rgba(255,220,240,0.42),transparent_44%),radial-gradient(98%_80%_at_94%_10%,rgba(204,188,255,0.3),transparent_48%),linear-gradient(135deg,#fdf5fb_0%,#f6f1fd_50%,#eef2ff_100%)] dark:bg-[radial-gradient(120%_90%_at_8%_0%,rgba(186,105,180,0.28),transparent_44%),radial-gradient(98%_80%_at_94%_10%,rgba(102,123,210,0.28),transparent_48%),linear-gradient(135deg,#0b1836_0%,#112348_50%,#16315f_100%)] p-8 md:p-10 shadow-luna-rich backdrop-blur-[1px] flex flex-col justify-center">
+          <div className="pointer-events-none absolute inset-0 rounded-[2.8rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.12),transparent_22%)] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.06),transparent_26%)]" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/65 dark:border-white/15 bg-white/65 dark:bg-slate-900/45 px-3 py-1.5 shadow-[0_8px_20px_rgba(145,111,188,0.16)]">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-gradient-to-r from-rose-400 to-violet-500" />
+            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-luna-purple">{dm.reflectionTitle}</p>
+          </div>
+          <p
+            className="mt-3 font-brand animate-color-shift-luna text-5xl md:text-6xl leading-[0.95] drop-shadow-[0_1px_0_rgba(255,255,255,0.45)] dark:drop-shadow-[0_1px_0_rgba(10,20,40,0.6)]"
+          >
+            {dayPart}, {profileName}
+          </p>
+          <h1 className="mt-2 text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-100">{dm.reflectionTitle}</h1>
+          <p className="mt-3 text-base font-medium text-slate-600 dark:text-slate-300 max-w-2xl">
+            {dm.reflectionSub}
+          </p>
+          <div className="mt-7 grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <article className="lg:col-span-2 text-left rounded-[2rem] border border-luna-purple/35 bg-[linear-gradient(145deg,rgba(255,255,255,0.96),rgba(250,242,255,0.88)_46%,rgba(244,236,255,0.84)_100%)] dark:bg-[linear-gradient(145deg,rgba(12,30,66,0.95),rgba(20,44,86,0.9)_46%,rgba(28,50,96,0.86)_100%)] p-7 shadow-luna-rich hover:shadow-luna-deep hover:-translate-y-[1px] transition-all relative overflow-hidden">
+              <div className="pointer-events-none absolute -right-8 -bottom-10 w-44 h-44 rounded-full bg-fuchsia-300/35 dark:bg-fuchsia-500/22 blur-3xl" />
+              <div className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-luna-purple/15 text-luna-purple">
+                <Mic size={18} />
+              </div>
+              <p className="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{dm.dailyAction}</p>
+              <p className="mt-2 text-3xl font-black text-slate-900 dark:text-slate-100">{dm.speakTitle}</p>
+              <p className="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{dm.speakSub}</p>
+              <div className="mt-5 flex flex-wrap gap-2 items-center">
+                <button
+                  onClick={() => setShowLive(true)}
+                  className="luna-soft-glow inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/70 dark:border-[#94a8d0]/35 bg-gradient-to-r from-[#8f51de] via-[#c455a6] to-[#7a5ef6] dark:from-[#4f5f8a] dark:via-[#4b5f89] dark:to-[#43638a] text-white text-[11px] font-black uppercase tracking-[0.14em] shadow-[0_14px_34px_rgba(121,79,189,0.45)] dark:shadow-[0_14px_28px_rgba(18,33,67,0.45)] hover:shadow-[0_22px_42px_rgba(121,79,189,0.58)] dark:hover:shadow-[0_20px_36px_rgba(18,33,67,0.58)] hover:-translate-y-[1px] transition-all"
+                >
+                  <Mic size={14} /> {eveningCopy.speak}
+                </button>
+              </div>
+            </article>
+            <button
+              data-testid="dashboard-checkin-start"
+              onClick={() => setShowSyncOverlay(true)}
+              className="luna-soft-glow text-left rounded-[2rem] border border-slate-200/90 dark:border-[#3b5c8d] bg-[linear-gradient(150deg,rgba(255,255,255,0.9),rgba(244,246,255,0.84)_48%,rgba(236,243,255,0.78)_100%)] dark:bg-[linear-gradient(150deg,rgba(12,30,66,0.86),rgba(20,48,90,0.8)_48%,rgba(21,54,93,0.74)_100%)] p-6 shadow-luna-rich hover:shadow-luna-deep hover:-translate-y-[1px] transition-all"
+            >
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-200/70 dark:bg-slate-700/60 text-slate-600 dark:text-slate-200">
+                <Activity size={16} />
+              </div>
+              <p className="mt-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-300">{dm.quickAction}</p>
+              <p className="mt-2 text-2xl font-black text-slate-900 dark:text-slate-100">{dm.quickTitle}</p>
+              <p className="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{dm.quickSub}</p>
+            </button>
+          </div>
+
+          <article className="mt-5 max-w-3xl rounded-[1.8rem] border border-luna-purple/25 bg-[linear-gradient(150deg,rgba(255,255,255,0.9),rgba(250,241,255,0.8)_48%,rgba(242,239,255,0.72)_100%)] dark:bg-[linear-gradient(150deg,rgba(13,35,72,0.82),rgba(25,54,100,0.72)_48%,rgba(24,51,95,0.64)_100%)] p-5 text-left shadow-[0_14px_34px_rgba(116,82,181,0.2)]">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{todayWithLuna.title}</p>
+            <p className="mt-2 text-base font-semibold text-slate-800 dark:text-slate-100">{todayWithLunaTopLine}</p>
+            <p className="mt-2 text-sm font-medium text-slate-700 dark:text-slate-200">{todayWithLunaSleepLine}</p>
+            <p className="mt-2 text-sm font-medium text-slate-700 dark:text-slate-200">{todayWithLunaReflectionLine}</p>
+            <div className="mt-4">
+              <button
+                onClick={() => navigateTo('today_mirror')}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-luna-purple/16 hover:bg-luna-purple/28 text-luna-purple text-[10px] font-black uppercase tracking-[0.14em] transition-all border border-luna-purple/25"
               >
-                <span className="text-2xl">{ruleOutput.archetype.icon}</span>
-                <span className="text-xs font-black uppercase tracking-widest" style={{ color: ruleOutput.archetype.color }}>
-                  {ruleOutput.archetype.name} {ui.dashboard.archetypeModeActive}
-                </span>
+                {todayMirrorCta.open}
+              </button>
+            </div>
+          </article>
+
+          <article className="mt-5 rounded-[2rem] border border-luna-purple/30 bg-[radial-gradient(110%_120%_at_10%_0%,rgba(255,224,241,0.42),transparent_46%),radial-gradient(95%_95%_at_90%_100%,rgba(199,188,255,0.28),transparent_55%),linear-gradient(140deg,#fff8fded_0%,#f8f1ffde_52%,#f2effadb_100%)] dark:bg-[radial-gradient(110%_120%_at_10%_0%,rgba(172,95,165,0.24),transparent_46%),radial-gradient(95%_95%_at_90%_100%,rgba(111,119,210,0.22),transparent_55%),linear-gradient(140deg,#10244af0_0%,#152b54ea_52%,#1a3665e2_100%)] p-6 text-left shadow-luna-rich max-w-3xl">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Evening Reflection</p>
+            <p className="mt-2 text-xl font-black text-slate-900 dark:text-slate-100">{eveningCopy.title}</p>
+            <p className="mt-2 text-sm font-medium text-slate-700 dark:text-slate-200">{eveningQuestion}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                  onClick={() => setShowLive(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-luna-purple/28 bg-luna-purple/16 hover:bg-luna-purple/28 text-luna-purple text-[11px] font-black uppercase tracking-[0.14em] shadow-[0_10px_22px_rgba(121,79,189,0.22)] transition-all"
+                >
+                  <Mic size={14} /> {eveningCopy.speak}
+                </button>
+              <button
+                onClick={() => {
+                  setEveningWriteOpen((prev) => !prev);
+                  setEveningStatus('');
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 text-[11px] font-black uppercase tracking-[0.14em] transition-all hover:bg-white"
+              >
+                <PenLine size={14} /> {eveningCopy.write}
+              </button>
+              <button
+                onClick={handleEveningSkip}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-200/70 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 text-[11px] font-black uppercase tracking-[0.14em] transition-all hover:bg-slate-300/70 dark:hover:bg-slate-700/70"
+              >
+                <SkipForward size={14} /> {eveningCopy.skip}
+              </button>
+            </div>
+            {eveningWriteOpen && (
+              <div className="mt-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white/70 dark:bg-slate-900/60 p-4">
+                <textarea
+                  value={eveningText}
+                  onChange={(e) => setEveningText(e.target.value)}
+                  placeholder={eveningCopy.writePlaceholder}
+                  className="w-full min-h-[94px] resize-none rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-white/90 dark:bg-slate-900/80 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 placeholder:text-slate-400 outline-none"
+                />
+                <button
+                  onClick={handleEveningSave}
+                  disabled={!eveningText.trim()}
+                  className="mt-3 px-4 py-2 rounded-full bg-luna-purple text-white text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-50"
+                >
+                  {eveningCopy.save}
+                </button>
               </div>
             )}
-          </div>
-          <p className="text-xl text-slate-700 dark:text-slate-400 italic font-medium max-w-lg leading-relaxed">
-            "{isNarrativeLoading ? ui.dashboard.thinking : stateNarrative || ui.dashboard.balanced}"
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-            <button data-testid="dashboard-checkin-start" onClick={() => setShowSyncOverlay(true)} className="px-10 py-5 bg-slate-950 dark:bg-luna-purple text-white rounded-full text-[11px] font-black uppercase shadow-luna-deep hover:scale-[1.02] transition-all">
-              {ui.dashboard.startCheckin}
-            </button>
-            <button onClick={() => setShowLive(true)} className="px-10 py-5 bg-luna-purple/10 text-luna-purple border-2 border-luna-purple/20 rounded-full text-[11px] font-black uppercase hover:bg-luna-purple/20 transition-all shadow-luna-rich">
-              {ui.dashboard.talkToLuna}
-            </button>
-          </div>
-        </div>
-        <article className="flex-1 w-full max-w-xl">
-          <DailyStatePanel phase={currentPhase} summary={stateNarrative || ''} reassurance={ui.dashboard.reassurance} />
+          </article>
+
+          {latestReflectionEvent && (
+            <article className="mt-6 rounded-[1.8rem] border border-luna-purple/25 bg-[linear-gradient(150deg,rgba(255,255,255,0.9),rgba(250,243,255,0.78)_48%,rgba(245,241,255,0.72)_100%)] dark:bg-[linear-gradient(150deg,rgba(13,35,72,0.82),rgba(24,51,96,0.7)_48%,rgba(23,46,90,0.64)_100%)] p-5 space-y-4 shadow-[0_14px_34px_rgba(109,78,175,0.2)]">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Here is your reflection</p>
+              <div className="space-y-2">
+                <p className="text-sm font-black text-slate-800 dark:text-slate-100">What Luna heard</p>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{resultHeard}</p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-black text-slate-800 dark:text-slate-100">What may help tonight</p>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{resultSuggestion}</p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-black text-slate-800 dark:text-slate-100">Something Luna is starting to notice</p>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{resultPattern}</p>
+              </div>
+              {canUsePaidInsights ? (
+                <>
+                  <div className="space-y-2">
+                    <p className="text-sm font-black text-slate-800 dark:text-slate-100">{paywallCopy.featureVoice}</p>
+                    <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                      Luna notices that emotionally heavier days often follow shorter sleep and tighter work pressure.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-black text-slate-800 dark:text-slate-100">{paywallCopy.featureMonthly}</p>
+                    <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                      {weeklyInsight || 'Your month is starting to form: keep reflecting to unlock a fuller rhythm view.'}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <button
+                  onClick={openSoftPaywall}
+                  className="w-full text-left rounded-2xl border border-luna-purple/30 bg-luna-purple/5 dark:bg-luna-purple/10 p-4 hover:bg-luna-purple/10 transition-colors"
+                >
+                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-luna-purple">{paywallCopy.locked}</p>
+                  <p className="mt-1 text-sm font-black text-slate-800 dark:text-slate-100">{paywallCopy.featureVoice}</p>
+                  <p className="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300">{paywallCopy.inPlan}</p>
+                </button>
+              )}
+              {eveningStatus && <p className="text-xs font-semibold text-slate-500 dark:text-slate-300">{eveningStatus}</p>}
+            </article>
+          )}
+
+          <article className="mt-6 max-w-3xl rounded-[1.8rem] border border-slate-200/80 dark:border-[#3b5d8f] bg-[linear-gradient(150deg,rgba(255,255,255,0.92),rgba(248,248,255,0.8)_48%,rgba(242,245,255,0.76)_100%)] dark:bg-[linear-gradient(150deg,rgba(8,26,61,0.95),rgba(18,43,82,0.9)_48%,rgba(22,47,88,0.82)_100%)] p-5 shadow-luna-rich">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">Your story with Luna</p>
+            {(canUsePaidInsights ? recentStory : recentStory.slice(0, 2)).length > 0 ? (
+              <div className="mt-3 space-y-3">
+                {(canUsePaidInsights ? recentStory : recentStory.slice(0, 2)).map((entry) => (
+                  <div key={entry.id} className="rounded-xl bg-[linear-gradient(145deg,rgba(255,255,255,0.8),rgba(246,241,255,0.72))] dark:bg-[linear-gradient(145deg,rgba(12,35,72,0.95),rgba(19,44,84,0.9))] p-3 border border-white/45 dark:border-white/10">
+                    <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">{entry.day}</p>
+                    <p className="mt-1 text-sm font-medium text-slate-700 dark:text-slate-200">{entry.text}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-2 text-sm font-medium text-slate-700 dark:text-slate-200">Your story with Luna is just beginning.</p>
+            )}
+            {!canUsePaidInsights && recentStory.length > 2 && (
+              <button
+                onClick={openSoftPaywall}
+                className="mt-4 w-full text-left rounded-xl border border-luna-purple/30 bg-luna-purple/5 dark:bg-luna-purple/10 p-3 hover:bg-luna-purple/10 transition-colors"
+              >
+                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-luna-purple">{paywallCopy.locked}</p>
+                <p className="mt-1 text-sm font-black text-slate-800 dark:text-slate-100">{paywallCopy.featureHistory}</p>
+              </button>
+            )}
+          </article>
         </article>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <article className="lg:col-span-2 rounded-[2.5rem] border border-slate-200/80 dark:border-[#3b5d8f] bg-[linear-gradient(150deg,rgba(255,255,255,0.92),rgba(246,246,255,0.82)_48%,rgba(241,246,255,0.78)_100%)] dark:bg-[linear-gradient(150deg,rgba(8,26,61,0.95),rgba(18,43,82,0.9)_48%,rgba(23,49,91,0.84)_100%)] p-7 shadow-luna-rich space-y-5">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{dm.rhythmTitle}</p>
+              <p className="mt-2 text-lg font-semibold text-slate-600 dark:text-slate-300">{dm.rhythmSub}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {rhythmItems.map((item) => (
+                <div key={item.label} className="rounded-2xl border border-white/55 dark:border-white/10 bg-gradient-to-br from-[#ffffffde] via-[#faf3ffdd] to-[#f1eeffd8] dark:from-[#0c2348] dark:via-[#13315a] dark:to-[#183b66] p-3 shadow-[0_10px_22px_rgba(109,78,175,0.16)]">
+                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">{item.label}</p>
+                  <p className="mt-1 text-sm font-black text-slate-900 dark:text-slate-100">{item.value}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              {isNarrativeLoading ? ui.dashboard.thinking : stateNarrative || ui.dashboard.balanced}
+            </p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{dm.insightsTitle}</p>
+            {insightLines.length > 0 ? (
+              <ul className="space-y-3">
+                {insightLines.map((line, index) => (
+                  <li key={`${line.slice(0, 22)}-${index}`} className="rounded-2xl border border-white/55 dark:border-white/10 bg-gradient-to-br from-[#ffffffd9] to-[#f2f0ffd4] dark:from-[#0c2348] dark:to-[#16355f] p-4 text-sm font-medium text-slate-700 dark:text-slate-200">
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="rounded-2xl border border-white/55 dark:border-white/10 bg-gradient-to-br from-[#ffffffd9] to-[#f2f0ffd4] dark:from-[#0c2348] dark:to-[#16355f] p-5">
+                <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{dm.learnTitle}</p>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{dm.learnSub}</p>
+              </div>
+            )}
+          </article>
+          <article className="rounded-[2.5rem] border border-slate-200/80 dark:border-[#3b5d8f] bg-[linear-gradient(150deg,rgba(255,255,255,0.92),rgba(246,246,255,0.82)_48%,rgba(241,246,255,0.78)_100%)] dark:bg-[linear-gradient(150deg,rgba(8,26,61,0.95),rgba(18,43,82,0.9)_48%,rgba(23,49,91,0.84)_100%)] p-7 shadow-luna-rich space-y-4">
+            <div className="inline-flex items-center gap-2">
+              <Sparkles size={14} className="text-luna-purple" />
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-luna-purple">{dm.patternTitle}</p>
+            </div>
+            {canUsePaidInsights ? (
+              <>
+                <article className="rounded-2xl border border-white/55 dark:border-white/10 bg-gradient-to-br from-[#ffffffde] via-[#fbf3ffdd] to-[#f2efffd8] dark:from-[#0c2348] dark:via-[#13315a] dark:to-[#183b66] p-4">
+                  <p className="text-sm font-black text-slate-800 dark:text-slate-100">{dm.patternOneA}</p>
+                  <p className="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300">{dm.patternOneB}</p>
+                </article>
+                <article className="rounded-2xl border border-white/55 dark:border-white/10 bg-gradient-to-br from-[#ffffffde] via-[#fbf3ffdd] to-[#f2efffd8] dark:from-[#0c2348] dark:via-[#13315a] dark:to-[#183b66] p-4">
+                  <p className="text-sm font-black text-slate-800 dark:text-slate-100">{dm.patternTwoA}</p>
+                  <p className="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300">{dm.patternTwoB}</p>
+                </article>
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{dm.disclaimer}</p>
+              </>
+            ) : (
+              <button
+                onClick={openSoftPaywall}
+                className="w-full text-left rounded-2xl border border-luna-purple/30 bg-luna-purple/5 dark:bg-luna-purple/10 p-4 hover:bg-luna-purple/10 transition-colors"
+              >
+                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-luna-purple">{paywallCopy.locked}</p>
+                <p className="mt-1 text-sm font-black text-slate-800 dark:text-slate-100">{paywallCopy.featurePattern}</p>
+                <p className="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300">{paywallCopy.inPlan}</p>
+              </button>
+            )}
+          </article>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+      <div className="space-y-4">
+        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400">{dm.moreTools}</p>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 opacity-90">
         <article className="lg:col-span-8">
           <FuelCompass phase={currentPhase} lang={lang} />
         </article>
@@ -642,6 +1350,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <aside className="p-8 bg-white dark:bg-[#081a3d] rounded-[3rem] border border-slate-200/80 dark:border-[#2a4670] shadow-luna-rich space-y-4">
             <p className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.12em] text-luna-purple">{retentionCopy.reminderTitle}</p>
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">{gentleReminderMessage}</p>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setReminderEnabled((prev) => !prev)}
@@ -672,7 +1381,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </p>
             {isReminderDueNow && (
               <div className="rounded-2xl border border-amber-300/70 dark:border-amber-700/70 bg-amber-50 dark:bg-amber-900/20 p-3 flex items-center justify-between gap-2">
-                <p className="text-xs font-black uppercase tracking-[0.1em] text-amber-700 dark:text-amber-300">{retentionCopy.dueNow}</p>
+                <div className="space-y-1">
+                  <p className="text-xs font-black uppercase tracking-[0.1em] text-amber-700 dark:text-amber-300">{retentionCopy.dueNow}</p>
+                  <p className="text-xs font-semibold text-amber-700/90 dark:text-amber-200/90">{gentleReminderMessage}</p>
+                </div>
                 <button
                   onClick={() => setShowSyncOverlay(true)}
                   className="px-3 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.15em] bg-amber-200 text-amber-800 dark:bg-amber-700/40 dark:text-amber-200"
@@ -762,7 +1474,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       </div>
 
-      <div className="space-y-12 bg-white/40 dark:bg-[#07152f]/92 p-10 rounded-[4rem] border-2 border-slate-300 dark:border-[#2a4670] shadow-luna-inset">
+      <div className="space-y-12 bg-[linear-gradient(145deg,rgba(255,255,255,0.54),rgba(245,240,252,0.42))] dark:bg-[linear-gradient(145deg,rgba(7,21,47,0.94),rgba(10,28,58,0.92))] p-10 rounded-[4rem] border-2 border-slate-300/80 dark:border-[#355483] shadow-luna-inset">
         <div className="rounded-[2rem] border border-luna-purple/30 bg-gradient-to-r from-luna-purple/10 via-luna-coral/10 to-luna-teal/10 p-5 md:p-6 mb-2">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="space-y-2">

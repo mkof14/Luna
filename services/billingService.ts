@@ -10,8 +10,24 @@ const parseJson = async <T>(response: Response): Promise<T & { error?: string }>
   return raw ? (JSON.parse(raw) as T & { error?: string }) : ({} as T & { error?: string });
 };
 
+const mockStatusPayload = (): { billing: BillingStatusPayload; enabled: boolean } => ({
+  billing: { status: 'inactive', plan: 'none', period: 'none', updatedAt: new Date().toISOString() },
+  enabled: false,
+});
+
+const shouldUseLocalBillingMock = () => {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname;
+  const isLocalHost = host === 'localhost' || host === '127.0.0.1';
+  const forceRealBilling = window.localStorage.getItem('luna_enable_billing_api') === 'true';
+  return isLocalHost && !forceRealBilling;
+};
+
 export const billingService = {
   async getStatus(): Promise<{ billing: BillingStatusPayload; enabled: boolean }> {
+    if (shouldUseLocalBillingMock()) {
+      return mockStatusPayload();
+    }
     const response = await fetch('/api/billing/status', {
       method: 'GET',
       credentials: 'include',
@@ -25,6 +41,9 @@ export const billingService = {
   },
 
   async createPortalSession(): Promise<{ id?: string; url: string }> {
+    if (shouldUseLocalBillingMock()) {
+      throw new Error('Billing is unavailable in local mode.');
+    }
     const response = await fetch('/api/billing/portal-session', {
       method: 'POST',
       credentials: 'include',
@@ -39,6 +58,9 @@ export const billingService = {
   },
 
   async createCheckoutSession(period: 'month' | 'year'): Promise<{ id?: string; url: string }> {
+    if (shouldUseLocalBillingMock()) {
+      throw new Error('Billing is unavailable in local mode.');
+    }
     const response = await fetch('/api/billing/checkout-session', {
       method: 'POST',
       credentials: 'include',
