@@ -6,6 +6,7 @@ import { ReflectionResultScreen } from '../screens/ReflectionResultScreen';
 import { TodayScreen } from '../screens/TodayScreen';
 import { VoiceReflectionScreen } from '../screens/VoiceReflectionScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
+import { PublicHomeScreen } from '../screens/PublicHomeScreen';
 import { RhythmScreen } from '../screens/RhythmScreen';
 import { YouScreen } from '../screens/YouScreen';
 import { YourStoryScreen } from '../screens/YourStoryScreen';
@@ -19,6 +20,7 @@ import { useMobileAuth } from '../state/useMobileAuth';
 export function AppNavigator() {
   const auth = useMobileAuth();
   const [view, setView] = useState<AppView>({ type: 'onboarding' });
+  const [preAuthScreen, setPreAuthScreen] = useState<'public' | 'auth'>('public');
   const { reflectionCount, insightStage, addReflection } = useLunaState();
   const { today, reflection, thread, loading, remoteError, refresh, syncReflection } = useRemoteLunaData();
 
@@ -100,19 +102,31 @@ export function AppNavigator() {
       return <RhythmScreen stage={insightStage} />;
     }
 
-    return <YouScreen dayOfMonth={new Date().getDate()} onSignOut={auth.signOut} />;
+    return (
+      <YouScreen
+        dayOfMonth={new Date().getDate()}
+        onSignOut={async () => {
+          await auth.signOut();
+          setPreAuthScreen('public');
+        }}
+      />
+    );
   }, [view, today, remoteError, loading, refresh, thread, insightStage, auth.signOut]);
 
   if (auth.loading) {
-    return <AuthScreen onSignIn={auth.signIn} onSignUp={auth.signUp} error="" />;
+    return <PublicHomeScreen onOpenAuth={() => setPreAuthScreen('auth')} onOpenAboutFlow={() => setPreAuthScreen('auth')} loading />;
   }
 
   if (!auth.session) {
+    if (preAuthScreen === 'public') {
+      return <PublicHomeScreen onOpenAuth={() => setPreAuthScreen('auth')} onOpenAboutFlow={() => setPreAuthScreen('auth')} />;
+    }
     return (
       <AuthScreen
         onSignIn={async (email, password) => {
           try {
             await auth.signIn(email, password);
+            setPreAuthScreen('public');
           } catch (error) {
             auth.setError(error instanceof Error ? error.message : 'Sign in failed.');
           }
@@ -120,6 +134,7 @@ export function AppNavigator() {
         onSignUp={async (name, email, password) => {
           try {
             await auth.signUp(name, email, password);
+            setPreAuthScreen('public');
           } catch (error) {
             auth.setError(error instanceof Error ? error.message : 'Sign up failed.');
           }
