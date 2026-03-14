@@ -91,19 +91,28 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
   const [homeCalibrateOffsetY, setHomeCalibrateOffsetY] = useState(0);
   const [homeCalibrateScale, setHomeCalibrateScale] = useState(100);
   const [homeCalibrateHidePanel, setHomeCalibrateHidePanel] = useState(false);
-  const appStoreUrl = (import.meta.env.VITE_APP_STORE_URL || '#').trim() || '#';
-  const googlePlayUrl = (import.meta.env.VITE_GOOGLE_PLAY_URL || '#').trim() || '#';
+  const normalizeExternalUrl = (value: unknown) => {
+    const next = String(value || '').trim();
+    if (!next || next === '#') return '';
+    return next;
+  };
+  const appStoreUrl = normalizeExternalUrl(import.meta.env.VITE_APP_STORE_URL);
+  const googlePlayUrl = normalizeExternalUrl(import.meta.env.VITE_GOOGLE_PLAY_URL);
+  const expoPreviewUrl = normalizeExternalUrl(import.meta.env.VITE_EXPO_PREVIEW_URL || 'https://expo.dev/accounts/mkof14/projects/luna-mobile');
+  const appStoreHref = appStoreUrl || expoPreviewUrl || '#';
+  const googlePlayHref = googlePlayUrl || expoPreviewUrl || '#';
+  const showPreviewLink = (!appStoreUrl || !googlePlayUrl) && Boolean(expoPreviewUrl);
 
-  const storeBadgeCopyByLang: Record<Language, { title: string; appStore: string; googlePlay: string; soon: string }> = {
-    en: { title: 'Luna Mobile', appStore: 'Download on the App Store', googlePlay: 'Get it on Google Play', soon: 'Store links will be active after release.' },
-    ru: { title: 'Luna Mobile', appStore: 'Скачать в App Store', googlePlay: 'Скачать в Google Play', soon: 'Ссылки станут активны после релиза.' },
-    uk: { title: 'Luna Mobile', appStore: 'Завантажити в App Store', googlePlay: 'Отримати в Google Play', soon: 'Посилання стануть активними після релізу.' },
-    es: { title: 'Luna Mobile', appStore: 'Descargar en App Store', googlePlay: 'Disponible en Google Play', soon: 'Los enlaces estarán activos tras el lanzamiento.' },
-    fr: { title: 'Luna Mobile', appStore: 'Télécharger sur App Store', googlePlay: 'Disponible sur Google Play', soon: 'Les liens seront actifs après la sortie.' },
-    de: { title: 'Luna Mobile', appStore: 'Im App Store laden', googlePlay: 'Bei Google Play', soon: 'Store-Links werden nach dem Release aktiviert.' },
-    zh: { title: 'Luna Mobile', appStore: 'App Store 下载', googlePlay: 'Google Play 获取', soon: '发布后将启用商店链接。' },
-    ja: { title: 'Luna Mobile', appStore: 'App Store で入手', googlePlay: 'Google Play で入手', soon: 'リリース後にストアリンクを有効化します。' },
-    pt: { title: 'Luna Mobile', appStore: 'Baixar na App Store', googlePlay: 'Disponível no Google Play', soon: 'Os links serão ativados após o lançamento.' },
+  const storeBadgeCopyByLang: Record<Language, { title: string; appStore: string; googlePlay: string; preview: string; soon: string }> = {
+    en: { title: 'Luna Mobile', appStore: 'Download on the App Store', googlePlay: 'Get it on Google Play', preview: 'Open Mobile Preview', soon: 'Store links will be active after release.' },
+    ru: { title: 'Luna Mobile', appStore: 'Скачать в App Store', googlePlay: 'Скачать в Google Play', preview: 'Открыть мобильный превью', soon: 'Ссылки станут активны после релиза.' },
+    uk: { title: 'Luna Mobile', appStore: 'Завантажити в App Store', googlePlay: 'Отримати в Google Play', preview: 'Відкрити мобільне превʼю', soon: 'Посилання стануть активними після релізу.' },
+    es: { title: 'Luna Mobile', appStore: 'Descargar en App Store', googlePlay: 'Disponible en Google Play', preview: 'Abrir vista previa móvil', soon: 'Los enlaces estarán activos tras el lanzamiento.' },
+    fr: { title: 'Luna Mobile', appStore: 'Télécharger sur App Store', googlePlay: 'Disponible sur Google Play', preview: 'Ouvrir aperçu mobile', soon: 'Les liens seront actifs après la sortie.' },
+    de: { title: 'Luna Mobile', appStore: 'Im App Store laden', googlePlay: 'Bei Google Play', preview: 'Mobile Vorschau öffnen', soon: 'Store-Links werden nach dem Release aktiviert.' },
+    zh: { title: 'Luna Mobile', appStore: 'App Store 下载', googlePlay: 'Google Play 获取', preview: '打开移动预览', soon: '发布后将启用商店链接。' },
+    ja: { title: 'Luna Mobile', appStore: 'App Store で入手', googlePlay: 'Google Play で入手', preview: 'モバイルプレビューを開く', soon: 'リリース後にストアリンクを有効化します。' },
+    pt: { title: 'Luna Mobile', appStore: 'Baixar na App Store', googlePlay: 'Disponível no Google Play', preview: 'Abrir prévia móvel', soon: 'Os links serão ativados após o lançamento.' },
   };
   const storeBadges = storeBadgeCopyByLang[lang] || storeBadgeCopyByLang.en;
 
@@ -2129,7 +2138,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-300">{storeBadges.title}</p>
                       <div className="flex flex-wrap gap-2">
                         <a
-                          href={appStoreUrl}
+                          href={appStoreHref}
                           target="_blank"
                           rel="noreferrer"
                           className="px-4 py-2.5 rounded-full border border-slate-300/80 dark:border-slate-600/80 bg-white/70 dark:bg-slate-900/55 text-[11px] font-black tracking-wide text-slate-800 dark:text-slate-100 hover:border-luna-purple/60 hover:text-luna-purple transition-colors"
@@ -2137,7 +2146,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
                           {storeBadges.appStore}
                         </a>
                         <a
-                          href={googlePlayUrl}
+                          href={googlePlayHref}
                           target="_blank"
                           rel="noreferrer"
                           className="px-4 py-2.5 rounded-full border border-slate-300/80 dark:border-slate-600/80 bg-white/70 dark:bg-slate-900/55 text-[11px] font-black tracking-wide text-slate-800 dark:text-slate-100 hover:border-luna-purple/60 hover:text-luna-purple transition-colors"
@@ -2145,7 +2154,17 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
                           {storeBadges.googlePlay}
                         </a>
                       </div>
-                      {(appStoreUrl === '#' || googlePlayUrl === '#') && (
+                      {showPreviewLink && (
+                        <a
+                          href={expoPreviewUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-4 py-2.5 rounded-full border border-slate-300/80 dark:border-slate-600/80 bg-white/70 dark:bg-slate-900/55 text-[11px] font-black tracking-wide text-slate-800 dark:text-slate-100 hover:border-luna-purple/60 hover:text-luna-purple transition-colors"
+                        >
+                          {storeBadges.preview}
+                        </a>
+                      )}
+                      {(!appStoreUrl || !googlePlayUrl) && (
                         <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-300">{storeBadges.soon}</p>
                       )}
                     </div>
@@ -2495,7 +2514,7 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
               </button>
               <div className="flex flex-col gap-2 pt-1">
                 <a
-                  href={appStoreUrl}
+                  href={appStoreHref}
                   target="_blank"
                   rel="noreferrer"
                   className="text-left text-[12px] font-semibold text-slate-800 dark:text-slate-300 hover:text-luna-purple transition-colors"
@@ -2503,13 +2522,23 @@ export const PublicLandingView: React.FC<PublicLandingViewProps> = ({ onSignIn, 
                   {storeBadges.appStore}
                 </a>
                 <a
-                  href={googlePlayUrl}
+                  href={googlePlayHref}
                   target="_blank"
                   rel="noreferrer"
                   className="text-left text-[12px] font-semibold text-slate-800 dark:text-slate-300 hover:text-luna-purple transition-colors"
                 >
                   {storeBadges.googlePlay}
                 </a>
+                {showPreviewLink && (
+                  <a
+                    href={expoPreviewUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-left text-[12px] font-semibold text-slate-800 dark:text-slate-300 hover:text-luna-purple transition-colors"
+                  >
+                    {storeBadges.preview}
+                  </a>
+                )}
               </div>
             </nav>
             <nav className="space-y-4 md:col-span-1">
