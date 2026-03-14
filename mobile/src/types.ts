@@ -5,6 +5,10 @@ export type AppView =
   | { type: 'tabs'; tab: TabKey }
   | { type: 'voice' }
   | { type: 'quickCheckIn' }
+  | { type: 'todayMirror' }
+  | { type: 'myDay' }
+  | { type: 'monthlyReflection' }
+  | { type: 'paywall' }
   | { type: 'result' };
 
 export type ContextSignal = {

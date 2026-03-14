@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
+import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
 import { ContextSignal, ReflectionPayload } from '../types';
@@ -29,8 +30,7 @@ export function ReflectionResultScreen({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerWrap}>
-        <Text style={styles.greeting}>Good evening, {userName}</Text>
-        <Text style={styles.subline}>Here is your reflection.</Text>
+        <MobileScreenHeader title={`Good evening, ${userName}`} subtitle="Here is your reflection." onBack={onBackToday} />
         <Text style={styles.continuity}>{reflection.continuity}</Text>
       </View>
 
@@ -83,7 +83,6 @@ export function ReflectionResultScreen({
         <LunaButton variant="secondary" onPress={onSave}>Save reflection</LunaButton>
         <LunaButton variant="secondary" onPress={onShare}>Share reflection</LunaButton>
       </View>
-      <LunaButton variant="ghost" onPress={onBackToday}>Back to Today</LunaButton>
     </ScrollView>
   );
 }
@@ -98,13 +97,10 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   greeting: {
-    fontSize: 27,
-    fontWeight: '700',
-    color: colors.textPrimary,
+    display: 'none',
   },
   subline: {
-    fontSize: 16,
-    color: colors.textSecondary,
+    display: 'none',
   },
   continuity: {
     fontSize: 14,

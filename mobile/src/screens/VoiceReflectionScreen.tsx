@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
+import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
 
@@ -47,8 +48,7 @@ export function VoiceReflectionScreen({
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.headerTitle}>Speak freely. Luna is listening.</Text>
-      <Text style={styles.headerSub}>There is no right way to say it. A few honest words are enough.</Text>
+      <MobileScreenHeader title="Speak freely. Luna is listening." subtitle="There is no right way to say it. A few honest words are enough." onBack={onBack} />
 
       <SurfaceCard style={styles.heroCard}>
         <Text style={styles.cardTitle}>Voice Reflection</Text>
@@ -103,7 +103,7 @@ export function VoiceReflectionScreen({
           >
             Finish
           </LunaButton>
-          <LunaButton variant="ghost" onPress={onBack}>Discard</LunaButton>
+          <LunaButton variant="ghost" onPress={onBack}>Back</LunaButton>
         </View>
       </SurfaceCard>
     </ScrollView>
@@ -115,17 +115,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     gap: 12,
-  },
-  headerTitle: {
-    fontSize: 26,
-    lineHeight: 33,
-    fontWeight: '700',
-    color: colors.textPrimary,
-  },
-  headerSub: {
-    fontSize: 14,
-    lineHeight: 21,
-    color: colors.textSecondary,
   },
   heroCard: {
     gap: 12,

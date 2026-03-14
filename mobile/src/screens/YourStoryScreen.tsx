@@ -1,14 +1,14 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { StoryEntry } from '../types';
 import { colors } from '../theme/tokens';
 
-export function YourStoryScreen({ entries }: { entries: StoryEntry[] }) {
+export function YourStoryScreen({ entries, onBack }: { entries: StoryEntry[]; onBack?: () => void }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Your story with Luna</Text>
-      <Text style={styles.subtitle}>A short thread from your latest reflections.</Text>
+      <MobileScreenHeader title="Your story with Luna" subtitle="A short thread from your latest reflections." onBack={onBack} />
       <SurfaceCard>
         {entries.length === 0 ? (
           <Text style={styles.empty}>Your story with Luna is just beginning.</Text>
@@ -32,14 +32,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   title: {
-    fontSize: 27,
-    color: colors.textPrimary,
-    fontWeight: '700',
+    display: 'none',
   },
   subtitle: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: colors.textSecondary,
+    display: 'none',
   },
   item: {
     borderBottomWidth: 1,

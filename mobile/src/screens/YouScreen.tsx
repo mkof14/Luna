@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
+import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { getReminderPreview } from '../features/reminders';
 import { freeFeatures, paidFeatures } from '../features/subscription';
@@ -12,7 +13,19 @@ import {
 } from '../services/notifications';
 import { colors } from '../theme/tokens';
 
-export function YouScreen({ dayOfMonth, onSignOut }: { dayOfMonth: number; onSignOut: () => Promise<void> }) {
+export function YouScreen({
+  dayOfMonth,
+  onSignOut,
+  onOpenPaywall,
+  onOpenMonthly,
+  onBack,
+}: {
+  dayOfMonth: number;
+  onSignOut: () => Promise<void>;
+  onOpenPaywall?: () => void;
+  onOpenMonthly?: () => void;
+  onBack?: () => void;
+}) {
   const reminder = getReminderPreview(dayOfMonth);
   const [permission, setPermission] = useState<ReminderPermissionState>('undetermined');
 
@@ -33,7 +46,7 @@ export function YouScreen({ dayOfMonth, onSignOut }: { dayOfMonth: number; onSig
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>You</Text>
+      <MobileScreenHeader title="You" subtitle="Profile, reminders, privacy, and subscription." onBack={onBack} />
 
       <SurfaceCard>
         <Text style={styles.cardTitle}>Profile</Text>
@@ -53,7 +66,10 @@ export function YouScreen({ dayOfMonth, onSignOut }: { dayOfMonth: number; onSig
         <View style={styles.stack}>{freeFeatures.map((item) => <Text key={item} style={styles.text}>• {item}</Text>)}</View>
         <Text style={styles.blockTitle}>Paid later</Text>
         <View style={styles.stack}>{paidFeatures.map((item) => <Text key={item} style={styles.text}>• {item}</Text>)}</View>
-        <LunaButton variant="secondary" onPress={() => {}}>Unlock deeper insights</LunaButton>
+        <View style={styles.stack}>
+          <LunaButton variant="secondary" onPress={() => onOpenPaywall?.()}>Unlock deeper insights</LunaButton>
+          <LunaButton variant="secondary" onPress={() => onOpenMonthly?.()}>Your month with Luna</LunaButton>
+        </View>
       </SurfaceCard>
 
       <SurfaceCard>
@@ -71,9 +87,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   title: {
-    fontSize: 27,
-    color: colors.textPrimary,
-    fontWeight: '700',
+    display: 'none',
   },
   cardTitle: {
     fontSize: 18,

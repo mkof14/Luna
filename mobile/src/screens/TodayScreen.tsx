@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
+import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { eveningQuestions } from '../data/mockData';
 import { colors } from '../theme/tokens';
@@ -17,6 +18,10 @@ export function TodayScreen({
   onRefresh,
   onSpeak,
   onQuickCheckIn,
+  onOpenTodayMirror,
+  onOpenMyDay,
+  onOpenMonthly,
+  onOpenPaywall,
   onWrite,
   onSkip,
 }: {
@@ -30,6 +35,10 @@ export function TodayScreen({
   onRefresh?: () => void;
   onSpeak: () => void;
   onQuickCheckIn: () => void;
+  onOpenTodayMirror: () => void;
+  onOpenMyDay: () => void;
+  onOpenMonthly: () => void;
+  onOpenPaywall: () => void;
   onWrite: () => void;
   onSkip: () => void;
 }) {
@@ -41,8 +50,7 @@ export function TodayScreen({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerWrap}>
-        <Text style={styles.greeting}>Good evening, {userName}</Text>
-        <Text style={styles.sectionTitle}>{title}</Text>
+        <MobileScreenHeader title={`Good evening, ${userName}`} subtitle={title} />
         <Text style={styles.explainer}>{explanation}</Text>
       </View>
 
@@ -87,6 +95,16 @@ export function TodayScreen({
       </SurfaceCard>
 
       <SurfaceCard>
+        <Text style={styles.cardTitle}>More with Luna</Text>
+        <View style={styles.actionsRow}>
+          <LunaButton variant="secondary" onPress={onOpenTodayMirror}>Today Mirror</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenMyDay}>My Day</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenMonthly}>Your Month</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenPaywall}>Unlock Insights</LunaButton>
+        </View>
+      </SurfaceCard>
+
+      <SurfaceCard>
         <Text style={styles.cardTitle}>Continuity</Text>
         <Text style={styles.detail}>{continuity}</Text>
         <Text style={styles.detailStrong}>How does today feel compared to yesterday?</Text>
@@ -117,14 +135,10 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   greeting: {
-    fontSize: 29,
-    fontWeight: '700',
-    color: colors.textPrimary,
+    display: 'none',
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.accentStrong,
+    display: 'none',
   },
   explainer: {
     fontSize: 15,

@@ -7,10 +7,12 @@ import { colors } from '../theme/tokens';
 export function AuthScreen({
   onSignIn,
   onSignUp,
+  onBack,
   error,
 }: {
   onSignIn: (email: string, password: string) => Promise<void>;
   onSignUp: (name: string, email: string, password: string) => Promise<void>;
+  onBack?: () => void;
   error?: string;
 }) {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
@@ -35,6 +37,9 @@ export function AuthScreen({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.hero}>
+        {onBack ? (
+          <LunaButton variant="ghost" onPress={onBack}>← Back</LunaButton>
+        ) : null}
         <View style={styles.heroGlowTop} />
         <View style={styles.heroGlowBottom} />
         <Text style={styles.eyebrow}>Luna Access</Text>

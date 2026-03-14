@@ -1,14 +1,14 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { defaultContextSignal } from '../data/mockData';
 import { colors } from '../theme/tokens';
 
-export function RhythmScreen({ stage }: { stage: 1 | 2 | 3 }) {
+export function RhythmScreen({ stage, onBack }: { stage: 1 | 2 | 3; onBack?: () => void }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Rhythm</Text>
-      <Text style={styles.subtitle}>A calm view of your cycle, energy, mood, and sleep trends.</Text>
+      <MobileScreenHeader title="Rhythm" subtitle="A calm view of your cycle, energy, mood, and sleep trends." onBack={onBack} />
 
       <SurfaceCard>
         <Text style={styles.cardTitle}>Today rhythm</Text>
@@ -40,14 +40,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   title: {
-    fontSize: 27,
-    color: colors.textPrimary,
-    fontWeight: '700',
+    display: 'none',
   },
   subtitle: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: colors.textSecondary,
+    display: 'none',
   },
   cardTitle: {
     fontSize: 18,

@@ -11,6 +11,10 @@ import { RhythmScreen } from '../screens/RhythmScreen';
 import { YouScreen } from '../screens/YouScreen';
 import { YourStoryScreen } from '../screens/YourStoryScreen';
 import { AuthScreen } from '../screens/AuthScreen';
+import { TodayMirrorScreen } from '../screens/TodayMirrorScreen';
+import { MyDayWithLunaScreen } from '../screens/MyDayWithLunaScreen';
+import { MonthlyReflectionScreen } from '../screens/MonthlyReflectionScreen';
+import { InsightsPaywallScreen } from '../screens/InsightsPaywallScreen';
 import { colors } from '../theme/tokens';
 import { AppView, TabKey } from '../types';
 import { useLunaState } from '../state/useLunaState';
@@ -35,6 +39,22 @@ export function AppNavigator() {
 
   function openQuickCheckIn() {
     setView({ type: 'quickCheckIn' });
+  }
+
+  function openTodayMirror() {
+    setView({ type: 'todayMirror' });
+  }
+
+  function openMyDay() {
+    setView({ type: 'myDay' });
+  }
+
+  function openMonthlyReflection() {
+    setView({ type: 'monthlyReflection' });
+  }
+
+  function openPaywall() {
+    setView({ type: 'paywall' });
   }
 
   function openResult(entry: string) {
@@ -89,6 +109,10 @@ export function AppNavigator() {
           onRefresh={refresh}
           onSpeak={openVoice}
           onQuickCheckIn={openQuickCheckIn}
+          onOpenTodayMirror={openTodayMirror}
+          onOpenMyDay={openMyDay}
+          onOpenMonthly={openMonthlyReflection}
+          onOpenPaywall={openPaywall}
           onWrite={handleWrite}
           onSkip={handleSkip}
         />
@@ -106,6 +130,8 @@ export function AppNavigator() {
     return (
       <YouScreen
         dayOfMonth={new Date().getDate()}
+        onOpenPaywall={openPaywall}
+        onOpenMonthly={openMonthlyReflection}
         onSignOut={async () => {
           await auth.signOut();
           setShowPublicHome(true);
@@ -176,6 +202,7 @@ export function AppNavigator() {
             await auth.signIn(email, password);
             setShowPublicHome(false);
             setPreAuthScreen('public');
+            openTab('today');
           } catch (error) {
             auth.setError(error instanceof Error ? error.message : 'Sign in failed.');
           }
@@ -185,9 +212,14 @@ export function AppNavigator() {
             await auth.signUp(name, email, password);
             setShowPublicHome(false);
             setPreAuthScreen('public');
+            openTab('today');
           } catch (error) {
             auth.setError(error instanceof Error ? error.message : 'Sign up failed.');
           }
+        }}
+        onBack={() => {
+          setPreAuthScreen('public');
+          setShowPublicHome(true);
         }}
         error={auth.error}
       />
@@ -204,6 +236,32 @@ export function AppNavigator() {
 
   if (view.type === 'quickCheckIn') {
     return <QuickCheckInScreen onBack={() => openTab('today')} onSubmit={handleQuickCheckIn} />;
+  }
+
+  if (view.type === 'todayMirror') {
+    return (
+      <TodayMirrorScreen
+        userName={auth.session.name || today.userName}
+        explanation={today.explanation}
+        continuity={today.continuity}
+        context={today.context}
+        onSpeak={openVoice}
+        onQuickCheckIn={openQuickCheckIn}
+        onBack={() => openTab('today')}
+      />
+    );
+  }
+
+  if (view.type === 'myDay') {
+    return <MyDayWithLunaScreen context={today.context} onBack={() => openTab('today')} onSpeak={openVoice} />;
+  }
+
+  if (view.type === 'monthlyReflection') {
+    return <MonthlyReflectionScreen onBack={() => openTab('today')} />;
+  }
+
+  if (view.type === 'paywall') {
+    return <InsightsPaywallScreen onBack={() => openTab('today')} />;
   }
 
   if (view.type === 'result') {

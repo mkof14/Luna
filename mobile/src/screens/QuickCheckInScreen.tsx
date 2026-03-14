@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
+import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
 
@@ -39,8 +40,7 @@ export function QuickCheckInScreen({
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.headerTitle}>Quick check-in</Text>
-      <Text style={styles.headerSub}>A calm 30-second snapshot for tonight.</Text>
+      <MobileScreenHeader title="Quick check-in" subtitle="A calm 30-second snapshot for tonight." onBack={onBack} />
 
       <SurfaceCard>
         <Text style={styles.cardTitle}>Energy</Text>
@@ -85,9 +85,6 @@ export function QuickCheckInScreen({
 
       <View style={styles.actions}>
         <LunaButton onPress={() => onSubmit(entryText)}>Save check-in</LunaButton>
-        <LunaButton variant="ghost" onPress={onBack}>
-          Back
-        </LunaButton>
       </View>
     </ScrollView>
   );
@@ -98,16 +95,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     gap: 12,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.textPrimary,
-  },
-  headerSub: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: colors.textSecondary,
   },
   cardTitle: {
     fontSize: 17,
