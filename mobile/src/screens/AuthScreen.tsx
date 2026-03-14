@@ -34,8 +34,13 @@ export function AuthScreen({
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Luna mobile</Text>
-      <Text style={styles.subtitle}>Sign in to keep your daily story and insights across devices.</Text>
+      <View style={styles.hero}>
+        <View style={styles.heroGlowTop} />
+        <View style={styles.heroGlowBottom} />
+        <Text style={styles.eyebrow}>Luna Access</Text>
+        <Text style={styles.title}>Welcome back</Text>
+        <Text style={styles.subtitle}>Sign in to keep your daily story and insights across devices.</Text>
+      </View>
 
       <SurfaceCard>
         <View style={styles.modeRow}>
@@ -62,6 +67,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 20,
     gap: 12,
+  },
+  hero: {
+    position: 'relative',
+    overflow: 'hidden',
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: '#f8eef8',
+    padding: 16,
+    gap: 6,
+  },
+  heroGlowTop: {
+    position: 'absolute',
+    width: 150,
+    height: 150,
+    top: -42,
+    right: -36,
+    borderRadius: 999,
+    backgroundColor: '#efd9ff',
+    opacity: 0.55,
+  },
+  heroGlowBottom: {
+    position: 'absolute',
+    width: 190,
+    height: 130,
+    bottom: -54,
+    left: -42,
+    borderRadius: 999,
+    backgroundColor: '#fbdde8',
+    opacity: 0.5,
+  },
+  eyebrow: {
+    fontSize: 11,
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+    fontWeight: '700',
+    color: colors.textMuted,
   },
   title: {
     fontSize: 30,

@@ -21,6 +21,7 @@ export function AppNavigator() {
   const auth = useMobileAuth();
   const [view, setView] = useState<AppView>({ type: 'onboarding' });
   const [preAuthScreen, setPreAuthScreen] = useState<'public' | 'auth'>('public');
+  const [showPublicHome, setShowPublicHome] = useState(true);
   const { reflectionCount, insightStage, addReflection } = useLunaState();
   const { today, reflection, thread, loading, remoteError, refresh, syncReflection } = useRemoteLunaData();
 
@@ -107,6 +108,7 @@ export function AppNavigator() {
         dayOfMonth={new Date().getDate()}
         onSignOut={async () => {
           await auth.signOut();
+          setShowPublicHome(true);
           setPreAuthScreen('public');
         }}
       />
@@ -114,18 +116,65 @@ export function AppNavigator() {
   }, [view, today, remoteError, loading, refresh, thread, insightStage, auth.signOut]);
 
   if (auth.loading) {
-    return <PublicHomeScreen onOpenAuth={() => setPreAuthScreen('auth')} onOpenAboutFlow={() => setPreAuthScreen('auth')} loading />;
+    return (
+      <PublicHomeScreen
+        onOpenAuth={() => {
+          setShowPublicHome(false);
+          setPreAuthScreen('auth');
+        }}
+        onOpenAboutFlow={() => {
+          setShowPublicHome(false);
+          setPreAuthScreen('auth');
+        }}
+        loading
+      />
+    );
+  }
+
+  if (showPublicHome) {
+    return (
+      <PublicHomeScreen
+        onOpenAuth={() => {
+          setShowPublicHome(false);
+          if (auth.session) {
+            openTab('today');
+            return;
+          }
+          setPreAuthScreen('auth');
+        }}
+        onOpenAboutFlow={() => {
+          setShowPublicHome(false);
+          if (auth.session) {
+            openTab('today');
+            return;
+          }
+          setPreAuthScreen('auth');
+        }}
+      />
+    );
   }
 
   if (!auth.session) {
     if (preAuthScreen === 'public') {
-      return <PublicHomeScreen onOpenAuth={() => setPreAuthScreen('auth')} onOpenAboutFlow={() => setPreAuthScreen('auth')} />;
+      return (
+        <PublicHomeScreen
+          onOpenAuth={() => {
+            setShowPublicHome(false);
+            setPreAuthScreen('auth');
+          }}
+          onOpenAboutFlow={() => {
+            setShowPublicHome(false);
+            setPreAuthScreen('auth');
+          }}
+        />
+      );
     }
     return (
       <AuthScreen
         onSignIn={async (email, password) => {
           try {
             await auth.signIn(email, password);
+            setShowPublicHome(false);
             setPreAuthScreen('public');
           } catch (error) {
             auth.setError(error instanceof Error ? error.message : 'Sign in failed.');
@@ -134,6 +183,7 @@ export function AppNavigator() {
         onSignUp={async (name, email, password) => {
           try {
             await auth.signUp(name, email, password);
+            setShowPublicHome(false);
             setPreAuthScreen('public');
           } catch (error) {
             auth.setError(error instanceof Error ? error.message : 'Sign up failed.');
