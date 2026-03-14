@@ -19,7 +19,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.mkof14.lunamobile",
       "infoPlist": {
-        "NSUserNotificationsUsageDescription": "Luna uses notifications for gentle evening reflection reminders."
+        "NSUserNotificationsUsageDescription": "Luna uses notifications for gentle evening reflection reminders.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
