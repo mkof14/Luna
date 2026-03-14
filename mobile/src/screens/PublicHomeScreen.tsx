@@ -16,6 +16,8 @@ export function PublicHomeScreen({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.hero}>
+        <View style={styles.heroGlowTop} />
+        <View style={styles.heroGlowBottom} />
         <Text style={styles.eyebrow}>Luna Home</Text>
         <Text style={styles.title}>Your daily emotional mirror</Text>
         <Text style={styles.subtitle}>Understand yourself through body rhythms, daily observations, and voice notes.</Text>
@@ -23,6 +25,7 @@ export function PublicHomeScreen({
           <LunaButton onPress={onOpenAuth}>{loading ? 'Loading...' : 'Start today'}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenAboutFlow}>See how Luna works</LunaButton>
         </View>
+        <Text style={styles.heroHint}>Private. Calm. Personal.</Text>
       </View>
 
       <SurfaceCard>
@@ -49,6 +52,12 @@ export function PublicHomeScreen({
         <Text style={styles.listItem}>2. Make a quick check-in</Text>
         <Text style={styles.listItem}>3. Receive a gentle reflection</Text>
       </SurfaceCard>
+
+      <SurfaceCard style={styles.patternCard}>
+        <Text style={styles.patternLabel}>Pattern preview</Text>
+        <Text style={styles.patternText}>Energy can feel lower when sleep is shorter.</Text>
+        <Text style={styles.patternText}>Luna helps you notice this early and stay gentle with your day.</Text>
+      </SurfaceCard>
     </ScrollView>
   );
 }
@@ -60,12 +69,34 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   hero: {
+    position: 'relative',
+    overflow: 'hidden',
     borderRadius: 24,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.cardStrong,
+    backgroundColor: '#f8eef8',
     padding: 18,
     gap: 8,
+  },
+  heroGlowTop: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    right: -40,
+    top: -50,
+    borderRadius: 999,
+    backgroundColor: '#f0d9ff',
+    opacity: 0.55,
+  },
+  heroGlowBottom: {
+    position: 'absolute',
+    width: 220,
+    height: 160,
+    left: -60,
+    bottom: -60,
+    borderRadius: 999,
+    backgroundColor: '#fbdde7',
+    opacity: 0.5,
   },
   eyebrow: {
     fontSize: 11,
@@ -85,6 +116,13 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: colors.textSecondary,
   },
+  heroHint: {
+    marginTop: 2,
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    color: colors.textMuted,
+  },
   actionsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -103,7 +141,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.card,
+    backgroundColor: '#fff9ff',
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
@@ -121,5 +159,21 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.textSecondary,
     lineHeight: 22,
+  },
+  patternCard: {
+    borderColor: '#e9d2ec',
+    backgroundColor: '#f9f3fb',
+  },
+  patternLabel: {
+    fontSize: 11,
+    textTransform: 'uppercase',
+    letterSpacing: 1.1,
+    fontWeight: '700',
+    color: colors.accentStrong,
+  },
+  patternText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: colors.textSecondary,
   },
 });
