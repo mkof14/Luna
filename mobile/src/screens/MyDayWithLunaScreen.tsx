@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, ScrollView, Share, StyleSheet, Text, View, Alert } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
@@ -17,7 +17,11 @@ export function MyDayWithLunaScreen({
 }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <MobileScreenHeader title="My Day with Luna" subtitle="A calm personal note for today." onBack={onBack} />
+      <ImageBackground source={require('../../assets/bg-soft-1.webp')} imageStyle={styles.heroImage} style={styles.heroCard}>
+        <View style={styles.heroOverlay}>
+          <MobileScreenHeader title="My Day with Luna" subtitle="A calm personal note for today." onBack={onBack} tone="light" />
+        </View>
+      </ImageBackground>
 
       <SurfaceCard>
         <Text style={styles.mainText}>Today may feel a little slower.</Text>
@@ -35,11 +39,28 @@ export function MyDayWithLunaScreen({
         </View>
       </SurfaceCard>
 
-      <SurfaceCard>
+      <SurfaceCard style={styles.noteCard}>
         <Text style={styles.note}>Nothing is wrong with today. Your body just asks for a little more rest.</Text>
         <View style={styles.actionsRow}>
-          <LunaButton variant="secondary" onPress={() => {}}>Save</LunaButton>
-          <LunaButton variant="secondary" onPress={() => {}}>Share</LunaButton>
+          <LunaButton
+            variant="secondary"
+            onPress={() => {
+              Alert.alert('Saved', 'My Day note saved to your Luna story.');
+            }}
+          >
+            Save
+          </LunaButton>
+          <LunaButton
+            variant="secondary"
+            onPress={() => {
+              void Share.share({
+                title: 'My Day with Luna',
+                message: `My Day with Luna\n\nBody: ${context.cycle}\nEnergy: ${context.energy}\nMood: ${context.mood}\nSleep: ${context.sleep}`,
+              });
+            }}
+          >
+            Share
+          </LunaButton>
           <LunaButton onPress={onSpeak}>Speak to Luna</LunaButton>
         </View>
       </SurfaceCard>
@@ -96,5 +117,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
+  },
+  heroCard: {
+    minHeight: 132,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: colors.border,
+    overflow: 'hidden',
+  },
+  heroImage: {
+    resizeMode: 'cover',
+  },
+  heroOverlay: {
+    flex: 1,
+    padding: 14,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(58, 39, 82, 0.25)',
+  },
+  noteCard: {
+    backgroundColor: 'rgba(245, 237, 253, 0.82)',
   },
 });

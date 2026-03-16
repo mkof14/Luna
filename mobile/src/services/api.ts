@@ -32,6 +32,29 @@ export type SubmitReflectionPayload = {
   reflection: ReflectionPayload;
 };
 
+const REQUEST_TIMEOUT_MS = 12000;
+
+function withTimeout(signal?: AbortSignal) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  if (signal) {
+    if (signal.aborted) controller.abort();
+    signal.addEventListener('abort', () => controller.abort(), { once: true });
+  }
+  return {
+    signal: controller.signal,
+    clear: () => clearTimeout(timeout),
+  };
+}
+
+async function readJsonSafe(response: Response) {
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
 async function requestJson<T>(path: string, init?: RequestInit, mobileId?: string): Promise<T> {
   if (!hasApiBaseUrl) {
     throw new Error('Missing EXPO_PUBLIC_API_BASE_URL');
@@ -46,17 +69,33 @@ async function requestJson<T>(path: string, init?: RequestInit, mobileId?: strin
     headers.set('Authorization', `Bearer ${mobileAuthToken}`);
   }
 
-  const response = await fetch(`${env.apiBaseUrl}${path}`, {
-    method: 'GET',
-    ...init,
-    headers,
-  });
+  const originalSignal = init?.signal ?? undefined;
+  const { signal, clear } = withTimeout(originalSignal);
+  try {
+    const response = await fetch(`${env.apiBaseUrl}${path}`, {
+      method: 'GET',
+      ...init,
+      headers,
+      signal,
+    });
+    const json = await readJsonSafe(response);
 
-  if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+    if (!response.ok) {
+      const message =
+        (json && typeof json === 'object' && 'error' in json && typeof json.error === 'string' && json.error) ||
+        `Request failed: ${response.status}`;
+      throw new Error(message);
+    }
+
+    return (json ?? {}) as T;
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Request timeout. Please retry.');
+    }
+    throw error instanceof Error ? error : new Error('Network request failed.');
+  } finally {
+    clear();
   }
-
-  return (await response.json()) as T;
 }
 
 export async function fetchTodayView(mobileId?: string): Promise<TodayViewPayload> {

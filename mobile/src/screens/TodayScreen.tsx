@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { eveningQuestions } from '../data/mockData';
 import { colors } from '../theme/tokens';
 import { ContextSignal } from '../types';
+import { mobileCopy, MobileLang } from '../i18n/mobileCopy';
 
 export function TodayScreen({
   userName,
@@ -24,6 +25,12 @@ export function TodayScreen({
   onOpenPaywall,
   onWrite,
   onSkip,
+  onOpenServices,
+  onOpenSupport,
+  onOpenLegal,
+  onOpenPublicHome,
+  onOpenAuth,
+  lang,
 }: {
   userName: string;
   title: string;
@@ -41,7 +48,14 @@ export function TodayScreen({
   onOpenPaywall: () => void;
   onWrite: () => void;
   onSkip: () => void;
+  onOpenServices: () => void;
+  onOpenSupport: () => void;
+  onOpenLegal: () => void;
+  onOpenPublicHome: () => void;
+  onOpenAuth: () => void;
+  lang: MobileLang;
 }) {
+  const copy = mobileCopy[lang];
   const question = useMemo(() => {
     const index = new Date().getDate() % eveningQuestions.length;
     return eveningQuestions[index];
@@ -49,10 +63,14 @@ export function TodayScreen({
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.headerWrap}>
-        <MobileScreenHeader title={`Good evening, ${userName}`} subtitle={title} />
-        <Text style={styles.explainer}>{explanation}</Text>
-      </View>
+      <ImageBackground source={require('../../assets/bg-soft-2.webp')} imageStyle={styles.leadImage} style={styles.leadWrap}>
+        <View style={styles.leadTint}>
+          <View style={styles.headerWrap}>
+            <MobileScreenHeader title={`Good evening, ${userName}`} subtitle={title} tone="light" />
+            <Text style={styles.explainer}>{explanation}</Text>
+          </View>
+        </View>
+      </ImageBackground>
 
       {remoteError ? (
         <SurfaceCard style={styles.errorCard}>
@@ -60,19 +78,19 @@ export function TodayScreen({
         </SurfaceCard>
       ) : null}
 
-      <SurfaceCard>
-        <Text style={styles.cardTitle}>Today’s reflection</Text>
-        <Text style={styles.detail}>Choose one small action now.</Text>
+      <SurfaceCard style={styles.mainActionCard}>
+        <Text style={styles.cardTitle}>{copy.today.reflection}</Text>
+        <Text style={styles.detail}>{copy.today.chooseAction}</Text>
         <View style={styles.actionsRow}>
-          <LunaButton onPress={onSpeak}>Speak to Luna</LunaButton>
-          <LunaButton variant="secondary" onPress={onQuickCheckIn}>Quick check-in</LunaButton>
+          <LunaButton onPress={onSpeak}>{copy.today.speak}</LunaButton>
+          <LunaButton variant="secondary" onPress={onQuickCheckIn}>{copy.today.quick}</LunaButton>
         </View>
         {onRefresh ? (
-          <LunaButton variant="ghost" onPress={onRefresh}>{loading ? 'Refreshing...' : 'Refresh context'}</LunaButton>
+          <LunaButton variant="ghost" onPress={onRefresh}>{loading ? 'Refreshing...' : copy.today.refresh}</LunaButton>
         ) : null}
       </SurfaceCard>
 
-      <SurfaceCard>
+      <SurfaceCard style={styles.contextCard}>
         <Text style={styles.cardTitle}>Today</Text>
         <View style={styles.signalGrid}>
           <View style={styles.signalPill}>
@@ -94,17 +112,22 @@ export function TodayScreen({
         </View>
       </SurfaceCard>
 
-      <SurfaceCard>
-        <Text style={styles.cardTitle}>More with Luna</Text>
+      <SurfaceCard style={styles.servicesCard}>
+        <Text style={styles.cardTitle}>Menu</Text>
         <View style={styles.actionsRow}>
+          <LunaButton variant="secondary" onPress={onOpenPublicHome}>Public Home</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenServices}>{copy.today.services}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenTodayMirror}>Today Mirror</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenMyDay}>My Day</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenMonthly}>Your Month</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenPaywall}>Unlock Insights</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenSupport}>Support</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenLegal}>Legal</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenAuth}>Sign in / Admin</LunaButton>
         </View>
       </SurfaceCard>
 
-      <SurfaceCard>
+      <SurfaceCard style={styles.continuityCard}>
         <Text style={styles.cardTitle}>Continuity</Text>
         <Text style={styles.detail}>{continuity}</Text>
         <Text style={styles.detailStrong}>How does today feel compared to yesterday?</Text>
@@ -120,6 +143,15 @@ export function TodayScreen({
           <LunaButton variant="ghost" onPress={onSkip}>Skip today</LunaButton>
         </View>
       </SurfaceCard>
+
+      <SurfaceCard>
+        <Text style={styles.cardTitle}>Footer</Text>
+        <View style={styles.actionsRow}>
+          <LunaButton variant="secondary" onPress={onOpenSupport}>Support & FAQ</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenLegal}>Legal & Privacy</LunaButton>
+          <LunaButton variant="ghost" onPress={onOpenPublicHome}>Back to Public Home</LunaButton>
+        </View>
+      </SurfaceCard>
     </ScrollView>
   );
 }
@@ -128,11 +160,26 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     paddingBottom: 20,
-    gap: 14,
+    gap: 15,
   },
   headerWrap: {
     gap: 5,
-    paddingTop: 8,
+    paddingTop: 2,
+  },
+  leadWrap: {
+    overflow: 'hidden',
+    borderRadius: 28,
+    borderWidth: 1,
+    borderColor: 'rgba(198, 165, 223, 0.58)',
+    minHeight: 196,
+  },
+  leadImage: {
+    resizeMode: 'cover',
+  },
+  leadTint: {
+    flex: 1,
+    padding: 18,
+    backgroundColor: 'rgba(72, 49, 88, 0.17)',
   },
   greeting: {
     display: 'none',
@@ -143,12 +190,12 @@ const styles = StyleSheet.create({
   explainer: {
     fontSize: 15,
     lineHeight: 22,
-    color: colors.textSecondary,
+    color: '#f6ebf9',
   },
   cardTitle: {
     fontSize: 19,
-    fontWeight: '700',
-    color: colors.textPrimary,
+    fontWeight: '800',
+    color: '#4a3960',
   },
   detail: {
     fontSize: 15,
@@ -158,8 +205,8 @@ const styles = StyleSheet.create({
   detailStrong: {
     fontSize: 15,
     lineHeight: 22,
-    color: colors.textPrimary,
-    fontWeight: '600',
+    color: '#4e3d66',
+    fontWeight: '700',
   },
   actionsRow: {
     flexDirection: 'row',
@@ -170,12 +217,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   signalPill: {
-    borderRadius: 14,
+    borderRadius: 16,
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.cardStrong,
+    borderColor: 'rgba(215,188,234,0.72)',
+    backgroundColor: 'rgba(255, 250, 255, 0.86)',
   },
   signalLabel: {
     fontSize: 12,
@@ -199,5 +246,21 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: '#9d4d67',
     fontWeight: '600',
+  },
+  mainActionCard: {
+    backgroundColor: 'rgba(255, 246, 255, 0.92)',
+    borderColor: 'rgba(209,183,227,0.68)',
+  },
+  contextCard: {
+    backgroundColor: 'rgba(247, 239, 255, 0.82)',
+    borderColor: 'rgba(209,183,227,0.68)',
+  },
+  servicesCard: {
+    backgroundColor: 'rgba(255, 251, 255, 0.9)',
+    borderColor: 'rgba(209,183,227,0.68)',
+  },
+  continuityCard: {
+    backgroundColor: 'rgba(244, 236, 253, 0.82)',
+    borderColor: 'rgba(209,183,227,0.68)',
   },
 });

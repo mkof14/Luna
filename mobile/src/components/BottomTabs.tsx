@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: '#fff7ff',
+    backgroundColor: 'rgba(255, 248, 255, 0.82)',
     padding: 8,
   },
   tab: {
@@ -43,9 +43,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   tabActive: {
-    backgroundColor: colors.accentSoft,
+    backgroundColor: '#f2dcfb',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: '#dec4e8',
   },
   label: {
     color: colors.textSecondary,

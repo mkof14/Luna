@@ -1,25 +1,111 @@
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, ImageBackground, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
+import { MobileLang } from '../i18n/mobileCopy';
+import { fetchMobileAuthProviders } from '../services/production';
+
+const copyByLang: Record<MobileLang, Record<string, string>> = {
+  en: {
+    back: 'Back',
+    eyebrow: 'Luna Access',
+    title: 'Welcome back',
+    subtitle: 'Sign in to keep your daily story and insights across devices.',
+    signIn: 'Sign in',
+    signUp: 'Sign up',
+    name: 'Name',
+    email: 'Email',
+    password: 'Password',
+    hide: 'Hide',
+    show: 'Show',
+    wait: 'Please wait...',
+    continue: 'Continue',
+    create: 'Create account',
+    providers: 'Sign in with providers',
+    google: 'Continue with Google',
+    apple: 'Continue with Apple',
+    providerReady: 'Ready',
+    providerPending: 'Setup required',
+    providerInfo: 'Native provider login is prepared for production app builds.',
+    providerTap: 'Provider sign-in will be enabled after native credentials are connected.',
+  },
+  ru: {
+    back: 'Назад',
+    eyebrow: 'Доступ Luna',
+    title: 'С возвращением',
+    subtitle: 'Войдите, чтобы сохранить ваш ежедневный путь и инсайты на всех устройствах.',
+    signIn: 'Войти',
+    signUp: 'Регистрация',
+    name: 'Имя',
+    email: 'Email',
+    password: 'Пароль',
+    hide: 'Скрыть',
+    show: 'Показать',
+    wait: 'Подождите...',
+    continue: 'Продолжить',
+    create: 'Создать аккаунт',
+    providers: 'Вход через провайдеров',
+    google: 'Продолжить с Google',
+    apple: 'Продолжить с Apple',
+    providerReady: 'Готово',
+    providerPending: 'Нужна настройка',
+    providerInfo: 'Native provider login подготовлен для production-сборок.',
+    providerTap: 'Вход через провайдеров будет включен после подключения native credentials.',
+  },
+  es: {
+    back: 'Atras',
+    eyebrow: 'Acceso Luna',
+    title: 'Bienvenida de nuevo',
+    subtitle: 'Inicia sesion para mantener tu historia diaria e insights en todos tus dispositivos.',
+    signIn: 'Entrar',
+    signUp: 'Crear cuenta',
+    name: 'Nombre',
+    email: 'Email',
+    password: 'Contrasena',
+    hide: 'Ocultar',
+    show: 'Mostrar',
+    wait: 'Espera...',
+    continue: 'Continuar',
+    create: 'Crear cuenta',
+    providers: 'Entrar con proveedores',
+    google: 'Continuar con Google',
+    apple: 'Continuar con Apple',
+    providerReady: 'Listo',
+    providerPending: 'Falta configurar',
+    providerInfo: 'El acceso nativo con proveedores esta preparado para builds de produccion.',
+    providerTap: 'El acceso con proveedores se activara cuando conectemos credenciales nativas.',
+  },
+};
 
 export function AuthScreen({
   onSignIn,
   onSignUp,
   onBack,
   error,
+  lang,
 }: {
   onSignIn: (email: string, password: string) => Promise<void>;
   onSignUp: (name: string, email: string, password: string) => Promise<void>;
   onBack?: () => void;
   error?: string;
+  lang: MobileLang;
 }) {
+  const copy = copyByLang[lang];
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [name, setName] = useState('Anna');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [providers, setProviders] = useState<{ google: boolean; apple: boolean; message: string } | null>(null);
+
+  useEffect(() => {
+    void (async () => {
+      const next = await fetchMobileAuthProviders();
+      setProviders(next);
+    })();
+  }, []);
 
   async function submit() {
     setSubmitting(true);
@@ -36,32 +122,57 @@ export function AuthScreen({
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.hero}>
+      <ImageBackground source={require('../../assets/home-hero.webp')} imageStyle={styles.heroImage} style={styles.hero}>
         {onBack ? (
-          <LunaButton variant="ghost" onPress={onBack}>← Back</LunaButton>
+          <LunaButton variant="ghost" onPress={onBack}>← {copy.back}</LunaButton>
         ) : null}
         <View style={styles.heroGlowTop} />
         <View style={styles.heroGlowBottom} />
-        <Text style={styles.eyebrow}>Luna Access</Text>
-        <Text style={styles.title}>Welcome back</Text>
-        <Text style={styles.subtitle}>Sign in to keep your daily story and insights across devices.</Text>
-      </View>
+        <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
+        <Text style={styles.title}>{copy.title}</Text>
+        <Text style={styles.subtitle}>{copy.subtitle}</Text>
+      </ImageBackground>
 
       <SurfaceCard>
         <View style={styles.modeRow}>
-          <LunaButton variant={mode === 'signin' ? 'primary' : 'secondary'} onPress={() => setMode('signin')}>Sign in</LunaButton>
-          <LunaButton variant={mode === 'signup' ? 'primary' : 'secondary'} onPress={() => setMode('signup')}>Sign up</LunaButton>
+          <LunaButton variant={mode === 'signin' ? 'primary' : 'secondary'} onPress={() => setMode('signin')}>{copy.signIn}</LunaButton>
+          <LunaButton variant={mode === 'signup' ? 'primary' : 'secondary'} onPress={() => setMode('signup')}>{copy.signUp}</LunaButton>
         </View>
 
         {mode === 'signup' ? (
-          <TextInput value={name} onChangeText={setName} placeholder="Name" style={styles.input} placeholderTextColor={colors.textMuted} />
+          <TextInput value={name} onChangeText={setName} placeholder={copy.name} style={styles.input} placeholderTextColor={colors.textMuted} />
         ) : null}
-        <TextInput value={email} onChangeText={setEmail} placeholder="Email" style={styles.input} placeholderTextColor={colors.textMuted} autoCapitalize="none" keyboardType="email-address" />
-        <TextInput value={password} onChangeText={setPassword} placeholder="Password" style={styles.input} placeholderTextColor={colors.textMuted} secureTextEntry />
+        <TextInput value={email} onChangeText={setEmail} placeholder={copy.email} style={styles.input} placeholderTextColor={colors.textMuted} autoCapitalize="none" keyboardType="email-address" />
+        <View style={styles.passwordWrap}>
+          <TextInput
+            value={password}
+            onChangeText={setPassword}
+            placeholder={copy.password}
+            style={[styles.input, styles.passwordInput]}
+            placeholderTextColor={colors.textMuted}
+            secureTextEntry={!showPassword}
+          />
+          <LunaButton variant="ghost" onPress={() => setShowPassword((prev) => !prev)}>
+            {showPassword ? copy.hide : copy.show}
+          </LunaButton>
+        </View>
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
-        <LunaButton onPress={submit}>{submitting ? 'Please wait...' : mode === 'signin' ? 'Continue' : 'Create account'}</LunaButton>
+        <LunaButton onPress={submit}>{submitting ? copy.wait : mode === 'signin' ? copy.continue : copy.create}</LunaButton>
+      </SurfaceCard>
+
+      <SurfaceCard style={styles.providersCard}>
+        <Text style={styles.providersTitle}>{copy.providers}</Text>
+        <View style={styles.modeRow}>
+          <LunaButton variant="secondary" onPress={() => Alert.alert(copy.providers, copy.providerTap)}>
+            {copy.google} · {(providers?.google ?? false) ? copy.providerReady : copy.providerPending}
+          </LunaButton>
+          <LunaButton variant="secondary" onPress={() => Alert.alert(copy.providers, copy.providerTap)}>
+            {copy.apple} · {(providers?.apple ?? false) ? copy.providerReady : copy.providerPending}
+          </LunaButton>
+        </View>
+        <Text style={styles.providersText}>{providers?.message || copy.providerInfo}</Text>
       </SurfaceCard>
     </ScrollView>
   );
@@ -71,17 +182,20 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     paddingVertical: 20,
-    gap: 12,
+    gap: 14,
   },
   hero: {
     position: 'relative',
     overflow: 'hidden',
-    borderRadius: 24,
+    borderRadius: 28,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: 'rgba(200,168,224,0.6)',
     backgroundColor: '#f8eef8',
-    padding: 16,
-    gap: 6,
+    padding: 18,
+    gap: 8,
+  },
+  heroImage: {
+    resizeMode: 'cover',
   },
   heroGlowTop: {
     position: 'absolute',
@@ -108,33 +222,55 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1.2,
     fontWeight: '700',
-    color: colors.textMuted,
+    color: '#eddcf9',
   },
   title: {
-    fontSize: 30,
-    fontWeight: '700',
-    color: colors.textPrimary,
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#fff8ff',
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 14,
     lineHeight: 22,
-    color: colors.textSecondary,
+    color: '#f4e4fa',
   },
   modeRow: {
     flexDirection: 'row',
     gap: 8,
+    flexWrap: 'wrap',
   },
   input: {
     minHeight: 44,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.cardStrong,
-    paddingHorizontal: 12,
-    color: colors.textPrimary,
+    borderColor: 'rgba(213,181,232,0.7)',
+    backgroundColor: 'rgba(255,249,255,0.92)',
+    paddingHorizontal: 13,
+    color: '#4a3960',
   },
   error: {
     color: '#b64d67',
     fontSize: 13,
+    fontWeight: '600',
+  },
+  passwordWrap: {
+    gap: 6,
+  },
+  passwordInput: {
+    width: '100%',
+  },
+  providersCard: {
+    backgroundColor: 'rgba(255, 247, 255, 0.94)',
+    borderColor: 'rgba(209,183,227,0.68)',
+  },
+  providersTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#4a3960',
+  },
+  providersText: {
+    fontSize: 14,
+    lineHeight: 21,
+    color: '#826f99',
   },
 });

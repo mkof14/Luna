@@ -11,6 +11,9 @@ export function useMobileAuth() {
       try {
         const restored = await restoreMobileSession();
         setSession(restored);
+      } catch (error) {
+        setSession(null);
+        setError(error instanceof Error ? error.message : 'Session restore failed.');
       } finally {
         setLoading(false);
       }

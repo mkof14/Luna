@@ -3,17 +3,18 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
+    "check:node": "node scripts/check-node.mjs",
+    "start": "npm run check:node && expo start",
+    "android": "npm run check:node && expo start --android",
+    "ios": "npm run check:node && expo start --ios",
+    "web": "npm run check:node && expo start --web",
     "typecheck": "tsc --noEmit",
     "release:preflight": "node scripts/release-preflight.mjs",
-    "build:ios": "npx eas-cli build --platform ios --profile production",
-    "build:android": "npx eas-cli build --platform android --profile production",
-    "build:all": "npx eas-cli build --platform all --profile production",
-    "submit:ios": "npx eas-cli submit --platform ios --profile production",
-    "submit:android": "npx eas-cli submit --platform android --profile production"
+    "build:ios": "npm run check:node && npx eas-cli build --platform ios --profile production",
+    "build:android": "npm run check:node && npx eas-cli build --platform android --profile production",
+    "build:all": "npm run check:node && npx eas-cli build --platform all --profile production",
+    "submit:ios": "npm run check:node && npx eas-cli submit --platform ios --profile production",
+    "submit:android": "npm run check:node && npx eas-cli submit --platform android --profile production"
   },
   "dependencies": {
     "expo": "~54.0.0",
@@ -24,8 +25,12 @@
     "react-native": "0.81.5"
   },
   "devDependencies": {
+    "@expo/ngrok": "^4.1.3",
     "@types/react": "~19.1.10",
     "typescript": "~5.9.2"
   },
-  "private": true
+  "private": true,
+  "engines": {
+    "node": ">=20 <23"
+  }
 }

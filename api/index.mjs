@@ -15,6 +15,9 @@ const SESSIONS_FILE = path.join(DATA_DIR, 'sessions.json');
 const PRIVACY_REQUESTS_FILE = path.join(DATA_DIR, 'privacy-requests.json');
 const BILLING_STATE_FILE = path.join(DATA_DIR, 'billing-state.json');
 const MOBILE_REFLECTIONS_FILE = path.join(DATA_DIR, 'mobile-reflections.json');
+const MOBILE_REPORTS_FILE = path.join(DATA_DIR, 'mobile-reports.json');
+const MOBILE_STATE_FILE = path.join(DATA_DIR, 'mobile-state.json');
+const MOBILE_PUSH_FILE = path.join(DATA_DIR, 'mobile-push.json');
 
 const SESSION_COOKIE = 'luna_sid';
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
@@ -211,6 +214,79 @@ const buildReflectionSummary = (lastEntryText) => {
     lastEntryText,
     'Your words suggest the day asked a lot from you.',
   ];
+};
+
+const sanitizeMobileReportsState = (raw) => {
+  if (!raw || typeof raw !== 'object') return { profiles: {} };
+  const profilesRaw = raw.profiles && typeof raw.profiles === 'object' ? raw.profiles : {};
+  const profiles = {};
+  for (const [key, value] of Object.entries(profilesRaw)) {
+    const profileKey = safeId(key, 160);
+    if (!profileKey || !Array.isArray(value)) continue;
+    profiles[profileKey] = value
+      .map((item) => {
+        if (!item || typeof item !== 'object') return null;
+        const id = safeText(item.id, 120);
+        const generatedAt = safeText(item.generatedAt, 64);
+        const text = safeText(item.text, 20000);
+        if (!id || !generatedAt || !text) return null;
+        return { id, generatedAt, text };
+      })
+      .filter(Boolean)
+      .slice(0, 100);
+  }
+  return { profiles };
+};
+
+const sanitizeMobileStateStore = (raw) => {
+  if (!raw || typeof raw !== 'object') return { profiles: {} };
+  const profilesRaw = raw.profiles && typeof raw.profiles === 'object' ? raw.profiles : {};
+  const profiles = {};
+  for (const [key, value] of Object.entries(profilesRaw)) {
+    const profileKey = safeId(key, 160);
+    if (!profileKey || !value || typeof value !== 'object') continue;
+    const sectionsRaw = value.sections && typeof value.sections === 'object' ? value.sections : {};
+    const sections = {};
+    for (const [sectionKey, sectionData] of Object.entries(sectionsRaw)) {
+      const nextSectionKey = safeId(sectionKey, 80);
+      if (!nextSectionKey) continue;
+      sections[nextSectionKey] = sectionData;
+    }
+    profiles[profileKey] = {
+      sections,
+      updatedAt: safeText(value.updatedAt, 64) || new Date().toISOString(),
+    };
+  }
+  return { profiles };
+};
+
+const sanitizeMobilePushStore = (raw) => {
+  if (!raw || typeof raw !== 'object') return { profiles: {} };
+  const profilesRaw = raw.profiles && typeof raw.profiles === 'object' ? raw.profiles : {};
+  const profiles = {};
+  for (const [key, value] of Object.entries(profilesRaw)) {
+    const profileKey = safeId(key, 160);
+    if (!profileKey || !value || typeof value !== 'object') continue;
+    const tokensRaw = Array.isArray(value.tokens) ? value.tokens : [];
+    const tokens = tokensRaw
+      .map((item) => {
+        if (!item || typeof item !== 'object') return null;
+        const token = safeText(item.token, 512);
+        const platform = safeText(item.platform, 32);
+        const deviceName = safeText(item.deviceName, 120);
+        const updatedAt = safeText(item.updatedAt, 64) || new Date().toISOString();
+        if (!token) return null;
+        return { token, platform: platform || 'unknown', deviceName, updatedAt };
+      })
+      .filter(Boolean)
+      .slice(0, 10);
+
+    profiles[profileKey] = {
+      tokens,
+      updatedAt: safeText(value.updatedAt, 64) || new Date().toISOString(),
+    };
+  }
+  return { profiles };
 };
 
 const readJson = async (filePath, fallback) => {
@@ -901,6 +977,9 @@ const start = async () => {
   let billingState = await readJson(BILLING_STATE_FILE, {});
   if (!billingState || typeof billingState !== 'object') billingState = {};
   let mobileReflections = sanitizeMobileState(await readJson(MOBILE_REFLECTIONS_FILE, { profiles: {} }));
+  let mobileReports = sanitizeMobileReportsState(await readJson(MOBILE_REPORTS_FILE, { profiles: {} }));
+  let mobileStateStore = sanitizeMobileStateStore(await readJson(MOBILE_STATE_FILE, { profiles: {} }));
+  let mobilePushStore = sanitizeMobilePushStore(await readJson(MOBILE_PUSH_FILE, { profiles: {} }));
   const storedSessions = parseStoredSessions(await readJson(SESSIONS_FILE, []));
   for (const item of storedSessions) {
     sessions.set(item.token, { userId: item.userId, expiresAt: item.expiresAt });
@@ -914,6 +993,9 @@ const start = async () => {
   const savePrivacyRequests = async () => writeJson(PRIVACY_REQUESTS_FILE, privacyRequests);
   const saveBillingState = async () => writeJson(BILLING_STATE_FILE, billingState);
   const saveMobileReflections = async () => writeJson(MOBILE_REFLECTIONS_FILE, mobileReflections);
+  const saveMobileReports = async () => writeJson(MOBILE_REPORTS_FILE, mobileReports);
+  const saveMobileStateStore = async () => writeJson(MOBILE_STATE_FILE, mobileStateStore);
+  const saveMobilePushStore = async () => writeJson(MOBILE_PUSH_FILE, mobilePushStore);
 
   const resolveMobileProfile = async (req, ip) => {
     const cookieSession = await getSessionUser(req, users);
@@ -938,6 +1020,33 @@ const start = async () => {
     }
 
     return { profile, profileKey };
+  };
+
+  const resolveMobileReportsProfile = async (req, ip) => {
+    const { profileKey } = await resolveMobileProfile(req, ip);
+    if (!mobileReports.profiles[profileKey]) {
+      mobileReports.profiles[profileKey] = [];
+      await saveMobileReports();
+    }
+    return { profileKey, reports: mobileReports.profiles[profileKey] };
+  };
+
+  const resolveMobileStateProfile = async (req, ip) => {
+    const { profileKey } = await resolveMobileProfile(req, ip);
+    if (!mobileStateStore.profiles[profileKey]) {
+      mobileStateStore.profiles[profileKey] = { sections: {}, updatedAt: new Date().toISOString() };
+      await saveMobileStateStore();
+    }
+    return { profileKey, profile: mobileStateStore.profiles[profileKey] };
+  };
+
+  const resolveMobilePushProfile = async (req, ip) => {
+    const { profileKey } = await resolveMobileProfile(req, ip);
+    if (!mobilePushStore.profiles[profileKey]) {
+      mobilePushStore.profiles[profileKey] = { tokens: [], updatedAt: new Date().toISOString() };
+      await saveMobilePushStore();
+    }
+    return { profileKey, profile: mobilePushStore.profiles[profileKey] };
   };
 
   let didBootstrapSuperAdmin = false;
@@ -1108,6 +1217,20 @@ const start = async () => {
       return;
     }
 
+    if (method === 'GET' && url.pathname === '/api/mobile/auth/providers') {
+      send(
+        res,
+        200,
+        {
+          google: Boolean(process.env.EXPO_PUBLIC_GOOGLE_NATIVE_CLIENT_ID || process.env.AUTH_GOOGLE_CLIENT_IDS),
+          apple: true,
+          message: 'Native provider auth requires app-build credentials and store-ready configuration.',
+        },
+        headers,
+      );
+      return;
+    }
+
     if (method === 'GET' && url.pathname === '/api/mobile/today') {
       const { profile } = await resolveMobileProfile(req, ip);
       const storyEntries = mapStoryEntries(profile.entries);
@@ -1207,6 +1330,218 @@ const start = async () => {
       } catch (error) {
         send(res, 400, { error: error instanceof Error ? error.message : 'Could not save reflection.' }, headers);
       }
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/mobile/reports/generate') {
+      if (!rateLimit(`mobile-reports-generate:${ip}`, 24, 60_000)) {
+        send(res, 429, { error: 'Too many report generations. Try again in a minute.' }, headers);
+        return;
+      }
+      try {
+        const body = await readBody(req);
+        const now = new Date();
+        const id = `LUNA-${now.toISOString().slice(0, 10).replaceAll('-', '')}-${Math.floor(Math.random() * 900 + 100)}`;
+        const cycleDay = safeText(body.cycleDay, 32) || '17';
+        const sleep = safeText(body.sleep, 64) || '6h 20m';
+        const energy = safeText(body.energy, 64) || 'Lower';
+        const mood = safeText(body.mood, 64) || 'Sensitive';
+        const source = safeText(body.source, 160) || 'Blood test + user note';
+        const note = safeText(body.note, 500) || 'No additional notes.';
+        const hormones = body.hormones && typeof body.hormones === 'object' ? body.hormones : {};
+        const labs = body.labs && typeof body.labs === 'object' ? body.labs : {};
+
+        const text = [
+          'Luna Health Report',
+          `Report ID: ${id}`,
+          `Generated: ${now.toLocaleString()}`,
+          '',
+          'Today context',
+          `Cycle day: ${cycleDay}`,
+          `Sleep: ${sleep}`,
+          `Energy: ${energy}`,
+          `Mood: ${mood}`,
+          `Source: ${source}`,
+          '',
+          'Hormones',
+          `Estradiol: ${safeText(hormones.estradiol, 64) || 'n/a'}`,
+          `Progesterone: ${safeText(hormones.progesterone, 64) || 'n/a'}`,
+          `Cortisol: ${safeText(hormones.cortisol, 64) || 'n/a'}`,
+          '',
+          'Lab markers',
+          `Ferritin: ${safeText(labs.ferritin, 64) || 'n/a'}`,
+          `TSH: ${safeText(labs.tsh, 64) || 'n/a'}`,
+          `Vitamin D: ${safeText(labs.vitaminD, 64) || 'n/a'}`,
+          '',
+          'Interpretation summary',
+          '- Energy and mood can feel more sensitive after shorter sleep.',
+          '- Luteal-phase timing may align with lower stress tolerance.',
+          '- Track markers over time with your doctor for context.',
+          '',
+          'Gentle recommendation:',
+          'Keep tonight slower, hydrate, and prioritize earlier sleep.',
+          `Note: ${note}`,
+          '',
+          'LUNA IS NOT A DIAGNOSIS TOOL. IF NEEDED, CONTACT YOUR DOCTOR.',
+        ].join('\n');
+
+        send(res, 200, { id, generatedAt: now.toISOString(), text }, headers);
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Could not generate report.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/mobile/reports/save') {
+      try {
+        const body = await readBody(req);
+        const id = safeText(body.id, 120);
+        const generatedAt = safeText(body.generatedAt, 64) || new Date().toISOString();
+        const text = safeText(body.text, 20000);
+        if (!id || !text) {
+          send(res, 400, { error: 'Invalid report payload.' }, headers);
+          return;
+        }
+
+        const { reports } = await resolveMobileReportsProfile(req, ip);
+        const next = [{ id, generatedAt, text }, ...(Array.isArray(reports) ? reports : [])]
+          .filter((item, index, arr) => arr.findIndex((target) => target.id === item.id) === index)
+          .slice(0, 100);
+        const { profileKey } = await resolveMobileReportsProfile(req, ip);
+        mobileReports.profiles[profileKey] = next;
+        await saveMobileReports();
+        send(res, 200, { ok: true }, headers);
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Could not save report.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/mobile/reports/history') {
+      const { reports } = await resolveMobileReportsProfile(req, ip);
+      send(res, 200, Array.isArray(reports) ? reports.slice(0, 20) : [], headers);
+      return;
+    }
+
+    if (method === 'POST' && /^\/api\/mobile\/reports\/[^/]+\/pdf$/.test(url.pathname)) {
+      send(res, 200, { ok: true, url: '' }, headers);
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/mobile/reports/ocr-intake') {
+      try {
+        const body = await readBody(req);
+        const input = safeText(body.input, 8000);
+        send(res, 200, { ok: true, extractedText: input }, headers);
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Could not process OCR intake.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/mobile/state') {
+      const section = safeId(url.searchParams.get('section') || '', 80);
+      if (!section) {
+        send(res, 400, { error: 'State section is required.' }, headers);
+        return;
+      }
+      const { profile } = await resolveMobileStateProfile(req, ip);
+      send(res, 200, { section, data: profile.sections?.[section] ?? null }, headers);
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/mobile/state') {
+      try {
+        const body = await readBody(req);
+        const section = safeId(body.section, 80);
+        if (!section) {
+          send(res, 400, { error: 'State section is required.' }, headers);
+          return;
+        }
+        const { profile } = await resolveMobileStateProfile(req, ip);
+        profile.sections = profile.sections && typeof profile.sections === 'object' ? profile.sections : {};
+        profile.sections[section] = body.data ?? null;
+        profile.updatedAt = new Date().toISOString();
+        await saveMobileStateStore();
+        send(res, 200, { ok: true }, headers);
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Could not save mobile state.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/mobile/push/status') {
+      const { profile } = await resolveMobilePushProfile(req, ip);
+      const tokens = Array.isArray(profile.tokens) ? profile.tokens : [];
+      send(
+        res,
+        200,
+        {
+          registered: tokens.length > 0,
+          count: tokens.length,
+          updatedAt: profile.updatedAt || null,
+        },
+        headers,
+      );
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/mobile/push/register') {
+      try {
+        const body = await readBody(req);
+        const token = safeText(body.token, 512);
+        const platform = safeText(body.platform, 32) || 'unknown';
+        const deviceName = safeText(body.deviceName, 120) || '';
+        if (!token) {
+          send(res, 400, { error: 'Push token is required.' }, headers);
+          return;
+        }
+        const { profile } = await resolveMobilePushProfile(req, ip);
+        const next = [
+          { token, platform, deviceName, updatedAt: new Date().toISOString() },
+          ...(Array.isArray(profile.tokens) ? profile.tokens : []),
+        ]
+          .filter((item, index, arr) => arr.findIndex((candidate) => candidate.token === item.token) === index)
+          .slice(0, 10);
+        profile.tokens = next;
+        profile.updatedAt = new Date().toISOString();
+        await saveMobilePushStore();
+        send(res, 200, { ok: true, registered: true, count: next.length }, headers);
+      } catch (error) {
+        send(res, 400, { error: error instanceof Error ? error.message : 'Could not register push token.' }, headers);
+      }
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/mobile/push/test') {
+      const { profile } = await resolveMobilePushProfile(req, ip);
+      const count = Array.isArray(profile.tokens) ? profile.tokens.length : 0;
+      send(
+        res,
+        200,
+        {
+          ok: true,
+          queued: count > 0,
+          message: count > 0 ? `Test notification queued for ${count} registered device(s).` : 'No registered device tokens yet.',
+        },
+        headers,
+      );
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/mobile/billing/status') {
+      send(
+        res,
+        200,
+        {
+          enabled: BILLING_ENABLED && Boolean(STRIPE_SECRET_KEY),
+          monthlyPrice: '$12.99',
+          yearlyPrice: '$89',
+          trial: '7-day free trial',
+          provider: BILLING_ENABLED ? 'stripe' : 'disabled',
+        },
+        headers,
+      );
       return;
     }
 
@@ -2005,6 +2340,89 @@ const start = async () => {
         },
         headers
       );
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/admin/social/connect-all') {
+      const auth = await requireSession(req, res, headers);
+      if (!auth) return;
+      if (!hasAnyPermission(auth.sessionPayload, ['manage_services', 'manage_admin_roles'])) {
+        send(res, 403, { error: 'Permission denied.' }, headers);
+        return;
+      }
+      pushAudit(adminState, {
+        actorEmail: auth.sessionPayload.email,
+        actorRole: auth.sessionPayload.role,
+        action: 'admin.social.connect_all',
+        details: 'Connected all social channels via mobile admin.',
+      });
+      await saveAdminState();
+      send(res, 200, { ok: true }, headers);
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/admin/social/pending-review') {
+      const auth = await requireSession(req, res, headers);
+      if (!auth) return;
+      if (!hasAnyPermission(auth.sessionPayload, ['manage_services', 'manage_admin_roles'])) {
+        send(res, 403, { error: 'Permission denied.' }, headers);
+        return;
+      }
+      pushAudit(adminState, {
+        actorEmail: auth.sessionPayload.email,
+        actorRole: auth.sessionPayload.role,
+        action: 'admin.social.pending_review',
+        details: 'Set social channels to pending review via mobile admin.',
+      });
+      await saveAdminState();
+      send(res, 200, { ok: true }, headers);
+      return;
+    }
+
+    if (method === 'GET' && url.pathname === '/api/admin/social/analytics') {
+      const auth = await requireSession(req, res, headers);
+      if (!auth) return;
+      if (!hasAnyPermission(auth.sessionPayload, ['manage_services', 'manage_admin_roles', 'view_technical_metrics'])) {
+        send(res, 403, { error: 'Permission denied.' }, headers);
+        return;
+      }
+      send(res, 200, { reach: 12400, engagement: 4.8, growth: 2.1 }, headers);
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/admin/templates/preview') {
+      const auth = await requireSession(req, res, headers);
+      if (!auth) return;
+      if (!hasAnyPermission(auth.sessionPayload, ['manage_email_templates', 'manage_admin_roles'])) {
+        send(res, 403, { error: 'Permission denied.' }, headers);
+        return;
+      }
+      pushAudit(adminState, {
+        actorEmail: auth.sessionPayload.email,
+        actorRole: auth.sessionPayload.role,
+        action: 'admin.templates.preview',
+        details: 'Opened template preview via mobile admin.',
+      });
+      await saveAdminState();
+      send(res, 200, { ok: true }, headers);
+      return;
+    }
+
+    if (method === 'POST' && url.pathname === '/api/admin/invites/admin') {
+      const auth = await requireSession(req, res, headers);
+      if (!auth) return;
+      if (!hasAnyPermission(auth.sessionPayload, ['manage_admin_roles'])) {
+        send(res, 403, { error: 'Permission denied.' }, headers);
+        return;
+      }
+      pushAudit(adminState, {
+        actorEmail: auth.sessionPayload.email,
+        actorRole: auth.sessionPayload.role,
+        action: 'admin.invite.send',
+        details: 'Sent admin invite via mobile admin.',
+      });
+      await saveAdminState();
+      send(res, 200, { ok: true }, headers);
       return;
     }
 

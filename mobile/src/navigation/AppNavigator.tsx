@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
+import { AppShell } from '../components/AppShell';
 import { BottomTabs } from '../components/BottomTabs';
 import { QuickCheckInScreen } from '../screens/QuickCheckInScreen';
 import { ReflectionResultScreen } from '../screens/ReflectionResultScreen';
@@ -15,19 +16,62 @@ import { TodayMirrorScreen } from '../screens/TodayMirrorScreen';
 import { MyDayWithLunaScreen } from '../screens/MyDayWithLunaScreen';
 import { MonthlyReflectionScreen } from '../screens/MonthlyReflectionScreen';
 import { InsightsPaywallScreen } from '../screens/InsightsPaywallScreen';
+import { MemberZoneScreen } from '../screens/MemberZoneScreen';
+import { FooterLinksScreen } from '../screens/FooterLinksScreen';
+import { AdminScreen } from '../screens/AdminScreen';
+import { ServicesHubScreen } from '../screens/ServicesHubScreen';
+import { BodyMapScreen } from '../screens/BodyMapScreen';
+import { RitualPathScreen } from '../screens/RitualPathScreen';
+import { BridgeMobileScreen } from '../screens/BridgeMobileScreen';
+import { KnowledgeScreen } from '../screens/KnowledgeScreen';
+import { HealthReportsScreen } from '../screens/HealthReportsScreen';
+import { SupportScreen } from '../screens/SupportScreen';
+import { PartnerFAQMobileScreen } from '../screens/PartnerFAQMobileScreen';
+import { LegalMobileScreen } from '../screens/LegalMobileScreen';
+import { AboutLunaMobileScreen } from '../screens/AboutLunaMobileScreen';
+import { HowItWorksMobileScreen } from '../screens/HowItWorksMobileScreen';
+import { ContactMobileScreen } from '../screens/ContactMobileScreen';
+import { VoiceFilesMobileScreen } from '../screens/VoiceFilesMobileScreen';
+import { RelationshipsMobileScreen } from '../screens/RelationshipsMobileScreen';
+import { FamilyMobileScreen } from '../screens/FamilyMobileScreen';
+import { CreativeStudioMobileScreen } from '../screens/CreativeStudioMobileScreen';
+import { MedicationNotesMobileScreen } from '../screens/MedicationNotesMobileScreen';
+import { ResetRoomMobileScreen } from '../screens/ResetRoomMobileScreen';
+import { TermsMobileScreen } from '../screens/TermsMobileScreen';
+import { MedicalDisclaimerMobileScreen } from '../screens/MedicalDisclaimerMobileScreen';
+import { CookiesMobileScreen } from '../screens/CookiesMobileScreen';
+import { DataRightsMobileScreen } from '../screens/DataRightsMobileScreen';
 import { colors } from '../theme/tokens';
 import { AppView, TabKey } from '../types';
 import { useLunaState } from '../state/useLunaState';
 import { useRemoteLunaData } from '../state/useRemoteLunaData';
 import { useMobileAuth } from '../state/useMobileAuth';
+import { MobileLang } from '../i18n/mobileCopy';
 
 export function AppNavigator() {
   const auth = useMobileAuth();
   const [view, setView] = useState<AppView>({ type: 'onboarding' });
   const [preAuthScreen, setPreAuthScreen] = useState<'public' | 'auth'>('public');
   const [showPublicHome, setShowPublicHome] = useState(true);
+  const [guestMode, setGuestMode] = useState(false);
+  const [lang, setLang] = useState<MobileLang>('en');
+  const [themeMode, setThemeMode] = useState<'light' | 'dark'>('light');
   const { reflectionCount, insightStage, addReflection } = useLunaState();
   const { today, reflection, thread, loading, remoteError, refresh, syncReflection } = useRemoteLunaData();
+
+  const effectiveSession =
+    auth.session ||
+    (guestMode
+      ? {
+          id: 'guest-mobile-user',
+          email: 'guest@luna.local',
+          name: 'Anna',
+          provider: 'password' as const,
+          role: 'member',
+          permissions: [],
+          lastLoginAt: new Date().toISOString(),
+        }
+      : null);
 
   function openTab(tab: TabKey) {
     setView({ type: 'tabs', tab });
@@ -55,6 +99,106 @@ export function AppNavigator() {
 
   function openPaywall() {
     setView({ type: 'paywall' });
+  }
+  function openMemberZone() {
+    setView({ type: 'memberZone' });
+  }
+  function openFooterLinks() {
+    setView({ type: 'footerLinks' });
+  }
+  function openAdmin() {
+    setView({ type: 'admin' });
+  }
+  function openServicesHub() {
+    setView({ type: 'servicesHub' });
+  }
+  function openBodyMap() {
+    setView({ type: 'bodyMap' });
+  }
+  function openRitualPath() {
+    setView({ type: 'ritualPath' });
+  }
+  function openBridge() {
+    setView({ type: 'bridge' });
+  }
+  function openKnowledge() {
+    setView({ type: 'knowledge' });
+  }
+  function openHealthReports() {
+    setView({ type: 'healthReports' });
+  }
+  function openSupport() {
+    setView({ type: 'support' });
+  }
+  function openPartnerFaq() {
+    setView({ type: 'partnerFaq' });
+  }
+  function openLegal() {
+    setView({ type: 'legal' });
+  }
+  function openAbout() {
+    setView({ type: 'about' });
+  }
+  function openHowItWorks() {
+    setView({ type: 'howItWorks' });
+  }
+  function openContact() {
+    setView({ type: 'contact' });
+  }
+  function openVoiceFiles() {
+    setView({ type: 'voiceFiles' });
+  }
+  function openRelationships() {
+    setView({ type: 'relationships' });
+  }
+  function openFamily() {
+    setView({ type: 'family' });
+  }
+  function openCreative() {
+    setView({ type: 'creative' });
+  }
+  function openMedicationNotes() {
+    setView({ type: 'medicationNotes' });
+  }
+  function openResetRoom() {
+    setView({ type: 'resetRoom' });
+  }
+  function openTerms() {
+    setView({ type: 'terms' });
+  }
+  function openMedicalDisclaimer() {
+    setView({ type: 'medicalDisclaimer' });
+  }
+  function openCookies() {
+    setView({ type: 'cookies' });
+  }
+  function openDataRights() {
+    setView({ type: 'dataRights' });
+  }
+
+  function openPublicHome() {
+    setShowPublicHome(true);
+    setPreAuthScreen('public');
+  }
+
+  function openAuthScreen() {
+    setGuestMode(false);
+    setShowPublicHome(false);
+    setPreAuthScreen('auth');
+  }
+
+  function openGuestSupport() {
+    setGuestMode(true);
+    setShowPublicHome(false);
+    setPreAuthScreen('public');
+    setView({ type: 'support' });
+  }
+
+  function openGuestLegal() {
+    setGuestMode(true);
+    setShowPublicHome(false);
+    setPreAuthScreen('public');
+    setView({ type: 'legal' });
   }
 
   function openResult(entry: string) {
@@ -99,7 +243,7 @@ export function AppNavigator() {
     if (view.tab === 'today') {
       return (
         <TodayScreen
-          userName={auth.session?.name || today.userName}
+          userName={effectiveSession?.name || today.userName}
           title={today.title}
           explanation={today.explanation}
           continuity={today.continuity}
@@ -115,16 +259,22 @@ export function AppNavigator() {
           onOpenPaywall={openPaywall}
           onWrite={handleWrite}
           onSkip={handleSkip}
+          onOpenServices={openServicesHub}
+          onOpenSupport={openSupport}
+          onOpenLegal={openLegal}
+          onOpenPublicHome={openPublicHome}
+          onOpenAuth={openAuthScreen}
+          lang={lang}
         />
       );
     }
 
     if (view.tab === 'story') {
-      return <YourStoryScreen entries={thread} />;
+      return <YourStoryScreen entries={thread} onBack={() => openTab('today')} lang={lang} />;
     }
 
     if (view.tab === 'rhythm') {
-      return <RhythmScreen stage={insightStage} />;
+      return <RhythmScreen stage={insightStage} onBack={() => openTab('today')} lang={lang} />;
     }
 
     return (
@@ -132,175 +282,529 @@ export function AppNavigator() {
         dayOfMonth={new Date().getDate()}
         onOpenPaywall={openPaywall}
         onOpenMonthly={openMonthlyReflection}
+        onOpenVoice={openVoice}
+        onOpenQuickCheckIn={openQuickCheckIn}
+        onOpenToday={() => openTab('today')}
+        onOpenStory={() => openTab('story')}
+        onOpenRhythm={() => openTab('rhythm')}
+        onOpenTodayMirror={openTodayMirror}
+        onOpenMyDay={openMyDay}
+        onOpenResult={() => setView({ type: 'result' })}
+        onOpenMemberZone={openMemberZone}
+        onOpenFooterLinks={openFooterLinks}
+        onOpenAdmin={openAdmin}
+        onOpenServices={openServicesHub}
+        onOpenPublicHome={openPublicHome}
+        onOpenAuth={openAuthScreen}
+        onOpenRelationships={openRelationships}
+        onOpenFamily={openFamily}
+        onOpenCreative={openCreative}
+        onOpenMedicationNotes={openMedicationNotes}
+        onOpenResetRoom={openResetRoom}
+        onOpenVoiceFiles={openVoiceFiles}
+        onOpenHowItWorks={openHowItWorks}
+        onOpenContact={openContact}
+        onOpenAbout={openAbout}
+        lang={lang}
+        setLang={setLang}
+        themeMode={themeMode}
+        onToggleTheme={() => setThemeMode((current) => (current === 'light' ? 'dark' : 'light'))}
         onSignOut={async () => {
-          await auth.signOut();
+          if (auth.session) {
+            await auth.signOut();
+          }
+          setGuestMode(false);
           setShowPublicHome(true);
           setPreAuthScreen('public');
+          setView({ type: 'onboarding' });
         }}
       />
     );
-  }, [view, today, remoteError, loading, refresh, thread, insightStage, auth.signOut]);
+  }, [
+    view,
+    today,
+    remoteError,
+    loading,
+    refresh,
+    thread,
+    insightStage,
+    auth.signOut,
+    effectiveSession?.name,
+    auth.session,
+    lang,
+    themeMode,
+  ]);
 
   if (auth.loading) {
     return (
-      <PublicHomeScreen
-        onOpenAuth={() => {
-          setShowPublicHome(false);
-          setPreAuthScreen('auth');
-        }}
-        onOpenAboutFlow={() => {
-          setShowPublicHome(false);
-          setPreAuthScreen('auth');
-        }}
-        loading
-      />
+      <AppShell mode={themeMode}>
+        <PublicHomeScreen
+          onOpenAuth={openAuthScreen}
+          onOpenAboutFlow={() => {
+            setGuestMode(true);
+            setShowPublicHome(false);
+            setPreAuthScreen('public');
+            setView({ type: 'onboarding' });
+          }}
+          onOpenApp={() => {
+            setGuestMode(true);
+            setShowPublicHome(false);
+            setPreAuthScreen('public');
+            setView({ type: 'onboarding' });
+          }}
+          onOpenSupport={openGuestSupport}
+          onOpenLegal={openGuestLegal}
+          lang={lang}
+          loading
+        />
+      </AppShell>
     );
   }
 
   if (showPublicHome) {
     return (
-      <PublicHomeScreen
-        onOpenAuth={() => {
-          setShowPublicHome(false);
-          if (auth.session) {
-            openTab('today');
-            return;
-          }
-          setPreAuthScreen('auth');
-        }}
-        onOpenAboutFlow={() => {
-          setShowPublicHome(false);
-          if (auth.session) {
-            openTab('today');
-            return;
-          }
-          setPreAuthScreen('auth');
-        }}
-      />
+      <AppShell mode={themeMode}>
+        <PublicHomeScreen
+          onOpenAuth={openAuthScreen}
+          onOpenAboutFlow={() => {
+            setGuestMode(true);
+            setShowPublicHome(false);
+            setPreAuthScreen('public');
+            setView({ type: 'onboarding' });
+          }}
+          onOpenApp={() => {
+            setGuestMode(true);
+            setShowPublicHome(false);
+            setPreAuthScreen('public');
+            setView({ type: 'onboarding' });
+          }}
+          onOpenSupport={openGuestSupport}
+          onOpenLegal={openGuestLegal}
+          lang={lang}
+        />
+      </AppShell>
     );
   }
 
-  if (!auth.session) {
+  if (!effectiveSession) {
     if (preAuthScreen === 'public') {
       return (
-        <PublicHomeScreen
-          onOpenAuth={() => {
-            setShowPublicHome(false);
-            setPreAuthScreen('auth');
-          }}
-          onOpenAboutFlow={() => {
-            setShowPublicHome(false);
-            setPreAuthScreen('auth');
-          }}
-        />
+        <AppShell mode={themeMode}>
+          <PublicHomeScreen
+            onOpenAuth={openAuthScreen}
+            onOpenAboutFlow={() => {
+              setGuestMode(true);
+              setShowPublicHome(false);
+              setPreAuthScreen('public');
+              setView({ type: 'onboarding' });
+            }}
+            onOpenApp={() => {
+              setGuestMode(true);
+              setShowPublicHome(false);
+              setPreAuthScreen('public');
+              setView({ type: 'onboarding' });
+            }}
+            onOpenSupport={openGuestSupport}
+            onOpenLegal={openGuestLegal}
+            lang={lang}
+          />
+        </AppShell>
       );
     }
     return (
-      <AuthScreen
-        onSignIn={async (email, password) => {
-          try {
-            await auth.signIn(email, password);
-            setShowPublicHome(false);
+      <AppShell mode={themeMode}>
+        <AuthScreen
+          onSignIn={async (email, password) => {
+            try {
+              await auth.signIn(email, password);
+              setGuestMode(false);
+              setShowPublicHome(false);
+              setPreAuthScreen('public');
+              openTab('today');
+            } catch (error) {
+              auth.setError(error instanceof Error ? error.message : 'Sign in failed.');
+            }
+          }}
+          onSignUp={async (name, email, password) => {
+            try {
+              await auth.signUp(name, email, password);
+              setGuestMode(false);
+              setShowPublicHome(false);
+              setPreAuthScreen('public');
+              openTab('today');
+            } catch (error) {
+              auth.setError(error instanceof Error ? error.message : 'Sign up failed.');
+            }
+          }}
+          onBack={() => {
             setPreAuthScreen('public');
-            openTab('today');
-          } catch (error) {
-            auth.setError(error instanceof Error ? error.message : 'Sign in failed.');
-          }
-        }}
-        onSignUp={async (name, email, password) => {
-          try {
-            await auth.signUp(name, email, password);
-            setShowPublicHome(false);
-            setPreAuthScreen('public');
-            openTab('today');
-          } catch (error) {
-            auth.setError(error instanceof Error ? error.message : 'Sign up failed.');
-          }
-        }}
-        onBack={() => {
-          setPreAuthScreen('public');
-          setShowPublicHome(true);
-        }}
-        error={auth.error}
-      />
+            setShowPublicHome(true);
+          }}
+          error={auth.error}
+          lang={lang}
+        />
+      </AppShell>
     );
   }
 
   if (view.type === 'onboarding') {
-    return <OnboardingScreen onBeginVoice={openVoice} onComplete={() => openTab('today')} />;
+    return (
+      <AppShell mode={themeMode}>
+        <OnboardingScreen onBeginVoice={openVoice} onComplete={() => openTab('today')} lang={lang} />
+      </AppShell>
+    );
   }
 
   if (view.type === 'voice') {
-    return <VoiceReflectionScreen onBack={() => openTab('today')} onFinish={openResult} />;
+    return (
+      <AppShell mode={themeMode}>
+        <VoiceReflectionScreen onBack={() => openTab('today')} onFinish={openResult} lang={lang} />
+      </AppShell>
+    );
   }
 
   if (view.type === 'quickCheckIn') {
-    return <QuickCheckInScreen onBack={() => openTab('today')} onSubmit={handleQuickCheckIn} />;
+    return (
+      <AppShell mode={themeMode}>
+        <QuickCheckInScreen onBack={() => openTab('today')} onSubmit={handleQuickCheckIn} lang={lang} />
+      </AppShell>
+    );
   }
 
   if (view.type === 'todayMirror') {
     return (
-      <TodayMirrorScreen
-        userName={auth.session.name || today.userName}
-        explanation={today.explanation}
-        continuity={today.continuity}
-        context={today.context}
-        onSpeak={openVoice}
-        onQuickCheckIn={openQuickCheckIn}
-        onBack={() => openTab('today')}
-      />
+      <AppShell mode={themeMode}>
+        <TodayMirrorScreen
+          userName={effectiveSession.name || today.userName}
+          explanation={today.explanation}
+          continuity={today.continuity}
+          context={today.context}
+          onSpeak={openVoice}
+          onQuickCheckIn={openQuickCheckIn}
+          onBack={() => openTab('today')}
+          lang={lang}
+        />
+      </AppShell>
     );
   }
 
   if (view.type === 'myDay') {
-    return <MyDayWithLunaScreen context={today.context} onBack={() => openTab('today')} onSpeak={openVoice} />;
+    return (
+      <AppShell mode={themeMode}>
+        <MyDayWithLunaScreen context={today.context} onBack={() => openTab('today')} onSpeak={openVoice} />
+      </AppShell>
+    );
   }
 
   if (view.type === 'monthlyReflection') {
-    return <MonthlyReflectionScreen onBack={() => openTab('today')} />;
+    return (
+      <AppShell mode={themeMode}>
+        <MonthlyReflectionScreen onBack={() => openTab('today')} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'memberZone') {
+    return (
+      <AppShell mode={themeMode}>
+        <MemberZoneScreen
+          onBack={() => openTab('today')}
+          onOpenToday={() => openTab('today')}
+          onOpenStory={() => openTab('story')}
+          onOpenRhythm={() => openTab('rhythm')}
+          onOpenVoice={openVoice}
+          onOpenQuickCheckIn={openQuickCheckIn}
+          onOpenTodayMirror={openTodayMirror}
+          onOpenMyDay={openMyDay}
+          onOpenMonthly={openMonthlyReflection}
+          onOpenPaywall={openPaywall}
+          onOpenServices={openServicesHub}
+          onOpenHealthReports={openHealthReports}
+          lang={lang}
+        />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'footerLinks') {
+    return (
+      <AppShell mode={themeMode}>
+        <FooterLinksScreen onBack={() => openTab('today')} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'admin') {
+    const hasAdminAccess = Boolean(
+      auth.session && (auth.session.permissions.includes('manage_services') || auth.session.permissions.includes('manage_admin_roles')),
+    );
+    return (
+      <AppShell mode={themeMode}>
+        <AdminScreen
+          onBack={() => openTab('today')}
+          hasAccess={hasAdminAccess}
+          onOpenFooterLinks={openFooterLinks}
+          onOpenMemberZone={openMemberZone}
+          lang={lang}
+        />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'servicesHub') {
+    return (
+      <AppShell mode={themeMode}>
+        <ServicesHubScreen
+          onBack={() => openTab('today')}
+          onOpenBodyMap={openBodyMap}
+          onOpenRitualPath={openRitualPath}
+          onOpenBridge={openBridge}
+          onOpenKnowledge={openKnowledge}
+          onOpenHealthReports={openHealthReports}
+          onOpenSupport={openSupport}
+          onOpenVoice={openVoice}
+          onOpenRelationships={openRelationships}
+          onOpenFamily={openFamily}
+          onOpenCreative={openCreative}
+          onOpenMedicationNotes={openMedicationNotes}
+          onOpenResetRoom={openResetRoom}
+          onOpenVoiceFiles={openVoiceFiles}
+          onOpenHowItWorks={openHowItWorks}
+          onOpenContact={openContact}
+          onOpenAbout={openAbout}
+          lang={lang}
+        />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'bodyMap') {
+    return (
+      <AppShell mode={themeMode}>
+        <BodyMapScreen onBack={openServicesHub} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'ritualPath') {
+    return (
+      <AppShell mode={themeMode}>
+        <RitualPathScreen onBack={openServicesHub} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'bridge') {
+    return (
+      <AppShell mode={themeMode}>
+        <BridgeMobileScreen onBack={openServicesHub} onOpenVoice={openVoice} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'knowledge') {
+    return (
+      <AppShell mode={themeMode}>
+        <KnowledgeScreen onBack={openServicesHub} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'healthReports') {
+    return (
+      <AppShell mode={themeMode}>
+        <HealthReportsScreen onBack={openServicesHub} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'support') {
+    return (
+      <AppShell mode={themeMode}>
+        <SupportScreen onBack={openServicesHub} onOpenPartnerFaq={openPartnerFaq} onOpenLegal={openLegal} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'partnerFaq') {
+    return (
+      <AppShell mode={themeMode}>
+        <PartnerFAQMobileScreen onBack={openSupport} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'legal') {
+    return (
+      <AppShell mode={themeMode}>
+        <LegalMobileScreen
+          onBack={openSupport}
+          lang={lang}
+          onOpenTerms={openTerms}
+          onOpenMedical={openMedicalDisclaimer}
+          onOpenCookies={openCookies}
+          onOpenDataRights={openDataRights}
+        />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'about') {
+    return (
+      <AppShell mode={themeMode}>
+        <AboutLunaMobileScreen onBack={openServicesHub} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'howItWorks') {
+    return (
+      <AppShell mode={themeMode}>
+        <HowItWorksMobileScreen onBack={openServicesHub} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'contact') {
+    return (
+      <AppShell mode={themeMode}>
+        <ContactMobileScreen onBack={openServicesHub} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'voiceFiles') {
+    return (
+      <AppShell mode={themeMode}>
+        <VoiceFilesMobileScreen onBack={openServicesHub} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'relationships') {
+    return (
+      <AppShell mode={themeMode}>
+        <RelationshipsMobileScreen onBack={openServicesHub} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'family') {
+    return (
+      <AppShell mode={themeMode}>
+        <FamilyMobileScreen onBack={openServicesHub} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'creative') {
+    return (
+      <AppShell mode={themeMode}>
+        <CreativeStudioMobileScreen onBack={openServicesHub} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'medicationNotes') {
+    return (
+      <AppShell mode={themeMode}>
+        <MedicationNotesMobileScreen onBack={openServicesHub} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'resetRoom') {
+    return (
+      <AppShell mode={themeMode}>
+        <ResetRoomMobileScreen onBack={openServicesHub} lang={lang} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'terms') {
+    return (
+      <AppShell mode={themeMode}>
+        <TermsMobileScreen onBack={openLegal} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'medicalDisclaimer') {
+    return (
+      <AppShell mode={themeMode}>
+        <MedicalDisclaimerMobileScreen onBack={openLegal} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'cookies') {
+    return (
+      <AppShell mode={themeMode}>
+        <CookiesMobileScreen onBack={openLegal} />
+      </AppShell>
+    );
+  }
+
+  if (view.type === 'dataRights') {
+    return (
+      <AppShell mode={themeMode}>
+        <DataRightsMobileScreen onBack={openLegal} />
+      </AppShell>
+    );
   }
 
   if (view.type === 'paywall') {
-    return <InsightsPaywallScreen onBack={() => openTab('today')} />;
+    return (
+      <AppShell mode={themeMode}>
+        <InsightsPaywallScreen onBack={() => openTab('today')} lang={lang} />
+      </AppShell>
+    );
   }
 
   if (view.type === 'result') {
     return (
-      <ReflectionResultScreen
-        userName={auth.session.name || today.userName}
-        reflection={reflection}
-        context={today.context}
-        recentEntries={thread}
-        onSeeRhythm={() => openTab('rhythm')}
-        onSave={handleSave}
-        onShare={handleShare}
-        onBackToday={() => openTab('today')}
-        hasPattern={reflectionCount >= 7}
-      />
+      <AppShell mode={themeMode}>
+        <ReflectionResultScreen
+          userName={effectiveSession.name || today.userName}
+          reflection={reflection}
+          context={today.context}
+          recentEntries={thread}
+          onSeeRhythm={() => openTab('rhythm')}
+          onSave={handleSave}
+          onShare={handleShare}
+          onBackToday={() => openTab('today')}
+          hasPattern={reflectionCount >= 7}
+          lang={lang}
+        />
+      </AppShell>
     );
   }
 
   return (
-    <View style={styles.layout}>
-      <View style={styles.content}>{tabScreen}</View>
-      <BottomTabs activeTab={activeTab} onSelect={openTab} />
-    </View>
+    <AppShell padded mode={themeMode}>
+      <View style={styles.layout}>
+        <View style={[styles.content, themeMode === 'dark' && styles.contentDark]}>{tabScreen}</View>
+        <BottomTabs activeTab={activeTab} onSelect={openTab} />
+      </View>
+    </AppShell>
   );
 }
 
 const styles = StyleSheet.create({
   layout: {
     flex: 1,
-    paddingHorizontal: 12,
-    paddingBottom: 12,
     gap: 10,
   },
   content: {
     flex: 1,
     borderRadius: 24,
-    backgroundColor: colors.pageAlt,
+    backgroundColor: 'rgba(252, 247, 255, 0.74)',
     borderWidth: 1,
     borderColor: colors.border,
     overflow: 'hidden',
+  },
+  contentDark: {
+    backgroundColor: 'rgba(24, 30, 49, 0.72)',
+    borderColor: '#3f4a6a',
   },
 });

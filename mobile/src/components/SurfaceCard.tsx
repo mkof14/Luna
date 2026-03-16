@@ -8,11 +8,11 @@ export function SurfaceCard({ children, style }: PropsWithChildren<{ style?: Sty
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 22,
+    borderRadius: 26,
     borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
-    padding: 16,
-    gap: 10,
+    borderColor: 'rgba(209,183,227,0.68)',
+    backgroundColor: 'rgba(255, 250, 255, 0.9)',
+    padding: 18,
+    gap: 12,
   },
 });

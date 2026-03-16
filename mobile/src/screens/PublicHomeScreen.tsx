@@ -1,62 +1,152 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
+import { mobileCopy, MobileLang } from '../i18n/mobileCopy';
 
 export function PublicHomeScreen({
   onOpenAuth,
   onOpenAboutFlow,
+  onOpenApp,
+  onOpenSupport,
+  onOpenLegal,
+  lang,
   loading = false,
 }: {
   onOpenAuth: () => void;
   onOpenAboutFlow: () => void;
+  onOpenApp: () => void;
+  onOpenSupport?: () => void;
+  onOpenLegal?: () => void;
+  lang: MobileLang;
   loading?: boolean;
 }) {
+  const copy = mobileCopy[lang];
+  const localized = {
+    loading: lang === 'ru' ? 'Загрузка...' : lang === 'es' ? 'Cargando...' : 'Loading...',
+    hint: lang === 'ru' ? 'Приватно. Спокойно. Лично.' : lang === 'es' ? 'Privado. Calmo. Personal.' : 'Private. Calm. Personal.',
+    ritual: lang === 'ru' ? 'Небольшой ежедневный ритуал' : lang === 'es' ? 'Un pequeno ritual diario' : 'A small daily ritual',
+    body: lang === 'ru' ? 'Your Body' : lang === 'es' ? 'Your Body' : 'Your Body',
+    bodyText: lang === 'ru' ? 'Ритмы и мягкий контекст.' : lang === 'es' ? 'Ritmos y contexto suave.' : 'Rhythms and gentle context.',
+    senses: lang === 'ru' ? 'Your Senses' : lang === 'es' ? 'Your Senses' : 'Your Senses',
+    sensesText: lang === 'ru' ? 'Как вы ощущали день.' : lang === 'es' ? 'Como se sintio tu dia.' : 'How the day felt to you.',
+    words: lang === 'ru' ? 'Your Words' : lang === 'es' ? 'Your Words' : 'Your Words',
+    wordsText: lang === 'ru' ? 'Голосовые заметки и отражения.' : lang === 'es' ? 'Notas de voz y reflexiones.' : 'Voice notes and reflections.',
+    menu: lang === 'ru' ? 'Меню' : lang === 'es' ? 'Menu' : 'Menu',
+    support: lang === 'ru' ? 'Поддержка' : lang === 'es' ? 'Soporte' : 'Support',
+    signin: lang === 'ru' ? 'Вход / Админ' : lang === 'es' ? 'Entrar / Admin' : 'Sign in / Admin',
+    oneMinute: lang === 'ru' ? 'Что можно сделать за одну минуту' : lang === 'es' ? 'Que puedes hacer en un minuto' : 'What you can do in one minute',
+    s1: lang === 'ru' ? '1. Поговорить с Luna' : lang === 'es' ? '1. Hablar con Luna' : '1. Speak to Luna',
+    s2: lang === 'ru' ? '2. Сделать быстрый check-in' : lang === 'es' ? '2. Hacer un check-in rapido' : '2. Make a quick check-in',
+    s3: lang === 'ru' ? '3. Получить мягкий отклик' : lang === 'es' ? '3. Recibir una reflexion suave' : '3. Receive a gentle reflection',
+    pattern: lang === 'ru' ? 'Превью паттерна' : lang === 'es' ? 'Vista de patron' : 'Pattern preview',
+    p1: lang === 'ru' ? 'Энергия может быть ниже, если сон короче.' : lang === 'es' ? 'La energia puede sentirse mas baja cuando duermes menos.' : 'Energy can feel lower when sleep is shorter.',
+    p2: lang === 'ru' ? 'Luna помогает замечать это заранее и быть мягче к себе.' : lang === 'es' ? 'Luna te ayuda a notarlo antes y a tratar tu dia con mas suavidad.' : 'Luna helps you notice this early and stay gentle with your day.',
+    footer: lang === 'ru' ? 'Футер' : lang === 'es' ? 'Footer' : 'Footer',
+    supportFaq: lang === 'ru' ? 'Поддержка и FAQ' : lang === 'es' ? 'Soporte y FAQ' : 'Support & FAQ',
+    legalPrivacy: lang === 'ru' ? 'Legal и Privacy' : lang === 'es' ? 'Legal y Privacy' : 'Legal & Privacy',
+    openNow: lang === 'ru' ? 'Открыть апп сейчас' : lang === 'es' ? 'Abrir app ahora' : 'Open app now',
+    includes: lang === 'ru' ? 'Что включает Luna' : lang === 'es' ? 'Que incluye Luna' : 'What Luna includes',
+    startReflection: lang === 'ru' ? 'Начать заметку' : lang === 'es' ? 'Iniciar reflexion' : 'Start Reflection',
+    startReflectionText: lang === 'ru' ? 'Говорите с Luna своими словами.' : lang === 'es' ? 'Habla con Luna con tus propias palabras.' : 'Speak with Luna in your own words.',
+    checkin: lang === 'ru' ? 'Check-in' : lang === 'es' ? 'Check-in' : 'Check-in',
+    checkinText: lang === 'ru' ? 'Быстрый снимок настроения и энергии.' : lang === 'es' ? 'Resumen rapido de estado y energia.' : 'Quick mood and energy snapshot.',
+    seeInsights: lang === 'ru' ? 'Смотреть инсайты' : lang === 'es' ? 'Ver insights' : 'See Insights',
+    seeInsightsText: lang === 'ru' ? 'Мягкие паттерны по дням.' : lang === 'es' ? 'Patrones suaves a lo largo de los dias.' : 'Gentle patterns across your days.',
+    bodyMap: 'Body Map',
+    bodyMapText: lang === 'ru' ? 'Понимать сегодняшний день в спокойном контексте.' : lang === 'es' ? 'Entender hoy en un contexto calmado.' : 'Understand today in calm context.',
+    home: 'Home',
+    knowledge: 'Knowledge',
+  };
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.hero}>
+      <ImageBackground source={require('../../assets/home-hero.webp')} imageStyle={styles.heroImage} style={styles.hero}>
         <View style={styles.heroGlowTop} />
         <View style={styles.heroGlowBottom} />
-        <Text style={styles.eyebrow}>Luna Home</Text>
-        <Text style={styles.title}>Your daily emotional mirror</Text>
-        <Text style={styles.subtitle}>Understand yourself through body rhythms, daily observations, and voice notes.</Text>
-        <View style={styles.actionsRow}>
-          <LunaButton onPress={onOpenAuth}>{loading ? 'Loading...' : 'Start today'}</LunaButton>
-          <LunaButton variant="secondary" onPress={onOpenAboutFlow}>See how Luna works</LunaButton>
+        <View style={styles.heroTint}>
+          <Text style={styles.eyebrow}>Luna Home</Text>
+          <Text style={styles.title}>{copy.publicHome.title}</Text>
+          <Text style={styles.subtitle}>{copy.publicHome.subtitle}</Text>
+          <View style={styles.actionsRow}>
+            <LunaButton onPress={onOpenApp}>{loading ? localized.loading : copy.publicHome.start}</LunaButton>
+            <LunaButton variant="secondary" onPress={onOpenAboutFlow}>{copy.publicHome.how}</LunaButton>
+            <LunaButton variant="ghost" onPress={onOpenApp}>{copy.publicHome.openApp}</LunaButton>
+          </View>
+          <Text style={styles.heroHint}>{localized.hint}</Text>
         </View>
-        <Text style={styles.heroHint}>Private. Calm. Personal.</Text>
-      </View>
+      </ImageBackground>
 
       <SurfaceCard>
-        <Text style={styles.cardTitle}>A small daily ritual</Text>
+        <Text style={styles.cardTitle}>{localized.ritual}</Text>
         <View style={styles.pillars}>
-          <View style={styles.pillar}>
-            <Text style={styles.pillarTitle}>Your Body</Text>
-            <Text style={styles.pillarText}>Rhythms and gentle context.</Text>
+          <View style={[styles.pillar, styles.pillarA]}>
+            <Text style={styles.pillarTitle}>{localized.body}</Text>
+            <Text style={styles.pillarText}>{localized.bodyText}</Text>
           </View>
-          <View style={styles.pillar}>
-            <Text style={styles.pillarTitle}>Your Senses</Text>
-            <Text style={styles.pillarText}>How the day felt to you.</Text>
+          <View style={[styles.pillar, styles.pillarB]}>
+            <Text style={styles.pillarTitle}>{localized.senses}</Text>
+            <Text style={styles.pillarText}>{localized.sensesText}</Text>
           </View>
-          <View style={styles.pillar}>
-            <Text style={styles.pillarTitle}>Your Words</Text>
-            <Text style={styles.pillarText}>Voice notes and reflections.</Text>
+          <View style={[styles.pillar, styles.pillarC]}>
+            <Text style={styles.pillarTitle}>{localized.words}</Text>
+            <Text style={styles.pillarText}>{localized.wordsText}</Text>
+          </View>
+        </View>
+      </SurfaceCard>
+
+      <SurfaceCard style={styles.includesCard}>
+        <Text style={styles.cardTitle}>{localized.includes}</Text>
+        <View style={styles.includesGrid}>
+          <View style={[styles.includeItem, styles.includeSoftPink]}>
+            <Text style={styles.includeTitle}>{localized.startReflection}</Text>
+            <Text style={styles.includeText}>{localized.startReflectionText}</Text>
+          </View>
+          <View style={[styles.includeItem, styles.includeSoftLilac]}>
+            <Text style={styles.includeTitle}>{localized.checkin}</Text>
+            <Text style={styles.includeText}>{localized.checkinText}</Text>
+          </View>
+          <View style={[styles.includeItem, styles.includeSoftPurple]}>
+            <Text style={styles.includeTitle}>{localized.seeInsights}</Text>
+            <Text style={styles.includeText}>{localized.seeInsightsText}</Text>
+          </View>
+          <View style={[styles.includeItem, styles.includeSoftWarm]}>
+            <Text style={styles.includeTitle}>{localized.bodyMap}</Text>
+            <Text style={styles.includeText}>{localized.bodyMapText}</Text>
           </View>
         </View>
       </SurfaceCard>
 
       <SurfaceCard>
-        <Text style={styles.cardTitle}>What you can do in one minute</Text>
-        <Text style={styles.listItem}>1. Speak to Luna</Text>
-        <Text style={styles.listItem}>2. Make a quick check-in</Text>
-        <Text style={styles.listItem}>3. Receive a gentle reflection</Text>
+        <Text style={styles.cardTitle}>{localized.menu}</Text>
+        <View style={styles.actionsRow}>
+          <LunaButton variant="secondary" onPress={onOpenApp}>{localized.home}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenAboutFlow}>{localized.knowledge}</LunaButton>
+          <LunaButton variant="secondary" onPress={() => onOpenSupport?.()}>{localized.support}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenAuth}>{localized.signin}</LunaButton>
+        </View>
+      </SurfaceCard>
+
+      <SurfaceCard>
+        <Text style={styles.cardTitle}>{localized.oneMinute}</Text>
+        <Text style={styles.listItem}>{localized.s1}</Text>
+        <Text style={styles.listItem}>{localized.s2}</Text>
+        <Text style={styles.listItem}>{localized.s3}</Text>
       </SurfaceCard>
 
       <SurfaceCard style={styles.patternCard}>
-        <Text style={styles.patternLabel}>Pattern preview</Text>
-        <Text style={styles.patternText}>Energy can feel lower when sleep is shorter.</Text>
-        <Text style={styles.patternText}>Luna helps you notice this early and stay gentle with your day.</Text>
+        <Text style={styles.patternLabel}>{localized.pattern}</Text>
+        <Text style={styles.patternText}>{localized.p1}</Text>
+        <Text style={styles.patternText}>{localized.p2}</Text>
+      </SurfaceCard>
+
+      <SurfaceCard>
+        <Text style={styles.cardTitle}>{localized.footer}</Text>
+        <View style={styles.actionsRow}>
+          <LunaButton variant="secondary" onPress={() => onOpenSupport?.()}>{localized.supportFaq}</LunaButton>
+          <LunaButton variant="secondary" onPress={() => onOpenLegal?.()}>{localized.legalPrivacy}</LunaButton>
+          <LunaButton variant="ghost" onPress={onOpenApp}>{localized.openNow}</LunaButton>
+        </View>
       </SurfaceCard>
     </ScrollView>
   );
@@ -66,17 +156,25 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     paddingVertical: 18,
-    gap: 12,
+    gap: 14,
   },
   hero: {
     position: 'relative',
     overflow: 'hidden',
-    borderRadius: 24,
+    borderRadius: 28,
     borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: '#f8eef8',
-    padding: 18,
+    borderColor: 'rgba(198, 165, 223, 0.58)',
+    minHeight: 270,
+  },
+  heroImage: {
+    resizeMode: 'cover',
+  },
+  heroTint: {
+    flex: 1,
+    padding: 20,
     gap: 8,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(72, 43, 95, 0.2)',
   },
   heroGlowTop: {
     position: 'absolute',
@@ -106,22 +204,22 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
   },
   title: {
-    fontSize: 33,
-    lineHeight: 37,
-    fontWeight: '700',
-    color: colors.textPrimary,
+    fontSize: 34,
+    lineHeight: 38,
+    fontWeight: '800',
+    color: '#fff7ff',
   },
   subtitle: {
     fontSize: 16,
     lineHeight: 24,
-    color: colors.textSecondary,
+    color: '#f5e9f7',
   },
   heroHint: {
     marginTop: 2,
     fontSize: 12,
     fontWeight: '700',
     letterSpacing: 0.5,
-    color: colors.textMuted,
+    color: '#f5dff7',
   },
   actionsRow: {
     flexDirection: 'row',
@@ -131,29 +229,38 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: '700',
-    color: colors.textPrimary,
+    fontWeight: '800',
+    color: '#4a3960',
   },
   pillars: {
     gap: 8,
   },
   pillar: {
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: '#fff9ff',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderColor: 'rgba(215, 190, 234, 0.72)',
+    paddingHorizontal: 13,
+    paddingVertical: 11,
+  },
+  pillarA: {
+    backgroundColor: 'rgba(250, 232, 242, 0.72)',
+  },
+  pillarB: {
+    backgroundColor: 'rgba(239, 233, 255, 0.76)',
+  },
+  pillarC: {
+    backgroundColor: 'rgba(229, 237, 255, 0.72)',
   },
   pillarTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.accentStrong,
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#6a3f8c',
+    letterSpacing: 0.2,
   },
   pillarText: {
     marginTop: 2,
     fontSize: 14,
-    color: colors.textSecondary,
+    color: '#665775',
   },
   listItem: {
     fontSize: 15,
@@ -175,5 +282,42 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     color: colors.textSecondary,
+  },
+  includesCard: {
+    backgroundColor: 'rgba(255, 249, 255, 0.92)',
+    borderColor: 'rgba(209,183,227,0.68)',
+  },
+  includesGrid: {
+    gap: 9,
+  },
+  includeItem: {
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(215,188,234,0.72)',
+    paddingHorizontal: 13,
+    paddingVertical: 12,
+    gap: 2,
+  },
+  includeSoftPink: {
+    backgroundColor: 'rgba(252, 232, 242, 0.6)',
+  },
+  includeSoftLilac: {
+    backgroundColor: 'rgba(238, 233, 255, 0.62)',
+  },
+  includeSoftPurple: {
+    backgroundColor: 'rgba(237, 224, 255, 0.7)',
+  },
+  includeSoftWarm: {
+    backgroundColor: 'rgba(251, 236, 231, 0.62)',
+  },
+  includeTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#533768',
+  },
+  includeText: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    lineHeight: 20,
   },
 });
