@@ -4,9 +4,9 @@ import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { StoryEntry } from '../types';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { BaseMobileLang, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
-const copyByLang: Record<MobileLang, Record<string, string>> = {
+const copyByLang: Record<BaseMobileLang, Record<string, string>> = {
   en: {
     title: 'Your story with Luna',
     subtitle: 'A short thread from your latest reflections.',
@@ -25,7 +25,7 @@ const copyByLang: Record<MobileLang, Record<string, string>> = {
 };
 
 export function YourStoryScreen({ entries, onBack, lang }: { entries: StoryEntry[]; onBack?: () => void; lang: MobileLang }) {
-  const copy = copyByLang[lang];
+  const copy = copyByLang[resolveLangBase(lang)];
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ImageBackground source={require('../../assets/bg-soft-1.webp')} imageStyle={styles.heroImage} style={styles.heroCard}>

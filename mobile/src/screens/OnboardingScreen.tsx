@@ -3,7 +3,7 @@ import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from '
 import { LunaButton } from '../components/LunaButton';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { mobileCopy, MobileLang } from '../i18n/mobileCopy';
+import { getMobileCopy, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
 type OnboardingAction = 'speak' | 'write' | 'skip';
 
@@ -16,61 +16,62 @@ export function OnboardingScreen({
   onComplete: () => void;
   lang: MobileLang;
 }) {
-  const copy = mobileCopy[lang].onboarding;
+  const baseLang = resolveLangBase(lang);
+  const copy = getMobileCopy(lang).onboarding;
   const localized = {
-    reasonTitle: lang === 'ru' ? 'Что привело вас в Luna?' : lang === 'es' ? 'Que te trajo a Luna?' : 'What brought you to Luna?',
+    reasonTitle: baseLang === 'ru' ? 'Что привело вас в Luna?' : baseLang === 'es' ? 'Que te trajo a Luna?' : 'What brought you to Luna?',
     reasons:
-      lang === 'ru'
+      baseLang === 'ru'
         ? ['Понять эмоции', 'Отслеживать цикл', 'Отражать свой день', 'Понять тело']
-        : lang === 'es'
+        : baseLang === 'es'
           ? ['Entender mis emociones', 'Seguir mi ciclo', 'Reflexionar sobre mis dias', 'Entender mi cuerpo']
           : ['Understand my emotions', 'Track my cycle', 'Reflect on my days', 'Understand my body'],
     signalsTitle:
-      lang === 'ru'
+      baseLang === 'ru'
         ? 'Luna работает через три простых сигнала'
-        : lang === 'es'
+        : baseLang === 'es'
           ? 'Luna funciona a traves de tres senales simples'
           : 'Luna works through three simple signals',
-    body: lang === 'ru' ? 'Тело' : lang === 'es' ? 'Cuerpo' : 'Body',
+    body: baseLang === 'ru' ? 'Тело' : baseLang === 'es' ? 'Cuerpo' : 'Body',
     bodyText:
-      lang === 'ru'
+      baseLang === 'ru'
         ? 'Ритмы тела и контекст цикла.'
-        : lang === 'es'
+        : baseLang === 'es'
           ? 'Ritmo corporal y contexto del ciclo.'
           : 'Body rhythm and cycle context.',
-    senses: lang === 'ru' ? 'Ощущения' : lang === 'es' ? 'Sensaciones' : 'Senses',
+    senses: baseLang === 'ru' ? 'Ощущения' : baseLang === 'es' ? 'Sensaciones' : 'Senses',
     sensesText:
-      lang === 'ru'
+      baseLang === 'ru'
         ? 'Ежедневные чувства и эмоциональный тон.'
-        : lang === 'es'
+        : baseLang === 'es'
           ? 'Sensaciones diarias y tono emocional.'
           : 'Daily feelings and emotional tone.',
-    words: lang === 'ru' ? 'Слова' : lang === 'es' ? 'Palabras' : 'Words',
+    words: baseLang === 'ru' ? 'Слова' : baseLang === 'es' ? 'Palabras' : 'Words',
     wordsText:
-      lang === 'ru'
+      baseLang === 'ru'
         ? 'Голосовые заметки и короткие отражения.'
-        : lang === 'es'
+        : baseLang === 'es'
           ? 'Notas de voz y reflexiones cortas.'
           : 'Voice notes and short reflections.',
     helpfulTitle:
-      lang === 'ru'
+      baseLang === 'ru'
         ? 'Luna становится полезнее, когда вы отражаете день регулярно.'
-        : lang === 'es'
+        : baseLang === 'es'
           ? 'Luna se vuelve mas util cuanto mas reflexionas.'
           : 'Luna becomes more helpful the more you reflect.',
     helpfulText:
-      lang === 'ru'
+      baseLang === 'ru'
         ? 'Достаточно 30–60 секунд в день.'
-        : lang === 'es'
+        : baseLang === 'es'
           ? 'Solo 30-60 segundos al dia son suficientes.'
           : 'Just 30-60 seconds a day is enough.',
     startFirst:
-      lang === 'ru' ? 'Начать первую заметку' : lang === 'es' ? 'Empezar mi primera reflexion' : 'Start my first reflection',
-    onboarding: lang === 'ru' ? 'Онбординг' : lang === 'es' ? 'Onboarding' : 'Onboarding',
-    step: lang === 'ru' ? 'Шаг' : lang === 'es' ? 'Paso' : 'Step',
-    speak: lang === 'ru' ? 'Голос' : lang === 'es' ? 'Hablar' : 'Speak',
-    write: lang === 'ru' ? 'Текст' : lang === 'es' ? 'Escribir' : 'Write',
-    skip: lang === 'ru' ? 'Пропустить' : lang === 'es' ? 'Saltar' : 'Skip',
+      baseLang === 'ru' ? 'Начать первую заметку' : baseLang === 'es' ? 'Empezar mi primera reflexion' : 'Start my first reflection',
+    onboarding: baseLang === 'ru' ? 'Онбординг' : baseLang === 'es' ? 'Onboarding' : 'Onboarding',
+    step: baseLang === 'ru' ? 'Шаг' : baseLang === 'es' ? 'Paso' : 'Step',
+    speak: baseLang === 'ru' ? 'Голос' : baseLang === 'es' ? 'Hablar' : 'Speak',
+    write: baseLang === 'ru' ? 'Текст' : baseLang === 'es' ? 'Escribir' : 'Write',
+    skip: baseLang === 'ru' ? 'Пропустить' : baseLang === 'es' ? 'Saltar' : 'Skip',
   };
   const [step, setStep] = useState(1);
   const [reason, setReason] = useState<string | null>(null);

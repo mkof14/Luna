@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react';
 import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { LanguageSelector } from '../components/LanguageSelector';
 import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { eveningQuestions } from '../data/mockData';
 import { colors } from '../theme/tokens';
 import { ContextSignal } from '../types';
-import { mobileCopy, MobileLang } from '../i18n/mobileCopy';
+import { getMobileCopy, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
 export function TodayScreen({
   userName,
@@ -63,7 +64,8 @@ export function TodayScreen({
   themeMode: 'light' | 'dark';
   onToggleTheme: () => void;
 }) {
-  const copy = mobileCopy[lang];
+  const copy = getMobileCopy(lang);
+  const baseLang = resolveLangBase(lang);
   const question = useMemo(() => {
     const index = new Date().getDate() % eveningQuestions.length;
     return eveningQuestions[index];
@@ -72,18 +74,14 @@ export function TodayScreen({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <SurfaceCard style={styles.controlsCard}>
-        <Text style={styles.cardTitle}>Quick controls</Text>
-        <View style={styles.actionsRow}>
-          <LunaButton variant={lang === 'en' ? 'primary' : 'secondary'} onPress={() => setLang('en')}>🇺🇸 EN</LunaButton>
-          <LunaButton variant={lang === 'ru' ? 'primary' : 'secondary'} onPress={() => setLang('ru')}>🇷🇺 RU</LunaButton>
-          <LunaButton variant={lang === 'es' ? 'primary' : 'secondary'} onPress={() => setLang('es')}>🇪🇸 ES</LunaButton>
-        </View>
+        <Text style={styles.cardTitle}>{baseLang === 'ru' ? 'Быстрые настройки' : baseLang === 'es' ? 'Controles rapidos' : 'Quick controls'}</Text>
+        <LanguageSelector lang={lang} setLang={setLang} />
         <View style={styles.actionsRow}>
           <LunaButton variant="secondary" onPress={onToggleTheme}>
-            Theme: {themeMode === 'light' ? 'Light' : 'Dark'}
+            {(baseLang === 'ru' ? 'Тема' : baseLang === 'es' ? 'Tema' : 'Theme')}: {themeMode === 'light' ? (baseLang === 'ru' ? 'Светлая' : baseLang === 'es' ? 'Claro' : 'Light') : (baseLang === 'ru' ? 'Темная' : baseLang === 'es' ? 'Oscuro' : 'Dark')}
           </LunaButton>
-          <LunaButton variant="secondary" onPress={onOpenServices}>Menu</LunaButton>
-          <LunaButton variant="secondary" onPress={onOpenFooterLinks}>Footer</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenServices}>{baseLang === 'ru' ? 'Меню' : baseLang === 'es' ? 'Menu' : 'Menu'}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenFooterLinks}>{baseLang === 'ru' ? 'Футер' : baseLang === 'es' ? 'Footer' : 'Footer'}</LunaButton>
         </View>
       </SurfaceCard>
 
@@ -110,7 +108,7 @@ export function TodayScreen({
           <LunaButton variant="secondary" onPress={onQuickCheckIn}>{copy.today.quick}</LunaButton>
         </View>
         {onRefresh ? (
-          <LunaButton variant="ghost" onPress={onRefresh}>{loading ? 'Refreshing...' : copy.today.refresh}</LunaButton>
+          <LunaButton variant="ghost" onPress={onRefresh}>{loading ? (baseLang === 'ru' ? 'Обновляем...' : baseLang === 'es' ? 'Actualizando...' : 'Refreshing...') : copy.today.refresh}</LunaButton>
         ) : null}
       </SurfaceCard>
 

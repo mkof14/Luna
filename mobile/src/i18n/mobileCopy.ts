@@ -1,4 +1,6 @@
-export type MobileLang = 'en' | 'ru' | 'es';
+export type BaseMobileLang = 'en' | 'ru' | 'es';
+export type MobileLang = BaseMobileLang;
+export type ExtraMobileLang = 'uk' | 'fr' | 'de' | 'pt' | 'ja' | 'zh';
 
 type CopyShape = {
   common: {
@@ -60,7 +62,7 @@ type CopyShape = {
   };
 };
 
-export const mobileCopy: Record<MobileLang, CopyShape> = {
+export const mobileCopy: Record<BaseMobileLang, CopyShape> = {
   en: {
     common: {
       back: 'Back',
@@ -239,3 +241,25 @@ export const mobileCopy: Record<MobileLang, CopyShape> = {
     },
   },
 };
+
+export const languageOptions: Array<{ key: MobileLang | ExtraMobileLang; target: MobileLang; label: string }> = [
+  { key: 'en', target: 'en', label: '🇺🇸 EN' },
+  { key: 'ru', target: 'ru', label: '🇷🇺 RU' },
+  { key: 'es', target: 'es', label: '🇪🇸 ES' },
+  { key: 'uk', target: 'ru', label: '🇺🇦 UK' },
+  { key: 'fr', target: 'en', label: '🇫🇷 FR' },
+  { key: 'de', target: 'en', label: '🇩🇪 DE' },
+  { key: 'pt', target: 'es', label: '🇵🇹 PT' },
+  { key: 'ja', target: 'en', label: '🇯🇵 JA' },
+  { key: 'zh', target: 'en', label: '🇨🇳 ZH' },
+];
+
+export function resolveLangBase(lang: MobileLang | ExtraMobileLang): BaseMobileLang {
+  if (lang === 'ru' || lang === 'uk') return 'ru';
+  if (lang === 'es' || lang === 'pt') return 'es';
+  return 'en';
+}
+
+export function getMobileCopy(lang: MobileLang): CopyShape {
+  return mobileCopy[resolveLangBase(lang)];
+}

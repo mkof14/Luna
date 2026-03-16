@@ -3,7 +3,7 @@ import { ImageBackground, Linking, Pressable, ScrollView, StyleSheet, Text, View
 import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
-import { MobileLang } from '../i18n/mobileCopy';
+import { BaseMobileLang, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
 const links = [
   { key: 'home', section: 'public', url: 'https://luna-eta-rust.vercel.app/' },
@@ -30,7 +30,7 @@ const socialLinks = [
   { key: 'tiktok', url: 'https://tiktok.com', icon: '♪', color: '#111111' },
 ] as const;
 
-const copyByLang: Record<MobileLang, Record<string, string>> = {
+const copyByLang: Record<BaseMobileLang, Record<string, string>> = {
   en: {
     title: 'Footer links',
     subtitle: 'All public, support, legal, and account links from Luna.',
@@ -172,7 +172,7 @@ export function FooterLinksScreen({
   onOpenServices: () => void;
   lang: MobileLang;
 }) {
-  const copy = copyByLang[lang];
+  const copy = copyByLang[resolveLangBase(lang)];
   const renderSectionLinks = (section: 'public' | 'support' | 'legal') => {
     return links
       .filter((item) => item.section === section)

@@ -3,7 +3,7 @@ import { Alert, ImageBackground, ScrollView, StyleSheet, Text, View } from 'reac
 import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
-import { MobileLang } from '../i18n/mobileCopy';
+import { BaseMobileLang, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 import { fetchMobileBillingStatus } from '../services/production';
 
 export function InsightsPaywallScreen({
@@ -28,7 +28,7 @@ export function InsightsPaywallScreen({
     })();
   }, []);
 
-  const copyByLang: Record<MobileLang, Record<string, string>> = {
+  const copyByLang: Record<BaseMobileLang, Record<string, string>> = {
     en: {
       title: 'Luna is beginning to understand your rhythm.',
       subtitle: 'Unlock deeper insights about your body, energy, and emotional patterns.',
@@ -84,7 +84,7 @@ export function InsightsPaywallScreen({
       back: 'Atras',
     },
   };
-  const copy = copyByLang[lang];
+  const copy = copyByLang[resolveLangBase(lang)];
   const priceLine = billingStatus ? `${billingStatus.yearlyPrice} / year or ${billingStatus.monthlyPrice} / month` : copy.price;
   const trialLine = billingStatus?.trial ? `${billingStatus.trial} · Cancel anytime` : copy.trial;
   return (

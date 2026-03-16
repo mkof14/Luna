@@ -15,7 +15,7 @@ import {
   runAdminMetricsCheck,
   sendAdminInvite,
 } from '../services/admin';
-import { mobileCopy, MobileLang } from '../i18n/mobileCopy';
+import { getMobileCopy, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
 export function AdminScreen({
   onBack,
@@ -30,8 +30,9 @@ export function AdminScreen({
   onOpenMemberZone: () => void;
   lang: MobileLang;
 }) {
-  const copy = mobileCopy[lang].admin;
-  const common = mobileCopy[lang].common;
+  const baseLang = resolveLangBase(lang);
+  const copy = getMobileCopy(lang).admin;
+  const common = getMobileCopy(lang).common;
   const extraCopy: Record<string, string> = {
     en: {
       loading: 'Loading...',
@@ -117,7 +118,7 @@ export function AdminScreen({
       active: 'Activo',
       draft: 'Borrador',
     },
-  }[lang];
+  }[baseLang];
   const [stateSummary, setStateSummary] = useState('');
   const [metricsSummary, setMetricsSummary] = useState('');
   const [auditSummary, setAuditSummary] = useState<string[]>([]);

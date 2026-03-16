@@ -3,10 +3,10 @@ import { Alert, ImageBackground, ScrollView, StyleSheet, Text, TextInput, View }
 import { LunaButton } from '../components/LunaButton';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { BaseMobileLang, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 import { fetchMobileAuthProviders } from '../services/production';
 
-const copyByLang: Record<MobileLang, Record<string, string>> = {
+const copyByLang: Record<BaseMobileLang, Record<string, string>> = {
   en: {
     back: 'Back',
     eyebrow: 'Luna Access',
@@ -91,7 +91,7 @@ export function AuthScreen({
   error?: string;
   lang: MobileLang;
 }) {
-  const copy = copyByLang[lang];
+  const copy = copyByLang[resolveLangBase(lang)];
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [name, setName] = useState('Anna');
   const [email, setEmail] = useState('');

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
+import * as SecureStore from 'expo-secure-store';
 import { AppShell } from '../components/AppShell';
 import { BottomTabs } from '../components/BottomTabs';
 import { QuickCheckInScreen } from '../screens/QuickCheckInScreen';
@@ -250,6 +251,31 @@ export function AppNavigator() {
     if (view.type === 'tabs') return view.tab;
     return 'today';
   }, [view]);
+
+  React.useEffect(() => {
+    void (async () => {
+      try {
+        const savedLang = await SecureStore.getItemAsync('luna_mobile_lang');
+        if (savedLang && ['en', 'ru', 'es'].includes(savedLang)) {
+          setLang(savedLang as MobileLang);
+        }
+        const savedTheme = await SecureStore.getItemAsync('luna_mobile_theme');
+        if (savedTheme === 'light' || savedTheme === 'dark') {
+          setThemeMode(savedTheme);
+        }
+      } catch {
+        // Keep defaults when secure storage is unavailable.
+      }
+    })();
+  }, []);
+
+  React.useEffect(() => {
+    void SecureStore.setItemAsync('luna_mobile_lang', lang).catch(() => {});
+  }, [lang]);
+
+  React.useEffect(() => {
+    void SecureStore.setItemAsync('luna_mobile_theme', themeMode).catch(() => {});
+  }, [themeMode]);
 
   const tabScreen = useMemo(() => {
     if (view.type !== 'tabs') return null;

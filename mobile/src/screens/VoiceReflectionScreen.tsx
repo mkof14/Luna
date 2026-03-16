@@ -4,9 +4,9 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { BaseMobileLang, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
-const copyByLang: Record<MobileLang, Record<string, string>> = {
+const copyByLang: Record<BaseMobileLang, Record<string, string>> = {
   en: {
     headerTitle: 'Speak freely. Luna is listening.',
     headerSubtitle: 'There is no right way to say it. A few honest words are enough.',
@@ -57,7 +57,7 @@ const copyByLang: Record<MobileLang, Record<string, string>> = {
   },
 };
 
-const promptsByLang: Record<MobileLang, string[]> = {
+const promptsByLang: Record<BaseMobileLang, string[]> = {
   en: ['What felt heavy today?', 'What felt easier than expected?', 'What is still on your mind?', 'How does your body feel tonight?'],
   ru: ['Что сегодня ощущалось тяжелым?', 'Что оказалось легче, чем ожидалось?', 'Что все еще у вас в мыслях?', 'Как ваше тело ощущается сегодня вечером?'],
   es: ['Que se sintio pesado hoy?', 'Que se sintio mas facil de lo esperado?', 'Que sigue en tu mente?', 'Como se siente tu cuerpo esta noche?'],
@@ -72,13 +72,14 @@ export function VoiceReflectionScreen({
   onFinish: (entryText: string) => void;
   lang: MobileLang;
 }) {
-  const copy = copyByLang[lang];
+  const baseLang = resolveLangBase(lang);
+  const copy = copyByLang[baseLang];
   const [recording, setRecording] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const [note, setNote] = useState('');
   const [selectedPrompt, setSelectedPrompt] = useState('');
 
-  const promptSuggestions = promptsByLang[lang];
+  const promptSuggestions = promptsByLang[baseLang];
 
   useEffect(() => {
     if (!recording) return;

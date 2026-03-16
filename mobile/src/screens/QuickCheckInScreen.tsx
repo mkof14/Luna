@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { BaseMobileLang, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
 const energyOptions = ['Low', 'Medium', 'High'] as const;
 const moodOptions = ['Calm', 'Sensitive', 'Overloaded'] as const;
@@ -25,7 +25,7 @@ function ChoicePill({ selected, label, onPress }: ChoicePillProps) {
   );
 }
 
-const copyByLang: Record<MobileLang, Record<string, string>> = {
+const copyByLang: Record<BaseMobileLang, Record<string, string>> = {
   en: {
     title: 'Quick check-in',
     subtitle: 'A calm 30-second snapshot for tonight.',
@@ -70,7 +70,7 @@ export function QuickCheckInScreen({
   onSubmit: (entryText: string) => void;
   lang: MobileLang;
 }) {
-  const copy = copyByLang[lang];
+  const copy = copyByLang[resolveLangBase(lang)];
   const [energy, setEnergy] = useState<(typeof energyOptions)[number]>('Medium');
   const [mood, setMood] = useState<(typeof moodOptions)[number]>('Sensitive');
   const [stress, setStress] = useState<(typeof stressOptions)[number]>('Medium');

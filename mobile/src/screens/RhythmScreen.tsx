@@ -4,9 +4,9 @@ import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { defaultContextSignal } from '../data/mockData';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { BaseMobileLang, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
-const copyByLang: Record<MobileLang, Record<string, string>> = {
+const copyByLang: Record<BaseMobileLang, Record<string, string>> = {
   en: {
     title: 'Rhythm',
     subtitle: 'A calm view of your cycle, energy, mood, and sleep trends.',
@@ -52,7 +52,7 @@ const copyByLang: Record<MobileLang, Record<string, string>> = {
 };
 
 export function RhythmScreen({ stage, onBack, lang }: { stage: 1 | 2 | 3; onBack?: () => void; lang: MobileLang }) {
-  const copy = copyByLang[lang];
+  const copy = copyByLang[resolveLangBase(lang)];
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ImageBackground source={require('../../assets/bg-soft-2.webp')} imageStyle={styles.heroImage} style={styles.heroCard}>

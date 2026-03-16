@@ -1,9 +1,10 @@
 import React from 'react';
 import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { LanguageSelector } from '../components/LanguageSelector';
 import { LunaButton } from '../components/LunaButton';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { mobileCopy, MobileLang } from '../i18n/mobileCopy';
+import { getMobileCopy, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
 export function PublicHomeScreen({
   onOpenAuth,
@@ -32,58 +33,55 @@ export function PublicHomeScreen({
   onToggleTheme: () => void;
   loading?: boolean;
 }) {
-  const copy = mobileCopy[lang];
+  const copy = getMobileCopy(lang);
+  const baseLang = resolveLangBase(lang);
   const localized = {
-    loading: lang === 'ru' ? 'Загрузка...' : lang === 'es' ? 'Cargando...' : 'Loading...',
-    hint: lang === 'ru' ? 'Приватно. Спокойно. Лично.' : lang === 'es' ? 'Privado. Calmo. Personal.' : 'Private. Calm. Personal.',
-    ritual: lang === 'ru' ? 'Небольшой ежедневный ритуал' : lang === 'es' ? 'Un pequeno ritual diario' : 'A small daily ritual',
-    body: lang === 'ru' ? 'Your Body' : lang === 'es' ? 'Your Body' : 'Your Body',
-    bodyText: lang === 'ru' ? 'Ритмы и мягкий контекст.' : lang === 'es' ? 'Ritmos y contexto suave.' : 'Rhythms and gentle context.',
-    senses: lang === 'ru' ? 'Your Senses' : lang === 'es' ? 'Your Senses' : 'Your Senses',
-    sensesText: lang === 'ru' ? 'Как вы ощущали день.' : lang === 'es' ? 'Como se sintio tu dia.' : 'How the day felt to you.',
-    words: lang === 'ru' ? 'Your Words' : lang === 'es' ? 'Your Words' : 'Your Words',
-    wordsText: lang === 'ru' ? 'Голосовые заметки и отражения.' : lang === 'es' ? 'Notas de voz y reflexiones.' : 'Voice notes and reflections.',
-    menu: lang === 'ru' ? 'Меню' : lang === 'es' ? 'Menu' : 'Menu',
-    support: lang === 'ru' ? 'Поддержка' : lang === 'es' ? 'Soporte' : 'Support',
-    signin: lang === 'ru' ? 'Вход / Админ' : lang === 'es' ? 'Entrar / Admin' : 'Sign in / Admin',
-    oneMinute: lang === 'ru' ? 'Что можно сделать за одну минуту' : lang === 'es' ? 'Que puedes hacer en un minuto' : 'What you can do in one minute',
-    s1: lang === 'ru' ? '1. Поговорить с Luna' : lang === 'es' ? '1. Hablar con Luna' : '1. Speak to Luna',
-    s2: lang === 'ru' ? '2. Сделать быстрый check-in' : lang === 'es' ? '2. Hacer un check-in rapido' : '2. Make a quick check-in',
-    s3: lang === 'ru' ? '3. Получить мягкий отклик' : lang === 'es' ? '3. Recibir una reflexion suave' : '3. Receive a gentle reflection',
-    pattern: lang === 'ru' ? 'Превью паттерна' : lang === 'es' ? 'Vista de patron' : 'Pattern preview',
-    p1: lang === 'ru' ? 'Энергия может быть ниже, если сон короче.' : lang === 'es' ? 'La energia puede sentirse mas baja cuando duermes menos.' : 'Energy can feel lower when sleep is shorter.',
-    p2: lang === 'ru' ? 'Luna помогает замечать это заранее и быть мягче к себе.' : lang === 'es' ? 'Luna te ayuda a notarlo antes y a tratar tu dia con mas suavidad.' : 'Luna helps you notice this early and stay gentle with your day.',
-    footer: lang === 'ru' ? 'Футер' : lang === 'es' ? 'Footer' : 'Footer',
-    supportFaq: lang === 'ru' ? 'Поддержка и FAQ' : lang === 'es' ? 'Soporte y FAQ' : 'Support & FAQ',
-    legalPrivacy: lang === 'ru' ? 'Legal и Privacy' : lang === 'es' ? 'Legal y Privacy' : 'Legal & Privacy',
-    openNow: lang === 'ru' ? 'Открыть апп сейчас' : lang === 'es' ? 'Abrir app ahora' : 'Open app now',
-    includes: lang === 'ru' ? 'Что включает Luna' : lang === 'es' ? 'Que incluye Luna' : 'What Luna includes',
-    startReflection: lang === 'ru' ? 'Начать заметку' : lang === 'es' ? 'Iniciar reflexion' : 'Start Reflection',
-    startReflectionText: lang === 'ru' ? 'Говорите с Luna своими словами.' : lang === 'es' ? 'Habla con Luna con tus propias palabras.' : 'Speak with Luna in your own words.',
-    checkin: lang === 'ru' ? 'Check-in' : lang === 'es' ? 'Check-in' : 'Check-in',
-    checkinText: lang === 'ru' ? 'Быстрый снимок настроения и энергии.' : lang === 'es' ? 'Resumen rapido de estado y energia.' : 'Quick mood and energy snapshot.',
-    seeInsights: lang === 'ru' ? 'Смотреть инсайты' : lang === 'es' ? 'Ver insights' : 'See Insights',
-    seeInsightsText: lang === 'ru' ? 'Мягкие паттерны по дням.' : lang === 'es' ? 'Patrones suaves a lo largo de los dias.' : 'Gentle patterns across your days.',
+    loading: baseLang === 'ru' ? 'Загрузка...' : baseLang === 'es' ? 'Cargando...' : 'Loading...',
+    hint: baseLang === 'ru' ? 'Приватно. Спокойно. Лично.' : baseLang === 'es' ? 'Privado. Calmo. Personal.' : 'Private. Calm. Personal.',
+    ritual: baseLang === 'ru' ? 'Небольшой ежедневный ритуал' : baseLang === 'es' ? 'Un pequeno ritual diario' : 'A small daily ritual',
+    body: 'Your Body',
+    bodyText: baseLang === 'ru' ? 'Ритмы и мягкий контекст.' : baseLang === 'es' ? 'Ritmos y contexto suave.' : 'Rhythms and gentle context.',
+    senses: 'Your Senses',
+    sensesText: baseLang === 'ru' ? 'Как вы ощущали день.' : baseLang === 'es' ? 'Como se sintio tu dia.' : 'How the day felt to you.',
+    words: 'Your Words',
+    wordsText: baseLang === 'ru' ? 'Голосовые заметки и отражения.' : baseLang === 'es' ? 'Notas de voz y reflexiones.' : 'Voice notes and reflections.',
+    menu: baseLang === 'ru' ? 'Меню' : baseLang === 'es' ? 'Menu' : 'Menu',
+    support: baseLang === 'ru' ? 'Поддержка' : baseLang === 'es' ? 'Soporte' : 'Support',
+    signin: baseLang === 'ru' ? 'Вход / Админ' : baseLang === 'es' ? 'Entrar / Admin' : 'Sign in / Admin',
+    oneMinute: baseLang === 'ru' ? 'Что можно сделать за одну минуту' : baseLang === 'es' ? 'Que puedes hacer en un minuto' : 'What you can do in one minute',
+    s1: baseLang === 'ru' ? '1. Поговорить с Luna' : baseLang === 'es' ? '1. Hablar con Luna' : '1. Speak to Luna',
+    s2: baseLang === 'ru' ? '2. Сделать быстрый check-in' : baseLang === 'es' ? '2. Hacer un check-in rapido' : '2. Make a quick check-in',
+    s3: baseLang === 'ru' ? '3. Получить мягкий отклик' : baseLang === 'es' ? '3. Recibir una reflexion suave' : '3. Receive a gentle reflection',
+    pattern: baseLang === 'ru' ? 'Превью паттерна' : baseLang === 'es' ? 'Vista de patron' : 'Pattern preview',
+    p1: baseLang === 'ru' ? 'Энергия может быть ниже, если сон короче.' : baseLang === 'es' ? 'La energia puede sentirse mas baja cuando duermes menos.' : 'Energy can feel lower when sleep is shorter.',
+    p2: baseLang === 'ru' ? 'Luna помогает замечать это заранее и быть мягче к себе.' : baseLang === 'es' ? 'Luna te ayuda a notarlo antes y a tratar tu dia con mas suavidad.' : 'Luna helps you notice this early and stay gentle with your day.',
+    footer: baseLang === 'ru' ? 'Футер' : baseLang === 'es' ? 'Footer' : 'Footer',
+    supportFaq: baseLang === 'ru' ? 'Поддержка и FAQ' : baseLang === 'es' ? 'Soporte y FAQ' : 'Support & FAQ',
+    legalPrivacy: baseLang === 'ru' ? 'Legal и Privacy' : baseLang === 'es' ? 'Legal y Privacy' : 'Legal & Privacy',
+    openNow: baseLang === 'ru' ? 'Открыть апп сейчас' : baseLang === 'es' ? 'Abrir app ahora' : 'Open app now',
+    includes: baseLang === 'ru' ? 'Что включает Luna' : baseLang === 'es' ? 'Que incluye Luna' : 'What Luna includes',
+    startReflection: baseLang === 'ru' ? 'Начать заметку' : baseLang === 'es' ? 'Iniciar reflexion' : 'Start Reflection',
+    startReflectionText: baseLang === 'ru' ? 'Говорите с Luna своими словами.' : baseLang === 'es' ? 'Habla con Luna con tus propias palabras.' : 'Speak with Luna in your own words.',
+    checkin: 'Check-in',
+    checkinText: baseLang === 'ru' ? 'Быстрый снимок настроения и энергии.' : baseLang === 'es' ? 'Resumen rapido de estado y energia.' : 'Quick mood and energy snapshot.',
+    seeInsights: baseLang === 'ru' ? 'Смотреть инсайты' : baseLang === 'es' ? 'Ver insights' : 'See Insights',
+    seeInsightsText: baseLang === 'ru' ? 'Мягкие паттерны по дням.' : baseLang === 'es' ? 'Patrones suaves a lo largo de los dias.' : 'Gentle patterns across your days.',
     bodyMap: 'Body Map',
     bodyMapText: lang === 'ru' ? 'Понимать сегодняшний день в спокойном контексте.' : lang === 'es' ? 'Entender hoy en un contexto calmado.' : 'Understand today in calm context.',
     home: 'Home',
     knowledge: 'Knowledge',
-    controls: lang === 'ru' ? 'Быстрые настройки' : lang === 'es' ? 'Controles rapidos' : 'Quick controls',
-    theme: lang === 'ru' ? 'Тема' : lang === 'es' ? 'Tema' : 'Theme',
-    light: lang === 'ru' ? 'Светлая' : lang === 'es' ? 'Claro' : 'Light',
-    dark: lang === 'ru' ? 'Темная' : lang === 'es' ? 'Oscuro' : 'Dark',
-    openMenu: lang === 'ru' ? 'Меню' : lang === 'es' ? 'Menu' : 'Menu',
-    openFooter: lang === 'ru' ? 'Футер' : lang === 'es' ? 'Footer' : 'Footer',
+    controls: baseLang === 'ru' ? 'Быстрые настройки' : baseLang === 'es' ? 'Controles rapidos' : 'Quick controls',
+    theme: baseLang === 'ru' ? 'Тема' : baseLang === 'es' ? 'Tema' : 'Theme',
+    light: baseLang === 'ru' ? 'Светлая' : baseLang === 'es' ? 'Claro' : 'Light',
+    dark: baseLang === 'ru' ? 'Темная' : baseLang === 'es' ? 'Oscuro' : 'Dark',
+    openMenu: baseLang === 'ru' ? 'Меню' : baseLang === 'es' ? 'Menu' : 'Menu',
+    openFooter: baseLang === 'ru' ? 'Футер' : baseLang === 'es' ? 'Footer' : 'Footer',
   };
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <SurfaceCard style={styles.controlsCard}>
         <Text style={styles.controlsTitle}>{localized.controls}</Text>
-        <View style={styles.actionsRow}>
-          <LunaButton variant={lang === 'en' ? 'primary' : 'secondary'} onPress={() => setLang('en')}>🇺🇸 EN</LunaButton>
-          <LunaButton variant={lang === 'ru' ? 'primary' : 'secondary'} onPress={() => setLang('ru')}>🇷🇺 RU</LunaButton>
-          <LunaButton variant={lang === 'es' ? 'primary' : 'secondary'} onPress={() => setLang('es')}>🇪🇸 ES</LunaButton>
-        </View>
+        <LanguageSelector lang={lang} setLang={setLang} />
         <View style={styles.actionsRow}>
           <LunaButton variant="secondary" onPress={onToggleTheme}>
             {localized.theme}: {themeMode === 'light' ? localized.light : localized.dark}

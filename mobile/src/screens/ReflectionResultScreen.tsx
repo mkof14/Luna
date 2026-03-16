@@ -5,9 +5,9 @@ import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
 import { ContextSignal, ReflectionPayload } from '../types';
-import { MobileLang } from '../i18n/mobileCopy';
+import { BaseMobileLang, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
-const copyByLang: Record<MobileLang, Record<string, string>> = {
+const copyByLang: Record<BaseMobileLang, Record<string, string>> = {
   en: {
     greeting: 'Good evening',
     subline: 'Here is your reflection.',
@@ -84,7 +84,7 @@ export function ReflectionResultScreen({
   hasPattern?: boolean;
   lang: MobileLang;
 }) {
-  const copy = copyByLang[lang];
+  const copy = copyByLang[resolveLangBase(lang)];
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ImageBackground source={require('../../assets/bg-soft-2.webp')} imageStyle={styles.headerImage} style={styles.headerCard}>

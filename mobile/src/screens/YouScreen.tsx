@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { LanguageSelector } from '../components/LanguageSelector';
 import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
@@ -15,7 +16,7 @@ import {
   type ReminderPermissionState,
 } from '../services/notifications';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { BaseMobileLang, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
 export function YouScreen({
   dayOfMonth,
@@ -84,7 +85,7 @@ export function YouScreen({
   onToggleTheme: () => void;
   onBack?: () => void;
 }) {
-  const copyByLang: Record<MobileLang, Record<string, string>> = {
+  const copyByLang: Record<BaseMobileLang, Record<string, string>> = {
     en: {
       title: 'You',
       subtitle: 'Profile, reminders, privacy, and subscription.',
@@ -233,7 +234,7 @@ export function YouScreen({
       signOut: 'Cerrar sesion',
     },
   };
-  const copy = copyByLang[lang];
+  const copy = copyByLang[resolveLangBase(lang)];
   const reminder = getReminderPreview(dayOfMonth);
   const [permission, setPermission] = useState<ReminderPermissionState>('undetermined');
   const [pushRegistered, setPushRegistered] = useState(false);
@@ -282,9 +283,7 @@ export function YouScreen({
         <Text style={styles.cardTitle}>{copy.profile}</Text>
         <Text style={styles.text}>{copy.profileText}</Text>
         <View style={styles.langRow}>
-          <LunaButton variant={lang === 'en' ? 'primary' : 'secondary'} onPress={() => setLang('en')}>🇺🇸 EN</LunaButton>
-          <LunaButton variant={lang === 'ru' ? 'primary' : 'secondary'} onPress={() => setLang('ru')}>🇷🇺 RU</LunaButton>
-          <LunaButton variant={lang === 'es' ? 'primary' : 'secondary'} onPress={() => setLang('es')}>🇪🇸 ES</LunaButton>
+          <LanguageSelector lang={lang} setLang={setLang} />
         </View>
         <LunaButton variant="secondary" onPress={onToggleTheme}>
           {copy.theme}: {themeMode === 'light' ? copy.light : copy.dark}

@@ -4,9 +4,9 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { BaseMobileLang, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
-const copyByLang: Record<MobileLang, Record<string, string>> = {
+const copyByLang: Record<BaseMobileLang, Record<string, string>> = {
   en: {
     title: 'Member Zone',
     subtitle: 'All member pages in one place.',
@@ -104,7 +104,7 @@ export function MemberZoneScreen({
   onOpenServices: () => void;
   lang: MobileLang;
 }) {
-  const copy = copyByLang[lang];
+  const copy = copyByLang[resolveLangBase(lang)];
   const metrics = useMemo(
     () => [
       { label: copy.weeklyCheckins, value: '5' },

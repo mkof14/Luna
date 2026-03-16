@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { mobileCopy, MobileLang } from '../i18n/mobileCopy';
+import { getMobileCopy, MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
 export function ServicesHubScreen({
   onBack,
@@ -63,7 +63,8 @@ export function ServicesHubScreen({
   onOpenAbout: () => void;
   lang: MobileLang;
 }) {
-  const copy = mobileCopy[lang].services;
+  const baseLang = resolveLangBase(lang);
+  const copy = getMobileCopy(lang).services;
   const extraCopy: Record<string, string> = {
     en: {
       today: 'Today',
@@ -164,7 +165,7 @@ export function ServicesHubScreen({
       safetyTitle: 'Soporte y seguridad',
       safetyText: 'FAQ, guia para pareja, controles legales y de privacidad.',
     },
-  }[lang];
+  }[baseLang];
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <MobileScreenHeader title={copy.title} subtitle={copy.subtitle} onBack={onBack} />
