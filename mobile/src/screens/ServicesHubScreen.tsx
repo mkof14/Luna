@@ -8,6 +8,8 @@ import { mobileCopy, MobileLang } from '../i18n/mobileCopy';
 
 export function ServicesHubScreen({
   onBack,
+  onOpenPublicHome,
+  onOpenAuth,
   onOpenMemberZone,
   onOpenFooterLinks,
   onOpenAdmin,
@@ -30,6 +32,8 @@ export function ServicesHubScreen({
   lang,
 }: {
   onBack: () => void;
+  onOpenPublicHome: () => void;
+  onOpenAuth: () => void;
   onOpenMemberZone: () => void;
   onOpenFooterLinks: () => void;
   onOpenAdmin: () => void;
@@ -73,6 +77,8 @@ export function ServicesHubScreen({
       safetyTitle: 'Support and safety',
       safetyText: 'FAQ, partner guidance, legal and privacy controls.',
       quickNav: 'Quick navigation',
+      publicHome: 'Public Home',
+      auth: 'Sign in / Admin Login',
       member: 'Member Zone',
       footer: 'Footer Links',
       admin: 'Admin Zone',
@@ -97,6 +103,8 @@ export function ServicesHubScreen({
       safetyTitle: 'Поддержка и безопасность',
       safetyText: 'FAQ, guidance для партнера, legal и privacy-контроли.',
       quickNav: 'Быстрая навигация',
+      publicHome: 'Публичный Home',
+      auth: 'Вход / Админ логин',
       member: 'Мембер Зона',
       footer: 'Ссылки футера',
       admin: 'Админ Зона',
@@ -121,6 +129,8 @@ export function ServicesHubScreen({
       safetyTitle: 'Soporte y seguridad',
       safetyText: 'FAQ, guia para pareja, controles legales y de privacidad.',
       quickNav: 'Navegacion rapida',
+      publicHome: 'Home publico',
+      auth: 'Entrar / Admin login',
       member: 'Zona miembro',
       footer: 'Links del footer',
       admin: 'Zona admin',
@@ -141,6 +151,8 @@ export function ServicesHubScreen({
       <SurfaceCard>
         <Text style={styles.cardTitle}>{extraCopy.quickNav}</Text>
         <View style={styles.stack}>
+          <LunaButton variant="secondary" onPress={onOpenPublicHome}>{extraCopy.publicHome}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenAuth}>{extraCopy.auth}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenMemberZone}>{extraCopy.member}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenFooterLinks}>{extraCopy.footer}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenAdmin}>{extraCopy.admin}</LunaButton>

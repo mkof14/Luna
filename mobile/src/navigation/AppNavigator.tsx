@@ -295,6 +295,36 @@ export function AppNavigator() {
       return <RhythmScreen stage={insightStage} onBack={() => openTab('today')} lang={lang} />;
     }
 
+    if (view.tab === 'menu') {
+      return (
+        <ServicesHubScreen
+          onBack={() => openTab('today')}
+          onOpenPublicHome={openPublicHome}
+          onOpenAuth={openAuthScreen}
+          onOpenMemberZone={openMemberZone}
+          onOpenFooterLinks={openFooterLinks}
+          onOpenAdmin={openAdmin}
+          onOpenBodyMap={openBodyMap}
+          onOpenRitualPath={openRitualPath}
+          onOpenBridge={openBridge}
+          onOpenKnowledge={openKnowledge}
+          onOpenHealthReports={openHealthReports}
+          onOpenSupport={openSupport}
+          onOpenVoice={openVoice}
+          onOpenRelationships={openRelationships}
+          onOpenFamily={openFamily}
+          onOpenCreative={openCreative}
+          onOpenMedicationNotes={openMedicationNotes}
+          onOpenResetRoom={openResetRoom}
+          onOpenVoiceFiles={openVoiceFiles}
+          onOpenHowItWorks={openHowItWorks}
+          onOpenContact={openContact}
+          onOpenAbout={openAbout}
+          lang={lang}
+        />
+      );
+    }
+
     return (
       <YouScreen
         dayOfMonth={new Date().getDate()}
@@ -359,10 +389,7 @@ export function AppNavigator() {
         <PublicHomeScreen
           onOpenAuth={openAuthScreen}
           onOpenAboutFlow={() => {
-            setGuestMode(true);
-            setShowPublicHome(false);
-            setPreAuthScreen('public');
-            setView({ type: 'onboarding' });
+            openGuestMenu();
           }}
           onOpenApp={() => {
             setGuestMode(true);
@@ -390,10 +417,7 @@ export function AppNavigator() {
         <PublicHomeScreen
           onOpenAuth={openAuthScreen}
           onOpenAboutFlow={() => {
-            setGuestMode(true);
-            setShowPublicHome(false);
-            setPreAuthScreen('public');
-            setView({ type: 'onboarding' });
+            openGuestMenu();
           }}
           onOpenApp={() => {
             setGuestMode(true);
@@ -421,10 +445,7 @@ export function AppNavigator() {
           <PublicHomeScreen
             onOpenAuth={openAuthScreen}
             onOpenAboutFlow={() => {
-              setGuestMode(true);
-              setShowPublicHome(false);
-              setPreAuthScreen('public');
-              setView({ type: 'onboarding' });
+              openGuestMenu();
             }}
             onOpenApp={() => {
               setGuestMode(true);
@@ -595,6 +616,8 @@ export function AppNavigator() {
       <AppShell mode={themeMode}>
         <ServicesHubScreen
           onBack={() => openTab('today')}
+          onOpenPublicHome={openPublicHome}
+          onOpenAuth={openAuthScreen}
           onOpenMemberZone={openMemberZone}
           onOpenFooterLinks={openFooterLinks}
           onOpenAdmin={openAdmin}
@@ -826,14 +849,7 @@ export function AppNavigator() {
     <AppShell padded mode={themeMode}>
       <View style={styles.layout}>
         <View style={[styles.content, themeMode === 'dark' && styles.contentDark]}>{tabScreen}</View>
-        <BottomTabs
-          activeTab={activeTab}
-          onSelect={openTab}
-          onOpenMenu={openServicesHub}
-          onOpenMember={openMemberZone}
-          onOpenFooter={openFooterLinks}
-          onOpenAdmin={openAdmin}
-        />
+        <BottomTabs activeTab={activeTab} onSelect={openTab} />
       </View>
     </AppShell>
   );

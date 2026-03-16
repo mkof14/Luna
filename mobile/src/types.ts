@@ -1,4 +1,4 @@
-export type TabKey = 'today' | 'story' | 'rhythm' | 'you';
+export type TabKey = 'today' | 'story' | 'rhythm' | 'menu' | 'you';
 
 export type AppView =
   | { type: 'onboarding' }
