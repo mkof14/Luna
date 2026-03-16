@@ -194,6 +194,20 @@ export function AppNavigator() {
     setView({ type: 'support' });
   }
 
+  function openGuestMenu() {
+    setGuestMode(true);
+    setShowPublicHome(false);
+    setPreAuthScreen('public');
+    setView({ type: 'servicesHub' });
+  }
+
+  function openGuestFooter() {
+    setGuestMode(true);
+    setShowPublicHome(false);
+    setPreAuthScreen('public');
+    setView({ type: 'footerLinks' });
+  }
+
   function openGuestLegal() {
     setGuestMode(true);
     setShowPublicHome(false);
@@ -260,11 +274,15 @@ export function AppNavigator() {
           onWrite={handleWrite}
           onSkip={handleSkip}
           onOpenServices={openServicesHub}
+          onOpenFooterLinks={openFooterLinks}
           onOpenSupport={openSupport}
           onOpenLegal={openLegal}
           onOpenPublicHome={openPublicHome}
           onOpenAuth={openAuthScreen}
           lang={lang}
+          setLang={setLang}
+          themeMode={themeMode}
+          onToggleTheme={() => setThemeMode((current) => (current === 'light' ? 'dark' : 'light'))}
         />
       );
     }
@@ -355,6 +373,11 @@ export function AppNavigator() {
           onOpenSupport={openGuestSupport}
           onOpenLegal={openGuestLegal}
           lang={lang}
+          setLang={setLang}
+          themeMode={themeMode}
+          onToggleTheme={() => setThemeMode((current) => (current === 'light' ? 'dark' : 'light'))}
+          onOpenMenu={openGuestMenu}
+          onOpenFooter={openGuestFooter}
           loading
         />
       </AppShell>
@@ -381,6 +404,11 @@ export function AppNavigator() {
           onOpenSupport={openGuestSupport}
           onOpenLegal={openGuestLegal}
           lang={lang}
+          setLang={setLang}
+          themeMode={themeMode}
+          onToggleTheme={() => setThemeMode((current) => (current === 'light' ? 'dark' : 'light'))}
+          onOpenMenu={openGuestMenu}
+          onOpenFooter={openGuestFooter}
         />
       </AppShell>
     );
@@ -407,6 +435,11 @@ export function AppNavigator() {
             onOpenSupport={openGuestSupport}
             onOpenLegal={openGuestLegal}
             lang={lang}
+            setLang={setLang}
+            themeMode={themeMode}
+            onToggleTheme={() => setThemeMode((current) => (current === 'light' ? 'dark' : 'light'))}
+            onOpenMenu={openGuestMenu}
+            onOpenFooter={openGuestFooter}
           />
         </AppShell>
       );

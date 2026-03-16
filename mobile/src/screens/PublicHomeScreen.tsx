@@ -9,17 +9,27 @@ export function PublicHomeScreen({
   onOpenAuth,
   onOpenAboutFlow,
   onOpenApp,
+  onOpenMenu,
+  onOpenFooter,
   onOpenSupport,
   onOpenLegal,
   lang,
+  setLang,
+  themeMode,
+  onToggleTheme,
   loading = false,
 }: {
   onOpenAuth: () => void;
   onOpenAboutFlow: () => void;
   onOpenApp: () => void;
+  onOpenMenu?: () => void;
+  onOpenFooter?: () => void;
   onOpenSupport?: () => void;
   onOpenLegal?: () => void;
   lang: MobileLang;
+  setLang: (lang: MobileLang) => void;
+  themeMode: 'light' | 'dark';
+  onToggleTheme: () => void;
   loading?: boolean;
 }) {
   const copy = mobileCopy[lang];
@@ -58,9 +68,31 @@ export function PublicHomeScreen({
     bodyMapText: lang === 'ru' ? 'Понимать сегодняшний день в спокойном контексте.' : lang === 'es' ? 'Entender hoy en un contexto calmado.' : 'Understand today in calm context.',
     home: 'Home',
     knowledge: 'Knowledge',
+    controls: lang === 'ru' ? 'Быстрые настройки' : lang === 'es' ? 'Controles rapidos' : 'Quick controls',
+    theme: lang === 'ru' ? 'Тема' : lang === 'es' ? 'Tema' : 'Theme',
+    light: lang === 'ru' ? 'Светлая' : lang === 'es' ? 'Claro' : 'Light',
+    dark: lang === 'ru' ? 'Темная' : lang === 'es' ? 'Oscuro' : 'Dark',
+    openMenu: lang === 'ru' ? 'Меню' : lang === 'es' ? 'Menu' : 'Menu',
+    openFooter: lang === 'ru' ? 'Футер' : lang === 'es' ? 'Footer' : 'Footer',
   };
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <SurfaceCard style={styles.controlsCard}>
+        <Text style={styles.controlsTitle}>{localized.controls}</Text>
+        <View style={styles.actionsRow}>
+          <LunaButton variant={lang === 'en' ? 'primary' : 'secondary'} onPress={() => setLang('en')}>🇺🇸 EN</LunaButton>
+          <LunaButton variant={lang === 'ru' ? 'primary' : 'secondary'} onPress={() => setLang('ru')}>🇷🇺 RU</LunaButton>
+          <LunaButton variant={lang === 'es' ? 'primary' : 'secondary'} onPress={() => setLang('es')}>🇪🇸 ES</LunaButton>
+        </View>
+        <View style={styles.actionsRow}>
+          <LunaButton variant="secondary" onPress={onToggleTheme}>
+            {localized.theme}: {themeMode === 'light' ? localized.light : localized.dark}
+          </LunaButton>
+          <LunaButton variant="secondary" onPress={() => onOpenMenu?.()}>{localized.openMenu}</LunaButton>
+          <LunaButton variant="secondary" onPress={() => onOpenFooter?.()}>{localized.openFooter}</LunaButton>
+        </View>
+      </SurfaceCard>
+
       <ImageBackground source={require('../../assets/home-hero.webp')} imageStyle={styles.heroImage} style={styles.hero}>
         <View style={styles.heroGlowTop} />
         <View style={styles.heroGlowBottom} />
@@ -157,6 +189,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 18,
     gap: 14,
+  },
+  controlsCard: {
+    backgroundColor: 'rgba(255, 248, 255, 0.94)',
+    borderColor: 'rgba(209,183,227,0.68)',
+  },
+  controlsTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#4a3960',
   },
   hero: {
     position: 'relative',

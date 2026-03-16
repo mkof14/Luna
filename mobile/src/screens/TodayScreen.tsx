@@ -26,11 +26,15 @@ export function TodayScreen({
   onWrite,
   onSkip,
   onOpenServices,
+  onOpenFooterLinks,
   onOpenSupport,
   onOpenLegal,
   onOpenPublicHome,
   onOpenAuth,
   lang,
+  setLang,
+  themeMode,
+  onToggleTheme,
 }: {
   userName: string;
   title: string;
@@ -49,11 +53,15 @@ export function TodayScreen({
   onWrite: () => void;
   onSkip: () => void;
   onOpenServices: () => void;
+  onOpenFooterLinks: () => void;
   onOpenSupport: () => void;
   onOpenLegal: () => void;
   onOpenPublicHome: () => void;
   onOpenAuth: () => void;
   lang: MobileLang;
+  setLang: (lang: MobileLang) => void;
+  themeMode: 'light' | 'dark';
+  onToggleTheme: () => void;
 }) {
   const copy = mobileCopy[lang];
   const question = useMemo(() => {
@@ -63,6 +71,22 @@ export function TodayScreen({
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <SurfaceCard style={styles.controlsCard}>
+        <Text style={styles.cardTitle}>Quick controls</Text>
+        <View style={styles.actionsRow}>
+          <LunaButton variant={lang === 'en' ? 'primary' : 'secondary'} onPress={() => setLang('en')}>🇺🇸 EN</LunaButton>
+          <LunaButton variant={lang === 'ru' ? 'primary' : 'secondary'} onPress={() => setLang('ru')}>🇷🇺 RU</LunaButton>
+          <LunaButton variant={lang === 'es' ? 'primary' : 'secondary'} onPress={() => setLang('es')}>🇪🇸 ES</LunaButton>
+        </View>
+        <View style={styles.actionsRow}>
+          <LunaButton variant="secondary" onPress={onToggleTheme}>
+            Theme: {themeMode === 'light' ? 'Light' : 'Dark'}
+          </LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenServices}>Menu</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenFooterLinks}>Footer</LunaButton>
+        </View>
+      </SurfaceCard>
+
       <ImageBackground source={require('../../assets/bg-soft-2.webp')} imageStyle={styles.leadImage} style={styles.leadWrap}>
         <View style={styles.leadTint}>
           <View style={styles.headerWrap}>
@@ -161,6 +185,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 20,
     gap: 15,
+  },
+  controlsCard: {
+    backgroundColor: 'rgba(255, 248, 255, 0.94)',
+    borderColor: 'rgba(209,183,227,0.68)',
   },
   headerWrap: {
     gap: 5,
