@@ -562,7 +562,13 @@ export function AppNavigator() {
   if (view.type === 'footerLinks') {
     return (
       <AppShell mode={themeMode}>
-        <FooterLinksScreen onBack={() => openTab('today')} lang={lang} />
+        <FooterLinksScreen
+          onBack={() => openTab('today')}
+          onOpenMemberZone={openMemberZone}
+          onOpenAdmin={openAdmin}
+          onOpenServices={openServicesHub}
+          lang={lang}
+        />
       </AppShell>
     );
   }
@@ -589,6 +595,9 @@ export function AppNavigator() {
       <AppShell mode={themeMode}>
         <ServicesHubScreen
           onBack={() => openTab('today')}
+          onOpenMemberZone={openMemberZone}
+          onOpenFooterLinks={openFooterLinks}
+          onOpenAdmin={openAdmin}
           onOpenBodyMap={openBodyMap}
           onOpenRitualPath={openRitualPath}
           onOpenBridge={openBridge}
@@ -817,7 +826,14 @@ export function AppNavigator() {
     <AppShell padded mode={themeMode}>
       <View style={styles.layout}>
         <View style={[styles.content, themeMode === 'dark' && styles.contentDark]}>{tabScreen}</View>
-        <BottomTabs activeTab={activeTab} onSelect={openTab} />
+        <BottomTabs
+          activeTab={activeTab}
+          onSelect={openTab}
+          onOpenMenu={openServicesHub}
+          onOpenMember={openMemberZone}
+          onOpenFooter={openFooterLinks}
+          onOpenAdmin={openAdmin}
+        />
       </View>
     </AppShell>
   );

@@ -8,6 +8,9 @@ import { mobileCopy, MobileLang } from '../i18n/mobileCopy';
 
 export function ServicesHubScreen({
   onBack,
+  onOpenMemberZone,
+  onOpenFooterLinks,
+  onOpenAdmin,
   onOpenBodyMap,
   onOpenRitualPath,
   onOpenBridge,
@@ -27,6 +30,9 @@ export function ServicesHubScreen({
   lang,
 }: {
   onBack: () => void;
+  onOpenMemberZone: () => void;
+  onOpenFooterLinks: () => void;
+  onOpenAdmin: () => void;
   onOpenBodyMap: () => void;
   onOpenRitualPath: () => void;
   onOpenBridge: () => void;
@@ -66,6 +72,10 @@ export function ServicesHubScreen({
       contextText: 'Read cycle, mood, sleep, and energy in one place.',
       safetyTitle: 'Support and safety',
       safetyText: 'FAQ, partner guidance, legal and privacy controls.',
+      quickNav: 'Quick navigation',
+      member: 'Member Zone',
+      footer: 'Footer Links',
+      admin: 'Admin Zone',
     },
     ru: {
       relationships: 'Relationships',
@@ -86,6 +96,10 @@ export function ServicesHubScreen({
       contextText: 'Цикл, настроение, сон и энергия в одном месте.',
       safetyTitle: 'Поддержка и безопасность',
       safetyText: 'FAQ, guidance для партнера, legal и privacy-контроли.',
+      quickNav: 'Быстрая навигация',
+      member: 'Мембер Зона',
+      footer: 'Ссылки футера',
+      admin: 'Админ Зона',
     },
     es: {
       relationships: 'Relationships',
@@ -106,6 +120,10 @@ export function ServicesHubScreen({
       contextText: 'Ciclo, estado, sueno y energia en un solo lugar.',
       safetyTitle: 'Soporte y seguridad',
       safetyText: 'FAQ, guia para pareja, controles legales y de privacidad.',
+      quickNav: 'Navegacion rapida',
+      member: 'Zona miembro',
+      footer: 'Links del footer',
+      admin: 'Zona admin',
     },
   }[lang];
   return (
@@ -119,6 +137,15 @@ export function ServicesHubScreen({
           <LunaButton onPress={onOpenVoice}>{copy.speak}</LunaButton>
         </View>
       </ImageBackground>
+
+      <SurfaceCard>
+        <Text style={styles.cardTitle}>{extraCopy.quickNav}</Text>
+        <View style={styles.stack}>
+          <LunaButton variant="secondary" onPress={onOpenMemberZone}>{extraCopy.member}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenFooterLinks}>{extraCopy.footer}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenAdmin}>{extraCopy.admin}</LunaButton>
+        </View>
+      </SurfaceCard>
 
       <SurfaceCard>
         <Text style={styles.cardTitle}>{copy.coreSections}</Text>
