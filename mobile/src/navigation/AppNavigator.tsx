@@ -299,6 +299,10 @@ export function AppNavigator() {
       return (
         <ServicesHubScreen
           onBack={() => openTab('today')}
+          onOpenToday={() => openTab('today')}
+          onOpenStory={() => openTab('story')}
+          onOpenRhythm={() => openTab('rhythm')}
+          onOpenYou={() => openTab('you')}
           onOpenPublicHome={openPublicHome}
           onOpenAuth={openAuthScreen}
           onOpenMemberZone={openMemberZone}
@@ -585,6 +589,12 @@ export function AppNavigator() {
       <AppShell mode={themeMode}>
         <FooterLinksScreen
           onBack={() => openTab('today')}
+          onOpenToday={() => openTab('today')}
+          onOpenStory={() => openTab('story')}
+          onOpenRhythm={() => openTab('rhythm')}
+          onOpenYou={() => openTab('you')}
+          onOpenPublicHome={openPublicHome}
+          onOpenAuth={openAuthScreen}
           onOpenMemberZone={openMemberZone}
           onOpenAdmin={openAdmin}
           onOpenServices={openServicesHub}
@@ -616,6 +626,10 @@ export function AppNavigator() {
       <AppShell mode={themeMode}>
         <ServicesHubScreen
           onBack={() => openTab('today')}
+          onOpenToday={() => openTab('today')}
+          onOpenStory={() => openTab('story')}
+          onOpenRhythm={() => openTab('rhythm')}
+          onOpenYou={() => openTab('you')}
           onOpenPublicHome={openPublicHome}
           onOpenAuth={openAuthScreen}
           onOpenMemberZone={openMemberZone}

@@ -1,36 +1,45 @@
 import React from 'react';
-import { ImageBackground, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
-import { colors } from '../theme/tokens';
 import { MobileLang } from '../i18n/mobileCopy';
 
 const links = [
-  { key: 'home', url: 'https://luna-eta-rust.vercel.app/' },
-  { key: 'ritual', url: 'https://luna-eta-rust.vercel.app/ritual-path' },
-  { key: 'body', url: 'https://luna-eta-rust.vercel.app/luna-balance' },
-  { key: 'bridge', url: 'https://luna-eta-rust.vercel.app/the-bridge' },
-  { key: 'pricing', url: 'https://luna-eta-rust.vercel.app/pricing' },
-  { key: 'faq', url: 'https://luna-eta-rust.vercel.app/faq' },
-  { key: 'about', url: 'https://luna-eta-rust.vercel.app/about' },
-  { key: 'how', url: 'https://luna-eta-rust.vercel.app/how-it-works' },
-  { key: 'contact', url: 'https://luna-eta-rust.vercel.app/contact' },
-  { key: 'privacy', url: 'https://luna-eta-rust.vercel.app/privacy' },
-  { key: 'terms', url: 'https://luna-eta-rust.vercel.app/terms' },
-  { key: 'medical', url: 'https://luna-eta-rust.vercel.app/disclaimer' },
-  { key: 'cookies', url: 'https://luna-eta-rust.vercel.app/cookies' },
-  { key: 'dataRights', url: 'https://luna-eta-rust.vercel.app/data-rights' },
+  { key: 'home', section: 'public', url: 'https://luna-eta-rust.vercel.app/' },
+  { key: 'ritual', section: 'public', url: 'https://luna-eta-rust.vercel.app/ritual-path' },
+  { key: 'body', section: 'public', url: 'https://luna-eta-rust.vercel.app/luna-balance' },
+  { key: 'bridge', section: 'public', url: 'https://luna-eta-rust.vercel.app/the-bridge' },
+  { key: 'pricing', section: 'public', url: 'https://luna-eta-rust.vercel.app/pricing' },
+  { key: 'faq', section: 'support', url: 'https://luna-eta-rust.vercel.app/faq' },
+  { key: 'contact', section: 'support', url: 'https://luna-eta-rust.vercel.app/contact' },
+  { key: 'partnerFaq', section: 'support', url: 'https://luna-eta-rust.vercel.app/partner-faq' },
+  { key: 'about', section: 'legal', url: 'https://luna-eta-rust.vercel.app/about' },
+  { key: 'how', section: 'legal', url: 'https://luna-eta-rust.vercel.app/how-it-works' },
+  { key: 'privacy', section: 'legal', url: 'https://luna-eta-rust.vercel.app/privacy' },
+  { key: 'terms', section: 'legal', url: 'https://luna-eta-rust.vercel.app/terms' },
+  { key: 'medical', section: 'legal', url: 'https://luna-eta-rust.vercel.app/disclaimer' },
+  { key: 'cookies', section: 'legal', url: 'https://luna-eta-rust.vercel.app/cookies' },
+  { key: 'dataRights', section: 'legal', url: 'https://luna-eta-rust.vercel.app/data-rights' },
+] as const;
+
+const socialLinks = [
+  { key: 'facebook', url: 'https://facebook.com', icon: 'f', color: '#1877F2' },
+  { key: 'instagram', url: 'https://instagram.com', icon: '◎', color: '#DD2A7B' },
+  { key: 'youtube', url: 'https://youtube.com', icon: '▶', color: '#FF0000' },
+  { key: 'tiktok', url: 'https://tiktok.com', icon: '♪', color: '#111111' },
 ] as const;
 
 const copyByLang: Record<MobileLang, Record<string, string>> = {
   en: {
     title: 'Footer links',
-    subtitle: 'Public and legal links from Luna footer.',
-    websiteLinks: 'Website links',
-    publicTitle: 'Public pages',
-    legalTitle: 'Legal pages',
+    subtitle: 'All public, support, legal, and account links from Luna.',
+    publicTitle: 'Public',
+    supportTitle: 'Support',
+    legalTitle: 'Legal',
     internalTitle: 'App navigation',
+    accountTitle: 'Account',
+    socialTitle: 'Social',
     home: 'Home',
     ritual: 'Ritual Path',
     body: 'Body Map',
@@ -45,17 +54,30 @@ const copyByLang: Record<MobileLang, Record<string, string>> = {
     medical: 'Disclaimer',
     cookies: 'Cookies',
     dataRights: 'Data Rights',
+    partnerFaq: 'Partner FAQ',
+    facebook: 'Facebook',
+    instagram: 'Instagram',
+    youtube: 'YouTube',
+    tiktok: 'TikTok',
+    today: 'Today',
+    story: 'Your Story',
+    rhythm: 'Rhythm',
+    you: 'You',
     menu: 'Menu',
+    auth: 'Sign In / Admin Login',
+    publicHome: 'Public Home',
     member: 'Member Zone',
     admin: 'Admin Zone',
   },
   ru: {
     title: 'Ссылки футера',
-    subtitle: 'Публичные и правовые ссылки из футера Luna.',
-    websiteLinks: 'Ссылки сайта',
-    publicTitle: 'Публичные страницы',
-    legalTitle: 'Юридические страницы',
+    subtitle: 'Все публичные, support, legal и account-ссылки Luna.',
+    publicTitle: 'Публично',
+    supportTitle: 'Поддержка',
+    legalTitle: 'Юридически',
     internalTitle: 'Навигация приложения',
+    accountTitle: 'Аккаунт',
+    socialTitle: 'Соцсети',
     home: 'Home',
     ritual: 'Ritual Path',
     body: 'Body Map',
@@ -70,17 +92,30 @@ const copyByLang: Record<MobileLang, Record<string, string>> = {
     medical: 'Disclaimer',
     cookies: 'Cookies',
     dataRights: 'Data Rights',
+    partnerFaq: 'Partner FAQ',
+    facebook: 'Facebook',
+    instagram: 'Instagram',
+    youtube: 'YouTube',
+    tiktok: 'TikTok',
+    today: 'Сегодня',
+    story: 'История',
+    rhythm: 'Ритм',
+    you: 'Вы',
     menu: 'Меню',
+    auth: 'Вход / Админ логин',
+    publicHome: 'Публичный Home',
     member: 'Мембер Зона',
     admin: 'Админ Зона',
   },
   es: {
     title: 'Links del footer',
-    subtitle: 'Links publicos y legales del footer de Luna.',
-    websiteLinks: 'Links del sitio',
-    publicTitle: 'Paginas publicas',
-    legalTitle: 'Paginas legales',
+    subtitle: 'Todos los links publicos, soporte, legales y de cuenta de Luna.',
+    publicTitle: 'Publico',
+    supportTitle: 'Soporte',
+    legalTitle: 'Legal',
     internalTitle: 'Navegacion de app',
+    accountTitle: 'Cuenta',
+    socialTitle: 'Social',
     home: 'Home',
     ritual: 'Ritual Path',
     body: 'Body Map',
@@ -95,7 +130,18 @@ const copyByLang: Record<MobileLang, Record<string, string>> = {
     medical: 'Disclaimer',
     cookies: 'Cookies',
     dataRights: 'Data Rights',
+    partnerFaq: 'Partner FAQ',
+    facebook: 'Facebook',
+    instagram: 'Instagram',
+    youtube: 'YouTube',
+    tiktok: 'TikTok',
+    today: 'Hoy',
+    story: 'Tu historia',
+    rhythm: 'Ritmo',
+    you: 'Tu',
     menu: 'Menu',
+    auth: 'Entrar / Admin login',
+    publicHome: 'Home publico',
     member: 'Zona miembro',
     admin: 'Zona admin',
   },
@@ -103,18 +149,46 @@ const copyByLang: Record<MobileLang, Record<string, string>> = {
 
 export function FooterLinksScreen({
   onBack,
+  onOpenToday,
+  onOpenStory,
+  onOpenRhythm,
+  onOpenYou,
+  onOpenPublicHome,
+  onOpenAuth,
   onOpenMemberZone,
   onOpenAdmin,
   onOpenServices,
   lang,
 }: {
   onBack: () => void;
+  onOpenToday: () => void;
+  onOpenStory: () => void;
+  onOpenRhythm: () => void;
+  onOpenYou: () => void;
+  onOpenPublicHome: () => void;
+  onOpenAuth: () => void;
   onOpenMemberZone: () => void;
   onOpenAdmin: () => void;
   onOpenServices: () => void;
   lang: MobileLang;
 }) {
   const copy = copyByLang[lang];
+  const renderSectionLinks = (section: 'public' | 'support' | 'legal') => {
+    return links
+      .filter((item) => item.section === section)
+      .map((item) => (
+        <LunaButton
+          key={item.url}
+          variant="secondary"
+          onPress={() => {
+            void Linking.openURL(item.url);
+          }}
+        >
+          {copy[item.key]}
+        </LunaButton>
+      ));
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ImageBackground source={require('../../assets/bg-soft-3.webp')} imageStyle={styles.heroImage} style={styles.heroCard}>
@@ -125,44 +199,55 @@ export function FooterLinksScreen({
 
       <SurfaceCard style={styles.linksCard}>
         <Text style={styles.cardTitle}>{copy.publicTitle}</Text>
-        <View style={styles.stack}>
-          {links.slice(0, 9).map((item) => (
-            <LunaButton
-              key={item.url}
-              variant="secondary"
-              onPress={() => {
-                void Linking.openURL(item.url);
-              }}
-            >
-              {copy[item.key]}
-            </LunaButton>
-          ))}
-        </View>
+        <View style={styles.stack}>{renderSectionLinks('public')}</View>
+      </SurfaceCard>
+
+      <SurfaceCard style={styles.linksCard}>
+        <Text style={styles.cardTitle}>{copy.supportTitle}</Text>
+        <View style={styles.stack}>{renderSectionLinks('support')}</View>
       </SurfaceCard>
 
       <SurfaceCard style={styles.linksCard}>
         <Text style={styles.cardTitle}>{copy.legalTitle}</Text>
-        <View style={styles.stack}>
-          {links.slice(9).map((item) => (
-            <LunaButton
-              key={item.url}
-              variant="secondary"
-              onPress={() => {
-                void Linking.openURL(item.url);
-              }}
-            >
-              {copy[item.key]}
-            </LunaButton>
-          ))}
-        </View>
+        <View style={styles.stack}>{renderSectionLinks('legal')}</View>
       </SurfaceCard>
 
       <SurfaceCard style={styles.linksCard}>
         <Text style={styles.cardTitle}>{copy.internalTitle}</Text>
         <View style={styles.stack}>
+          <LunaButton variant="secondary" onPress={onOpenToday}>{copy.today}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenStory}>{copy.story}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenRhythm}>{copy.rhythm}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenYou}>{copy.you}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenServices}>{copy.menu}</LunaButton>
+        </View>
+      </SurfaceCard>
+
+      <SurfaceCard style={styles.linksCard}>
+        <Text style={styles.cardTitle}>{copy.accountTitle}</Text>
+        <View style={styles.stack}>
+          <LunaButton variant="secondary" onPress={onOpenPublicHome}>{copy.publicHome}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenAuth}>{copy.auth}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenMemberZone}>{copy.member}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenAdmin}>{copy.admin}</LunaButton>
+        </View>
+      </SurfaceCard>
+
+      <SurfaceCard style={styles.linksCard}>
+        <Text style={styles.cardTitle}>{copy.socialTitle}</Text>
+        <View style={styles.socialRow}>
+          {socialLinks.map((item) => (
+            <Pressable
+              key={item.key}
+              onPress={() => {
+                void Linking.openURL(item.url);
+              }}
+              style={styles.socialChip}
+            >
+              <Text style={[styles.socialIcon, { color: item.color }]}>{item.icon}</Text>
+              <Text style={styles.socialText}>{copy[item.key]}</Text>
+            </Pressable>
+          ))}
         </View>
       </SurfaceCard>
     </ScrollView>
@@ -182,6 +267,32 @@ const styles = StyleSheet.create({
   },
   stack: {
     gap: 8,
+  },
+  socialRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  socialChip: {
+    minHeight: 38,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(206,175,227,0.72)',
+    backgroundColor: 'rgba(255, 244, 255, 0.86)',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+  },
+  socialIcon: {
+    fontSize: 15,
+    fontWeight: '900',
+  },
+  socialText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#564268',
   },
   heroCard: {
     minHeight: 146,

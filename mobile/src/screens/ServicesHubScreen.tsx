@@ -8,6 +8,10 @@ import { mobileCopy, MobileLang } from '../i18n/mobileCopy';
 
 export function ServicesHubScreen({
   onBack,
+  onOpenToday,
+  onOpenStory,
+  onOpenRhythm,
+  onOpenYou,
   onOpenPublicHome,
   onOpenAuth,
   onOpenMemberZone,
@@ -32,6 +36,10 @@ export function ServicesHubScreen({
   lang,
 }: {
   onBack: () => void;
+  onOpenToday: () => void;
+  onOpenStory: () => void;
+  onOpenRhythm: () => void;
+  onOpenYou: () => void;
   onOpenPublicHome: () => void;
   onOpenAuth: () => void;
   onOpenMemberZone: () => void;
@@ -58,6 +66,19 @@ export function ServicesHubScreen({
   const copy = mobileCopy[lang].services;
   const extraCopy: Record<string, string> = {
     en: {
+      today: 'Today',
+      story: 'Your Story',
+      rhythm: 'Rhythm',
+      you: 'You',
+      quickNav: 'Quick navigation',
+      publicHome: 'Public Home',
+      auth: 'Sign in / Admin Login',
+      member: 'Member Zone',
+      footer: 'Footer Links',
+      admin: 'Admin Zone',
+      coreTitle: 'Core pages',
+      supportTitle: 'Support and guidance',
+      extraTitle: 'Extra tools',
       relationships: 'Relationships',
       family: 'Family',
       creative: 'Creative Studio',
@@ -76,64 +97,72 @@ export function ServicesHubScreen({
       contextText: 'Read cycle, mood, sleep, and energy in one place.',
       safetyTitle: 'Support and safety',
       safetyText: 'FAQ, partner guidance, legal and privacy controls.',
-      quickNav: 'Quick navigation',
-      publicHome: 'Public Home',
-      auth: 'Sign in / Admin Login',
-      member: 'Member Zone',
-      footer: 'Footer Links',
-      admin: 'Admin Zone',
     },
     ru: {
-      relationships: 'Relationships',
-      family: 'Family',
-      creative: 'Creative Studio',
-      meds: 'Medication Notes',
-      reset: 'Reset Room',
-      voiceFiles: 'My Voice Files',
-      how: 'Как работает Luna',
-      contact: 'Контакты',
-      about: 'О Luna',
-      includesTitle: 'Что включает сервис Luna',
-      voiceTitle: 'Голосовые заметки',
-      voiceText: 'Говорите свободно и получайте спокойный ответ.',
-      reportsTitle: 'Health Reports',
-      reportsText: 'Создавайте простой отчет для врача и обмена.',
-      contextTitle: 'Контекст тела',
-      contextText: 'Цикл, настроение, сон и энергия в одном месте.',
-      safetyTitle: 'Поддержка и безопасность',
-      safetyText: 'FAQ, guidance для партнера, legal и privacy-контроли.',
+      today: 'Сегодня',
+      story: 'История',
+      rhythm: 'Ритм',
+      you: 'Вы',
       quickNav: 'Быстрая навигация',
       publicHome: 'Публичный Home',
       auth: 'Вход / Админ логин',
       member: 'Мембер Зона',
       footer: 'Ссылки футера',
       admin: 'Админ Зона',
+      coreTitle: 'Основные страницы',
+      supportTitle: 'Поддержка и помощь',
+      extraTitle: 'Дополнительные инструменты',
+      relationships: 'Отношения',
+      family: 'Семья',
+      creative: 'Творческая студия',
+      meds: 'Заметки по препаратам',
+      reset: 'Reset Room',
+      voiceFiles: 'Мои голосовые файлы',
+      how: 'Как работает Luna',
+      contact: 'Контакты',
+      about: 'О Luna',
+      includesTitle: 'Что включает Luna',
+      voiceTitle: 'Голосовые заметки',
+      voiceText: 'Говорите свободно и получайте спокойный отклик.',
+      reportsTitle: 'Отчеты здоровья',
+      reportsText: 'Собирайте понятный отчет для врача и обмена.',
+      contextTitle: 'Контекст тела',
+      contextText: 'Цикл, настроение, сон и энергия в одном месте.',
+      safetyTitle: 'Поддержка и безопасность',
+      safetyText: 'FAQ, партнерская помощь, юридические и privacy-контроли.',
     },
     es: {
-      relationships: 'Relationships',
-      family: 'Family',
-      creative: 'Creative Studio',
-      meds: 'Medication Notes',
-      reset: 'Reset Room',
-      voiceFiles: 'My Voice Files',
-      how: 'Como funciona Luna',
-      contact: 'Contacto',
-      about: 'Sobre Luna',
-      includesTitle: 'Que incluyen los servicios de Luna',
-      voiceTitle: 'Notas de voz',
-      voiceText: 'Habla con naturalidad y recibe una respuesta calmada.',
-      reportsTitle: 'Health Reports',
-      reportsText: 'Crea un informe simple para visitas medicas y compartir.',
-      contextTitle: 'Contexto corporal',
-      contextText: 'Ciclo, estado, sueno y energia en un solo lugar.',
-      safetyTitle: 'Soporte y seguridad',
-      safetyText: 'FAQ, guia para pareja, controles legales y de privacidad.',
+      today: 'Hoy',
+      story: 'Tu historia',
+      rhythm: 'Ritmo',
+      you: 'Tu',
       quickNav: 'Navegacion rapida',
       publicHome: 'Home publico',
       auth: 'Entrar / Admin login',
       member: 'Zona miembro',
       footer: 'Links del footer',
       admin: 'Zona admin',
+      coreTitle: 'Paginas clave',
+      supportTitle: 'Soporte y guia',
+      extraTitle: 'Herramientas extra',
+      relationships: 'Relaciones',
+      family: 'Familia',
+      creative: 'Estudio creativo',
+      meds: 'Notas de medicacion',
+      reset: 'Reset Room',
+      voiceFiles: 'Mis archivos de voz',
+      how: 'Como funciona Luna',
+      contact: 'Contacto',
+      about: 'Sobre Luna',
+      includesTitle: 'Que incluye Luna',
+      voiceTitle: 'Notas de voz',
+      voiceText: 'Habla con calma y recibe una respuesta suave.',
+      reportsTitle: 'Informes de salud',
+      reportsText: 'Crea un informe claro para visitas medicas y compartir.',
+      contextTitle: 'Contexto corporal',
+      contextText: 'Ciclo, estado, sueno y energia en un solo lugar.',
+      safetyTitle: 'Soporte y seguridad',
+      safetyText: 'FAQ, guia para pareja, controles legales y de privacidad.',
     },
   }[lang];
   return (
@@ -151,6 +180,10 @@ export function ServicesHubScreen({
       <SurfaceCard>
         <Text style={styles.cardTitle}>{extraCopy.quickNav}</Text>
         <View style={styles.stack}>
+          <LunaButton variant="secondary" onPress={onOpenToday}>{extraCopy.today}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenStory}>{extraCopy.story}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenRhythm}>{extraCopy.rhythm}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenYou}>{extraCopy.you}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenPublicHome}>{extraCopy.publicHome}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenAuth}>{extraCopy.auth}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenMemberZone}>{extraCopy.member}</LunaButton>
@@ -160,23 +193,35 @@ export function ServicesHubScreen({
       </SurfaceCard>
 
       <SurfaceCard>
-        <Text style={styles.cardTitle}>{copy.coreSections}</Text>
+        <Text style={styles.cardTitle}>{extraCopy.coreTitle}</Text>
         <View style={styles.stack}>
           <LunaButton variant="secondary" onPress={onOpenBodyMap}>{copy.bodyMap}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenRitualPath}>{copy.ritualPath}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenBridge}>{copy.bridge}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenKnowledge}>{copy.knowledge}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenHealthReports}>{copy.reports}</LunaButton>
+        </View>
+      </SurfaceCard>
+
+      <SurfaceCard>
+        <Text style={styles.cardTitle}>{extraCopy.supportTitle}</Text>
+        <View style={styles.stack}>
           <LunaButton variant="secondary" onPress={onOpenSupport}>{copy.support}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenRelationships}>{extraCopy.relationships}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenFamily}>{extraCopy.family}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenHowItWorks}>{extraCopy.how}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenContact}>{extraCopy.contact}</LunaButton>
+          <LunaButton variant="secondary" onPress={onOpenAbout}>{extraCopy.about}</LunaButton>
+        </View>
+      </SurfaceCard>
+
+      <SurfaceCard>
+        <Text style={styles.cardTitle}>{extraCopy.extraTitle}</Text>
+        <View style={styles.stack}>
           <LunaButton variant="secondary" onPress={onOpenCreative}>{extraCopy.creative}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenMedicationNotes}>{extraCopy.meds}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenResetRoom}>{extraCopy.reset}</LunaButton>
           <LunaButton variant="secondary" onPress={onOpenVoiceFiles}>{extraCopy.voiceFiles}</LunaButton>
-          <LunaButton variant="secondary" onPress={onOpenHowItWorks}>{extraCopy.how}</LunaButton>
-          <LunaButton variant="secondary" onPress={onOpenContact}>{extraCopy.contact}</LunaButton>
-          <LunaButton variant="secondary" onPress={onOpenAbout}>{extraCopy.about}</LunaButton>
         </View>
       </SurfaceCard>
 
@@ -243,7 +288,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     color: colors.textPrimary,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   stack: {
     gap: 8,
