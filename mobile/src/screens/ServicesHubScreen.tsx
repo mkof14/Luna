@@ -1,5 +1,6 @@
 import React from 'react';
 import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { LanguageSelector } from '../components/LanguageSelector';
 import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
@@ -34,6 +35,9 @@ export function ServicesHubScreen({
   onOpenContact,
   onOpenAbout,
   lang,
+  setLang,
+  themeMode,
+  onToggleTheme,
 }: {
   onBack: () => void;
   onOpenToday: () => void;
@@ -62,6 +66,9 @@ export function ServicesHubScreen({
   onOpenContact: () => void;
   onOpenAbout: () => void;
   lang: MobileLang;
+  setLang: (lang: MobileLang) => void;
+  themeMode: 'light' | 'dark';
+  onToggleTheme: () => void;
 }) {
   const baseLang = resolveLangBase(lang);
   const copy = getMobileCopy(lang).services;
@@ -169,6 +176,14 @@ export function ServicesHubScreen({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <MobileScreenHeader title={copy.title} subtitle={copy.subtitle} onBack={onBack} />
+
+      <SurfaceCard style={styles.controlsCard}>
+        <Text style={styles.cardTitle}>{baseLang === 'ru' ? 'Язык и тема' : baseLang === 'es' ? 'Idioma y tema' : 'Language and theme'}</Text>
+        <LanguageSelector lang={lang} setLang={setLang} />
+        <LunaButton variant="secondary" onPress={onToggleTheme}>
+          {(baseLang === 'ru' ? 'Тема' : baseLang === 'es' ? 'Tema' : 'Theme')}: {themeMode === 'light' ? (baseLang === 'ru' ? 'Светлая' : baseLang === 'es' ? 'Claro' : 'Light') : (baseLang === 'ru' ? 'Темная' : baseLang === 'es' ? 'Oscuro' : 'Dark')}
+        </LunaButton>
+      </SurfaceCard>
 
       <ImageBackground source={require('../../assets/home-hero.webp')} imageStyle={styles.heroImage} style={styles.heroCard}>
         <View style={styles.heroOverlay}>
@@ -290,6 +305,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.textPrimary,
     fontWeight: '800',
+  },
+  controlsCard: {
+    backgroundColor: 'rgba(255, 248, 255, 0.94)',
+    borderColor: 'rgba(209,183,227,0.68)',
   },
   stack: {
     gap: 8,

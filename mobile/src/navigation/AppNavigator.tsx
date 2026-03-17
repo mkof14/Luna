@@ -351,6 +351,9 @@ export function AppNavigator() {
           onOpenContact={openContact}
           onOpenAbout={openAbout}
           lang={lang}
+          setLang={setLang}
+          themeMode={themeMode}
+          onToggleTheme={() => setThemeMode((current) => (current === 'light' ? 'dark' : 'light'))}
         />
       );
     }
@@ -526,6 +529,9 @@ export function AppNavigator() {
           }}
           error={auth.error}
           lang={lang}
+          setLang={setLang}
+          themeMode={themeMode}
+          onToggleTheme={() => setThemeMode((current) => (current === 'light' ? 'dark' : 'light'))}
         />
       </AppShell>
     );
@@ -625,6 +631,9 @@ export function AppNavigator() {
           onOpenAdmin={openAdmin}
           onOpenServices={openServicesHub}
           lang={lang}
+          setLang={setLang}
+          themeMode={themeMode}
+          onToggleTheme={() => setThemeMode((current) => (current === 'light' ? 'dark' : 'light'))}
         />
       </AppShell>
     );
@@ -678,6 +687,9 @@ export function AppNavigator() {
           onOpenContact={openContact}
           onOpenAbout={openAbout}
           lang={lang}
+          setLang={setLang}
+          themeMode={themeMode}
+          onToggleTheme={() => setThemeMode((current) => (current === 'light' ? 'dark' : 'light'))}
         />
       </AppShell>
     );

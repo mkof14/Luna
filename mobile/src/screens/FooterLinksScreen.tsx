@@ -1,5 +1,6 @@
 import React from 'react';
 import { ImageBackground, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { LanguageSelector } from '../components/LanguageSelector';
 import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
@@ -159,6 +160,9 @@ export function FooterLinksScreen({
   onOpenAdmin,
   onOpenServices,
   lang,
+  setLang,
+  themeMode,
+  onToggleTheme,
 }: {
   onBack: () => void;
   onOpenToday: () => void;
@@ -171,8 +175,12 @@ export function FooterLinksScreen({
   onOpenAdmin: () => void;
   onOpenServices: () => void;
   lang: MobileLang;
+  setLang: (lang: MobileLang) => void;
+  themeMode: 'light' | 'dark';
+  onToggleTheme: () => void;
 }) {
-  const copy = copyByLang[resolveLangBase(lang)];
+  const baseLang = resolveLangBase(lang);
+  const copy = copyByLang[baseLang];
   const renderSectionLinks = (section: 'public' | 'support' | 'legal') => {
     return links
       .filter((item) => item.section === section)
@@ -196,6 +204,14 @@ export function FooterLinksScreen({
           <MobileScreenHeader title={copy.title} subtitle={copy.subtitle} onBack={onBack} tone="light" />
         </View>
       </ImageBackground>
+
+      <SurfaceCard style={styles.linksCard}>
+        <Text style={styles.cardTitle}>{baseLang === 'ru' ? 'Язык и тема' : baseLang === 'es' ? 'Idioma y tema' : 'Language and theme'}</Text>
+        <LanguageSelector lang={lang} setLang={setLang} />
+        <LunaButton variant="secondary" onPress={onToggleTheme}>
+          {(baseLang === 'ru' ? 'Тема' : baseLang === 'es' ? 'Tema' : 'Theme')}: {themeMode === 'light' ? (baseLang === 'ru' ? 'Светлая' : baseLang === 'es' ? 'Claro' : 'Light') : (baseLang === 'ru' ? 'Темная' : baseLang === 'es' ? 'Oscuro' : 'Dark')}
+        </LunaButton>
+      </SurfaceCard>
 
       <SurfaceCard style={styles.linksCard}>
         <Text style={styles.cardTitle}>{copy.publicTitle}</Text>

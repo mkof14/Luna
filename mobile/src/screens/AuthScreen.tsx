@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, ImageBackground, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { LanguageSelector } from '../components/LanguageSelector';
 import { LunaButton } from '../components/LunaButton';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
@@ -84,14 +85,21 @@ export function AuthScreen({
   onBack,
   error,
   lang,
+  setLang,
+  themeMode,
+  onToggleTheme,
 }: {
   onSignIn: (email: string, password: string) => Promise<void>;
   onSignUp: (name: string, email: string, password: string) => Promise<void>;
   onBack?: () => void;
   error?: string;
   lang: MobileLang;
+  setLang: (lang: MobileLang) => void;
+  themeMode: 'light' | 'dark';
+  onToggleTheme: () => void;
 }) {
-  const copy = copyByLang[resolveLangBase(lang)];
+  const baseLang = resolveLangBase(lang);
+  const copy = copyByLang[baseLang];
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [name, setName] = useState('Anna');
   const [email, setEmail] = useState('');
@@ -132,6 +140,14 @@ export function AuthScreen({
         <Text style={styles.title}>{copy.title}</Text>
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
       </ImageBackground>
+
+      <SurfaceCard style={styles.providersCard}>
+        <Text style={styles.providersTitle}>{baseLang === 'ru' ? 'Язык и тема' : baseLang === 'es' ? 'Idioma y tema' : 'Language and theme'}</Text>
+        <LanguageSelector lang={lang} setLang={setLang} />
+        <LunaButton variant="secondary" onPress={onToggleTheme}>
+          {(baseLang === 'ru' ? 'Тема' : baseLang === 'es' ? 'Tema' : 'Theme')}: {themeMode === 'light' ? (baseLang === 'ru' ? 'Светлая' : baseLang === 'es' ? 'Claro' : 'Light') : (baseLang === 'ru' ? 'Темная' : baseLang === 'es' ? 'Oscuro' : 'Dark')}
+        </LunaButton>
+      </SurfaceCard>
 
       <SurfaceCard>
         <View style={styles.modeRow}>
