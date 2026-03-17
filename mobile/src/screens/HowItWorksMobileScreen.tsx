@@ -3,14 +3,14 @@ import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-nativ
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
 export function HowItWorksMobileScreen({ onBack, lang }: { onBack: () => void; lang: MobileLang }) {
   const copy = {
     en: { title: 'How Luna works', subtitle: 'Open, reflect, receive, continue.', steps: ['Open Luna', 'Speak or quick check-in', 'Receive reflection', 'See rhythm context'] },
     ru: { title: 'Как работает Luna', subtitle: 'Открыть, отразить, получить, продолжить.', steps: ['Открыть Luna', 'Голос или быстрый check-in', 'Получить отражение', 'Посмотреть ритм'] },
     es: { title: 'Como funciona Luna', subtitle: 'Abrir, reflejar, recibir, continuar.', steps: ['Abrir Luna', 'Hablar o check-in rapido', 'Recibir reflexion', 'Ver contexto del ritmo'] },
-  }[lang];
+  }[resolveLangBase(lang)];
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

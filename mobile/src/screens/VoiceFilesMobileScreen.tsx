@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 import { loadSectionState, saveSectionState } from '../services/mobileState';
 
 type VoiceItem = { id: string; label: string; text: string };
@@ -14,7 +14,7 @@ export function VoiceFilesMobileScreen({ onBack, lang }: { onBack: () => void; l
     en: { title: 'My Voice Files', subtitle: 'Recent voice notes and continuity.' },
     ru: { title: 'Мои Voice Files', subtitle: 'Последние голосовые заметки и непрерывность.' },
     es: { title: 'Mis archivos de voz', subtitle: 'Notas de voz recientes y continuidad.' },
-  }[lang];
+  }[resolveLangBase(lang)];
 
   const [items] = useState<VoiceItem[]>([
     { id: '1', label: 'Today', text: 'Work felt demanding.' },

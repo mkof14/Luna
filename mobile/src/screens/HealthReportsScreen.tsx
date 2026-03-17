@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 import { generateReport, getReportHistory, preparePdf, runOcrIntake, saveReport } from '../services/reports';
 
 export function HealthReportsScreen({ onBack, lang }: { onBack: () => void; lang: MobileLang }) {
@@ -120,7 +120,7 @@ export function HealthReportsScreen({ onBack, lang }: { onBack: () => void; lang
       statusPrinted: 'Vista previa de impresion preparada.',
       statusPdf: 'Paquete PDF preparado para la siguiente fase backend.',
     },
-  }[lang];
+  }[resolveLangBase(lang)];
   const [cycleDay, setCycleDay] = useState('17');
   const [sleep, setSleep] = useState('6h 20m');
   const [energy, setEnergy] = useState('Lower');

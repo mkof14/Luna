@@ -256,7 +256,7 @@ export function AppNavigator() {
     void (async () => {
       try {
         const savedLang = await SecureStore.getItemAsync('luna_mobile_lang');
-        if (savedLang && ['en', 'ru', 'es'].includes(savedLang)) {
+        if (savedLang && ['en', 'ru', 'es', 'uk', 'fr', 'de', 'pt', 'ja', 'zh'].includes(savedLang)) {
           setLang(savedLang as MobileLang);
         }
         const savedTheme = await SecureStore.getItemAsync('luna_mobile_theme');

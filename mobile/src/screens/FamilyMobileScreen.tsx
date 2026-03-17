@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 import { loadSectionState, saveSectionState } from '../services/mobileState';
 
 const TASKS = ['Evening check-in', 'Gentle support message', 'Prepare calmer morning'];
@@ -14,7 +14,7 @@ export function FamilyMobileScreen({ onBack, lang }: { onBack: () => void; lang:
     en: { title: 'Family', subtitle: 'Shared understanding without pressure.', done: 'Done today' },
     ru: { title: 'Семья', subtitle: 'Общее понимание без давления.', done: 'Выполнено сегодня' },
     es: { title: 'Familia', subtitle: 'Entendimiento compartido sin presion.', done: 'Hecho hoy' },
-  }[lang];
+  }[resolveLangBase(lang)];
 
   const [done, setDone] = useState<string[]>([]);
 

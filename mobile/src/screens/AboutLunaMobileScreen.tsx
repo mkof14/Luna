@@ -3,7 +3,7 @@ import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-nativ
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
 export function AboutLunaMobileScreen({ onBack, lang }: { onBack: () => void; lang: MobileLang }) {
   const copy = {
@@ -28,7 +28,7 @@ export function AboutLunaMobileScreen({ onBack, lang }: { onBack: () => void; la
         'Luna te ayuda a entender tu dia con ritmo corporal, senales diarias y notas de voz. El objetivo es un habito diario simple y personal.',
       pillars: ['Tu cuerpo', 'Tus sensaciones', 'Tus palabras'],
     },
-  }[lang];
+  }[resolveLangBase(lang)];
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

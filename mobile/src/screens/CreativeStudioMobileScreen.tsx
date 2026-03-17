@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 import { loadSectionState, saveSectionState } from '../services/mobileState';
 
 export function CreativeStudioMobileScreen({ onBack, lang }: { onBack: () => void; lang: MobileLang }) {
@@ -12,7 +12,7 @@ export function CreativeStudioMobileScreen({ onBack, lang }: { onBack: () => voi
     en: { title: 'Creative Studio', subtitle: 'Turn feelings into short expressive notes.', placeholder: 'Write one honest line about your day...' },
     ru: { title: 'Creative Studio', subtitle: 'Преобразуйте ощущения в короткие выразительные заметки.', placeholder: 'Напишите одну честную строку о дне...' },
     es: { title: 'Creative Studio', subtitle: 'Convierte sensaciones en notas expresivas cortas.', placeholder: 'Escribe una linea honesta sobre tu dia...' },
-  }[lang];
+  }[resolveLangBase(lang)];
 
   const [draft, setDraft] = useState('Today felt slower, but I stayed kind to myself.');
   const [saved, setSaved] = useState<string[]>([]);

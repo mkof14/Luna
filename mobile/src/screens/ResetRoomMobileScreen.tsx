@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 import { loadSectionState, saveSectionState } from '../services/mobileState';
 
 export function ResetRoomMobileScreen({ onBack, lang }: { onBack: () => void; lang: MobileLang }) {
@@ -12,7 +12,7 @@ export function ResetRoomMobileScreen({ onBack, lang }: { onBack: () => void; la
     en: { title: 'Reset Room', subtitle: 'A quiet place when everything feels too much.' },
     ru: { title: 'Reset Room', subtitle: 'Тихое пространство, когда всего слишком много.' },
     es: { title: 'Reset Room', subtitle: 'Un espacio tranquilo cuando todo se siente demasiado.' },
-  }[lang];
+  }[resolveLangBase(lang)];
 
   const [seconds, setSeconds] = useState(60);
   const [running, setRunning] = useState(false);

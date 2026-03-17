@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 import { env, hasApiBaseUrl } from '../config/env';
 
 export function ContactMobileScreen({ onBack, lang }: { onBack: () => void; lang: MobileLang }) {
@@ -12,7 +12,7 @@ export function ContactMobileScreen({ onBack, lang }: { onBack: () => void; lang
     en: { title: 'Contact', subtitle: 'Reach Luna support and partnership team.', mail: 'Email support', site: 'Open Luna website', send: 'Send message' },
     ru: { title: 'Контакты', subtitle: 'Связь с поддержкой и партнёрской командой Luna.', mail: 'Написать в поддержку', site: 'Открыть сайт Luna', send: 'Отправить сообщение' },
     es: { title: 'Contacto', subtitle: 'Contacta soporte y equipo de alianzas de Luna.', mail: 'Enviar email a soporte', site: 'Abrir sitio Luna', send: 'Enviar mensaje' },
-  }[lang];
+  }[resolveLangBase(lang)];
 
   const [name, setName] = useState('Anna');
   const [email, setEmail] = useState('dnainform@gmail.com');

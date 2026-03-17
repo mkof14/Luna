@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
 export function SupportScreen({
   onBack,
@@ -78,7 +78,7 @@ export function SupportScreen({
       docsText: 'Abre paginas publicas clave y documentos legales.',
       openHome: 'Abrir Luna Home',
     },
-  }[lang];
+  }[resolveLangBase(lang)];
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ImageBackground source={require('../../assets/bg-soft-1.webp')} imageStyle={styles.heroImage} style={styles.heroCard}>

@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 import { loadSectionState, saveSectionState } from '../services/mobileState';
 
 export function RelationshipsMobileScreen({ onBack, lang }: { onBack: () => void; lang: MobileLang }) {
@@ -30,7 +30,7 @@ export function RelationshipsMobileScreen({ onBack, lang }: { onBack: () => void
       message: 'Explicar hoy a mi pareja',
       note: 'Usa lenguaje corto, calido y concreto.',
     },
-  }[lang];
+  }[resolveLangBase(lang)];
 
   const [selectedPrompt, setSelectedPrompt] = useState(copy.prompts[0]);
 

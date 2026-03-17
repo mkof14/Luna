@@ -14,7 +14,7 @@ export function LanguageSelector({
     <View style={styles.wrap}>
       {languageOptions.map((item) => (
         <View key={item.key} style={styles.item}>
-          <LunaButton variant={lang === item.target && item.key === item.target ? 'primary' : 'secondary'} onPress={() => setLang(item.target)}>
+          <LunaButton variant={lang === item.target ? 'primary' : 'secondary'} onPress={() => setLang(item.target)}>
             {item.label}
           </LunaButton>
         </View>

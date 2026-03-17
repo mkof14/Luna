@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
 const topics = {
   en: [
@@ -32,13 +32,13 @@ export function KnowledgeScreen({ onBack, lang }: { onBack: () => void; lang: Mo
     en: { title: 'Knowledge', subtitle: 'Clear guidance without overload.', search: 'Search topic...' },
     ru: { title: 'Knowledge', subtitle: 'Понятные ориентиры без перегруза.', search: 'Поиск темы...' },
     es: { title: 'Knowledge', subtitle: 'Guia clara sin sobrecarga.', search: 'Buscar tema...' },
-  }[lang];
+  }[resolveLangBase(lang)];
 
   const [query, setQuery] = useState('');
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
-    const list = topics[lang];
+    const list = topics[resolveLangBase(lang)];
     if (!query.trim()) return list;
     return list.filter((topic) => `${topic.title} ${topic.body}`.toLowerCase().includes(query.toLowerCase()));
   }, [lang, query]);

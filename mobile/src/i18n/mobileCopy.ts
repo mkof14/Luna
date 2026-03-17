@@ -1,6 +1,6 @@
 export type BaseMobileLang = 'en' | 'ru' | 'es';
 export type ExtraMobileLang = 'uk' | 'fr' | 'de' | 'pt' | 'ja' | 'zh';
-export type MobileLang = BaseMobileLang;
+export type MobileLang = BaseMobileLang | ExtraMobileLang;
 
 type CopyShape = {
   common: {
@@ -246,12 +246,12 @@ export const languageOptions: Array<{ key: MobileLang | ExtraMobileLang; target:
   { key: 'en', target: 'en', label: '🇺🇸 EN' },
   { key: 'ru', target: 'ru', label: '🇷🇺 RU' },
   { key: 'es', target: 'es', label: '🇪🇸 ES' },
-  { key: 'uk', target: 'ru', label: '🇺🇦 UK' },
-  { key: 'fr', target: 'en', label: '🇫🇷 FR' },
-  { key: 'de', target: 'en', label: '🇩🇪 DE' },
-  { key: 'pt', target: 'es', label: '🇵🇹 PT' },
-  { key: 'ja', target: 'en', label: '🇯🇵 JA' },
-  { key: 'zh', target: 'en', label: '🇨🇳 ZH' },
+  { key: 'uk', target: 'uk', label: '🇺🇦 UK' },
+  { key: 'fr', target: 'fr', label: '🇫🇷 FR' },
+  { key: 'de', target: 'de', label: '🇩🇪 DE' },
+  { key: 'pt', target: 'pt', label: '🇵🇹 PT' },
+  { key: 'ja', target: 'ja', label: '🇯🇵 JA' },
+  { key: 'zh', target: 'zh', label: '🇨🇳 ZH' },
 ];
 
 export function resolveLangBase(lang: MobileLang | ExtraMobileLang): BaseMobileLang {

@@ -3,7 +3,7 @@ import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-nativ
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 
 export function PartnerFAQMobileScreen({ onBack, lang }: { onBack: () => void; lang: MobileLang }) {
   const copy = {
@@ -55,7 +55,7 @@ export function PartnerFAQMobileScreen({ onBack, lang }: { onBack: () => void; l
         { q: 'Como usar Luna juntos cada dia?', a: 'Haz un check-in breve por la noche y mantiene tono calmado.' },
       ],
     },
-  }[lang];
+  }[resolveLangBase(lang)];
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ImageBackground source={require('../../assets/bg-soft-2.webp')} imageStyle={styles.heroImage} style={styles.heroCard}>

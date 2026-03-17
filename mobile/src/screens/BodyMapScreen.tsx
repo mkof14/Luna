@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 import { loadSectionState, saveSectionState } from '../services/mobileState';
 
 const phases = ['Follicular', 'Ovulatory', 'Luteal', 'Menstrual'];
@@ -47,7 +47,7 @@ export function BodyMapScreen({ onBack, lang }: { onBack: () => void; lang: Mobi
       action: 'Guardar nota del mapa corporal',
       share: 'Compartir tarjeta de mi dia',
     },
-  }[lang];
+  }[resolveLangBase(lang)];
 
   const [phase, setPhase] = useState('Luteal');
   const [energy, setEnergy] = useState(36);

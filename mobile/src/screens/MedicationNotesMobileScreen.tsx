@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 import { loadSectionState, saveSectionState } from '../services/mobileState';
 
 type Entry = { id: string; medicine: string; note: string };
@@ -14,7 +14,7 @@ export function MedicationNotesMobileScreen({ onBack, lang }: { onBack: () => vo
     en: { title: 'Medication Notes', subtitle: 'Simple notes for medicine and supplements.' },
     ru: { title: 'Medication Notes', subtitle: 'Простые заметки о лекарствах и добавках.' },
     es: { title: 'Notas de medicacion', subtitle: 'Notas simples sobre medicina y suplementos.' },
-  }[lang];
+  }[resolveLangBase(lang)];
 
   const [medicine, setMedicine] = useState('Magnesium');
   const [note, setNote] = useState('Taken after dinner. Felt calmer.');

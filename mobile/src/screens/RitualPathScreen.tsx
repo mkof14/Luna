@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 import { loadSectionState, saveSectionState } from '../services/mobileState';
 
 export function RitualPathScreen({ onBack, lang }: { onBack: () => void; lang: MobileLang }) {
@@ -42,7 +42,7 @@ export function RitualPathScreen({ onBack, lang }: { onBack: () => void; lang: M
       e: 'Noche',
       eBody: 'Cierra el dia con una nota breve para preservar senal, no ruido.',
     },
-  }[lang];
+  }[resolveLangBase(lang)];
 
   const [done, setDone] = useState({ morning: false, midday: false, evening: false });
 

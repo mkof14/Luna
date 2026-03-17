@@ -4,7 +4,7 @@ import { LunaButton } from '../components/LunaButton';
 import { MobileScreenHeader } from '../components/MobileScreenHeader';
 import { SurfaceCard } from '../components/SurfaceCard';
 import { colors } from '../theme/tokens';
-import { MobileLang } from '../i18n/mobileCopy';
+import { MobileLang, resolveLangBase } from '../i18n/mobileCopy';
 import { loadSectionState, saveSectionState } from '../services/mobileState';
 
 export function BridgeMobileScreen({
@@ -44,7 +44,7 @@ export function BridgeMobileScreen({
       create: 'Crear mensaje desde nota de voz',
       share: 'Explicar hoy a mi pareja',
     },
-  }[lang];
+  }[resolveLangBase(lang)];
 
   const [tone, setTone] = useState<'soft' | 'direct' | 'supportive'>('soft');
   const [context, setContext] = useState('Work pressure and short sleep.');
