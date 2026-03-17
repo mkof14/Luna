@@ -97,6 +97,15 @@ export function ServicesHubScreen({
       contact: 'Contact',
       about: 'About Luna',
       includesTitle: 'What Luna services include',
+      mapTitle: 'Luna map',
+      mapScreens: 'Screens',
+      mapScreensText: 'Today, Story, Rhythm, You, Public Home, Auth.',
+      mapLogic: 'Logic',
+      mapLogicText: 'Daily loop: open, reflect, receive, continue.',
+      mapServices: 'Services',
+      mapServicesText: 'Voice notes, reports, body map, support.',
+      mapFunctions: 'Functions',
+      mapFunctionsText: 'Language, theme, sharing, access and admin.',
       voiceTitle: 'Voice notes',
       voiceText: 'Speak naturally and receive a calm response.',
       reportsTitle: 'Health reports',
@@ -130,6 +139,15 @@ export function ServicesHubScreen({
       contact: 'Контакты',
       about: 'О Luna',
       includesTitle: 'Что включает Luna',
+      mapTitle: 'Карта Luna',
+      mapScreens: 'Скрины',
+      mapScreensText: 'Today, Story, Rhythm, You, Public Home, Auth.',
+      mapLogic: 'Логика',
+      mapLogicText: 'Ежедневный цикл: открыть, заметка, отклик, продолжить.',
+      mapServices: 'Сервисы',
+      mapServicesText: 'Голосовые заметки, отчеты, body map, поддержка.',
+      mapFunctions: 'Функции',
+      mapFunctionsText: 'Язык, тема, шаринг, доступ и админ.',
       voiceTitle: 'Голосовые заметки',
       voiceText: 'Говорите свободно и получайте спокойный отклик.',
       reportsTitle: 'Отчеты здоровья',
@@ -163,6 +181,15 @@ export function ServicesHubScreen({
       contact: 'Contacto',
       about: 'Sobre Luna',
       includesTitle: 'Que incluye Luna',
+      mapTitle: 'Mapa de Luna',
+      mapScreens: 'Pantallas',
+      mapScreensText: 'Today, Story, Rhythm, You, Public Home, Auth.',
+      mapLogic: 'Logica',
+      mapLogicText: 'Bucle diario: abrir, reflejar, recibir, continuar.',
+      mapServices: 'Servicios',
+      mapServicesText: 'Notas de voz, informes, body map, soporte.',
+      mapFunctions: 'Funciones',
+      mapFunctionsText: 'Idioma, tema, compartir, acceso y admin.',
       voiceTitle: 'Notas de voz',
       voiceText: 'Habla con calma y recibe una respuesta suave.',
       reportsTitle: 'Informes de salud',
@@ -242,6 +269,28 @@ export function ServicesHubScreen({
       </SurfaceCard>
 
       <SurfaceCard style={styles.infoCard}>
+        <Text style={styles.cardTitle}>{extraCopy.mapTitle}</Text>
+        <View style={styles.infoGrid}>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoTitle}>{extraCopy.mapScreens}</Text>
+            <Text style={styles.infoText}>{extraCopy.mapScreensText}</Text>
+          </View>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoTitle}>{extraCopy.mapLogic}</Text>
+            <Text style={styles.infoText}>{extraCopy.mapLogicText}</Text>
+          </View>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoTitle}>{extraCopy.mapServices}</Text>
+            <Text style={styles.infoText}>{extraCopy.mapServicesText}</Text>
+          </View>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoTitle}>{extraCopy.mapFunctions}</Text>
+            <Text style={styles.infoText}>{extraCopy.mapFunctionsText}</Text>
+          </View>
+        </View>
+      </SurfaceCard>
+
+      <SurfaceCard style={styles.infoCard}>
         <Text style={styles.cardTitle}>{extraCopy.includesTitle}</Text>
         <View style={styles.infoGrid}>
           <View style={styles.infoItem}>
@@ -314,7 +363,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   infoCard: {
-    backgroundColor: 'rgba(255, 249, 255, 0.84)',
+    backgroundColor: 'rgba(255, 249, 255, 0.92)',
+    borderColor: 'rgba(209,183,227,0.68)',
   },
   infoGrid: {
     gap: 8,
@@ -323,7 +373,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: 'rgba(248, 238, 253, 0.8)',
+    backgroundColor: 'rgba(248, 238, 253, 0.82)',
     paddingHorizontal: 11,
     paddingVertical: 10,
     gap: 2,

@@ -28,10 +28,10 @@ const styles = StyleSheet.create({
   },
   bgImage: {
     resizeMode: 'cover',
-    opacity: 0.32,
+    opacity: 0.38,
   },
   bgImageDark: {
-    opacity: 0.16,
+    opacity: 0.08,
   },
   overlayTop: {
     position: 'absolute',
@@ -44,8 +44,8 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   overlayTopDark: {
-    backgroundColor: '#3b2b5c',
-    opacity: 0.52,
+    backgroundColor: '#2f1f4a',
+    opacity: 0.62,
   },
   overlayBottom: {
     position: 'absolute',
@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
     opacity: 0.55,
   },
   overlayBottomDark: {
-    backgroundColor: '#2a3b69',
-    opacity: 0.5,
+    backgroundColor: '#1f305d',
+    opacity: 0.62,
   },
   content: {
     flex: 1,

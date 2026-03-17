@@ -1,6 +1,6 @@
 export type BaseMobileLang = 'en' | 'ru' | 'es';
-export type MobileLang = BaseMobileLang;
 export type ExtraMobileLang = 'uk' | 'fr' | 'de' | 'pt' | 'ja' | 'zh';
+export type MobileLang = BaseMobileLang;
 
 type CopyShape = {
   common: {

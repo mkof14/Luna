@@ -915,13 +915,13 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     borderRadius: 24,
-    backgroundColor: 'rgba(252, 247, 255, 0.74)',
+    backgroundColor: 'rgba(252, 247, 255, 0.84)',
     borderWidth: 1,
     borderColor: colors.border,
     overflow: 'hidden',
   },
   contentDark: {
-    backgroundColor: 'rgba(24, 30, 49, 0.72)',
-    borderColor: '#3f4a6a',
+    backgroundColor: 'rgba(10, 15, 31, 0.92)',
+    borderColor: '#2f3a5a',
   },
 });
